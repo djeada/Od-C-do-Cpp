@@ -1,0 +1,17 @@
+throw - tak jak return
+
+throw dowolny typ
+
+catch (precyzuje typ)
+
+throw (TYP_X) wartosc_x
+
+catch TYP_Y:
+nie zlapie tego
+
+catch (...):
+  lapie wszystko
+  
+Nie zlapane zamknie program.
+
+W STL .at(-1) wyrzuci wyjatek.
