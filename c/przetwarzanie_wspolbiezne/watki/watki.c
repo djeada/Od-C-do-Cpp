@@ -18,8 +18,8 @@ int main() {
       pthread_create(&thread2, NULL, print_message_function, (void *)message2);
 
   // wait till threads are complete before main continues Unleess we wait we run
-  // the risk of executing an exit wchi will termineate the porcess before thread
-  // have complted
+  // the risk of executing an exit wchi will termineate the porcess before
+  // thread have complted
 
   pthread_join(thread1, NULL);
   pthread_join(thread2, NULL);
