@@ -1,0 +1,360 @@
+%!TeX encoding = UTF-8
+%!TeX program = xelatex
+\documentclass[notheorems, aspectratio=54]{beamer}
+% aspectratio: 1610, 149, 54, 43(default), 32
+\usepackage[utf8]{inputenc} % `utf8` option to match Editor encoding
+\usepackage[T1]{fontenc}
+\usepackage{latexsym}
+\usepackage{amsmath,amssymb}
+\usepackage{mathtools}
+\usepackage{color,xcolor}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{amsthm}
+\usepackage{lmodern} % 解决 font warning
+% \usepackage[UTF8]{ctex}
+\usepackage{animate} % insert gif
+\usepackage{listings}
+
+\usepackage{karnaugh-map}
+
+\usetikzlibrary{matrix,calc}
+\usepackage{lipsum} % To generate test text 
+\usepackage{ulem} % 下划线，波浪线
+
+\usepackage{listings} % display code on slides; don't forget [fragile] option after \begin{frame}
+
+
+% ----------------------------------------------
+% tikx
+\usepackage{framed}
+\usepackage{tikz}
+\usepackage{pgf}
+\usetikzlibrary{calc,trees,positioning,arrows,chains,shapes.geometric,%
+    decorations.pathreplacing,decorations.pathmorphing,shapes,%
+    matrix,shapes.symbols}
+\pgfmathsetseed{1} % To have predictable results
+% Define a background layer, in which the parchment shape is drawn
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+% define styles for the normal border and the torn border
+\tikzset{
+  normal border/.style={black!70!gray, decorate, 
+     decoration={random steps, segment length=2.5cm, amplitude=.7mm}},
+  torn border/.style={black!70!gray, decorate, 
+     decoration={random steps, segment length=.5cm, amplitude=1.7mm}}}
+
+% Macro to draw the shape behind the text, when it fits completly in the
+% page
+\def\parchmentframe#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};  % Draw the text of the node
+  \begin{pgfonlayer}{background}  % Draw the shape behind
+  \fill[normal border] 
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text will continue in next page
+\def\parchmentframetop#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};    % Draw the text of the node
+  \begin{pgfonlayer}{background}    
+  \fill[normal border]              % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]                % Add the torn lower border
+        ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+        ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text continues from previous page
+\def\parchmentframebottom#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};   % Draw the text of the node
+  \begin{pgfonlayer}{background}   
+  \fill[normal border]             % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]               % Add the torn upper border
+        ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+        ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when both the text continues from previous page
+% and it will continue in next page
+\def\parchmentframemiddle#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};   % Draw the text of the node
+  \begin{pgfonlayer}{background}   
+  \fill[normal border]             % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]               % Add the torn lower border
+        ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+        ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+  \fill[torn border]               % Add the torn upper border
+        ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+        ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Define the environment which puts the frame
+% In this case, the environment also accepts an argument with an optional
+% title (which defaults to ``Example'', which is typeset in a box overlaid
+% on the top border
+\newenvironment{parchment}[1][Example]{%
+  \def\FrameCommand{\parchmentframe}%
+  \def\FirstFrameCommand{\parchmentframetop}%
+  \def\LastFrameCommand{\parchmentframebottom}%
+  \def\MidFrameCommand{\parchmentframemiddle}%
+  \vskip\baselineskip
+  \MakeFramed {\FrameRestore}
+  \noindent\tikz\node[inner sep=1ex, draw=black!20, fill=black!90, 
+          anchor=west, overlay] at (0em, 2em) {\sffamily#1};\par}%
+{\endMakeFramed}
+
+% ----------------------------------------------
+
+\mode<presentation>{
+    \usetheme{Warsaw}
+    % Boadilla CambridgeUS
+    % default Antibes Berlin Copenhagen
+    % Madrid Montpelier Ilmenau Malmoe
+    % Berkeley Singapore Warsaw
+    \usecolortheme{seagull}
+    % beetle, beaver, orchid, whale, dolphin, seagull
+    \useoutertheme{infolines}
+    % infolines miniframes shadow sidebar smoothbars smoothtree split tree
+    \useinnertheme{circles}
+    % circles, rectanges, rounded, inmargin
+}
+
+% ---------------------------------------------------------------------
+% Jet Black Theme
+\setbeamercolor{normal text}{fg=white,bg=black!90}
+\setbeamercolor{structure}{fg=white}
+
+\setbeamercolor{alerted text}{fg=red!85!black}
+
+\setbeamercolor{item projected}{use=item,fg=black,bg=item.fg!35}
+
+\setbeamercolor*{palette primary}{use=structure,fg=structure.fg}
+\setbeamercolor*{palette secondary}{use=structure,fg=structure.fg!95!black}
+\setbeamercolor*{palette tertiary}{use=structure,fg=structure.fg!90!black}
+\setbeamercolor*{palette quaternary}{use=structure,fg=structure.fg!95!black,bg=black!80}
+
+\setbeamercolor*{framesubtitle}{fg=white}
+
+\setbeamercolor*{block title}{parent=structure,bg=black!70!gray}
+\setbeamercolor*{block body}{fg=black,bg=black!10}
+\setbeamercolor*{block title alerted}{parent=alerted text,bg=black!15}
+\setbeamercolor*{block title example}{parent=example text,bg=black!15}
+% ---------------------------------------------------------------------
+
+
+% ---------------------------------------------------------------------
+% flow chart
+\tikzset{
+    >=stealth',
+    punktchain/.style={
+        rectangle, 
+        rounded corners, 
+        % fill=black!10,
+        draw=white, very thick,
+        text width=6em,
+        minimum height=2em, 
+        text centered, 
+        on chain
+    },
+    largepunktchain/.style={
+        rectangle,
+        rounded corners,
+        draw=white, very thick,
+        text width=10em,
+        minimum height=2em,
+        on chain
+    },
+    line/.style={draw, thick, <-},
+    element/.style={
+        tape,
+        top color=white,
+        bottom color=blue!50!black!60!,
+        minimum width=6em,
+        draw=blue!40!black!90, very thick,
+        text width=6em, 
+        minimum height=2em, 
+        text centered, 
+        on chain
+    },
+    every join/.style={->, thick,shorten >=1pt},
+    decoration={brace},
+    tuborg/.style={decorate},
+    tubnode/.style={midway, right=2pt},
+    font={\fontsize{10pt}{12}\selectfont},
+}
+% ---------------------------------------------------------------------
+
+% code setting
+\lstset{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{red},
+    breaklines=true,
+    xleftmargin=2em,
+    numbers=left,
+    numberstyle=\color[RGB]{222,155,81},
+    frame=leftline,
+    tabsize=4,
+    breakatwhitespace=false,
+    showspaces=false,               
+    showstringspaces=false,
+    showtabs=false,
+    morekeywords={Str, Num, List},
+}
+
+% ---------------------------------------------------------------------
+
+\newcommand{\reditem}[1]{\setbeamercolor{item}{fg=red}\item #1}
+
+% 缩放公式大小
+\newcommand*{\Scale}[2][4]{\scalebox{#1}{\ensuremath{#2}}}
+
+% 解决 font warning
+\renewcommand\textbullet{\ensuremath{\bullet}}
+
+% -------------------------------------------------------------
+
+%% preamble
+\title[Fork i exec]{Fork i exec}
+% \subtitle{The subtitle}
+\author{Adam Djellouli}
+
+% -------------------------------------------------------------
+
+\begin{document}
+
+% title frame
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}
+
+W Linuxie mamy dostępne dwie funkcje do tworzenia nowych procesów w programie:
+
+\begin{enumerate}
+\item fork() - tworzy nowy proces będący kopią procesu wywołującego. 
+\item exec() - tworzy nowy proces, który podmienia proces wywołujący.
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+Fork
+Fork klonuje aktualnie wykonywany proces i zwraca liczbę. 
+Liczba ta istnieje zarówno dla procesu wywołującego, jak i dla procesu potomnego!
+
+\begin{itemize}
+\item rodzic otrzymuje PID procesu potomnego.
+\item proces potomny otrzymuje 0.
+\end{itemize}
+
+Dziecko i rodzic są identycznymi procesami. Co to znaczy?
+
+\begin{itemize} 
+\item Dziecko ma ten sam ciąg wywołań funkcji.
+\item Dziecko i rodzic współdzielą zasoby takie jak otwarte pliki, urządzenia, gniazda itd.
+\item Procesy mają różną pamięć wirtualną.
+\item Procesy mają różne PID.
+\end{frame}
+
+\begin{frame}
+Exec podmienia aktuanie wykonywany program na inny. Co to znaczy?
+
+\begin{itemize}
+\item Oryginalny program przestaje być wykonywany.
+\item Stan oryginalnego procesu jest utracony.
+\item Nowy program otrzymuje PID procesu wywołującego.
+\item Nowy program dziedziczy zasoby procesu wywołującego.
+\end{itemize}
+
+Przykładem funkcji z rodziny exec jest execv().
+
+\begin{lstlisting}[language=C++]
+int execv(const char *path, char *const argv[]);
+\end{lstlisting}
+
+Pierwszym argumentem jest ścieżka do pliku, który ma zostać uruchomiony. 
+Drugim argumentem jest tablica wskaźników na argumenty nowego programu.
+Ostatnim elementem tablicy jest zawsze wskaźnik na NULL.
+\end{frame}
+
+\begin{frame}
+
+Procesy
+
+\begin{itemize}
+\item Procesy to wykonywane programy.
+\item Wykonywany program ładowany jest do pamięci wirtualnej.
+\item Każdy proces ma przydzieloną przestrzeń adresów w pamięci wirtualnej.
+\item Procesy są zorganizowane hierarchicznie, każdy proces ma jednego rodzica.
+\item Procesy mają swoje własne zasoby, takie jak otwarte pliki, gniazda itd.
+\item Procesy identyfikowane są przez unikalną liczbę, zwaną PID.
+\item Wiele procesów może wykonywać ten sam program.
+\item Każdy ma oddzielną przestrzeń w pamięci wirtualnej.
+\end{frame}
+
+
+\begin{frame}
+Wywołanie systemowe
+
+\begin{itemize}
+\item Wywołania systemowe pozwalają procesom na komunikację z jądrem systemu. 
+\item Zazwyczaj nie umieszczamy wywołań systemowych bezpośrednio w kodzie programu.
+\item Istnieją biblioteki oferujące przyjazne nakładki do wywołań systemowych.
+\end{itemize}
+
+Przykładem jest funkcja getpid(), zwracająca PID procesu. Innym przykładem jest funkcja 
+getppid(), zwracająca PID rodzica procesu.
+
+\end{frame}
+
+\begin{frame}
+
+Przykład funkcji wykorzystującej wywołania systemowe:
+
+\begin{lstlisting}[language=C++]
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <sys/types.h> 
+#include <unistd.h> 
+
+int main() { 
+  printf("PID procesu: %d \n", getpid()); 
+  printf("PID rodzica: %d \n", getppid());
+  printf("Cross verification of pid's by executing process commands on shell \n"); 
+  system("ps -ef"); 
+  return 0; 
+}
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}
+Komunikacja międzyprocesowa (IPC)
+
+\begin{itemize}
+\item Ogólnie możemy podzielić procesy na dwie kategorie.
+\item Procesy działające w odosobnieniu od innych procesów oraz procesy współdziałające z innymi procesami.
+\item Istnieją różne techniki na umożliwienie wymiany danych między procesami.
+\item Przykładowo procesy mogą przekazywać sobie dane za pomocą plików (najstarsza i najprostsza forma).
+\item Procesy mogą również dzielić pamięć wirtualną.
+\item Sygnały mogą być wysyłane między procesami.
+\item Potoki pozwalają na przekazanie wyniku działania jednego programu, jako dane wejściowe do innego programu.
+\item Kolejka komunikatów pozwala na przesyłanie wiadomości między procesami.
+\end{itemize}
+
+\end{frame}
+
+\end{document}
