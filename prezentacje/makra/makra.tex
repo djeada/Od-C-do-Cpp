@@ -1,0 +1,362 @@
+%!TeX encoding = UTF-8
+%!TeX program = xelatex
+\documentclass[notheorems, aspectratio=54]{beamer}
+% aspectratio: 1610, 149, 54, 43(default), 32
+\usepackage[utf8]{inputenc} % `utf8` option to match Editor encoding
+\usepackage[T1]{fontenc}
+\usepackage{latexsym}
+\usepackage{amsmath,amssymb}
+\usepackage{mathtools}
+\usepackage{color,xcolor}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{amsthm}
+\usepackage{lmodern} % 解决 font warning
+% \usepackage[UTF8]{ctex}
+\usepackage{animate} % insert gif
+\usepackage{listings}
+
+\usepackage{karnaugh-map}
+
+\usetikzlibrary{matrix,calc}
+\usepackage{lipsum} % To generate test text 
+\usepackage{ulem} % 下划线，波浪线
+
+\usepackage{listings} % display code on slides; don't forget [fragile] option after \begin{frame}
+
+
+% ----------------------------------------------
+% tikx
+\usepackage{framed}
+\usepackage{tikz}
+\usepackage{pgf}
+\usetikzlibrary{calc,trees,positioning,arrows,chains,shapes.geometric,%
+    decorations.pathreplacing,decorations.pathmorphing,shapes,%
+    matrix,shapes.symbols}
+\pgfmathsetseed{1} % To have predictable results
+% Define a background layer, in which the parchment shape is drawn
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+% define styles for the normal border and the torn border
+\tikzset{
+  normal border/.style={black!70!gray, decorate, 
+     decoration={random steps, segment length=2.5cm, amplitude=.7mm}},
+  torn border/.style={black!70!gray, decorate, 
+     decoration={random steps, segment length=.5cm, amplitude=1.7mm}}}
+
+% Macro to draw the shape behind the text, when it fits completly in the
+% page
+\def\parchmentframe#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};  % Draw the text of the node
+  \begin{pgfonlayer}{background}  % Draw the shape behind
+  \fill[normal border] 
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text will continue in next page
+\def\parchmentframetop#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};    % Draw the text of the node
+  \begin{pgfonlayer}{background}    
+  \fill[normal border]              % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]                % Add the torn lower border
+        ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+        ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text continues from previous page
+\def\parchmentframebottom#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};   % Draw the text of the node
+  \begin{pgfonlayer}{background}   
+  \fill[normal border]             % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]               % Add the torn upper border
+        ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+        ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when both the text continues from previous page
+% and it will continue in next page
+\def\parchmentframemiddle#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};   % Draw the text of the node
+  \begin{pgfonlayer}{background}   
+  \fill[normal border]             % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]               % Add the torn lower border
+        ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+        ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+  \fill[torn border]               % Add the torn upper border
+        ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+        ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Define the environment which puts the frame
+% In this case, the environment also accepts an argument with an optional
+% title (which defaults to ``Example'', which is typeset in a box overlaid
+% on the top border
+\newenvironment{parchment}[1][Example]{%
+  \def\FrameCommand{\parchmentframe}%
+  \def\FirstFrameCommand{\parchmentframetop}%
+  \def\LastFrameCommand{\parchmentframebottom}%
+  \def\MidFrameCommand{\parchmentframemiddle}%
+  \vskip\baselineskip
+  \MakeFramed {\FrameRestore}
+  \noindent\tikz\node[inner sep=1ex, draw=black!20, fill=black!90, 
+          anchor=west, overlay] at (0em, 2em) {\sffamily#1};\par}%
+{\endMakeFramed}
+
+% ----------------------------------------------
+
+\mode<presentation>{
+    \usetheme{Warsaw}
+    % Boadilla CambridgeUS
+    % default Antibes Berlin Copenhagen
+    % Madrid Montpelier Ilmenau Malmoe
+    % Berkeley Singapore Warsaw
+    \usecolortheme{seagull}
+    % beetle, beaver, orchid, whale, dolphin, seagull
+    \useoutertheme{infolines}
+    % infolines miniframes shadow sidebar smoothbars smoothtree split tree
+    \useinnertheme{circles}
+    % circles, rectanges, rounded, inmargin
+}
+
+% ---------------------------------------------------------------------
+% Jet Black Theme
+\setbeamercolor{normal text}{fg=white,bg=black!90}
+\setbeamercolor{structure}{fg=white}
+
+\setbeamercolor{alerted text}{fg=red!85!black}
+
+\setbeamercolor{item projected}{use=item,fg=black,bg=item.fg!35}
+
+\setbeamercolor*{palette primary}{use=structure,fg=structure.fg}
+\setbeamercolor*{palette secondary}{use=structure,fg=structure.fg!95!black}
+\setbeamercolor*{palette tertiary}{use=structure,fg=structure.fg!90!black}
+\setbeamercolor*{palette quaternary}{use=structure,fg=structure.fg!95!black,bg=black!80}
+
+\setbeamercolor*{framesubtitle}{fg=white}
+
+\setbeamercolor*{block title}{parent=structure,bg=black!70!gray}
+\setbeamercolor*{block body}{fg=black,bg=black!10}
+\setbeamercolor*{block title alerted}{parent=alerted text,bg=black!15}
+\setbeamercolor*{block title example}{parent=example text,bg=black!15}
+% ---------------------------------------------------------------------
+
+
+% ---------------------------------------------------------------------
+% flow chart
+\tikzset{
+    >=stealth',
+    punktchain/.style={
+        rectangle, 
+        rounded corners, 
+        % fill=black!10,
+        draw=white, very thick,
+        text width=6em,
+        minimum height=2em, 
+        text centered, 
+        on chain
+    },
+    largepunktchain/.style={
+        rectangle,
+        rounded corners,
+        draw=white, very thick,
+        text width=10em,
+        minimum height=2em,
+        on chain
+    },
+    line/.style={draw, thick, <-},
+    element/.style={
+        tape,
+        top color=white,
+        bottom color=blue!50!black!60!,
+        minimum width=6em,
+        draw=blue!40!black!90, very thick,
+        text width=6em, 
+        minimum height=2em, 
+        text centered, 
+        on chain
+    },
+    every join/.style={->, thick,shorten >=1pt},
+    decoration={brace},
+    tuborg/.style={decorate},
+    tubnode/.style={midway, right=2pt},
+    font={\fontsize{10pt}{12}\selectfont},
+}
+% ---------------------------------------------------------------------
+
+% code setting
+\lstset{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{red},
+    breaklines=true,
+    xleftmargin=2em,
+    numbers=left,
+    numberstyle=\color[RGB]{222,155,81},
+    frame=leftline,
+    tabsize=4,
+    breakatwhitespace=false,
+    showspaces=false,               
+    showstringspaces=false,
+    showtabs=false,
+    morekeywords={Str, Num, List},
+}
+
+% ---------------------------------------------------------------------
+
+\newcommand{\reditem}[1]{\setbeamercolor{item}{fg=red}\item #1}
+
+% 缩放公式大小
+\newcommand*{\Scale}[2][4]{\scalebox{#1}{\ensuremath{#2}}}
+
+% 解决 font warning
+\renewcommand\textbullet{\ensuremath{\bullet}}
+
+% -------------------------------------------------------------
+
+%% preamble
+\title[Makro]{Makro}
+% \subtitle{The subtitle}
+\author{Adam Djellouli}
+
+% -------------------------------------------------------------
+
+\begin{document}
+
+% title frame
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}
+
+Kompilator wewnętrznie używa preprocesora przed faktycznym procesem kompilacji. 
+Do jego zadań należą między innymi:
+
+\begin{itemize}
+    \item Załączenia kodu ze wszystkich bibliotek wymienionych po dyrektywie \texttt{include}.
+    \item Rozwijanie makr definiowanych po dyrektywie \texttt{define}.
+    \item Warunkowa kompilacja. Część kodu zawarta między dyrektywami \texttt{if} i \texttt{endif} jest ignorowana, 
+    jeśli warunek jest nieprawdziwy.
+    \item Usuwanie komentarzy.
+\end{itemize}
+
+\end{}
+
+\begin{frame}
+Dyrektywa \texttt{include} pozwala na załączenie kodu z innych plików. Są dwa sposoby użycia tej dyrektywy:
+
+\begin{lstlisting}
+#include "nazwa_pliku"
+#include <nazwa_pliku>
+\end{lstlisting}
+
+Dla nawiasów ostrych, preprocesor szuka pliku w folderze systemowym, którego ścieżka ustawiana jest w trakcie 
+instalacji kompilatora. 
+
+Dla cudzysłowów, preprocesor szuka pliku w bieżącym folderze. Jeśli plik nie zostanie znaleziony,
+preprocesor będzie próbował znaleźć go w folderze systemowym.
+
+Jeśli plik zostanie znaleziony, preprocesor skompiuje jego zawartość i przekaże ją do kompilatora.
+W przeciwnym razie preprocesor zgłosi błąd.
+\end{frame}
+
+\begin{frame}
+Konstrukcja 'include guard' pozwala na uniknięcie powtórzeń przy załączaniu plików. 
+Jeśi wielokrotnie użyjemy dyrektywy \texttt{include} wraz z tą samą nazwą pliku, to domyślnie 
+zostanie on wielokrotnie załączony. 
+
+\begin{lstlisting}
+#ifndef NAZWA_PLIKU
+#define NAZWA_PLIKU
+
+  // kod...
+
+#endif
+\end{lstlisting}
+
+Dzięki temu zabiegowi, ten plik zostanie załączony tylko raz. Preprocesor sprawdzi czy plik został już załączony.
+Jeśli tak, to zostanie pominiety.
+\end{frame}
+
+\begin{frame}
+Dyrektywa \texttt{define} pozwala na definiowanie makr oraz stałych. 
+Makra są wykonywane przed wykonaniem kodu. 
+
+Ogólna postać makra:
+
+$\# define + nazwa + cialo$
+
+Nazwy pisane są często dużymi literami, ale nie jest to wymagane.
+Domyślnie, ciało makra definiowane jest w jednym wierszu, 
+ale przy użyciu lewego ukośnika można poszerzyć ciało makra o nowe wiersze.
+
+\begin{lstlisting}
+ // przyklad stalej
+#define PI 3.14
+
+// makro zwracajace stala wartosc, wynik dzielenia PI przez 2
+#define PI_2 PI/2
+
+// makro zwracajace wartosc przekazanej liczby podniesionej do kwadratu
+#define KWADRAT(x) x*x
+
+// makro zwracajace wieksza z dwoch wartosci
+#define MAKS_2(x,y) (x>y?x:y)
+
+// makro zwracajace najwieksza z trzech wartosci
+#define MAKS_3(x,y,z) MAKS_2(MAKS_2(x,y),z) 
+\end{frame}
+
+\begin{frame}
+Makra, a funkcje
+
+\begin{center}
+\begin{tabular}{ |c|c|c|c| } 
+\hline
+Makra & Funkcje \\
+\hline
+makra nie są kompilowane & funkcje są kompilowane \\
+typy nie są sprawdzane & typy są sprawdzane \\
+przy wywolaniu kod jest kopiowany & kod jest wykonywany \\
+szybkie & szybkie, ale wolniejsze \\
+brak wsparcia dla skalowania & wsparcie dla skalowania \\
+kompilator nie sprawdza błędów & kompilator sprawdza błędy \\
+\hline
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+\begin{frame}
+Dyrektywa \texttt{if} pozwala na warunkowe kompilacje.
+
+\begin{lstlisting}
+#define FLAGA 1
+
+int main() {
+
+  #if FLAGA
+    // kod do wykonania, gdy flaga jest ustawiona
+  #else
+    // kod do wykonania, gdy flaga nie jest ustawiona
+  #endif
+
+  return 0;
+}
+\end{lstlisting}
+\end{frame}
+
+
+\end{document}
