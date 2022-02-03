@@ -1,11 +1,14 @@
+#include <chrono>
 #include <iostream>
 #include <thread>
 #include <vector>
 
 // Kazdy watek wywola ta funkcje
-void petla(int id) { 
-  for (int i=0; i < 1000; i++)
-      std::cout << "Watek nr: " << id << std::endl;
+void petla(int id) {
+  for (int i = 0; i < 1000; i++) {
+    std::cout << "Watek nr: " << id << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  }
 }
 
 int main() {
@@ -22,7 +25,7 @@ int main() {
   watekB.join();
   watekC.join();
   watekD.join();
-  
+
   std::cout << "KONIEC" << std::endl;
 
   return 0;

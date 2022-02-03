@@ -1,16 +1,20 @@
 #include <iostream>
-#include <thread>
 #include <mutex>
+#include <thread>
 #include <vector>
 
 // Utworz globalny mutex
 std::mutex mutexPrzyklad;
 
-// Kazdy watek wywola ta funkcje
-void petla(int id) { 
+// Mutex sprawi, ze inne watki zostaną zablokowane
+// przed wykonaniem sie do czasu, az nie zostanie
+// wykonany kod miedzy blokada.
+void petla(int id) {
   mutexPrzyklad.lock();
-  for (int i=0; i < 1000; i++)
-      std::cout << "Watek nr: " << id << std::endl;
+  for (int i = 0; i < 1000; i++) {
+    std::cout << "Watek nr: " << id << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  }
   mutexPrzyklad.unlock();
 }
 
@@ -28,7 +32,7 @@ int main() {
   watekB.join();
   watekC.join();
   watekD.join();
-  
+
   std::cout << "KONIEC" << std::endl;
 
   return 0;
