@@ -1,0 +1,353 @@
+%!TeX encoding = UTF-8
+%!TeX program = xelatex
+\documentclass[notheorems, aspectratio=54]{beamer}
+% aspectratio: 1610, 149, 54, 43(default), 32
+\usepackage[utf8]{inputenc} % `utf8` option to match Editor encoding
+\usepackage[T1]{fontenc}
+\usepackage{latexsym}
+\usepackage{amsmath,amssymb}
+\usepackage{mathtools}
+\usepackage{color,xcolor}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{amsthm}
+\usepackage{lmodern} % 解决 font warning
+% \usepackage[UTF8]{ctex}
+\usepackage{animate} % insert gif
+\usepackage{listings}
+
+\usepackage{karnaugh-map}
+
+\usetikzlibrary{matrix,calc}
+\usepackage{lipsum} % To generate test text 
+\usepackage{ulem} % 下划线，波浪线
+
+\usepackage{listings} % display code on slides; don't forget [fragile] option after \begin{frame}
+
+
+% ----------------------------------------------
+% tikx
+\usepackage{framed}
+\usepackage{tikz}
+\usepackage{pgf}
+\usetikzlibrary{calc,trees,positioning,arrows,chains,shapes.geometric,%
+    decorations.pathreplacing,decorations.pathmorphing,shapes,%
+    matrix,shapes.symbols}
+\pgfmathsetseed{1} % To have predictable results
+% Define a background layer, in which the parchment shape is drawn
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+% define styles for the normal border and the torn border
+\tikzset{
+  normal border/.style={black!70!gray, decorate, 
+     decoration={random steps, segment length=2.5cm, amplitude=.7mm}},
+  torn border/.style={black!70!gray, decorate, 
+     decoration={random steps, segment length=.5cm, amplitude=1.7mm}}}
+
+% Macro to draw the shape behind the text, when it fits completly in the
+% page
+\def\parchmentframe#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};  % Draw the text of the node
+  \begin{pgfonlayer}{background}  % Draw the shape behind
+  \fill[normal border] 
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text will continue in next page
+\def\parchmentframetop#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};    % Draw the text of the node
+  \begin{pgfonlayer}{background}    
+  \fill[normal border]              % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]                % Add the torn lower border
+        ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+        ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text continues from previous page
+\def\parchmentframebottom#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};   % Draw the text of the node
+  \begin{pgfonlayer}{background}   
+  \fill[normal border]             % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]               % Add the torn upper border
+        ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+        ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when both the text continues from previous page
+% and it will continue in next page
+\def\parchmentframemiddle#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};   % Draw the text of the node
+  \begin{pgfonlayer}{background}   
+  \fill[normal border]             % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]               % Add the torn lower border
+        ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+        ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+  \fill[torn border]               % Add the torn upper border
+        ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+        ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Define the environment which puts the frame
+% In this case, the environment also accepts an argument with an optional
+% title (which defaults to ``Example'', which is typeset in a box overlaid
+% on the top border
+\newenvironment{parchment}[1][Example]{%
+  \def\FrameCommand{\parchmentframe}%
+  \def\FirstFrameCommand{\parchmentframetop}%
+  \def\LastFrameCommand{\parchmentframebottom}%
+  \def\MidFrameCommand{\parchmentframemiddle}%
+  \vskip\baselineskip
+  \MakeFramed {\FrameRestore}
+  \noindent\tikz\node[inner sep=1ex, draw=black!20, fill=black!90, 
+          anchor=west, overlay] at (0em, 2em) {\sffamily#1};\par}%
+{\endMakeFramed}
+
+% ----------------------------------------------
+
+\mode<presentation>{
+    \usetheme{Warsaw}
+    % Boadilla CambridgeUS
+    % default Antibes Berlin Copenhagen
+    % Madrid Montpelier Ilmenau Malmoe
+    % Berkeley Singapore Warsaw
+    \usecolortheme{seagull}
+    % beetle, beaver, orchid, whale, dolphin, seagull
+    \useoutertheme{infolines}
+    % infolines miniframes shadow sidebar smoothbars smoothtree split tree
+    \useinnertheme{circles}
+    % circles, rectanges, rounded, inmargin
+}
+
+% ---------------------------------------------------------------------
+% Jet Black Theme
+\setbeamercolor{normal text}{fg=white,bg=black!90}
+\setbeamercolor{structure}{fg=white}
+
+\setbeamercolor{alerted text}{fg=red!85!black}
+
+\setbeamercolor{item projected}{use=item,fg=black,bg=item.fg!35}
+
+\setbeamercolor*{palette primary}{use=structure,fg=structure.fg}
+\setbeamercolor*{palette secondary}{use=structure,fg=structure.fg!95!black}
+\setbeamercolor*{palette tertiary}{use=structure,fg=structure.fg!90!black}
+\setbeamercolor*{palette quaternary}{use=structure,fg=structure.fg!95!black,bg=black!80}
+
+\setbeamercolor*{framesubtitle}{fg=white}
+
+\setbeamercolor*{block title}{parent=structure,bg=black!70!gray}
+\setbeamercolor*{block body}{fg=black,bg=black!10}
+\setbeamercolor*{block title alerted}{parent=alerted text,bg=black!15}
+\setbeamercolor*{block title example}{parent=example text,bg=black!15}
+% ---------------------------------------------------------------------
+
+
+% ---------------------------------------------------------------------
+% flow chart
+\tikzset{
+    >=stealth',
+    punktchain/.style={
+        rectangle, 
+        rounded corners, 
+        % fill=black!10,
+        draw=white, very thick,
+        text width=6em,
+        minimum height=2em, 
+        text centered, 
+        on chain
+    },
+    largepunktchain/.style={
+        rectangle,
+        rounded corners,
+        draw=white, very thick,
+        text width=10em,
+        minimum height=2em,
+        on chain
+    },
+    line/.style={draw, thick, <-},
+    element/.style={
+        tape,
+        top color=white,
+        bottom color=blue!50!black!60!,
+        minimum width=6em,
+        draw=blue!40!black!90, very thick,
+        text width=6em, 
+        minimum height=2em, 
+        text centered, 
+        on chain
+    },
+    every join/.style={->, thick,shorten >=1pt},
+    decoration={brace},
+    tuborg/.style={decorate},
+    tubnode/.style={midway, right=2pt},
+    font={\fontsize{10pt}{12}\selectfont},
+}
+% ---------------------------------------------------------------------
+
+% code setting
+\lstset{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{red},
+    breaklines=true,
+    xleftmargin=2em,
+    numbers=left,
+    numberstyle=\color[RGB]{222,155,81},
+    frame=leftline,
+    tabsize=4,
+    breakatwhitespace=false,
+    showspaces=false,               
+    showstringspaces=false,
+    showtabs=false,
+    morekeywords={Str, Num, List},
+}
+
+% ---------------------------------------------------------------------
+
+\newcommand{\reditem}[1]{\setbeamercolor{item}{fg=red}\item #1}
+
+% 缩放公式大小
+\newcommand*{\Scale}[2][4]{\scalebox{#1}{\ensuremath{#2}}}
+
+% 解决 font warning
+\renewcommand\textbullet{\ensuremath{\bullet}}
+
+% -------------------------------------------------------------
+
+%% preamble
+\title[Wskaźniki]{Wskaźniki}
+% \subtitle{The subtitle}
+\author{Adam Djellouli}
+
+% -------------------------------------------------------------
+
+\begin{document}
+
+% title frame
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}
+
+\begin{itemize}
+  \item Sygnał to krótka wiadomość, która zawiera jedynie jedną liczbę całkowitą.
+  \item Sygnały są jednym z rodzajów komunikacji między procesami (IPC) w systemach uniksopodobnych.
+  \item Sygnały są generowane przez system, ale użytkownik może również generować sygnały programistycznie.
+  \item Procesy mogą otrzymywać sygnały asynchronicznie (w dowolnym momencie wykonywania).
+  \item Po otrzymaniu sygnału, proces musi zatrzymać swoją obecną pracę i przejść do obsługi sygnału (więcej na ten temat w sekcji domyślne działania).
+  \item Dostępne sygnały są definiowane przez system operacyjny.
+\end{frame}
+
+\begin{frame}
+
+Przykłady:
+
+\begin{itemize}
+  \item Jeśli chcemy zakończyć wykonywanie wszystkich instancji programu firefox, możemy użyć komendy: killall firefox.
+  \item System operacyjny znajdzie wszystkie instancje programu firefox i wyśle do nich sygnał SIGTERM.
+  \item Gdy w terminalu użyjesz komendy Ctrl-c, system operacyjny wyśle sygnał SIGINT do aktualnie wykonywanego programu.
+  \item Natomiast gdy użyjesz komendy Ctrl-z, system operacyjny wyśle sygnał SIGTSTP do aktualnie wykonywanego programu. 
+  \item Po wywołaniu funkcji fgets() przez program, otrzymuje on sygnał SIGIO oznaczający, że dane są gotowe do odczytu.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+  Po otrzymaniu sygnału proces ma trzy możliwości:
+
+  \begin{enumerate}
+    \item Wykonać domyślne działanie.
+    \item Obsłużyć sygnał.
+    \item Zignorować sygnał (nie wszystkie sygnały są ignorowalne).
+  \end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+
+Komunikacja między procesami
+\begin{itemize}
+  \item Każdy proces ma własną przestrzeń adresów.
+  \item Jeśli jeden proces chce przekazać jakąś informację do innego procesu, to odbywa się to poprzez jeden z mechnizmów IPC.
+  \item Komunikacja między procesami może być widoczna jako metoda współpracy pomiędzy procesami.
+  \item Komunikacja może odbywać się zarówno między spokrewnionymi procesami, jak i między procesami, które nie są spokrewnione.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+Generowanie sygnałów
+
+\begin{itemize}
+  \item Biblioteka <signal.h> zawiera funkcje, które pozwalają na wywołanie sygnałów.
+  \item Sygnały są generowane przez wywołanie funkcji raise() lub kill().
+  \item Funkcja raise(int numer) wysyła sygnał o danym numerze do aktualnie wykonywanego programu.
+  \item Funkcja kill() wysyła sygnał do procesu o podanym identyfikatorze.
+  \item Jeśli funkcja raise() zakończy się powodzeniem, to zwrócone zostanie 0.
+  \item Po wysłaniu sygnału, wykonywanie aktualnego procesu zostaje zatrzymane.
+\end{itemize}  
+
+\begin{lstlisting}[language=C++]
+#include <signal.h>
+#include <stdio.h>
+
+  int main(int argc, char *argv[])
+  {
+    // wysłanie sygnału SIGINT do aktualnie wykonywanego programu
+    raise(SIGINT);
+   
+    // ta linijka nie zostanie wykonana
+    printf("Wysłano sygnał SIGINT \n");
+
+    return 0;
+  }
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}
+Obsługa sygnałów
+
+\begin{itemize}
+  \item Aby obsłużyć sygnał, należy zaimplementować funkcję obsługi sygnału.
+  \item Funkcję obsługi sygnału należy przekazać jako drugi parametr do funkcji signal(numer_sygnału, funkcja_obsługi).
+  \item Funkcja signal() zwraca wskaźnik do funkcji obsługi sygnału.
+  \item W funkcji obsługi sygnału można wykonać dowolne działanie.
+  \item W funkcji obsługi sygnału nie można wywołać funkcji raise() lub kill().
+\end{itemize}
+
+\begin{lstlisting}[language=C++]
+#include <signal.h>
+#include <stdio.h>
+
+  void handler(int signum)
+  {
+    printf("Wywołano obsługę sygnału %d \n", signum);
+  }
+
+  int main(int argc, char *argv[])
+  {
+    // obsługa sygnału SIGINT
+    signal(SIGINT, handler);
+
+    // ta linijka nie zostanie wykonana
+    printf("Wysłano sygnał SIGINT \n");
+
+    return 0;
+  }
+\end{lstlisting}
+\end{frame}  
+
+\end{document}
