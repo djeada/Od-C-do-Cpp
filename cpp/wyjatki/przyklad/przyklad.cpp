@@ -1,34 +1,31 @@
 #include <fstream>
+#include <vector>
+#include <string>
 #include <iostream>
 #include <stdexcept>
-#include <vector>
 
-using namespace std;
-
-vector<string> getText(string file_name) {
-  vector<string> lines_of_text;
-  try {
-    ifstream my_file(file_name);
-    my_file.exceptions(ifstream::eofbit | ifstream::failbit | ifstream::badbit);
-    string line;
-    while (getline(my_file, line)) {
-      lines_of_text.push_back(line);
-    }
-    my_file.close();
-  } catch (std::exception const &e) {
-    cerr << "There was an error: " << e.what() << endl;
+void wczytajDane(std::string nazwa_pliku, std::vector<std::string> &wiersze) {
+  std::ifstream moj_plik(nazwa_pliku);
+  if (!moj_plik.is_open()) {
+    throw std::runtime_error("Nie udalo sie otworzyc pliku " + nazwa_pliku);
   }
-  return lines_of_text;
+  std::string wiersz;
+  while (getline(moj_plik, wiersz)) {
+    wiersze.push_back(wiersz);
+  }
+  moj_plik.close();
 }
 
 int main() {
-
-  vector<string> lines_of_text = getText("test.txt");
-  for (auto const &i : lines_of_text) {
-    cout << i << " " << endl;
+  std::vector<std::string> wiersze;
+  try {
+    wczytajDane("plik.txt", wiersze);
+  } catch (std::runtime_error &e) {
+    std::cerr << "Wystąpil blad: " << e.what() << std::endl;
   }
-
-  cout << "Koniec! " << endl;
-
+  std::cout << "Tresc pliku: " << std::endl;
+  for (auto wiersz : wiersze) {
+    std::cout << wiersz << std::endl;
+  }
   return 0;
 }
