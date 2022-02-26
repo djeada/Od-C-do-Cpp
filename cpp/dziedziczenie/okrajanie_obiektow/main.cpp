@@ -4,6 +4,7 @@
 class KlasaBazowa
 {
 public:
+  // zmien na virtual by zadzialalo
   void wiadomosc()
   {
     std::cout << "Brak informacji" << std::endl;
@@ -40,7 +41,11 @@ int main()
   // co sie stalo? zamiast skopiowac przekazany obiekt, wywolany zostanie
   // konstruktor kopiujacy klasy bazowej z obiektem przekazanym jako parametr.
   kolejka.front().wiadomosc();
-  
+
+  // rozwiazanie: przekazujemy adres zamiast kopiowac
+  std::deque<KlasaBazowa*> kolejka_wsk;
+  kolejka_wsk.push_front(&obiekt);       
+  kolejka_wsk.front()->wiadomosc();
+
   return 0;
 }
-
