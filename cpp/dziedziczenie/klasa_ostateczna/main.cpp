@@ -1,39 +1,32 @@
 #include <iostream>
 
 // żadna klasa nie może być dziedziczona po klasie KlasaPrzykladowa
-class KlasaPrzykladowa final
-{ 
+class KlasaPrzykladowa final {
 public:
-    void info() {
-     std::cout << "Klasa Przykladowa" << std::endl;
-    }
+  void info() { std::cout << "Klasa Przykladowa" << std::endl; }
 };
 
-class KlasaBazowa
-{public:
-    virtual void info() final {
-     std::cout << "Klasa Bazowa" << std::endl;
-      
-    }
+class KlasaBazowa {
+public:
+  virtual void info() final { std::cout << "Klasa Bazowa" << std::endl; }
 };
 
 class KlasaPochodna : public KlasaBazowa {
 
   /* virtual void info() override {
-     std::cout << "Klasa Pochodna" << std::endl;    
+     std::cout << "Klasa Pochodna" << std::endl;
   } */
 };
 
-int main()
-{
-    KlasaPrzykladowa obiekt;
-    obiekt.info();
+int main() {
+  KlasaPrzykladowa obiekt;
+  obiekt.info();
 
-    KlasaBazowa obiekt2;
-    obiekt2.info();
+  KlasaBazowa obiekt2;
+  obiekt2.info();
 
-    KlasaPochodna obiekt3;
-    obiekt3.info();
-  
-    return 0;
+  KlasaPochodna obiekt3;
+  obiekt3.info();
+
+  return 0;
 }

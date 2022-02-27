@@ -1,7 +1,7 @@
-#include <vector>
-#include <list>
 #include <forward_list>
 #include <iostream>
+#include <list>
+#include <vector>
 
 /*
 Iteratory uogoglniaja prace z kontenerami.
@@ -24,22 +24,21 @@ Mimo wszystko roznice.
 - Inkrementacja
 */
 
-int main()
-{
-    std::vector<int> wektor{1, 2, 3, 4, 5};
-  
-    std::vector<int>::iterator itr = wektor.begin();
-    std::vector<int>::iterator itr1 = itr + 5;
-    std::vector<int>::iterator itr2 = itr - 4;
-    if (itr2 > itr1)
-        std::cout << "itr2 gt itr1" << std::endl;
+int main() {
+  std::vector<int> wektor{1, 2, 3, 4, 5};
 
-    //Dodaj wyswietlanie samego iteratora i *iterator
-    auto x = *itr;
-  
-    // Pokaz co sie stanie z kontenerem jak zmienie 
-    // wartosc za pomoca gwiazdki *
-    *itr = 100;
+  std::vector<int>::iterator itr = wektor.begin();
+  std::vector<int>::iterator itr1 = itr + 5;
+  std::vector<int>::iterator itr2 = itr - 4;
+  if (itr2 > itr1)
+    std::cout << "itr2 gt itr1" << std::endl;
 
-    return 0;
+  // Dodaj wyswietlanie samego iteratora i *iterator
+  auto x = *itr;
+
+  // Pokaz co sie stanie z kontenerem jak zmienie
+  // wartosc za pomoca gwiazdki *
+  *itr = 100;
+
+  return 0;
 }

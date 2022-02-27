@@ -1,8 +1,8 @@
 #include <fstream>
-#include <vector>
-#include <string>
 #include <iostream>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 void wczytajDane(std::string nazwa_pliku, std::vector<std::string> &wiersze) {
   std::ifstream moj_plik(nazwa_pliku);
