@@ -22,7 +22,7 @@ void foo()
     Tunczyk *p = new Tunczyk("Gunner");
     p->info(); 
    // delete p; // alles super
-   // mamy zwisajacy wskaznik i wyciek pamieci
+   // mamy wyciek pamieci
 }
 
 void foo2()
