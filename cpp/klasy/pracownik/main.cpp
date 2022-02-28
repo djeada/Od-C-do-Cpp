@@ -10,7 +10,7 @@ int main() {
   cout << p1;
   cout << p2;
 
-  // wielkość tablicy
+  // wielkosc tablicy
   int n = 4;
 
   Pracownik tab[n];

@@ -1,11 +1,11 @@
 /*
 Uproszczona definicja:
-- lwartość: obiekt, który zajmuje pewną identyfikowalną lokalizację w pamięci
-    - coś w pamięci, a nie coś w rejestrze
-    - ma możliwy do zidentyfikowania adres
-- rvalue: dowolny obiekt, który nie jest lvalue
-    - jeśli spróbuję uzyskać ich adres w ten sposób, kompilator wystąpi błąd
-    - Nie mogę im też przypisać innej wartości
+- lwartosc: obiekt, ktory zajmuje pewna identyfikowalna lokalizacje w pamieci
+    - cos w pamieci, a nie cos w rejestrze
+    - ma mozliwy do zidentyfikowania adres
+- rvalue: dowolny obiekt, ktory nie jest lvalue
+    - jesli sprobuje uzyskac ich adres w ten sposob, kompilator wystapi blad
+    - Nie moge im tez przypisac innej wartosci
 */
 
 class PrzykladowaKlasa {};

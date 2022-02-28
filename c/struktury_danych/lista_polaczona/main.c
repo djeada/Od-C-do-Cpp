@@ -7,8 +7,8 @@ typedef struct wezel {
 } wezel;
 
 /*
-1. Dodawanie elementów do listy.
-2. Wyświetlanie aktualnej listy.
+1. Dodawanie elementow do listy.
+2. Wyswietlanie aktualnej listy.
 */
 
 // tworzymy nowy wezel i wypelniamy danymi od uzytkownika
@@ -50,12 +50,12 @@ void dodaj_nowe_pudelko(wezel **lista) {
 
 void polacz_z_reszta_listy(wezel **lista, wezel *nowe_pudelko) {
 
-  // lista jest pusta, więc nowe pudełko jest całą listą
+  // lista jest pusta, wiec nowe pudelko jest cala lista
   if (*lista == NULL) {
     *lista = nowe_pudelko;
   }
 
-  // coś w liście już jest, przechodzimy na sam koniec i dostawiamy nowe pudełko
+  // cos w liscie juz jest, przechodzimy na sam koniec i dostawiamy nowe pudelko
   else {
 
     for (wezel *licznik = *lista; licznik != NULL;

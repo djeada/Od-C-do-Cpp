@@ -16,14 +16,14 @@ dziedziczenie wielokrotne
  \/
  C
 
-problem diamentu (to jest to co chcemy uzyskać)
+problem diamentu (to jest to co chcemy uzyskac)
   A
  /\
  B C
  \/
   D
 
-domyślnie mamy:
+domyslnie mamy:
 A A
 | |
 B C
@@ -37,7 +37,7 @@ class A {
 
 public:
   void set_a(int x) { pole_a = x; }
-  void print_a() { cout << "Wartość pola a: " << pole_a << endl; }
+  void print_a() { cout << "Wartosc pola a: " << pole_a << endl; }
 };
 
 class B : virtual public A {
@@ -45,7 +45,7 @@ class B : virtual public A {
 
 public:
   void set_b(int x) { pole_b = x; }
-  void print_b() { cout << "Wartość pola b: " << pole_b << endl; }
+  void print_b() { cout << "Wartosc pola b: " << pole_b << endl; }
 };
 
 class C : virtual public A {
@@ -53,7 +53,7 @@ class C : virtual public A {
 
 public:
   void set_c(int x) { pole_c = x; }
-  void print_c() { cout << "Wartość pola c: " << pole_c << endl; }
+  void print_c() { cout << "Wartosc pola c: " << pole_c << endl; }
 };
 
 class D : public B, public C {
@@ -61,7 +61,7 @@ class D : public B, public C {
 
 public:
   void set_d(int x) { pole_d = x; }
-  void print_d() { cout << "Wartość pola d: " << pole_d << endl; }
+  void print_d() { cout << "Wartosc pola d: " << pole_d << endl; }
 };
 
 int main() {

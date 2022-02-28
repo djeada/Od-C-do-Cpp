@@ -1,6 +1,6 @@
 #include <iostream>
 
-// żadna klasa nie może być dziedziczona po klasie KlasaPrzykladowa
+// zadna klasa nie moze byc dziedziczona po klasie KlasaPrzykladowa
 class KlasaPrzykladowa final {
 public:
   void info() { std::cout << "Klasa Przykladowa" << std::endl; }

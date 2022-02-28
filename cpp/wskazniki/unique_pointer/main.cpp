@@ -1,13 +1,13 @@
 /*
-- dla unikalnego wskaźnika jeden obiekt może być własnością tylko jednego
-unikalnego wskaźnika i kiedy że jeden unikalny wskaźnik wychodzi poza zakres lub
-zaczyna posiadać inny obiekt wtedy oryginalny obiekt zostanie automatycznie
-usunięty
-- kolejną różnicą między wskaźnikiem unikalnym a wskaźnikiem wspólnym jest
-unikalny pointer to lekki inteligentny wskaźnik, więc jest tańszy w użyciu niż
-wspólny wskaźnik, jeśli masz wiele wskaźników zapisanych w swoim programie i nie
-są one udostępniane preferowane jest używanie unikalnego wskaźnika zamiast
-wspólnych wskaźników
+- dla unikalnego wskaznika jeden obiekt moze byc wlasnoscia tylko jednego
+unikalnego wskaznika i kiedy ze jeden unikalny wskaznik wychodzi poza zakres lub
+zaczyna posiadac inny obiekt wtedy oryginalny obiekt zostanie automatycznie
+usuniety
+- kolejna roznica miedzy wskaznikiem unikalnym a wskaznikiem wspolnym jest
+unikalny pointer to lekki inteligentny wskaznik, wiec jest tanszy w uzyciu niz
+wspolny wskaznik, jesli masz wiele wskaznikow zapisanych w swoim programie i nie
+sa one udostepniane preferowane jest uzywanie unikalnego wskaznika zamiast
+wspolnych wskaznikow
 */
 
 #include <iostream>

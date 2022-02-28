@@ -71,7 +71,7 @@ void swap(Pracownik &p1, Pracownik &p2) {
    6 4 2
 */
 
-// ustawiamy pracowników według stanowiska
+// ustawiamy pracownikow wedlug stanowiska
 void sortowanie(Pracownik *tablica, int n) {
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {

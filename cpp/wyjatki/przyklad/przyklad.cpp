@@ -21,7 +21,7 @@ int main() {
   try {
     wczytajDane("plik.txt", wiersze);
   } catch (std::runtime_error &e) {
-    std::cerr << "Wystąpil blad: " << e.what() << std::endl;
+    std::cerr << "Wystapil blad: " << e.what() << std::endl;
   }
   std::cout << "Tresc pliku: " << std::endl;
   for (auto wiersz : wiersze) {

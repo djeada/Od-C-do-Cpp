@@ -9,32 +9,32 @@ int main() {
   int *p = &a;
   int **pp = &p;
 
-  printf("Wartość zmiennej a: %d\n", a);
-  printf("Wartość zmiennej na którą wskazuje wskaźnik p: %d\n", *p);
+  printf("Wartosc zmiennej a: %d\n", a);
+  printf("Wartosc zmiennej na ktora wskazuje wskaznik p: %d\n", *p);
   printf(
-      "Wartość zmiennej na którą wskazuje wskaźnik na który wskazuje pp: %d\n",
+      "Wartosc zmiennej na ktora wskazuje wskaznik na ktory wskazuje pp: %d\n",
       **pp);
 
   printf("Adres zmiennej a: %lu\n", &a);
-  printf("Adres przechowywany przez wskaźnik p: %lu\n", p);
+  printf("Adres przechowywany przez wskaznik p: %lu\n", p);
 
-  printf("Adres wskaźnika p: %lu\n", &p);
-  printf("Adres przechowywany przez wskaźnik pp: %lu\n", pp);
+  printf("Adres wskaznika p: %lu\n", &p);
+  printf("Adres przechowywany przez wskaznik pp: %lu\n", pp);
 
   a = 15;
-  printf("Wartość zmiennej a: %d\n", a);
+  printf("Wartosc zmiennej a: %d\n", a);
 
   *p = 20;
-  printf("Wartość zmiennej a: %d\n", a);
+  printf("Wartosc zmiennej a: %d\n", a);
 
   **pp = 7;
-  printf("Wartość zmiennej a: %d\n", a);
+  printf("Wartosc zmiennej a: %d\n", a);
 
   int b = 30;
   zmien_wsk(p, b);
-  printf("Wartość zmiennej na którą wskazuje wskaźnik p: %d\n", *p);
+  printf("Wartosc zmiennej na ktora wskazuje wskaznik p: %d\n", *p);
   zmien_wsk2(&p, b);
-  printf("Wartość zmiennej na którą wskazuje wskaźnik p: %d\n", *p);
+  printf("Wartosc zmiennej na ktora wskazuje wskaznik p: %d\n", *p);
 
   return 0;
 }

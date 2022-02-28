@@ -1,10 +1,10 @@
 #include <iostream>
 
 /*
-Dlaczego warto używać const
-    - Zabezpiecza przed nieumyślnym zapisem do zmiennej
+Dlaczego warto uzywac const
+    - Zabezpiecza przed nieumyslnym zapisem do zmiennej
     - samodokumentowanie
-    - Włącz kompilator do optymalizacji, dzięki czemu kod będzie ciaśniejszy
+    - Wlacz kompilator do optymalizacji, dzieki czemu kod bedzie ciasniejszy
 */
 
 int main() {
@@ -21,8 +21,8 @@ int main() {
   //*p2 = 5;            // ok
   // int *const p2 = &i; //error
 
-  // jeśli const jest na lewo od *, dane sa const
-  // jeśli const jest na prawo od *, wskaźnik jest const
+  // jesli const jest na lewo od *, dane sa const
+  // jesli const jest na prawo od *, wskaznik jest const
 
   const int j = 5;
   // static_cast<const int &>(j) = 7; // static_cast nie dziala z const

@@ -22,11 +22,11 @@ int polaczGniazdo(short uchwytGniazda) {
   int portSerwera = UZYWANY_PORT;
 
   struct sockaddr_in adresSerwera = {0};
-  adresSerwera.sin_family = AF_INET; // Rodzina adresów IP (IPv4)
+  adresSerwera.sin_family = AF_INET; // Rodzina adresow IP (IPv4)
   adresSerwera.sin_addr.s_addr =
-      htonl(INADDR_ANY); // Adres IP serwera (zostawiamy domyślny)
+      htonl(INADDR_ANY); // Adres IP serwera (zostawiamy domyslny)
   adresSerwera.sin_port = htons(portSerwera); // Port serwera (przekazujemy
-                                              // wartość zdefiniowaną w #define)
+                                              // wartosc zdefiniowana w #define)
 
   return bind(uchwytGniazda, (struct sockaddr *)&adresSerwera,
               sizeof(adresSerwera));

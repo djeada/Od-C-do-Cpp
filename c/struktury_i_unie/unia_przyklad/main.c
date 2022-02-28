@@ -13,19 +13,19 @@ int main() {
   ocena.zaokraglenie = 10;
   ocena.wynik = 9.7;
 
-  printf("Uczeń otrzymał ocenę %c %d %f\n", ocena.litera, ocena.zaokraglenie,
+  printf("Uczen otrzymal ocene %c %d %f\n", ocena.litera, ocena.zaokraglenie,
          ocena.wynik);
 
   union Ocena ocena2;
 
   ocena2.litera = 'B';
-  printf("Uczeń otrzymał ocenę %c\n", ocena2.litera);
+  printf("Uczen otrzymal ocene %c\n", ocena2.litera);
 
   ocena2.zaokraglenie = 8;
-  printf("Uczeń otrzymał ocenę %d\n", ocena2.zaokraglenie);
+  printf("Uczen otrzymal ocene %d\n", ocena2.zaokraglenie);
 
   ocena2.wynik = 7.8;
-  printf("Uczeń otrzymał ocenę %f\n", ocena2.wynik);
+  printf("Uczen otrzymal ocene %f\n", ocena2.wynik);
 
   return 0;
 }

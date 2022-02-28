@@ -7,7 +7,7 @@ using namespace std;
 
 /*
 Klasa pracownik zbiera informacje o pracowniku firmy
-Chcemy mieć możliwość wprowadzania nowych pracowników
+Chcemy miec mozliwosc wprowadzania nowych pracownikow
 i wyszukiwania informacji z wprowadzonych
 
 Pracownik p1;

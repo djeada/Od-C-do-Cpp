@@ -1,14 +1,14 @@
 #include <iostream>
 
 /*
-maska: liczba z bitami ustawiony (1) i ywłączonymi (0)
-używana aby ustawić, wyłączyć, odwrócić bity innej liczby za pomocą pojedynczej
-operacji logicznej lub czytać
+maska: liczba z bitami ustawiony (1) i ywlaczonymi (0)
+uzywana aby ustawic, wylaczyc, odwrocic bity innej liczby za pomoca pojedynczej
+operacji logicznej lub czytac
 
 0000 0010 Masa
 1001 0110 Flaga
 flaga & maska
-maska zasłania bity
+maska zaslania bity
 
 */
 using namespace std;
@@ -19,11 +19,11 @@ int main() {
 
   flag = flag | mask;
 
-  // bity maski ustawią bity flagi
+  // bity maski ustawia bity flagi
 
   flag = flag & ~(mask);
 
-  // bity maski czyszczą bity flagi
+  // bity maski czyszcza bity flagi
 
   flag = flag ^ mask;
 

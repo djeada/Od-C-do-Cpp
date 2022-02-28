@@ -1,14 +1,14 @@
 #include <stdio.h>
 
 /*
-dużo szybsze niż operacje arytmetyczne
--niskopoziomowa kontrola urządzeń
--korekcja błędów
+duzo szybsze niz operacje arytmetyczne
+-niskopoziomowa kontrola urzadzen
+-korekcja bledow
 -algorytmy korekcji
 -kompresja danych
 -szyfrowanie
-nie można dzuakac na floatach
-używając maski możemy operować na wielu bitach
+nie mozna dzuakac na floatach
+uzywajac maski mozemy operowac na wielu bitach
 */
 
 long long decNaBin(int liczba) {

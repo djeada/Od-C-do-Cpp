@@ -6,7 +6,7 @@
 // Utworz globalny mutex
 std::mutex mutexPrzyklad;
 
-// Mutex sprawi, ze inne watki zostaną zablokowane
+// Mutex sprawi, ze inne watki zostana zablokowane
 // przed wykonaniem sie do czasu, az nie zostanie
 // wykonany kod miedzy blokada.
 void petla(int id) {
