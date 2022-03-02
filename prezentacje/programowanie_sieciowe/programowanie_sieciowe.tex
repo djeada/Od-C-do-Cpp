@@ -236,120 +236,120 @@
 
 % title frame
 \begin{frame}
-    \titlepage
+	\titlepage
 \end{frame}
 
 \begin{frame}
-Protokół TCP
-
-\begin{itemize}
-\item Standard definiujący jak ustanowić i utrzymać połączenie między urządzeniami w sieci.
-\item Działa wspólnie z protokołem IP, który definiuje jak dane w postaci pakietów, przesyłane są między urządzeniami.
-\item Przesyłanie plików i maili przez internet, bez utraty danych możliwe jest dzięki temu protokołowi.
-\item TCP ustanawia połączenie między nadawcą a odbiorcą, zanim dane zostaną przesłane i utrzymuje je w czasie przesyłania danych.
-\end{frame}
-
-\begin{frame}
-Cechy połączenia TCP
-
-\begin{itemize}
-\item Zorientowany na połączenie - nadawca zwraca się z prośbą o uzyskanie zgody na połączenie do odbiorcy.
-\item Protokół typu punkt-punkt - każde połączenie TCP ma dokładnie dwa końce.
-\item Niezawodność - wszystkie dane zostaną przesłane.
-\item Dwukierunkowość.
-\item Strumieniowy interfejs - dane nie muszą być przesłane do odbiorcy w kawałkach o takiej samej wielkości w jakiej zostały wysłane.
-\item Łagodne zakończenie połączenia - pakiety nie zostaną utracone.
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-Model klient-serwer
-\begin{itemize}
-\item Klient wysyła zapytanie o połączenie do serwera (musi znać adres IP oraz port serwera).
-\item Serwer udziela zgodę na połączenie lub odrzuca prośbę.
-\item Klient otrzymuje odpowiedź i wysyła dane do serwera.
-\item Serwer odbiera dane i ewentualnie wysyła odpowiedź.
-\item Połączenie może być zamknięte przez serwer lub klienta.
-\item Jednocześnie z jednym serwerem może być połączonych wielu klientów.
-\item Komunikacja odbywa się poprzez protokoły TCP bądź UDP, zarówno w obrębie LAN jak i WAN.
-\item Klient-serwer to centralna koncepcja w teorii sieci komputerowych.
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-Typy serwerów
-
-Serwery iteracyjne
-\begin{itemize}
-\item W danej chwili może być obsłużony tylko jeden klient.
-\item Program przechodzi przez wszystkich klientów, przetwarzając ich zapytania.
-\item Klienci, którzy nie są w danej chwili obsługiwani, czekają na swoją kolej.
-\item Zaletą tego typu serwerów jest prostota implementacji.
-\end{itemize}
-
-Serwery współbieżne
-\begin{itemize}
-\item W danej chwili może być obsłużonych wielu klientów.
-\item W systemach uniksopodobnych serwer może przy nowym połączeniu użyć funkcji fork, by stworzyć proces pochodny
-będący kopią oryginalnego serwera.
-\end{frame}
-
-\begin{frame}
-Gniazda
-
-\begin{itemize}
-\item Gniazdo to wirtualny punkt końcowy połączeń w sieci.
-\item Programowanie gniazd polega na ustaleniu reguł komunikacji między dwoma punktami sieci.
-\item Gniazdo może być wykorzystane do nasłuchiwania połączeń na określonym porcie i pod danym adresem IP.
-\item Jeśli inne gniazdo próbuje się połączyć z tym portem i adresem IP, to próba połączenia zostanie obsłużona przez gniazdo nasłuchujące.
-\item Gdy gniazda są ze sobą połączone, to mogą między sobą przesyłać dane.
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-Komunikacja między gniazdami:
-
-\begin{itemize}
-\item Utwórz gniazdo (socket) i przypisz mu adres IP oraz port.
-\item Podejmij próbę połączenia się z innym gniazdem (connect).
-\item Nasłuchuj połączeń (listen).
-\item Zaakceptuj prośbę o połączenie (accept).
-\item Powiąż lokalną nazwę z deskryptorem gniazda (bind).
-\item Wyślij dane do drugiego gniazda (send).
-\item Odbierz dane z drugiego gniazda (recv).
-\item Zakończ połączenie (close).
-
-\end{frame}
-
-\begin{frame}
-Przegląd bibliotek
-
-<sys/types.h>
-definicje typów używanych w komunikacji między gniazdami
-
-<sys/socket.h>
-definicja struktury reprezentującej gniazdo
-funkcje wykorzystywane do komunikacji między gniazdami (connect, listen, accept, send, recv, close) 
-
-<netinet/in.h>
-stałe oraz struktury reprezentujące adresy IP
-
-<netdb.h>
-definicje operacji sieciowych na bazach danych
-
-\end{frame}
-
-\begin{frame}
-Porty
-
-\begin{itemize}
-\item Na jednym komputerze może jednocześnie być uruchomionych wiele aplikacji komunikujących się z siecią.
-\item Aby uniknąć problemów z konfliktami wprowadzono porty, liczby służące do identyfikacji aplikacji.
-\item Każdy z portów to dwukieronkowa droga, umożliwia zarówno przesyłanie jak i odbieranie informacji.
-\item Porty to liczby całkowite z zakresu 0-65535.
-\item Liczby między 0-1023 są zarezerwowane dla systemów operacyjnych. Telnet używa portu 23, FTP używa portu 21, HTTP używa portu 80 itd.
-\end{itemize}
-
-\end{frame}
-
+	Protokół TCP
+	
+	\begin{itemize}
+		\item Standard definiujący jak ustanowić i utrzymać połączenie między urządzeniami w sieci.
+		\item Działa wspólnie z protokołem IP, który definiuje jak dane w postaci pakietów, przesyłane są między urządzeniami.
+		\item Przesyłanie plików i maili przez internet, bez utraty danych możliwe jest dzięki temu protokołowi.
+		\item TCP ustanawia połączenie między nadawcą a odbiorcą, zanim dane zostaną przesłane i utrzymuje je w czasie przesyłania danych.
+		\end{frame}
+		
+		\begin{frame}
+			Cechy połączenia TCP
+			
+			\begin{itemize}
+				\item Zorientowany na połączenie - nadawca zwraca się z prośbą o uzyskanie zgody na połączenie do odbiorcy.
+				\item Protokół typu punkt-punkt - każde połączenie TCP ma dokładnie dwa końce.
+				\item Niezawodność - wszystkie dane zostaną przesłane.
+				\item Dwukierunkowość.
+				\item Strumieniowy interfejs - dane nie muszą być przesłane do odbiorcy w kawałkach o takiej samej wielkości w jakiej zostały wysłane.
+				\item Łagodne zakończenie połączenia - pakiety nie zostaną utracone.
+			\end{itemize}
+		\end{frame}
+		
+		\begin{frame}
+			Model klient-serwer
+			\begin{itemize}
+				\item Klient wysyła zapytanie o połączenie do serwera (musi znać adres IP oraz port serwera).
+				\item Serwer udziela zgodę na połączenie lub odrzuca prośbę.
+				\item Klient otrzymuje odpowiedź i wysyła dane do serwera.
+				\item Serwer odbiera dane i ewentualnie wysyła odpowiedź.
+				\item Połączenie może być zamknięte przez serwer lub klienta.
+				\item Jednocześnie z jednym serwerem może być połączonych wielu klientów.
+				\item Komunikacja odbywa się poprzez protokoły TCP bądź UDP, zarówno w obrębie LAN jak i WAN.
+				\item Klient-serwer to centralna koncepcja w teorii sieci komputerowych.
+			\end{itemize}
+		\end{frame}
+		
+		\begin{frame}
+			Typy serwerów
+			
+			Serwery iteracyjne
+			\begin{itemize}
+				\item W danej chwili może być obsłużony tylko jeden klient.
+				\item Program przechodzi przez wszystkich klientów, przetwarzając ich zapytania.
+				\item Klienci, którzy nie są w danej chwili obsługiwani, czekają na swoją kolej.
+				\item Zaletą tego typu serwerów jest prostota implementacji.
+			\end{itemize}
+			
+			Serwery współbieżne
+			\begin{itemize}
+				\item W danej chwili może być obsłużonych wielu klientów.
+				\item W systemach uniksopodobnych serwer może przy nowym połączeniu użyć funkcji fork, by stworzyć proces pochodny
+				      będący kopią oryginalnego serwera.
+				\end{frame}
+				
+				\begin{frame}
+					Gniazda
+					
+					\begin{itemize}
+						\item Gniazdo to wirtualny punkt końcowy połączeń w sieci.
+						\item Programowanie gniazd polega na ustaleniu reguł komunikacji między dwoma punktami sieci.
+						\item Gniazdo może być wykorzystane do nasłuchiwania połączeń na określonym porcie i pod danym adresem IP.
+						\item Jeśli inne gniazdo próbuje się połączyć z tym portem i adresem IP, to próba połączenia zostanie obsłużona przez gniazdo nasłuchujące.
+						\item Gdy gniazda są ze sobą połączone, to mogą między sobą przesyłać dane.
+					\end{itemize}
+				\end{frame}
+				
+				\begin{frame}
+					Komunikacja między gniazdami:
+					
+					\begin{itemize}
+						\item Utwórz gniazdo (socket) i przypisz mu adres IP oraz port.
+						\item Podejmij próbę połączenia się z innym gniazdem (connect).
+						\item Nasłuchuj połączeń (listen).
+						\item Zaakceptuj prośbę o połączenie (accept).
+						\item Powiąż lokalną nazwę z deskryptorem gniazda (bind).
+						\item Wyślij dane do drugiego gniazda (send).
+						\item Odbierz dane z drugiego gniazda (recv).
+						\item Zakończ połączenie (close).
+						      
+						\end{frame}
+						
+						\begin{frame}
+							Przegląd bibliotek
+							
+							<sys/types.h>
+							definicje typów używanych w komunikacji między gniazdami
+							
+							<sys/socket.h>
+							definicja struktury reprezentującej gniazdo
+							funkcje wykorzystywane do komunikacji między gniazdami (connect, listen, accept, send, recv, close) 
+							
+							<netinet/in.h>
+							stałe oraz struktury reprezentujące adresy IP
+							
+							<netdb.h>
+							definicje operacji sieciowych na bazach danych
+							
+						\end{frame}
+						
+						\begin{frame}
+							Porty
+							
+							\begin{itemize}
+								\item Na jednym komputerze może jednocześnie być uruchomionych wiele aplikacji komunikujących się z siecią.
+								\item Aby uniknąć problemów z konfliktami wprowadzono porty, liczby służące do identyfikacji aplikacji.
+								\item Każdy z portów to dwukieronkowa droga, umożliwia zarówno przesyłanie jak i odbieranie informacji.
+								\item Porty to liczby całkowite z zakresu 0-65535.
+								\item Liczby między 0-1023 są zarezerwowane dla systemów operacyjnych. Telnet używa portu 23, FTP używa portu 21, HTTP używa portu 80 itd.
+							\end{itemize}
+							
+						\end{frame}
+						
 \end{document}
