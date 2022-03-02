@@ -240,10 +240,10 @@
 \end{frame}
 
 \begin{frame}
-	
+		
 	Kompilator wewnętrznie używa preprocesora przed faktycznym procesem kompilacji. 
 	Do jego zadań należą między innymi:
-	
+		
 	\begin{itemize}
 		\item Załączenia kodu ze wszystkich bibliotek wymienionych po dyrektywie \texttt{include}.
 		\item Rozwijanie makr definiowanych po dyrektywie \texttt{define}.
@@ -251,32 +251,32 @@
 		      jeśli warunek jest nieprawdziwy.
 		\item Usuwanie komentarzy.
 	\end{itemize}
-	
+		
 	\end{}
-	
+		
 	\begin{frame}
 		Dyrektywa \texttt{include} pozwala na załączenie kodu z innych plików. Są dwa sposoby użycia tej dyrektywy:
-		
+				
 		\begin{lstlisting}
 #include "nazwa_pliku"
 #include <nazwa_pliku>
 		\end{lstlisting}
-		
+				
 		Dla nawiasów ostrych, preprocesor szuka pliku w folderze systemowym, którego ścieżka ustawiana jest w trakcie 
 		instalacji kompilatora. 
-		
+				
 		Dla cudzysłowów, preprocesor szuka pliku w bieżącym folderze. Jeśli plik nie zostanie znaleziony,
 		preprocesor będzie próbował znaleźć go w folderze systemowym.
-		
+				
 		Jeśli plik zostanie znaleziony, preprocesor skompiuje jego zawartość i przekaże ją do kompilatora.
 		W przeciwnym razie preprocesor zgłosi błąd.
 	\end{frame}
-	
+		
 	\begin{frame}
 		Konstrukcja 'include guard' pozwala na uniknięcie powtórzeń przy załączaniu plików. 
 		Jeśi wielokrotnie użyjemy dyrektywy \texttt{include} wraz z tą samą nazwą pliku, to domyślnie 
 		zostanie on wielokrotnie załączony. 
-		
+				
 		\begin{lstlisting}
 #ifndef NAZWA_PLIKU
 #define NAZWA_PLIKU
@@ -285,23 +285,23 @@
 
 #endif
 		\end{lstlisting}
-		
+				
 		Dzięki temu zabiegowi, ten plik zostanie załączony tylko raz. Preprocesor sprawdzi czy plik został już załączony.
 		Jeśli tak, to zostanie pominiety.
 	\end{frame}
-	
+		
 	\begin{frame}
 		Dyrektywa \texttt{define} pozwala na definiowanie makr oraz stałych. 
 		Makra są wykonywane przed wykonaniem kodu. 
-		
+				
 		Ogólna postać makra:
-		
+				
 		$\# define + nazwa + cialo$
-		
+				
 		Nazwy pisane są często dużymi literami, ale nie jest to wymagane.
 		Domyślnie, ciało makra definiowane jest w jednym wierszu, 
 		ale przy użyciu lewego ukośnika można poszerzyć ciało makra o nowe wiersze.
-		
+				
 		\begin{lstlisting}
  // przyklad stalej
 #define PI 3.14
@@ -317,32 +317,34 @@
 
 // makro zwracajace najwieksza z trzech wartosci
 #define MAKS_3(x,y,z) MAKS_2(MAKS_2(x,y),z) 
-\end{frame}
-
-\begin{frame}
-Makra, a funkcje
-
-\begin{center}
-\begin{tabular}{ |c|c|c|c| } 
-\hline
-Makra & Funkcje \\
-\hline
-makra nie są kompilowane & funkcje są kompilowane \\
-typy nie są sprawdzane & typy są sprawdzane \\
-przy wywolaniu kod jest kopiowany & kod jest wykonywany \\
-szybkie & szybkie, ale wolniejsze \\
-brak wsparcia dla skalowania & wsparcie dla skalowania \\
-kompilator nie sprawdza błędów & kompilator sprawdza błędy \\
-\hline
-\end{tabular}
-\end{center}
-
-\end{frame}
-
-\begin{frame}
-Dyrektywa \texttt{if} pozwala na warunkowe kompilacje.
-
-\begin{lstlisting}
+		\end{lstlisting}
+		
+	\end{frame}
+	
+	\begin{frame}
+		Makra, a funkcje
+		
+		\begin{center}
+			\begin{tabular}{ |c|c|c|c| } 
+				\hline
+				Makra                             & Funkcje                     \\
+				\hline
+				makra nie są kompilowane         & funkcje są kompilowane     \\
+				typy nie są sprawdzane           & typy są sprawdzane         \\
+				przy wywolaniu kod jest kopiowany & kod jest wykonywany         \\
+				szybkie                           & szybkie, ale wolniejsze     \\
+				brak wsparcia dla skalowania      & wsparcie dla skalowania     \\
+				kompilator nie sprawdza błędów & kompilator sprawdza błędy \\
+				\hline
+			\end{tabular}
+		\end{center}
+		
+	\end{frame}
+	
+	\begin{frame}
+		Dyrektywa \texttt{if} pozwala na warunkowe kompilacje.
+		
+		\begin{lstlisting}
 #define FLAGA 1
 
 int main() {
@@ -357,6 +359,6 @@ int main() {
 }
 		\end{lstlisting}
 	\end{frame}
-	
-	
+		
+		
 \end{document}
