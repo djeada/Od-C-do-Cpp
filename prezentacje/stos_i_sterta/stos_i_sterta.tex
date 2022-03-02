@@ -236,68 +236,68 @@
 
 % title frame
 \begin{frame}
-    \titlepage
+	\titlepage
 \end{frame}
 
 \begin{frame}
-Pamięć wykorzystywana przez program podzielony jest m.in. na:
-
-\begin{itemize}
-    \item Stos
-    \item Stertę
-\end{itemize}
-
-\begin{figure}
-  \includegraphics [width=\linewidth]{pamiec.png}
-  \caption{Pamięć wykorzystywana przez program podzielony jest m.in. na: Stos i Stertę}
-\end{figure}
-
+	Pamięć wykorzystywana przez program podzielony jest m.in. na:
+	
+	\begin{itemize}
+		\item Stos
+		\item Stertę
+	\end{itemize}
+	
+	\begin{figure}
+		\includegraphics [width=\linewidth]{pamiec.png}
+		\caption{Pamięć wykorzystywana przez program podzielony jest m.in. na: Stos i Stertę}
+	\end{figure}
+	
 \end{frame}
 \begin{frame}
-
-\begin{itemize}
-    \item stos to część pamięci przechowująca tymczasowe zmienne;
-    \item argumenty przekazywane funkcjom są zbierane na stosie;
-    \item zmienne tworzone w obrębie funkcji;
-    \item pamięć dostępna tylko lokalnie;
-    \item łatwo wkładać i zdejmować;
-    \item kiedy zmienne nie są więcej wykorzystywane, ściągane są ze stosu;
-    \item liniowa struktura danych;
-    \item LIFO;
-    \item stos ma stałą wielkość określoną przez twój komputer;
-    \item stack overflow gdy chcemy włożyć zbyt wiele na stos;
-    \item popularny błąd: próba użycia zmiennej zapisanej na stosie poza
-funkcją, która tą zmienną odłożyła na stos;
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}
-
-\begin{itemize}
-  \item duże pole pamięci, które można wykorzystywać dynamicznie;
-  \item nikt za nas nie zarządza pamięcią;
-  \item dostęp do pamięci poprzez wskaźniki;
-  \item allokujemy (malloc) i dealokujemy (free);
-  \item w przeciwnym razie wyciek pamięci (pamięć której nie używamy jest
-  dla nas trzymana);
-  \item nie ma ograniczeń na stertę poza fizyczną pamięcią komputera;
-  \item zmienne dostępne z całego programu;
-  \item wolniejsza w dostępie od stosu;
-\end{itemize}
+	
+	\begin{itemize}
+		\item stos to część pamięci przechowująca tymczasowe zmienne;
+		\item argumenty przekazywane funkcjom są zbierane na stosie;
+		\item zmienne tworzone w obrębie funkcji;
+		\item pamięć dostępna tylko lokalnie;
+		\item łatwo wkładać i zdejmować;
+		\item kiedy zmienne nie są więcej wykorzystywane, ściągane są ze stosu;
+		\item liniowa struktura danych;
+		\item LIFO;
+		\item stos ma stałą wielkość określoną przez twój komputer;
+		\item stack overflow gdy chcemy włożyć zbyt wiele na stos;
+		\item popularny błąd: próba użycia zmiennej zapisanej na stosie poza
+		      funkcją, która tą zmienną odłożyła na stos;
+	\end{itemize}
+	
 \end{frame}
 
 \begin{frame}
-Po co używać sterty?
+	
+	\begin{itemize}
+		\item duże pole pamięci, które można wykorzystywać dynamicznie;
+		\item nikt za nas nie zarządza pamięcią;
+		\item dostęp do pamięci poprzez wskaźniki;
+		\item allokujemy (malloc) i dealokujemy (free);
+		\item w przeciwnym razie wyciek pamięci (pamięć której nie używamy jest
+		      dla nas trzymana);
+		\item nie ma ograniczeń na stertę poza fizyczną pamięcią komputera;
+		\item zmienne dostępne z całego programu;
+		\item wolniejsza w dostępie od stosu;
+	\end{itemize}
+\end{frame}
 
-\begin {itemize}
-  \item Dzięki stercie zmienna stworzona w funkcji może żyć dłużej niż wywołanie funkcji;
-  \item Nie musisz się przejmować długością życia zmiennch odłożonych na stertę, będą one żyć tak długo, aż explicite zwolnisz pamięć;
-  \item Stos jest mniejszy niż sterta. Gdy mamy dostęp z dużymi danymi (np. dla obrazów) możemy użyć sterty.
-  \item Struktury danych zaimplementowane w bibliotece standardowej (np. std::vector) trzymają swoje dane na stercie.
-\end {itemize}
-
-\begin{lstlisting}[language=C++]
+\begin{frame}
+	Po co używać sterty?
+	
+	\begin {itemize}
+	\item Dzięki stercie zmienna stworzona w funkcji może żyć dłużej niż wywołanie funkcji;
+	\item Nie musisz się przejmować długością życia zmiennch odłożonych na stertę, będą one żyć tak długo, aż explicite zwolnisz pamięć;
+	\item Stos jest mniejszy niż sterta. Gdy mamy dostęp z dużymi danymi (np. dla obrazów) możemy użyć sterty.
+	\item Struktury danych zaimplementowane w bibliotece standardowej (np. std::vector) trzymają swoje dane na stercie.
+	\end {itemize}
+	
+	\begin{lstlisting}[language=C++]
 
 int* utworz_tablice(int rozmiar) {
     int* tablica = (int*) malloc(rozmiar * sizeof(int));
@@ -310,27 +310,26 @@ int* utworz_tablice_zle(int rozmiar) {
     return tablica;
 }
 
-\end{lstlisting}
-
+	\end{lstlisting}
+	
 \end{frame}
 
 \begin{frame}
-Malloc vs new (free vs delete)
-
-\begin{table}[]
-  \begin{tabular}{| l | l | }
-  \hline
-  malloc & new \\
-  \hline
-  funkcja & operator \\
-  zwraca void* & nic nie zwraca \\
-  w razie błędu zwraca NULL & w razie błędu wyrzuca wyjątek \\
-  nie może być nadpisany & może być nadpisany \\
-  sami podejmy liczbę bajtów do alokacji & kompilator liczy za nas \\
-  jedynie alokuje pamięć & dodatkowo wywołuje konstruktor \\
-\end{tabular}
-\end{table}
+	Malloc vs new (free vs delete)
+	
+	\begin{table}[]
+		\begin{tabular}{| l | l | }
+			\hline
+			malloc                                   & new                              \\
+			\hline
+			funkcja                                  & operator                         \\
+			zwraca void*                             & nic nie zwraca                   \\
+			w razie błędu zwraca NULL              & w razie błędu wyrzuca wyjątek \\
+			nie może być nadpisany                 & może być nadpisany             \\
+			sami podejmy liczbę bajtów do alokacji & kompilator liczy za nas          \\
+			jedynie alokuje pamięć                 & dodatkowo wywołuje konstruktor  \\
+		\end{tabular}
+	\end{table}
 \end{frame}
-
 
 \end{document}
