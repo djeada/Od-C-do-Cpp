@@ -1,0 +1,354 @@
+
+C. Albert Thompson
+
+Home
+Papers
+Classes
+Tools
+FAQ
+
+Online Latex Formatter
+Paste Latex Here
+
+%!TeX encoding = UTF-8
+%!TeX program = xelatex
+\documentclass[notheorems, aspectratio=54]{beamer}
+% aspectratio: 1610, 149, 54, 43(default), 32
+\usepackage[utf8]{inputenc} % `utf8` option to match Editor encoding
+\usepackage[T1]{fontenc}
+\usepackage{latexsym}
+\usepackage{amsmath,amssymb}
+\usepackage{mathtools}
+\usepackage{color,xcolor}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{amsthm}
+\usepackage{lmodern} % 解决 font warning
+% \usepackage[UTF8]{ctex}
+\usepackage{animate} % insert gif
+\usepackage{listings}
+
+\usepackage{karnaugh-map}
+
+\usetikzlibrary{matrix,calc}
+\usepackage{lipsum} % To generate test text 
+\usepackage{ulem} % 下划线，波浪线
+
+\usepackage{listings} % display code on slides; don't forget [fragile] option after \begin{frame}
+
+
+% ----------------------------------------------
+% tikx
+\usepackage{framed}
+\usepackage{tikz}
+\usepackage{pgf}
+\usetikzlibrary{calc,trees,positioning,arrows,chains,shapes.geometric,%
+decorations.pathreplacing,decorations.pathmorphing,shapes,%
+matrix,shapes.symbols}
+\pgfmathsetseed{1} % To have predictable results
+% Define a background layer, in which the parchment shape is drawn
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+% define styles for the normal border and the torn border
+\tikzset{
+normal border/.style={black!70!gray, decorate, 
+ decoration={random steps, segment length=2.5cm, amplitude=.7mm}},
+torn border/.style={black!70!gray, decorate, 
+ decoration={random steps, segment length=.5cm, amplitude=1.7mm}}}
+
+% Macro to draw the shape behind the text, when it fits completly in the
+% page
+\def\parchmentframe#1{
+\tikz{
+\node[inner sep=2em] (A) {#1};  % Draw the text of the node
+\begin{pgfonlayer}{background}  % Draw the shape behind
+\fill[normal border] 
+    (A.south east) -- (A.south west) -- 
+    (A.north west) -- (A.north east) -- cycle;
+\end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text will continue in next page
+\def\parchmentframetop#1{
+\tikz{
+\node[inner sep=2em] (A) {#1};    % Draw the text of the node
+\begin{pgfonlayer}{background}    
+\fill[normal border]              % Draw the ``complete shape'' behind
+    (A.south east) -- (A.south west) -- 
+    (A.north west) -- (A.north east) -- cycle;
+\fill[torn border]                % Add the torn lower border
+    ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+    ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+\end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text continues from previous page
+\def\parchmentframebottom#1{
+\tikz{
+\node[inner sep=2em] (A) {#1};   % Draw the text of the node
+\begin{pgfonlayer}{background}   
+\fill[normal border]             % Draw the ``complete shape'' behind
+    (A.south east) -- (A.south west) -- 
+    (A.north west) -- (A.north east) -- cycle;
+\fill[torn border]               % Add the torn upper border
+    ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+    ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+\end{pgfonlayer}}}
+
+% Macro to draw the shape, when both the text continues from previous page
+% and it will continue in next page
+\def\parchmentframemiddle#1{
+\tikz{
+\node[inner sep=2em] (A) {#1};   % Draw the text of the node
+\begin{pgfonlayer}{background}   
+\fill[normal border]             % Draw the ``complete shape'' behind
+    (A.south east) -- (A.south west) -- 
+    (A.north west) -- (A.north east) -- cycle;
+\fill[torn border]               % Add the torn lower border
+    ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+    ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+\fill[torn border]               % Add the torn upper border
+    ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+    ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+\end{pgfonlayer}}}
+
+% Define the environment which puts the frame
+% In this case, the environment also accepts an argument with an optional
+% title (which defaults to ``Example'', which is typeset in a box overlaid
+% on the top border
+\newenvironment{parchment}[1][Example]{%
+\def\FrameCommand{\parchmentframe}%
+\def\FirstFrameCommand{\parchmentframetop}%
+\def\LastFrameCommand{\parchmentframebottom}%
+\def\MidFrameCommand{\parchmentframemiddle}%
+\vskip\baselineskip
+\MakeFramed {\FrameRestore}
+\noindent\tikz\node[inner sep=1ex, draw=black!20, fill=black!90, 
+      anchor=west, overlay] at (0em, 2em) {\sffamily#1};\par}%
+{\endMakeFramed}
+
+% ----------------------------------------------
+
+\mode<presentation>{
+\usetheme{Warsaw}
+% Boadilla CambridgeUS
+% default Antibes Berlin Copenhagen
+% Madrid Montpelier Ilmenau Malmoe
+% Berkeley Singapore Warsaw
+\usecolortheme{seagull}
+% beetle, beaver, orchid, whale, dolphin, seagull
+\useoutertheme{infolines}
+% infolines miniframes shadow sidebar smoothbars smoothtree split tree
+\useinnertheme{circles}
+% circles, rectanges, rounded, inmargin
+}
+
+% ---------------------------------------------------------------------
+% Jet Black Theme
+\setbeamercolor{normal text}{fg=white,bg=black!90}
+\setbeamercolor{structure}{fg=white}
+
+\setbeamercolor{alerted text}{fg=red!85!black}
+
+\setbeamercolor{item projected}{use=item,fg=black,bg=item.fg!35}
+
+\setbeamercolor*{palette primary}{use=structure,fg=structure.fg}
+\setbeamercolor*{palette secondary}{use=structure,fg=structure.fg!95!black}
+\setbeamercolor*{palette tertiary}{use=structure,fg=structure.fg!90!black}
+\setbeamercolor*{palette quaternary}{use=structure,fg=structure.fg!95!black,bg=black!80}
+
+\setbeamercolor*{framesubtitle}{fg=white}
+
+\setbeamercolor*{block title}{parent=structure,bg=black!70!gray}
+\setbeamercolor*{block body}{fg=black,bg=black!10}
+\setbeamercolor*{block title alerted}{parent=alerted text,bg=black!15}
+\setbeamercolor*{block title example}{parent=example text,bg=black!15}
+% ---------------------------------------------------------------------
+
+
+% ---------------------------------------------------------------------
+% flow chart
+\tikzset{
+>=stealth',
+punktchain/.style={
+    rectangle, 
+    rounded corners, 
+    % fill=black!10,
+    draw=white, very thick,
+    text width=6em,
+    minimum height=2em, 
+    text centered, 
+    on chain
+},
+largepunktchain/.style={
+    rectangle,
+    rounded corners,
+    draw=white, very thick,
+    text width=10em,
+    minimum height=2em,
+    on chain
+},
+line/.style={draw, thick, <-},
+element/.style={
+    tape,
+    top color=white,
+    bottom color=blue!50!black!60!,
+    minimum width=6em,
+    draw=blue!40!black!90, very thick,
+    text width=6em, 
+    minimum height=2em, 
+    text centered, 
+    on chain
+},
+every join/.style={->, thick,shorten >=1pt},
+decoration={brace},
+tuborg/.style={decorate},
+tubnode/.style={midway, right=2pt},
+font={\fontsize{10pt}{12}\selectfont},
+}
+% ---------------------------------------------------------------------
+
+% code setting
+\lstset{
+language=C++,
+basicstyle=\ttfamily\footnotesize,
+keywordstyle=\color{red},
+breaklines=true,
+xleftmargin=2em,
+numbers=left,
+numberstyle=\color[RGB]{222,155,81},
+frame=leftline,
+tabsize=4,
+breakatwhitespace=false,
+showspaces=false,               
+showstringspaces=false,
+showtabs=false,
+morekeywords={Str, Num, List},
+}
+
+% ---------------------------------------------------------------------
+
+\newcommand{\reditem}[1]{\setbeamercolor{item}{fg=red}\item #1}
+
+% 缩放公式大小
+\newcommand*{\Scale}[2][4]{\scalebox{#1}{\ensuremath{#2}}}
+
+% 解决 font warning
+\renewcommand\textbullet{\ensuremath{\bullet}}
+
+% -------------------------------------------------------------
+
+%% preamble
+\title[Zjawisko wyscigu]{Zjawisko wyscigu}
+% \subtitle{The subtitle}
+\author{Adam Djellouli}
+
+% -------------------------------------------------------------
+
+\begin{document}
+
+% title frame
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}
+
+Zjawisko wyścigu
+
+\begin{itemize}
+\item Podczas pracy z wątkami musimy być szczególnie ostrożni, gdyż kolejność w jakiej ułożyliśmy instrukcje w kodzie może nie pokrywać się z kolejnością w jakiej instrukcje zostaną wykonane. 
+\item Wątki mogą być wykonywane w dowolnej kolejności.
+\item Prędkość wykonywania wątków może się różnić.
+\item Kilka wątków może wykonywać operacje na tym samym obszarze pamięci.
+\item Jeśli te operacje są zależne od kolejności ich wykonania, to taką sytuację zwiemy zjawiskiem wyścigu.
+\item Przykładowo jeśli jedną zmienną próbujemy odczytać i nadpisać z różnych wątków, to próba nadpisania może pokryć się z oczekiwaniami na odczytanie.
+\end{itemize}
+
+Zjawisko wyścigu (race condition) występuje gdy wątki współbieżnie korzystają z zasobu dzielonego (np. zmiennej), przy czym przynajmniej jeden z nich zmienia stan tego zasobu.
+Wyścig często jest przyczyną niedeterministycznego zachowania się programu i może prowadzić do trudnych do wykrycia błędów.
+Pojęcie thread-safety (bezpieczeństwo dla wątków, wielobieżność): kod jest bezpieczny dla wątków, gdy jego współbieżne wykonanie nie powoduje sytuacji wyścigu. 
+
+\end{frame}
+
+\begin{frame}
+Cztery typy programowania wielowątkowego:
+
+\begin{itemize}
+\item Niezależne wątki. Najprostszy model: wątki niepowiązane ze sobą. Mechanizmy programistyczne: podstawowe abstrakcje do tworzenia wątków.
+\item Powiązane, niesynchronizowane wątki. Wątki powiązane ze sobą, jednak nie oddziałują na siebie i nie posiadają danych współdzielonych. Np. problem podzielony na podproblemy, z których każdy przetwarzany jest przez oddzielny wątek. Mechanizmy programistyczne: pule wątków.
+\item Wątki wzajemnie wykluczające się. Wątki operują na współdzielonych danych i muszą być synchronizowane. Np. wątki czytające i modyfikujące stan zmiennej. Mechanizmy programistyczne: synchronizacja wątków (semafory, blokady etc.)
+\item Komunikujące się, wzajemnie wykluczające wątki. Wątki operują na współdzielonych danych, ale również komunikują się / koordynują działania. Np. zależność w stylu producent-konsument. Mechanizmy programistyczne: koordynacja typu wait/notify, zmienne warunkowe.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+Zakleszczenie
+\begin{itemize}
+\item Zakleszczenie jest sytuację w której wątek wykonujący operację zostaje zablokowany przez inny wątek.
+\item Problem pięciu filozofów jest jednym z klasycznych problemów teorii współbieżności.
+\item N filozofów zasiada przy okrągłym stole
+\item Pomiędzy sąsiednimi filozofami leży widelec (łącznie jest N widelców)
+\item Każdy filozof działa ciągle według schematu „myślenie - jedzenie - myślenie - jedzenie - ... ”.
+\item Aby zjeść, filozof musi podnieść oba sąsiadujące widelce
+\end{itemize}
+
+\begin{enumerate}
+\item Naiwne rozwiązanie. Każdy filozof czeka najpierw na widelec z lewej strony, a potem na widelec 
+      z prawej strony. Wadą tego rozwiązania jest możliwość pojawienia się blokady.
+\item Część filozofów umiera z głodu, ale nie ma blokady. Każdy filozof sprawdza, czy 
+      wolne są oba widelce i je tylko, gdy ma to miejsce. Jeśli, któryś widelec jest stale 
+      zajęty filozof umiera z głodu.
+\item Rozwiązanie asymetryczne. Filozofowie są ponumerowani. Filozof z parzystym numerem
+      najpierw podnosi prawy widelec, filozof z nieparzystym numerem najpierw podnosi lewy
+      widelec.
+\item Rozwiązanie z arbitrem. Zewnętrzny arbiter pilnuje, aby jednocześnie co
+      najwyżej czterech filozofów konkurowało o widelce. Jeśli naraz
+      wszyscy filozofowie będą chcieli jeść, arbiter powstrzymuje jednego z nich aż do czasu, gdy
+      któryś z filozofów skończy jeść.
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+Kod wątkowo bezpieczny.
+\begin{itemize}
+\item Ze względu na problemy ze zjawiskiem wyścigu oraz zakleszczenie funkcja wywoływana w wątku musi być wątkowo bezpieczna.
+\item Kod tylko manipuluje współdzielonymi strukturami danych w taki sposób, aby wszystkie wątki działały prawidłowo bez niepowodzenia.
+\item Wątkowo bezpieczny oznacza, że nie ma statycznych lub globalnych zmiennych (współdzielonych zasobów) które inne wątki mogą uszkodzić lub zniszczyć.
+\item Wątkowo bezpieczny oznacza, że program chroni współdzielone dane.
+\item Prawdopodobnie poprzez użycie współdzielonych zasobów, wątkowo bezpieczne funkcje mogą być używane tylko przez jeden wątek w programie i unikalność wątku musi zostać zapewniona.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+Wielowątkowość w C
+\begin{itemize}
+\item Domyślnie w C mamy jeden wątek, który jest głównym wątkiem (main).
+\item C nie ma wbudowanej obsługi wielowątkowości.
+\item Dopiero w standardzie C11 mamy wsparcie dla wielowątkowości.
+\item Wielowątkowość tradycyjnie dostępna była dzięki sprzętowi i systemowi operacyjnemu.
+\item Implementacje różniły się między sobą, dlatego pisanie wielowątkowych aplikacji przenośnych między różnymi platformami.
+\item W celu uzyskania pełnego wykorzystania możliwości wielowątkowości, wymagano standardowego interfejsu programistycznego. 
+\item W 1995, POSIX stał się standardem dla wielu systemów operacyjnych, włączając w to obsługę wielowątkowości.
+\item Obecnie piszemy wielowątkowe programy wykorzystując interfejs POSIX.
+\item Także nazywamy wielowątkowość pthreads, implementacja jest dostępna za pomocą kompilatora gcc. 
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+Muteksy
+\begin{itemize}
+\item Muteksy są sposobem synchronizacji dostępu do zasobów współdzielonych.
+\item Gdy chronimy dane współdzielone, to jest ona odpowiedzialnością programisty, aby upewnić się, że każdy wątek, który potrzebuje użycia muteksu, to zrobi to.
+\item Zbyt często wykonywane jest przez wątek właściciela muteksu aktualizacja globalnych zmiennych.
+\item Niektóre zastosowania muteksów są typowymi sekwencjami wykonywanymi przez wątki.
+\item W 1995 roku POSIX stał się standardem dla wielu systemów operacyjnych w UNIX, w tym środowisku wątków.
+\item Jesteśmy przygotowani na pisania wielowątkowych programów C za pomocą standardu POSIX wątków.
+\item Także znany jest jako pthreads, implementacja jest dostępna za pomocą kompilatora gcc.
+\end{itemize}
+
+\end{frame}
+
+\end{document}

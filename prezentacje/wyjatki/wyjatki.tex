@@ -1,0 +1,498 @@
+%!TeX encoding = UTF-8
+%!TeX program = xelatex
+\documentclass[notheorems, aspectratio=54]{beamer}
+% aspectratio: 1610, 149, 54, 43(default), 32
+\usepackage[utf8]{inputenc} % `utf8` option to match Editor encoding
+\usepackage[T1]{fontenc}
+\usepackage{latexsym}
+\usepackage{amsmath,amssymb}
+\usepackage{mathtools}
+\usepackage{color,xcolor}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{amsthm}
+\usepackage{lmodern} % 解决 font warning
+% \usepackage[UTF8]{ctex}
+\usepackage{animate} % insert gif
+\usepackage{listings}
+
+\usepackage{karnaugh-map}
+
+\usetikzlibrary{matrix,calc}
+\usepackage{lipsum} % To generate test text 
+\usepackage{ulem} % 下划线，波浪线
+
+\usepackage{listings} % display code on slides; don't forget [fragile] option after \begin{frame}
+
+
+% ----------------------------------------------
+% tikx
+\usepackage{framed}
+\usepackage{tikz}
+\usepackage{pgf}
+\usetikzlibrary{calc,trees,positioning,arrows,chains,shapes.geometric,%
+    decorations.pathreplacing,decorations.pathmorphing,shapes,%
+    matrix,shapes.symbols}
+\pgfmathsetseed{1} % To have predictable results
+% Define a background layer, in which the parchment shape is drawn
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+% define styles for the normal border and the torn border
+\tikzset{
+  normal border/.style={black!70!gray, decorate, 
+     decoration={random steps, segment length=2.5cm, amplitude=.7mm}},
+  torn border/.style={black!70!gray, decorate, 
+     decoration={random steps, segment length=.5cm, amplitude=1.7mm}}}
+
+% Macro to draw the shape behind the text, when it fits completly in the
+% page
+\def\parchmentframe#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};  % Draw the text of the node
+  \begin{pgfonlayer}{background}  % Draw the shape behind
+  \fill[normal border] 
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text will continue in next page
+\def\parchmentframetop#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};    % Draw the text of the node
+  \begin{pgfonlayer}{background}    
+  \fill[normal border]              % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]                % Add the torn lower border
+        ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+        ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text continues from previous page
+\def\parchmentframebottom#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};   % Draw the text of the node
+  \begin{pgfonlayer}{background}   
+  \fill[normal border]             % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]               % Add the torn upper border
+        ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+        ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when both the text continues from previous page
+% and it will continue in next page
+\def\parchmentframemiddle#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};   % Draw the text of the node
+  \begin{pgfonlayer}{background}   
+  \fill[normal border]             % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]               % Add the torn lower border
+        ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+        ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+  \fill[torn border]               % Add the torn upper border
+        ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+        ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Define the environment which puts the frame
+% In this case, the environment also accepts an argument with an optional
+% title (which defaults to ``Example'', which is typeset in a box overlaid
+% on the top border
+\newenvironment{parchment}[1][Example]{%
+  \def\FrameCommand{\parchmentframe}%
+  \def\FirstFrameCommand{\parchmentframetop}%
+  \def\LastFrameCommand{\parchmentframebottom}%
+  \def\MidFrameCommand{\parchmentframemiddle}%
+  \vskip\baselineskip
+  \MakeFramed {\FrameRestore}
+  \noindent\tikz\node[inner sep=1ex, draw=black!20, fill=black!90, 
+          anchor=west, overlay] at (0em, 2em) {\sffamily#1};\par}%
+{\endMakeFramed}
+
+% ----------------------------------------------
+
+\mode<presentation>{
+    \usetheme{Warsaw}
+    % Boadilla CambridgeUS
+    % default Antibes Berlin Copenhagen
+    % Madrid Montpelier Ilmenau Malmoe
+    % Berkeley Singapore Warsaw
+    \usecolortheme{seagull}
+    % beetle, beaver, orchid, whale, dolphin, seagull
+    \useoutertheme{infolines}
+    % infolines miniframes shadow sidebar smoothbars smoothtree split tree
+    \useinnertheme{circles}
+    % circles, rectanges, rounded, inmargin
+}
+
+% ---------------------------------------------------------------------
+% Jet Black Theme
+\setbeamercolor{normal text}{fg=white,bg=black!90}
+\setbeamercolor{structure}{fg=white}
+
+\setbeamercolor{alerted text}{fg=red!85!black}
+
+\setbeamercolor{item projected}{use=item,fg=black,bg=item.fg!35}
+
+\setbeamercolor*{palette primary}{use=structure,fg=structure.fg}
+\setbeamercolor*{palette secondary}{use=structure,fg=structure.fg!95!black}
+\setbeamercolor*{palette tertiary}{use=structure,fg=structure.fg!90!black}
+\setbeamercolor*{palette quaternary}{use=structure,fg=structure.fg!95!black,bg=black!80}
+
+\setbeamercolor*{framesubtitle}{fg=white}
+
+\setbeamercolor*{block title}{parent=structure,bg=black!70!gray}
+\setbeamercolor*{block body}{fg=black,bg=black!10}
+\setbeamercolor*{block title alerted}{parent=alerted text,bg=black!15}
+\setbeamercolor*{block title example}{parent=example text,bg=black!15}
+% ---------------------------------------------------------------------
+
+
+% ---------------------------------------------------------------------
+% flow chart
+\tikzset{
+    >=stealth',
+    punktchain/.style={
+        rectangle, 
+        rounded corners, 
+        % fill=black!10,
+        draw=white, very thick,
+        text width=6em,
+        minimum height=2em, 
+        text centered, 
+        on chain
+    },
+    largepunktchain/.style={
+        rectangle,
+        rounded corners,
+        draw=white, very thick,
+        text width=10em,
+        minimum height=2em,
+        on chain
+    },
+    line/.style={draw, thick, <-},
+    element/.style={
+        tape,
+        top color=white,
+        bottom color=blue!50!black!60!,
+        minimum width=6em,
+        draw=blue!40!black!90, very thick,
+        text width=6em, 
+        minimum height=2em, 
+        text centered, 
+        on chain
+    },
+    every join/.style={->, thick,shorten >=1pt},
+    decoration={brace},
+    tuborg/.style={decorate},
+    tubnode/.style={midway, right=2pt},
+    font={\fontsize{10pt}{12}\selectfont},
+}
+% ---------------------------------------------------------------------
+
+% code setting
+\lstset{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{red},
+    breaklines=true,
+    xleftmargin=2em,
+    numbers=left,
+    numberstyle=\color[RGB]{222,155,81},
+    frame=leftline,
+    tabsize=4,
+    breakatwhitespace=false,
+    showspaces=false,               
+    showstringspaces=false,
+    showtabs=false,
+    morekeywords={Str, Num, List},
+}
+
+% ---------------------------------------------------------------------
+
+\newcommand{\reditem}[1]{\setbeamercolor{item}{fg=red}\item #1}
+
+% 缩放公式大小
+\newcommand*{\Scale}[2][4]{\scalebox{#1}{\ensuremath{#2}}}
+
+% 解决 font warning
+\renewcommand\textbullet{\ensuremath{\bullet}}
+
+% -------------------------------------------------------------
+
+%% preamble
+\title[Wyjątki]{Wyjątki}
+% \subtitle{The subtitle}
+\author{Adam Djellouli}
+
+% -------------------------------------------------------------
+
+\begin{document}
+
+% title frame
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}
+
+Pytania, na które checemy odpowiedzieć:
+
+\begin{itemize}
+\item Czym to jest?
+\item Jak to działa?
+\item Po co to komu potrzebne?
+\item Kiedy się tego używa?
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+O co w tym chodzi?\\
+
+Każdy program działa jedynie gdy spełnione są określone założenia.\\
+Część z tych założeń jest całkowicie niezależnych od programisty.\\~\\
+Co ma się stać gdy, któreś z założeń nie zostanie spełnione?\\
+
+\begin{enumerate}
+\item Zakończenie działania programu.
+\item Zwrócenie kodu błędu.
+\item Wyrzucenie wyjątku.
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+
+Mówiąc o wyjątkach, mamy najczęściej na myśli jedną z dwóch rzeczy:
+
+\begin{enumerate}
+\item Zdarzenie mające miejsce w czasie działania programu i uniemożliwiające działanie programu.
+\item Mechanizm będący częścią języka programowania, który pozwala na radzenie sobie z tymi zdarzeniami.
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+Jak działa ten mechanizm?
+
+\begin{lstlisting}[language=C++]
+#include <iostream>
+
+void funkcja()
+{
+    std::cout << "Przed wyrzuceniem wyjatku" << std::endl;
+    throw std::runtime_error("Wyjatek");
+    std::cout << "Po wyrzuceniu wyjatku" << std::endl;
+}
+
+int main()
+{
+    funkcja();
+    std::cout << "Po wywolaniu funkcji" << std::endl;
+    return 0;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+Obsługa wyjątków
+
+\begin{lstlisting}[language=C++]
+#include <iostream>
+
+void funkcja()
+{
+    throw std::runtime_error("Wyjatek");
+}
+
+int main() {
+  try
+  {
+      funkcja();
+  }
+  catch(std::runtime_error& e)
+  {
+      std::cout << "Wyjątek: " << e.what() << std::endl;
+  }
+
+  std::cout << "Zycie toczy sie dalej" << std::endl;
+
+  return 0;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+Biblioteka standardowa używa wyjątków.
+
+Przykład std::out_of_range:
+\begin{lstlisting}[language=C++]
+int main() {
+  std::vector wektor{3, 5, 2};
+
+  std::cout << wektor.at(0) << std::endl;
+  std::cout << wektor.at(-1) << std::endl;
+
+  return 0;
+}
+\end{lstlisting}
+
+Przykład std::invalid_argument:
+\begin{lstlisting}[language=C++]
+int main() {
+
+  // bitset spodziewa sie napisu zlozonego wylacznie
+  // z 0 lub 1.
+  std::bitset<8> przyklad {std::string("01234")};
+
+  return 0;
+}
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}
+
+Kiedy użyć wyjątków?
+
+W sytuacji gdy wykonywanie zadania przez funkcję uniemożliwone jest przez zewnętrzną przyczynę. Przykłady:
+
+\begin{itemize}
+\item Wartości parametrów nie spełniają założeń. Nie ma możliwości na poprawne rozwiązanie problemu.
+\item Brak miejsca na dysku. Program chciałby użyć więcej pamięci niż jest dostępne.
+\item Serwer nie odpowiada (funkcja mająca zwrócić dane z serwera).
+\item Format danych w bazie danych jest niezgodny z wymaganiami programu (funkcja mająca zwrócić dane w określonym formacie).
+\end{itemize}
+
+\end{frame}
+\begin{frame}
+
+Jak nie używać wyjątków?
+
+\begin{itemize}
+\item Nie należy wyjątków jak skoków.
+
+\begin{lstlisting}[language=C++]
+
+  bool czyLiczba(std::string napis) {
+    try {
+      std::stoi(napis);
+      return true;
+    } catch (std::invalid_argument& e) {
+      return false;
+    }
+  }
+\end{lstlisting}
+  
+\item Nie powinno się wyrzucać wyjątków gdy sytuacja tego nie wymaga.
+
+Przykład: wyrzucenie wyjątku gdy użytkownik podaje niepoprawne hasło.
+Albo w aplikacji kalkulator użytkownik chce dzielić przez 0.
+Wszystko zależy od poziomu w aplikacji na którym operujemy.
+
+\item Użycie złego typu wyjątku.
+
+\begin{lstlisting}[language=C++]
+void funkcja() {
+  throw std::invalid_argument("Wyjatek");
+}
+\end{lstlisting}
+
+\item Używanie mylącego komunikatu.
+
+\begin{lstlisting}[language=C++]
+void funkcja() {
+  throw std::exception("Wystapil problem");
+}
+\end{lstlisting}
+
+\item Połykanie wyjątków.
+
+\begin{lstlisting}[language=C++]
+try {
+  funkcja();
+} catch (std::exception& e) {
+  return;
+}
+\end{lstlisting}
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+ Dlaczego wyjątki?
+
+Wiemy już, że funkcje mogą napotkać na sytuacje uniemożliwiające ich poprawne działanie.
+Jakie mamy alternatywy do radzenia sobie z tym problemem?
+
+  \begin{itemize}
+  \item można użyć zmiennych jako flag i ustawiać je w chwilii pojawienia się problemu;
+  \item w funkcji zwracać wartość, która sugerowałaby, że pojawił się błąd (np. -1);
+  \item użyć wyjątków;
+  \end{itemize}
+  
+  Obie z dwóch pierwszych opcji są złe chociażby dlatego, że wymagają od nas ciągłego sprawdzania czy nie pojawiła się problematyczna sytuacja.
+  Łatwo jest zignorować błędy w takiej sytuacji i ciężko jest oddzielić kod obsługi błędu od reszty kodu (używamy te same mechanizmy).
+  Zamiast tego wyjątki umożliwiają wyraźne oddzielenie kodu wywoływanego w normalnej sytuacji, od kodu wywoływanego w sytuacji wyjątkowej.
+  Dodatkowo wyjątki zapewniają uwolnienie wszystkich zasobów dzięki destruktorom.
+  \end{frame}
+
+
+\begin{frame}
+Wyjatki schowane (o uwalnianiu pamięci)
+
+1. Funkcja napotyka problematyczną sytuację, więc wyrzuca wyjątek, który niesie informacje o tej sytuacji.\\
+2. Wyjątek wyrzucony jest do miejsca wywołania funkcji.\\
+3. Wyjątek może tam zostać złapany i obsłużony lub rzucony dalej.\\
+4. Podczas tego procesu rzucania wyjątkiem ma miejsce coś niezwykle isotnego. Pamięć zarezerwowana na stercie dla obiektów tworzonych w tych funkcjach jest uwalniana!
+\end{frame}
+
+\begin{frame}[fragile]
+Wyjątki w konstruktorze\\
+\begin{lstlisting}
+
+Piesek::Piesek 
+{
+	wsk_na_kosc = new popcorn();
+	movie_ptr = new movie(bigMovie);
+	soda_ptr = new soda();
+}
+\end{lstlisting}
+
+Co jeśli pojawi się problem w trakcie tworzenia obiektu? 
+Wiemy, że wyjątki zapewniają uwolnienie zarezerwowanych zasobów dzięki destrukotrom.
+Ale jak wywołać destruktor dla częściowo zainicjalizowanego obiektu?
+Która część konstrukotra jest już gotowa?
+
+\end{frame}
+
+\begin{frame}
+Wyjątek w trakcie obsługi wyjątku?\\
+
+Jakie mamy opcje? Możemy:
+\begin{itemize}
+\item Zignorować drugi wyjąt i kontynuować obsługę pierwszego.
+\item Porzucić obsługę pierwszego wyjątku i przejść do obsługi drugiego.
+\item Poddać się i zamknąć program.
+\end{itemize}
+
+Twórcy C++ wybrali trzecią opcję. 
+Jeśli wyrzucisz wyjątek w trakcie obsługi innego wyjątku, to wywołana zostanie funkcja std::terminate().
+
+\end{frame}
+
+\begin{frame}
+  Bibliografia:\\
+  \begin{itemize}
+  \item http://www.cplusplus.com/doc/tutorial/exceptions/
+  \item https://en.cppreference.com/w/cpp/language/exceptions
+  \item https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#exceptions
+  \end{itemize}
+\end{document}
