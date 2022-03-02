@@ -51,7 +51,7 @@
 \tikz{
   \node[inner sep=2em] (A) {#1};  % Draw the text of the node
   \begin{pgfonlayer}{background}  % Draw the shape behind
-  \fill[normal border
+  \fill[normal border] 
         (A.south east) -- (A.south west) -- 
         (A.north west) -- (A.north east) -- cycle;
   \end{pgfonlayer}}}
@@ -226,7 +226,7 @@
 % -------------------------------------------------------------
 
 %% preamble
-\title[Procesy]{Procesy}
+\title[Makro]{Makro}
 % \subtitle{The subtitle}
 \author{Adam Djellouli}
 
@@ -236,125 +236,127 @@
 
 % title frame
 \begin{frame}
-    \titlepage
+	\titlepage
 \end{frame}
 
 \begin{frame}
+	
+	Kompilator wewnętrznie używa preprocesora przed faktycznym procesem kompilacji. 
+	Do jego zadań należą między innymi:
+	
+	\begin{itemize}
+		\item Załączenia kodu ze wszystkich bibliotek wymienionych po dyrektywie \texttt{include}.
+		\item Rozwijanie makr definiowanych po dyrektywie \texttt{define}.
+		\item Warunkowa kompilacja. Część kodu zawarta między dyrektywami \texttt{if} i \texttt{endif} jest ignorowana, 
+		      jeśli warunek jest nieprawdziwy.
+		\item Usuwanie komentarzy.
+	\end{itemize}
+	
+	\end{}
+	
+	\begin{frame}
+		Dyrektywa \texttt{include} pozwala na załączenie kodu z innych plików. Są dwa sposoby użycia tej dyrektywy:
+		
+		\begin{lstlisting}
+#include "nazwa_pliku"
+#include <nazwa_pliku>
+		\end{lstlisting}
+		
+		Dla nawiasów ostrych, preprocesor szuka pliku w folderze systemowym, którego ścieżka ustawiana jest w trakcie 
+		instalacji kompilatora. 
+		
+		Dla cudzysłowów, preprocesor szuka pliku w bieżącym folderze. Jeśli plik nie zostanie znaleziony,
+		preprocesor będzie próbował znaleźć go w folderze systemowym.
+		
+		Jeśli plik zostanie znaleziony, preprocesor skompiuje jego zawartość i przekaże ją do kompilatora.
+		W przeciwnym razie preprocesor zgłosi błąd.
+	\end{frame}
+	
+	\begin{frame}
+		Konstrukcja 'include guard' pozwala na uniknięcie powtórzeń przy załączaniu plików. 
+		Jeśi wielokrotnie użyjemy dyrektywy \texttt{include} wraz z tą samą nazwą pliku, to domyślnie 
+		zostanie on wielokrotnie załączony. 
+		
+		\begin{lstlisting}
+#ifndef NAZWA_PLIKU
+#define NAZWA_PLIKU
 
-W Linuxie mamy dostępne dwie funkcje do tworzenia nowych procesów w programie:
+  // kod...
 
-\begin{enumerate}
-\item fork() - tworzy nowy proces będący kopią procesu wywołującego. 
-\item exec() - tworzy nowy proces, który podmienia proces wywołujący.
-\end{enumerate}
+#endif
+		\end{lstlisting}
+		
+		Dzięki temu zabiegowi, ten plik zostanie załączony tylko raz. Preprocesor sprawdzi czy plik został już załączony.
+		Jeśli tak, to zostanie pominiety.
+	\end{frame}
+	
+	\begin{frame}
+		Dyrektywa \texttt{define} pozwala na definiowanie makr oraz stałych. 
+		Makra są wykonywane przed wykonaniem kodu. 
+		
+		Ogólna postać makra:
+		
+		$\# define + nazwa + cialo$
+		
+		Nazwy pisane są często dużymi literami, ale nie jest to wymagane.
+		Domyślnie, ciało makra definiowane jest w jednym wierszu, 
+		ale przy użyciu lewego ukośnika można poszerzyć ciało makra o nowe wiersze.
+		
+		\begin{lstlisting}
+ // przyklad stalej
+#define PI 3.14
+
+// makro zwracajace stala wartosc, wynik dzielenia PI przez 2
+#define PI_2 PI/2
+
+// makro zwracajace wartosc przekazanej liczby podniesionej do kwadratu
+#define KWADRAT(x) x*x
+
+// makro zwracajace wieksza z dwoch wartosci
+#define MAKS_2(x,y) (x>y?x:y)
+
+// makro zwracajace najwieksza z trzech wartosci
+#define MAKS_3(x,y,z) MAKS_2(MAKS_2(x,y),z) 
+\end{frame}
+
+\begin{frame}
+Makra, a funkcje
+
+\begin{center}
+\begin{tabular}{ |c|c|c|c| } 
+\hline
+Makra & Funkcje \\
+\hline
+makra nie są kompilowane & funkcje są kompilowane \\
+typy nie są sprawdzane & typy są sprawdzane \\
+przy wywolaniu kod jest kopiowany & kod jest wykonywany \\
+szybkie & szybkie, ale wolniejsze \\
+brak wsparcia dla skalowania & wsparcie dla skalowania \\
+kompilator nie sprawdza błędów & kompilator sprawdza błędy \\
+\hline
+\end{tabular}
+\end{center}
 
 \end{frame}
 
 \begin{frame}
-Fork
-Fork klonuje aktualnie wykonywany proces i zwraca liczbę. 
-Liczba ta istnieje zarówno dla procesu wywołującego, jak i dla procesu potomnego!
+Dyrektywa \texttt{if} pozwala na warunkowe kompilacje.
 
-\begin{itemize}
-\item rodzic otrzymuje PID procesu potomnego.
-\item proces potomny otrzymuje 0.
-\end{itemize}
+\begin{lstlisting}
+#define FLAGA 1
 
-Dziecko i rodzic są identycznymi procesami. Co to znaczy?
+int main() {
 
-\begin{itemize} 
-\item Dziecko ma ten sam ciąg wywołań funkcji.
-\item Dziecko i rodzic współdzielą zasoby takie jak otwarte pliki, urządzenia, gniazda itd.
-\item Procesy mają różną pamięć wirtualną.
-\item Procesy mają różne PID.
-\end{frame}
+  #if FLAGA
+    // kod do wykonania, gdy flaga jest ustawiona
+  #else
+    // kod do wykonania, gdy flaga nie jest ustawiona
+  #endif
 
-\begin{frame}
-Exec podmienia aktuanie wykonywany program na inny. Co to znaczy?
-
-\begin{itemize}
-\item Oryginalny program przestaje być wykonywany.
-\item Stan oryginalnego procesu jest utracony.
-\item Nowy program otrzymuje PID procesu wywołującego.
-\item Nowy program dziedziczy zasoby procesu wywołującego.
-\end{itemize}
-
-Przykładem funkcji z rodziny exec jest execv().
-
-\begin{lstlisting}[language=C++]
-int execv(const char *path, char *const argv[]);
-\end{lstlisting}
-
-Pierwszym argumentem jest ścieżka do pliku, który ma zostać uruchomiony. 
-Drugim argumentem jest tablica wskaźników na argumenty nowego programu.
-Ostatnim elementem tablicy jest zawsze wskaźnik na NULL.
-\end{frame}
-
-\begin{frame}
-
-Procesy
-
-\begin{itemize}
-\item Procesy to wykonywane programy.
-\item Wykonywany program ładowany jest do pamięci wirtualnej.
-\item Każdy proces ma przydzieloną przestrzeń adresów w pamięci wirtualnej.
-\item Procesy są zorganizowane hierarchicznie, każdy proces ma jednego rodzica.
-\item Procesy mają swoje własne zasoby, takie jak otwarte pliki, gniazda itd.
-\item Procesy identyfikowane są przez unikalną liczbę, zwaną PID.
-\item Wiele procesów może wykonywać ten sam program.
-\item Każdy ma oddzielną przestrzeń w pamięci wirtualnej.
-\end{frame}
-
-
-\begin{frame}
-Wywołanie systemowe
-
-\begin{itemize}
-\item Wywołania systemowe pozwalają procesom na komunikację z jądrem systemu. 
-\item Zazwyczaj nie umieszczamy wywołań systemowych bezpośrednio w kodzie programu.
-\item Istnieją biblioteki oferujące przyjazne nakładki do wywołań systemowych.
-\end{itemize}
-
-Przykładem jest funkcja getpid(), zwracająca PID procesu. Innym przykładem jest funkcja 
-getppid(), zwracająca PID rodzica procesu.
-
-\end{frame}
-
-\begin{frame}
-
-Przykład funkcji wykorzystującej wywołania systemowe:
-
-\begin{lstlisting}[language=C++]
-#include <stdio.h> 
-#include <stdlib.h> 
-#include <sys/types.h> 
-#include <unistd.h> 
-
-int main() { 
-  printf("PID procesu: %d \n", getpid()); 
-  printf("PID rodzica: %d \n", getppid());
-  printf("Cross verification of pid's by executing process commands on shell \n"); 
-  system("ps -ef"); 
-  return 0; 
+  return 0;
 }
-\end{lstlisting}
-
-\end{frame}
-
-\begin{frame}
-Komunikacja międzyprocesowa (IPC)
-
-\begin{itemize}
-\item Ogólnie możemy podzielić procesy na dwie kategorie.
-\item Procesy działające w odosobnieniu od innych procesów oraz procesy współdziałające z innymi procesami.
-\item Istnieją różne techniki na umożliwienie wymiany danych między procesami.
-\item Przykładowo procesy mogą przekazywać sobie dane za pomocą plików (najstarsza i najprostsza forma).
-\item Procesy mogą również dzielić pamięć wirtualną.
-\item Sygnały mogą być wysyłane między procesami.
-\item Potoki pozwalają na przekazanie wyniku działania jednego programu, jako dane wejściowe do innego programu.
-\item Kolejka komunikatów pozwala na przesyłanie wiadomości między procesami.
-\end{itemize}
-
-\end{frame}
-
+		\end{lstlisting}
+	\end{frame}
+	
+	
 \end{document}
