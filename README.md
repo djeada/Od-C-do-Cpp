@@ -1799,16 +1799,11 @@ STL (Standard Template Library) jest biblioteką, która implementuje wiele przy
 
 Kontener unordered_map implementuje tablicę mieszającą.
 
-\begin{tabular}{ |c|c| }
-\hline
-operacje & złożoność czasowa \\
-\hline
-wyszukiwanie & O(1) \\
-wstawianie & O(1) \\
-usuwanie & O(1) \\
-\hline
-\end{tabular}
-\end{tabular}
+| operacje | złożoność czasowa |
+|---|---|
+| wyszukiwanie | O(1) |
+| wstawianie | O(1) | 
+| usuwanie | O(1) | 
 
 2. map
 
@@ -1873,13 +1868,13 @@ wyszukiwanie & O(n) \\
 Struktura unordered_set implementuje tablicę mieszającą.
 
 \begin{tabular}{ |c|c| }
-	\hline
-	operacje & złożoność czasowa \\
-	\hline
-	wyszukiwanie & O(1) \\
-	wstawianie & O(1) \\
-	usuwanie & O(1) \\
-	\hline
+\hline
+operacje & złożoność czasowa \\
+\hline
+wyszukiwanie & O(1) \\
+wstawianie & O(1) \\
+usuwanie & O(1) \\
+\hline
 \end{tabular}
 
 7. set
