@@ -236,52 +236,52 @@
 
 % title frame
 \begin{frame}
-    \titlepage
+	\titlepage
 \end{frame}
 
 \begin{frame}
-
-Pytania, na które checemy odpowiedzieć:
-
-\begin{itemize}
-\item Czym to jest?
-\item Jak to działa?
-\item Po co to komu potrzebne?
-\item Kiedy się tego używa?
-\end{itemize}
-
+	
+	Pytania, na które checemy odpowiedzieć:
+	
+	\begin{itemize}
+		\item Czym to jest?
+		\item Jak to działa?
+		\item Po co to komu potrzebne?
+		\item Kiedy się tego używa?
+	\end{itemize}
+	
 \end{frame}
 
 \begin{frame}
-O co w tym chodzi?\\
-
-Każdy program działa jedynie gdy spełnione są określone założenia.\\
-Część z tych założeń jest całkowicie niezależnych od programisty.\\~\\
-Co ma się stać gdy, któreś z założeń nie zostanie spełnione?\\
-
-\begin{enumerate}
-\item Zakończenie działania programu.
-\item Zwrócenie kodu błędu.
-\item Wyrzucenie wyjątku.
-\end{enumerate}
-
+	O co w tym chodzi?\\
+	
+	Każdy program działa jedynie gdy spełnione są określone założenia.\\
+	Część z tych założeń jest całkowicie niezależnych od programisty.\\~\\
+	Co ma się stać gdy, któreś z założeń nie zostanie spełnione?\\
+	
+	\begin{enumerate}
+		\item Zakończenie działania programu.
+		\item Zwrócenie kodu błędu.
+		\item Wyrzucenie wyjątku.
+	\end{enumerate}
+	
 \end{frame}
 
 \begin{frame}
-
-Mówiąc o wyjątkach, mamy najczęściej na myśli jedną z dwóch rzeczy:
-
-\begin{enumerate}
-\item Zdarzenie mające miejsce w czasie działania programu i uniemożliwiające działanie programu.
-\item Mechanizm będący częścią języka programowania, który pozwala na radzenie sobie z tymi zdarzeniami.
-\end{enumerate}
-
+	
+	Mówiąc o wyjątkach, mamy najczęściej na myśli jedną z dwóch rzeczy:
+	
+	\begin{enumerate}
+		\item Zdarzenie mające miejsce w czasie działania programu i uniemożliwiające działanie programu.
+		\item Mechanizm będący częścią języka programowania, który pozwala na radzenie sobie z tymi zdarzeniami.
+	\end{enumerate}
+	
 \end{frame}
 
 \begin{frame}
-Jak działa ten mechanizm?
-
-\begin{lstlisting}[language=C++]
+	Jak działa ten mechanizm?
+	
+	\begin{lstlisting}[language=C++]
 #include <iostream>
 
 void funkcja()
@@ -297,13 +297,13 @@ int main()
     std::cout << "Po wywolaniu funkcji" << std::endl;
     return 0;
 }
-\end{lstlisting}
+	\end{lstlisting}
 \end{frame}
 
 \begin{frame}
-Obsługa wyjątków
-
-\begin{lstlisting}[language=C++]
+	Obsługa wyjątków
+	
+	\begin{lstlisting}[language=C++]
 #include <iostream>
 
 void funkcja()
@@ -325,14 +325,14 @@ int main() {
 
   return 0;
 }
-\end{lstlisting}
+	\end{lstlisting}
 \end{frame}
 
 \begin{frame}
-Biblioteka standardowa używa wyjątków.
-
-Przykład std::out_of_range:
-\begin{lstlisting}[language=C++]
+	Biblioteka standardowa używa wyjątków.
+	
+	Przykład std::out_of_range:
+	\begin{lstlisting}[language=C++]
 int main() {
   std::vector wektor{3, 5, 2};
 
@@ -341,10 +341,10 @@ int main() {
 
   return 0;
 }
-\end{lstlisting}
-
-Przykład std::invalid_argument:
-\begin{lstlisting}[language=C++]
+	\end{lstlisting}
+	
+	Przykład std::invalid_argument:
+	\begin{lstlisting}[language=C++]
 int main() {
 
   // bitset spodziewa sie napisu zlozonego wylacznie
@@ -353,32 +353,32 @@ int main() {
 
   return 0;
 }
-\end{lstlisting}
-
+	\end{lstlisting}
+	
 \end{frame}
 
 \begin{frame}
-
-Kiedy użyć wyjątków?
-
-W sytuacji gdy wykonywanie zadania przez funkcję uniemożliwone jest przez zewnętrzną przyczynę. Przykłady:
-
-\begin{itemize}
-\item Wartości parametrów nie spełniają założeń. Nie ma możliwości na poprawne rozwiązanie problemu.
-\item Brak miejsca na dysku. Program chciałby użyć więcej pamięci niż jest dostępne.
-\item Serwer nie odpowiada (funkcja mająca zwrócić dane z serwera).
-\item Format danych w bazie danych jest niezgodny z wymaganiami programu (funkcja mająca zwrócić dane w określonym formacie).
-\end{itemize}
-
+	
+	Kiedy użyć wyjątków?
+	
+	W sytuacji gdy wykonywanie zadania przez funkcję uniemożliwone jest przez zewnętrzną przyczynę. Przykłady:
+	
+	\begin{itemize}
+		\item Wartości parametrów nie spełniają założeń. Nie ma możliwości na poprawne rozwiązanie problemu.
+		\item Brak miejsca na dysku. Program chciałby użyć więcej pamięci niż jest dostępne.
+		\item Serwer nie odpowiada (funkcja mająca zwrócić dane z serwera).
+		\item Format danych w bazie danych jest niezgodny z wymaganiami programu (funkcja mająca zwrócić dane w określonym formacie).
+	\end{itemize}
+	
 \end{frame}
 \begin{frame}
-
-Jak nie używać wyjątków?
-
-\begin{itemize}
-\item Nie należy wyjątków jak skoków.
-
-\begin{lstlisting}[language=C++]
+	
+	Jak nie używać wyjątków?
+	
+	\begin{itemize}
+		\item Nie należy wyjątków jak skoków.
+		      
+		      \begin{lstlisting}[language=C++]
 
   bool czyLiczba(std::string napis) {
     try {
@@ -388,75 +388,75 @@ Jak nie używać wyjątków?
       return false;
     }
   }
-\end{lstlisting}
-  
-\item Nie powinno się wyrzucać wyjątków gdy sytuacja tego nie wymaga.
-
-Przykład: wyrzucenie wyjątku gdy użytkownik podaje niepoprawne hasło.
-Albo w aplikacji kalkulator użytkownik chce dzielić przez 0.
-Wszystko zależy od poziomu w aplikacji na którym operujemy.
-
-\item Użycie złego typu wyjątku.
-
-\begin{lstlisting}[language=C++]
+		      \end{lstlisting}
+		        
+		\item Nie powinno się wyrzucać wyjątków gdy sytuacja tego nie wymaga.
+		      
+		      Przykład: wyrzucenie wyjątku gdy użytkownik podaje niepoprawne hasło.
+		      Albo w aplikacji kalkulator użytkownik chce dzielić przez 0.
+		      Wszystko zależy od poziomu w aplikacji na którym operujemy.
+		      
+		\item Użycie złego typu wyjątku.
+		      
+		      \begin{lstlisting}[language=C++]
 void funkcja() {
   throw std::invalid_argument("Wyjatek");
 }
-\end{lstlisting}
-
-\item Używanie mylącego komunikatu.
-
-\begin{lstlisting}[language=C++]
+		      \end{lstlisting}
+		      
+		\item Używanie mylącego komunikatu.
+		      
+		      \begin{lstlisting}[language=C++]
 void funkcja() {
   throw std::exception("Wystapil problem");
 }
-\end{lstlisting}
-
-\item Połykanie wyjątków.
-
-\begin{lstlisting}[language=C++]
+		      \end{lstlisting}
+		      
+		\item Połykanie wyjątków.
+		      
+		      \begin{lstlisting}[language=C++]
 try {
   funkcja();
 } catch (std::exception& e) {
   return;
 }
-\end{lstlisting}
-
-\end{itemize}
-
+		      \end{lstlisting}
+		      
+	\end{itemize}
+	
 \end{frame}
 
 \begin{frame}
- Dlaczego wyjątki?
-
-Wiemy już, że funkcje mogą napotkać na sytuacje uniemożliwiające ich poprawne działanie.
-Jakie mamy alternatywy do radzenia sobie z tym problemem?
-
-  \begin{itemize}
-  \item można użyć zmiennych jako flag i ustawiać je w chwilii pojawienia się problemu;
-  \item w funkcji zwracać wartość, która sugerowałaby, że pojawił się błąd (np. -1);
-  \item użyć wyjątków;
-  \end{itemize}
-  
-  Obie z dwóch pierwszych opcji są złe chociażby dlatego, że wymagają od nas ciągłego sprawdzania czy nie pojawiła się problematyczna sytuacja.
-  Łatwo jest zignorować błędy w takiej sytuacji i ciężko jest oddzielić kod obsługi błędu od reszty kodu (używamy te same mechanizmy).
-  Zamiast tego wyjątki umożliwiają wyraźne oddzielenie kodu wywoływanego w normalnej sytuacji, od kodu wywoływanego w sytuacji wyjątkowej.
-  Dodatkowo wyjątki zapewniają uwolnienie wszystkich zasobów dzięki destruktorom.
-  \end{frame}
+	Dlaczego wyjątki?
+	
+	Wiemy już, że funkcje mogą napotkać na sytuacje uniemożliwiające ich poprawne działanie.
+	Jakie mamy alternatywy do radzenia sobie z tym problemem?
+	
+	\begin{itemize}
+		\item można użyć zmiennych jako flag i ustawiać je w chwilii pojawienia się problemu;
+		\item w funkcji zwracać wartość, która sugerowałaby, że pojawił się błąd (np. -1);
+		\item użyć wyjątków;
+	\end{itemize}
+	  
+	Obie z dwóch pierwszych opcji są złe chociażby dlatego, że wymagają od nas ciągłego sprawdzania czy nie pojawiła się problematyczna sytuacja.
+	Łatwo jest zignorować błędy w takiej sytuacji i ciężko jest oddzielić kod obsługi błędu od reszty kodu (używamy te same mechanizmy).
+	Zamiast tego wyjątki umożliwiają wyraźne oddzielenie kodu wywoływanego w normalnej sytuacji, od kodu wywoływanego w sytuacji wyjątkowej.
+	Dodatkowo wyjątki zapewniają uwolnienie wszystkich zasobów dzięki destruktorom.
+\end{frame}
 
 
 \begin{frame}
-Wyjatki schowane (o uwalnianiu pamięci)
-
-1. Funkcja napotyka problematyczną sytuację, więc wyrzuca wyjątek, który niesie informacje o tej sytuacji.\\
-2. Wyjątek wyrzucony jest do miejsca wywołania funkcji.\\
-3. Wyjątek może tam zostać złapany i obsłużony lub rzucony dalej.\\
-4. Podczas tego procesu rzucania wyjątkiem ma miejsce coś niezwykle isotnego. Pamięć zarezerwowana na stercie dla obiektów tworzonych w tych funkcjach jest uwalniana!
+	Wyjatki schowane (o uwalnianiu pamięci)
+	
+	1. Funkcja napotyka problematyczną sytuację, więc wyrzuca wyjątek, który niesie informacje o tej sytuacji.\\
+	2. Wyjątek wyrzucony jest do miejsca wywołania funkcji.\\
+	3. Wyjątek może tam zostać złapany i obsłużony lub rzucony dalej.\\
+	4. Podczas tego procesu rzucania wyjątkiem ma miejsce coś niezwykle isotnego. Pamięć zarezerwowana na stercie dla obiektów tworzonych w tych funkcjach jest uwalniana!
 \end{frame}
 
 \begin{frame}[fragile]
-Wyjątki w konstruktorze\\
-\begin{lstlisting}
+	Wyjątki w konstruktorze\\
+	\begin{lstlisting}
 
 Piesek::Piesek 
 {
@@ -464,35 +464,35 @@ Piesek::Piesek
 	movie_ptr = new movie(bigMovie);
 	soda_ptr = new soda();
 }
-\end{lstlisting}
-
-Co jeśli pojawi się problem w trakcie tworzenia obiektu? 
-Wiemy, że wyjątki zapewniają uwolnienie zarezerwowanych zasobów dzięki destrukotrom.
-Ale jak wywołać destruktor dla częściowo zainicjalizowanego obiektu?
-Która część konstrukotra jest już gotowa?
-
+	\end{lstlisting}
+	
+	Co jeśli pojawi się problem w trakcie tworzenia obiektu? 
+	Wiemy, że wyjątki zapewniają uwolnienie zarezerwowanych zasobów dzięki destrukotrom.
+	Ale jak wywołać destruktor dla częściowo zainicjalizowanego obiektu?
+	Która część konstrukotra jest już gotowa?
+	
 \end{frame}
 
 \begin{frame}
-Wyjątek w trakcie obsługi wyjątku?\\
-
-Jakie mamy opcje? Możemy:
-\begin{itemize}
-\item Zignorować drugi wyjąt i kontynuować obsługę pierwszego.
-\item Porzucić obsługę pierwszego wyjątku i przejść do obsługi drugiego.
-\item Poddać się i zamknąć program.
-\end{itemize}
-
-Twórcy C++ wybrali trzecią opcję. 
-Jeśli wyrzucisz wyjątek w trakcie obsługi innego wyjątku, to wywołana zostanie funkcja std::terminate().
-
+	Wyjątek w trakcie obsługi wyjątku?\\
+	
+	Jakie mamy opcje? Możemy:
+	\begin{itemize}
+		\item Zignorować drugi wyjąt i kontynuować obsługę pierwszego.
+		\item Porzucić obsługę pierwszego wyjątku i przejść do obsługi drugiego.
+		\item Poddać się i zamknąć program.
+	\end{itemize}
+	
+	Twórcy C++ wybrali trzecią opcję. 
+	Jeśli wyrzucisz wyjątek w trakcie obsługi innego wyjątku, to wywołana zostanie funkcja std::terminate().
+	
 \end{frame}
 
 \begin{frame}
-  Bibliografia:\\
-  \begin{itemize}
-  \item http://www.cplusplus.com/doc/tutorial/exceptions/
-  \item https://en.cppreference.com/w/cpp/language/exceptions
-  \item https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#exceptions
-  \end{itemize}
+	Bibliografia:\\
+	\begin{itemize}
+		\item http://www.cplusplus.com/doc/tutorial/exceptions/
+		\item https://en.cppreference.com/w/cpp/language/exceptions
+		\item https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#exceptions
+	\end{itemize}
 \end{document}
