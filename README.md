@@ -1,40 +1,41 @@
 # Od-C-do-Cpp
+
 Kod źródłowy do programów z yt.
 
-
-Spis Treści
-=================
+# Spis Treści
 
 <!--ts-->
-   * [Proces kompilacji](#Proces-kompilacji)
-   * [Preprocesor](#Preprocesor)
-   * [Zmienne](#Zmienne)
-   * [Interakcja z konsolą](#Interakcja-z-konsolą)
-   * [Instrukcje sterujące](#Instrukcje-sterujące)
-   * [Pętle](#Pętle)
-   * [Liczby losowe](#Liczby-losowe)
-   * [Funkcje](#Funkcje)
-   * [Wskaźniki](#Wskaźniki)
-   * [Tablice](#Tablice)
-   * [Napisy](#Napisy)
-   * [Pola bitowe](#Pola-bitowe)
-   * [Operacje bitowe](#Operacje-bitowe)
-   * [Iteratory](#Iteratory)
+
+- [Proces kompilacji](#Proces-kompilacji)
+- [Preprocesor](#Preprocesor)
+- [Zmienne](#Zmienne)
+- [Interakcja z konsolą](#Interakcja-z-konsolą)
+- [Instrukcje sterujące](#Instrukcje-sterujące)
+- [Pętle](#Pętle)
+- [Liczby losowe](#Liczby-losowe)
+- [Funkcje](#Funkcje)
+- [Wskaźniki](#Wskaźniki)
+- [Tablice](#Tablice)
+- [Napisy](#Napisy)
+- [Pola bitowe](#Pola-bitowe)
+- [Operacje bitowe](#Operacje-bitowe)
+- [Iteratory](#Iteratory)
 
 <!--te-->
 
 ## Proces kompilacji
+
 Kompilator to program, który na wejściu otrzymuje kod źródłowy innego programu i generuje pliki obiektowe zawierające kod assemblera.
 
-1. Najpierw na scenę wkracza Pan Preprocesor. Zadań tego Pana jest wiele, wśród nich wymienić można: 
+1. Najpierw na scenę wkracza Pan Preprocesor. Zadań tego Pana jest wiele, wśród nich wymienić można:
 
-	- Włączenie zawartości załączonych plików nagłówkowych do kodu źródłowego. Na przykład, jeśli w jednym z kompilowanych plików umieściliśmy <code>#include "plik.h"</code>, to treść tego pliku zostanie przekopiowana do naszego kodu źródłowego. 
-	-  Generacja kodu makr.
-	-  Zamiana stałych zdefiniowanych za pomocą #define na ich wartości. Kod źródłowy przygotowany przez Pana Preprocesora jest następnie poddany analizie składni, w której skład wchodzą:
-	-  Analiza leksykalna (np. odrzucenie zakomentowanych fragmentów kodu). - Analiza składni (np. czy nie próbujemy skorzystać ze zmiennej, zanim została stworzona).
-	-  Analiza semantyczna (np. weryfikacja typów i poprawność instrukcji). 
+   - Włączenie zawartości załączonych plików nagłówkowych do kodu źródłowego. Na przykład, jeśli w jednym z kompilowanych plików umieściliśmy <code>#include "plik.h"</code>, to treść tego pliku zostanie przekopiowana do naszego kodu źródłowego.
+   - Generacja kodu makr.
+   - Zamiana stałych zdefiniowanych za pomocą #define na ich wartości. Kod źródłowy przygotowany przez Pana Preprocesora jest następnie poddany analizie składni, w której skład wchodzą:
+   - Analiza leksykalna (np. odrzucenie zakomentowanych fragmentów kodu). - Analiza składni (np. czy nie próbujemy skorzystać ze zmiennej, zanim została stworzona).
+   - Analiza semantyczna (np. weryfikacja typów i poprawność instrukcji).
 
-2. Tworzenie plików obiektowych z rozszerzeniem .o i zawierających kod źródłowy przetłumaczony na rozkazy w assemblerze. 
+2. Tworzenie plików obiektowych z rozszerzeniem .o i zawierających kod źródłowy przetłumaczony na rozkazy w assemblerze.
 3. Przygotowany w ten sposób kod obiektowy jest łączony z kodem obiektowym funkcji z zewnętrznych bibliotek w wykonywalny program (pod Windowsem będzie mieć rozszerzenie .exe).
 
 Dlaczego nie piszemy bezpośrednio w assemblerze?
@@ -42,32 +43,31 @@ Dlaczego nie piszemy bezpośrednio w assemblerze?
 1. Istnieje wiele dialektów języka assembler. Każdy procesor ma własny zestaw instrukcji, który nie zawsze pokrywa się z instrukcjami innych typów procesorów. Kompilator pozwala nam ten sam kod kompilować do wielu typów procesorów.
 2. Kompilatory to szczwane bestie. Twój kod jest nie tylko tłumaczony na assembler, ale również optymalizowany pod względem wydajności.
 3. Wysokopoziomowe języki programowania bogate są wiele konstrukcji ułatwiających pracę nad złożonym kodem. Przykładem mogą być struktury danych jak stosy, czy kolejki. Assembler to tylko kilka instrukcji, typu zwiększ, skocz do innej linii, porównaj.
-Pan Preprocesor przetwarza kod źródłowy.
+   Pan Preprocesor przetwarza kod źródłowy.
 
-Zadania Pana Preprocesora definiowane są za pomocą specjalnych zaklęć zwanych dyrektywami rozpoczynanych od kratki <i>#</i>. 
+Zadania Pana Preprocesora definiowane są za pomocą specjalnych zaklęć zwanych dyrektywami rozpoczynanych od kratki <i>#</i>.
 Dyrektywy mogą być umieszczane w dowolnym miejscu programu, ale przyjęło się, że najczęściej gromadzi się je u góry pliku źródłowego.
 
 Najczęściej spotykaną dyrektywą będzie załączenie biblioteki.
 
 Kompilacja programu napisanego w C, przy pomocy gcc:
 
-	gcc -std=c99 main.c -o exe
+    gcc -std=c99 main.c -o exe
 
 Kompilacja programu napisanego w C++, przy pomocy g++:
 
-	g++ -pedantic -std=c++98 main.cpp -o exe
-	g++-10 -Wall -Wextra -std=c++20 main.cpp -o exe
-
+    g++ -pedantic -std=c++98 main.cpp -o exe
+    g++-10 -Wall -Wextra -std=c++20 main.cpp -o exe
 
 Poprawa formatowania, przy pomocy clang-format:
 
-	find . -regex '.*\.\(cpp\|hpp\|cu\|c\|h\)' -exec clang-format -style=file -i {} \;
-
+    find . -regex '.*\.\(cpp\|hpp\|cu\|c\|h\)' -exec clang-format -style=file -i {} \;
 
 ## Preprocesor
+
 Pan Preprocesor przetwarza kod źródłowy.
 
-Zadania Pana Preprocesora definiowane są za pomocą specjalnych zaklęć zwanych dyrektywami rozpoczynanych od kratki <i>#</i>. 
+Zadania Pana Preprocesora definiowane są za pomocą specjalnych zaklęć zwanych dyrektywami rozpoczynanych od kratki <i>#</i>.
 Dyrektywy mogą być umieszczane w dowolnym miejscu programu, ale przyjęło się, że najczęściej gromadzi się je u góry pliku źródłowego.
 
 Najczęściej spotykaną dyrektywą będzie załączenie biblioteki.
@@ -99,17 +99,17 @@ Możemy również włączyć/wyłączyć część kodu w zależności od danego 
 Ogólna zasada: <code>Typ</code> + nazwa</code>.
 
 ```c++
-int x; // zmienna x typu int 
+int x; // zmienna x typu int
 double y; // zmienna y typu double
 ```
 
-###  Zasady nazewnictwa zmiennych 
+### Zasady nazewnictwa zmiennych
 
 Nazwy zmiennych mogą składać się z:
 
-* liter </br>
-* liczb </br>
-* podkreślnika "_"
+- liter </br>
+- liczb </br>
+- podkreślnika "\_"
 
 Muszą zaczynać się od litery bądź podkreślnika. </br>
 
@@ -117,7 +117,7 @@ Nazwa zmiennej powinna coś znaczyć np. <i>liczbaSamochodow</i>, bądź <i>kolo
 
 Są różne konwencje tworzenie złożonych nazw zmiennych. Dwie najpopularniejsze współcześnie to:
 
-1. oddzielanie słów podkreślnikiem np. masa_czastki_alfa (tzw. snake_case). 
+1. oddzielanie słów podkreślnikiem np. masa_czastki_alfa (tzw. snake_case).
 2. oddzielanie słów wielką literą np. masaCzastkiAlfa (tzw. camelCase).
 
 ### Inicjalizacja
@@ -126,6 +126,7 @@ Są różne konwencje tworzenie złożonych nazw zmiennych. Dwie najpopularniejs
 int x = 10;
 double y = 3.56;
 ```
+
 ### Nadpisanie:
 
 ```c++
@@ -135,6 +136,7 @@ x++; // teraz x przechowuje 14
 ```
 
 ### Typy zmiennych
+
 <table class="boxed">
     <tbody>
         <tr>
@@ -230,8 +232,8 @@ x++; // teraz x przechowuje 14
     </tbody>
 </table>
 
-
 ### Stałe
+
 Zmienna, której wartość nie może zostać zmieniona w trakcie trwania programu zwana jest stałą.
 
 ```c++
@@ -265,17 +267,18 @@ int main(){
 ```
 
 ## Interakcja z konsolą
+
 Każdy program w momencie uruchomienia ma dostęp do trzech strumieni:
 
-	1. stdin - strumień wejściowy 
-	2. stdout - strumień wyjściowy
-	3. stderr - strumień błędów
+    1. stdin - strumień wejściowy
+    2. stdout - strumień wyjściowy
+    3. stderr - strumień błędów
 
 Biblioteka <code>iostream</code>zawiera definicje funkcji, które pozwalają na komunikację z tymi strumieniami:
 
-* obiekt<code>cout</code> oraz operator <code><<</code> wypisuje tekst na standardowe wyjście;
-* obiekt<code>cin</code> oraz operator <code>>></code> wczytują pojedynczą wartość ze standardowego wejścia;
-* <code>getline(cin, string)</code> wczytuje ze standardowego wejścia cały wiersz wraz ze spacjami.
+- obiekt<code>cout</code> oraz operator <code><<</code> wypisuje tekst na standardowe wyjście;
+- obiekt<code>cin</code> oraz operator <code>>></code> wczytują pojedynczą wartość ze standardowego wejścia;
+- <code>getline(cin, string)</code> wczytuje ze standardowego wejścia cały wiersz wraz ze spacjami.
 
 ```c++
 #include <iostream>
@@ -285,19 +288,19 @@ using namespace std;
 int main(){
     int liczba;
     cout << "Podaj pojedynczą liczbę: "<< endl;
-    cin >> liczba;        
-    
-    cout << "Podałeś liczbę: " << liczba << endl; 
-    
+    cin >> liczba;
+
+    cout << "Podałeś liczbę: " << liczba << endl;
+
     cin.ignore();  //wyczyszczenie bufora
-    
+
     string zadanie;
     cout << "Podaj pełne zdanie: "<< endl;
 
     getline(cin, zdanie);
-    
-    cout << "Podałeś zdanie: " << endl << zdanie << endl; 
-    
+
+    cout << "Podałeś zdanie: " << endl << zdanie << endl;
+
     return 0;
 }
 ```
@@ -347,7 +350,8 @@ int main(){
 }
 ```
 
-###  Wielokrotne warunki 
+### Wielokrotne warunki
+
 Możemy sprawdzić wiele warunków jeden po drugim i uzleżnić od ich spełnienia różne bloki kodu.
 
 ```c++
@@ -359,25 +363,25 @@ int main(){
 	int n;
 	cout << "Podaj numer dnia tygodnia: " << endl;
 	cin >> n;
-	
+
 	if (n == 0)
 		cout << "Poniedziałek." << endl;
-		
+
 	else if (n == 1)
 		cout << "Wtorek." << endl;
 
 	else if (n == 2)
 		cout << "Środa. " << endl;
-		
+
 	else if (n == 3)
 		cout << "Czwartek." << endl;
-		
+
 	else if (n == 4)
 		cout << "Piątek." << endl;
-		
+
 	else if (n == 5)
 		cout << "Sobota." << endl;
-		
+
 	else if (n == 6)
 		cout << "Niedziela." << endl;
 	else
@@ -386,7 +390,6 @@ int main(){
 	return 0;
 }
 ```
-
 
 ### Switch
 
@@ -403,12 +406,12 @@ int main(){
 	int n;
 	cout << "Podaj numer dnia tygodnia: " << endl;
 	cin >> n;
-	
+
 	switch (n) {
 		case 0:
 			cout << "Poniedziałek." << endl;
 			break;
-	
+
 		case  1:
 			cout << "Wtorek." << endl;
 			break;
@@ -416,7 +419,7 @@ int main(){
 		case 2:
 			cout << "Środa. " << endl;
 			break;
-		
+
 		case 3:
 			cout << "Czwartek." << endl;
 			break;
@@ -436,14 +439,14 @@ int main(){
 		default:
 			cout << "Error! " << endl;
 	}
-		
+
 	return 0;
 }
 ```
 
 ## Pętle
 
-###  Pętla for 
+### Pętla for
 
 Po słowie kluczowym <code>for</code> w nawiasach okrągłych mamy do dyspozycji trzy miejsca oddzielone średnikami. Na pierwszym miejscu wstawiamy kod, który ma się wykonać przed pętlą. Najczęściej będzie to inicjalizacja licznika. Na drugim miejscu wstawiamy warunek, który będzie sprawdzany w każdej iteracji pętli. Jeśli warunek jest spełniony, to wykonany zostanie kod znajdujący się w nawiasach klamrowych za <code>for</code>. W przeciwnym razie pętla zostanie zakończona. Na trzecim miejscu wstawiamy kod, który ma się wykonać po każdej iteracji pętli.
 
@@ -453,7 +456,7 @@ for (inicjalizaja; warunek; inkrementacja) {
 }
 ```
 
-###  Pętla while 
+### Pętla while
 
 Pętla <code>while</code> jest podobna do pętli <code>for</code>, z tym, że nie musi mieć inicjalizacji, ani inkrementacji. Warunek jest również spradzany przed każdą iteracją pętli.
 
@@ -463,9 +466,9 @@ while (warunek) {
 }
 ```
 
-###  Pętla do while 
+### Pętla do while
 
-Pętla <code>do while</code> jest niemalże identyczna jak pętla <code>while</code>, z tym, że kod wykonywany jest  przed sprawdzeniem warunku. Z tej przyczyny ciało pętli będzie zawsze wykonane conajmniej raz, nawet jeśli warunek jest już na samym początku fałszywy.
+Pętla <code>do while</code> jest niemalże identyczna jak pętla <code>while</code>, z tym, że kod wykonywany jest przed sprawdzeniem warunku. Z tej przyczyny ciało pętli będzie zawsze wykonane conajmniej raz, nawet jeśli warunek jest już na samym początku fałszywy.
 
 ```
 do {
@@ -473,7 +476,7 @@ do {
 } while (warunek);
 ```
 
-### Continue 
+### Continue
 
 Słowo kluczowe <code>continue</code> pozwala przerwać aktualną iterację pętli i wrócić do początku pętli. Jeśli warunek pętli jest dalej spełniony, to ciało pętli zostanie ponownie wykonane.
 
@@ -486,18 +489,18 @@ int main(){
 	int n;
 	cout << "Podaj liczbę: " << endl;
 	cin >> n;
-	
+
 	for (int i = 0; i < n; i++) {
 		if (i % 2)
 			continue;
 		cout << i << endl;
 	}
-	
+
 	return 0;
 }
 ```
 
-### Break 
+### Break
 
 Podobnie jak <code>continue</code>, <code>break</code> przerywa aktualną iterację pętli. Różnica polega na tym, że po wywołaniu <code>break</code> pętla zostanie całkowicie przerwana i program przejdzie do kodu znajdującego się pod pętlą.
 
@@ -510,13 +513,13 @@ int main(){
 	int n;
 	cout << "Podaj liczbę: " << endl;
 	cin >> n;
-	
+
 	for (int i = 0; i < n; i++) {
 		if (i % 2)
 			break;
 		cout << i << endl;
 	}
-	
+
 	return 0;
 }
 ```
@@ -527,8 +530,8 @@ int main(){
 #include <random>
 
 int losowa_z_przedzialu(int start, int end){
-    std::random_device rd;  
-    std::mt19937 gen(rd()); 
+    std::random_device rd;
+    std::mt19937 gen(rd());
     std::uniform_real_distribution<> dist(start,end);
     return distr(gen);
 }
@@ -544,7 +547,7 @@ int orzel_lub_reszka(){
 
 ## Typ wyliczeniowy enum
 
-Typ wyliczeniowy <code>enum</code> pozwala na tworzenie zmiennych, które mogą przyjmować jedynie z góry określone wartości. Wartości te mają czytelne nazwy, a dodatkowo <code>enum</code> jest bardzo szybki i opłaca się go używać nawet w krytycznych miejscach programu. 
+Typ wyliczeniowy <code>enum</code> pozwala na tworzenie zmiennych, które mogą przyjmować jedynie z góry określone wartości. Wartości te mają czytelne nazwy, a dodatkowo <code>enum</code> jest bardzo szybki i opłaca się go używać nawet w krytycznych miejscach programu.
 
 ```c++
 #include <iostream>
@@ -559,7 +562,7 @@ enum class Kolor {
 
 int main(){
 	Kolor kolor = Color::Czerwony;
-	
+
 	switch (kolor) {
 		case Color::Czerwony:
 			cout << "Wybrano czerwony." << endl;
@@ -573,31 +576,33 @@ int main(){
 		default:
 			cout << "Blad!" << endl;
 	}
-	
+
 	return 0;
 }
 ```
 
 ## Funkcje
-Za pomocą funkcji możemy część kodu zamknąć pod jedną nazwą. 
+
+Za pomocą funkcji możemy część kodu zamknąć pod jedną nazwą.
 
 ### Tworzenie i wywoływanie funkcji
 
 Elementy składowe funkcji to:
+
 1. <code>Typ</code> zwracanej wartości.
 2. <code>Imię</code> funkcji, dzięki któremu jest rozpoznawalna.
 3. <code>Argumenty</code>, czyli zewnętrzne wartości, które chcemy użyć w funkcji i chcemy żeby zostały nam podane w momencie wywołania funkcji.
 
 ```
-wybrany_typ nazwa_funkcji(argumenty){	
-	//ciało czyli jaki kod chcemy żeby został uruchomiony po wywołaniu nazwa_funkcji 	
-	return wartosc_jaka_ma_zostac_zwrocona; 
+wybrany_typ nazwa_funkcji(argumenty){
+	//ciało czyli jaki kod chcemy żeby został uruchomiony po wywołaniu nazwa_funkcji
+	return wartosc_jaka_ma_zostac_zwrocona;
 
-}	
+}
 
-int main(){ 	
-	wybrany_typ x = nazwa_funkcji(argumenty); 	
-}	
+int main(){
+	wybrany_typ x = nazwa_funkcji(argumenty);
+}
 ```
 
 ### Deklaracja funkcji
@@ -635,6 +640,7 @@ void fun3(){
 ```
 
 ### Funkcja zwracająca wartość
+
 Do zwracania wartości poprzez funkcję używamy słowa kluczowego <code>return</code>. Słowo kluczowe <code>return</code> przerywa działanie funkcji i zwraca wartość umieszczoną po nim w kodzie. Typ zwracanej wartości musi być taki sam jak typ funkcji. Funkcja nie będąca funkjcą typu void musi zawsze zwracać wartość.
 
 ```c++
@@ -649,14 +655,15 @@ int suma(int x, int y){
 int main() {
 	int a = 5;
 	int b = 3;
-	
+
 	cout << suma(a, b) << endl;
-	
+
 	return 0;
-}	
+}
 ```
 
 ### Funkcja typu void
+
 Funkcje typu void nie zwracają żadnej wartości. Nie ma konieczności użycia słowa kluczowego <code>return</code>. Jeśli jednak zostanie użyte, to nie może być podana za nim żadna wartość. W kontekście funkcji typu void <code>return</code> służy jedynie do przerywania funkcji.
 
 ```c++
@@ -671,7 +678,7 @@ void wypisz_imie(string s){
 int main() {
 	string imie = "Karol";
 	wypisz_imie(imie);
-	
+
 	return 0;
 }
 ```
@@ -692,7 +699,7 @@ int pomnoz(int a, int b = 3){
 int main() {
 	int x = 2;
 	int y = 7;
-	
+
 	cout << pomnoz(x, y) << endl;
 	cout << pomnoz(x) << endl;
 
@@ -738,7 +745,7 @@ int main() {
 
 Wskaźnik to zmienna, która przechowuje adres innej zmiennej. Dodatkowo przy pomocy wskaźników mamy możliwość modyfikowania zmiennych, których adresy przechowują wskaźniki.
 
-<code>Typ_zmiennej_kt&oacute;rej_adres_przechowuje_wskaźnik * nazwa_wskaźnika;</code>
+<code>Typ_zmiennej_kt&oacute;rej_adres_przechowuje_wskaźnik \* nazwa_wskaźnika;</code>
 
 ```c++
 \\ Deklaracja
@@ -756,12 +763,13 @@ p1 = &x; // OK. Typy się zgadzają
 p2 = &y;
 p3 = &s;
 ```
-	
+
 ### Dereferencja
+
 Wyłuskanie wartości na, która znajduje się w zmiennej, na którą wskazuje nasz wskaźnik.
 Używane nie tylko do odczytu, ale również zmiany wartości tej zmiennej.
 
-<code>*nazwa wskaźnika</code>
+<code>\*nazwa wskaźnika</code>
 
 ```c++
 #include<iostream>
@@ -771,16 +779,16 @@ int main(){
 	int x = 4;
 	double y = 3.5;
 	string s = "napis";
-	
+
 	int* p1 = &x;
 	double* p2 = &y;
 	string* p3 = &s;
-  
+
   	cout << "Co siedzi w zmiennych x, y, s: " << endl;
 	cout << p1* << endl;
 	cout << p2* << endl;
 	cout << p3* << endl;
-  
+
   	*p1 = 7; //zmiana wartosci zmiennej x
 	*p2 = 8.123; //zmiana wartosci zmiennej y
   	*p3 = "inny"; //zmiana wartosci zmiennej s
@@ -789,14 +797,14 @@ int main(){
 	cout << p1* << endl;
 	cout << p2* << endl;
 	cout << p3* << endl;
-  
+
   	return 0;
 }
 ```
 
 ### Wskaźnik na wskaźnik
 
-Operator * pozwala również tworzyć wskaźniki przechowujące adresy innych wskaźników.
+Operator \* pozwala również tworzyć wskaźniki przechowujące adresy innych wskaźników.
 
 ```c++
 #include<iostream>
@@ -807,7 +815,7 @@ int main(){
 	int* j = &i;
 	int** k = &j;
 	int*** l = &k;
-  
+
   	return 0;
 }
 ```
@@ -816,7 +824,7 @@ int main(){
 
 <code>NULL</code> to specjalna wartość wskaźnika symbolizująca wskazywanie na nieistniejący obiekt. Dzięki tej wartości możemy sygnalizować koniec listy połączonej lub poinformować o niemożliwości przydziału pamięci, lub otwarcia pliku (współcześnie preferuje się wyjątki).
 
-W C, w zależności od implementacji <code>NULL</code> definiowany jest jako <code>0</code> lub <code>((void*)0)</code>. W obu przypadkach używany jest dokładnie do tego samego. 
+W C, w zależności od implementacji <code>NULL</code> definiowany jest jako <code>0</code> lub <code>((void\*)0)</code>. W obu przypadkach używany jest dokładnie do tego samego.
 Z uwagi na to, że <code>NULL</code> to po prostu zero, możemy w taki sposób sprawdzić, czy wskaźnik <code>wsk</code> nie jest wskaźnikiem na <code>NULL</code>:
 
 ```c++
@@ -843,10 +851,12 @@ Tak, więc jeśli piszesz kod w C++, to używaj <code>nullptr</code>.
 ### Stałe wskaźniki
 
 Podobnie jak możemy deklarować zwykłe stałe, tak samo możemy mieć stałe wskaźniki - jednak są ich dwa rodzaje. Wskaźniki na stałą wartość:
+
 ```c++
  const int *a;
  int const * a;  /* równoważnie */
 ```
+
 oraz stałe wskaźniki:
 
 ```c++
@@ -855,7 +865,7 @@ oraz stałe wskaźniki:
 
 Słówko const przed typem działa jak w przypadku zwykłych stałych, tzn. nie możemy zmienić wartości wskazywanej przy pomocy wskaźnika.
 
-W drugim przypadku słowo const jest tuż za gwiazdką oznaczającą typ wskaźnikowy, co skutkuje stworzeniem stałego wskaźnika, czyli takiego którego nie można przestawić na inny adres. 
+W drugim przypadku słowo const jest tuż za gwiazdką oznaczającą typ wskaźnikowy, co skutkuje stworzeniem stałego wskaźnika, czyli takiego którego nie można przestawić na inny adres.
 
 ```c++
 #include <iostream>
@@ -889,6 +899,7 @@ Przykłady tablicy zadeklarowanej i zainicjalizowanej:
 ```c++
 int tabA[3] = {7, 8, 11};
 ```
+
 ```c++
 int tabB[] = {7, 8, 11};
 ```
@@ -906,19 +917,19 @@ const int n = 10;
 int main() {
 
 	int a[n];
-	
+
 	cout << "Podaj " << n << " elementów: " << endl;
 
 	// wczytywanie
 	for (int i = 0; i < n; i++)
 		cin >> a[i];
-		
+
 	cout << "Twoja tablica: " << endl;
-	
+
 	// wypisywanie
 	for (int i = 0; i < n; i++)
 		cout << a[i] << endl;
-	
+
 	return 0;
 }
 ```
@@ -927,7 +938,7 @@ Jeśli spróbujesz odnieść się do tablicy przy użyciu nieporawnego indeksu (
 
 ### Tablica jako wskaźnik
 
-Za pomocą wskaźników można również odwoływać się do elementów tablicy. Nazwa tablicy to wskaźnik do pierwszego elementu tablicy. Jeśli <code>tab</code> to nazwa tablicy, to <code>tab[0]</code> oraz <code>*tab</code> są synonimami.
+Za pomocą wskaźników można również odwoływać się do elementów tablicy. Nazwa tablicy to wskaźnik do pierwszego elementu tablicy. Jeśli <code>tab</code> to nazwa tablicy, to <code>tab[0]</code> oraz <code>\*tab</code> są synonimami.
 
 ```c++
 #include <iostream>
@@ -935,23 +946,23 @@ using namespace std;
 
 int suma(int* tablica, int dlugosc) {
 	int suma = 0;
-	
+
 	for (int i = 0; i < dlugosc; i++)
 		suma += tablica[i];
-	
+
 	return suma;
 }
 
 int main() {
 
-	int tab[] = {2, 4, 8, 16, 32};	
+	int tab[] = {2, 4, 8, 16, 32};
 	cout << suma(tab, 5) << endl;
-	
+
 	return 0;
 }
 ```
 
-Zwróć uwagę, że w powyższym przykładzie przekazujemy do funkcji długość tablicy. Kompilator nie wie, czy <code>int* tablica</code> wskazuje na pojedynczą liczbę, czy na tablicę 10 liczb. Nie pomoże nawet operator <code>sizeof</code>, zwracający rozmiar danego obiektu lub typu podany w bajtach. Dla wskaźnika zwróci jedynie rozmiar typu, na który wskazuje wskaźnik.
+Zwróć uwagę, że w powyższym przykładzie przekazujemy do funkcji długość tablicy. Kompilator nie wie, czy <code>int\* tablica</code> wskazuje na pojedynczą liczbę, czy na tablicę 10 liczb. Nie pomoże nawet operator <code>sizeof</code>, zwracający rozmiar danego obiektu lub typu podany w bajtach. Dla wskaźnika zwróci jedynie rozmiar typu, na który wskazuje wskaźnik.
 
 ### Arytmetyka wskaźników
 
@@ -963,15 +974,15 @@ using namespace std;
 int main() {
 	int tab[] = {1, 2, 3, 4, 5};
 	int* wsk = tab;
-	
+
 	cout << *wsk << endl;
 	cout << *(wsk+3) << endl;
-	
+
 	return 0;
 }
 ```
 
-### Dynamiczna alokacja pamięci 
+### Dynamiczna alokacja pamięci
 
 Aby skorzystać z pamięci sterty, używamy operatora <code>new</code> do alokacji (rezerwacji) miejsc w pamięci komputera dla elementów tablicy. Użycie samego <code>new</code> zarezerwuje pamięć dla pojedynczej zmiennej. Dla tablicy używam <code>new [liczba]</code>, gdzie <code>liczba</code> to długość tablicy, jaką chcemy stworzyć.
 Gdy tablica nie jest nam już potrzebna, zarezerwowaną uprzednio pamięć uwalniamy przy pomocy <code>delete</code>. Podobnie jak z operatorem <code>new</code>, dla tablicy używamy <code>delete []</code>. Tym razem nie wstawiamy już żadnych liczb w nawiasy kwadratowe.
@@ -982,26 +993,26 @@ Gdy tablica nie jest nam już potrzebna, zarezerwowaną uprzednio pamięć uwaln
 using namespace std;
 
 int main() {
-	
+
 	cout << "Podaj liczbę elemntów tablicy: " << endl;
-	
+
 	int n;
 	cin >> n;
 
 	int *tab = new int[n];
-	
+
 	cout << "Podaj " << n << " elementów: " << endl;
-	
+
 	for (int i = 0; i < n; i++)
 		cin >> tab[i];
-		
+
 	cout << "Twoja tablica: " << endl;
-	
+
 	for (int i = 0; i < n; i++)
 		cout << tab[i] << endl;
-	
+
 	delete[] tab;
-	
+
 	return 0;
 }
 ```
@@ -1023,27 +1034,26 @@ int const m = 4;
 int main() {
 
 	int a[n][m];
-	
+
 	cout << "Podaj " << n*m << " elementów: " << endl;
-	
+
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < m; j++)
 			cin >> a[i][j];
-		
+
 	cout << "Twoja tablica: " << endl;
-	
+
 	for (int i = 0; i < n; i++){
 		for (int j = 0; j < m; j++)
 			cout << a[i][j] << " ";
 		cout << endl;
 	}
-		
+
 	return 0;
 }
 ```
 
 Dla tablic dwuwymiarowych alokacja i dealokacja pamięci odbywa się przy pomocy pętli. Stwórzmy macierz o liczbie wierszy równej zmiennej <code>wysokość</code> i liczbie kolumn równej zmiennej <code>szerokość</code>:
-
 
 ```c++
 #include <iostream>
@@ -1053,21 +1063,21 @@ int main() {
 
 	double** macierz;
 	int wysokosc, szerokosc;
-	
+
 	cin >> wysokosc >> szerokosc;
-	
+
 	// Alokacja
 	macierz = new (double *)[wysokosc];
-	
+
 	for (int i = 0; i < wysokosc; i++)
 		macierz[i] = new double[szerokosc];
-	
+
 	// Dealokacja
 	for (int i = 0; i < wysokosc; i++)
 		delete[] macierz[i];
 
 	delete[] macierz;
-	
+
 	return 0;
 }
 ```
@@ -1146,9 +1156,9 @@ int main() {
 	d.Rok = 2020;
 	d.Miesiac = 7;
 	d.Dzien = 18;
-	
+
 	wypiszDate(d);
-	
+
 	return 0;
 }
 ```
@@ -1157,7 +1167,7 @@ int main() {
 
 Mamy możliwość wykonywania operacji na pojedynczych bitach.
 
-###  Bramka NOT 
+### Bramka NOT
 
 Zamienia zera na jedynki i na odwrót. Operator ~.
 
@@ -1176,7 +1186,6 @@ Zamienia zera na jedynki i na odwrót. Operator ~.
   </tr>
 </table>
 
-
 ```c++
 #include <iostream>
 #include <bitset>
@@ -1192,7 +1201,7 @@ int main() {
 }
 ```
 
-###  Bramka OR 
+### Bramka OR
 
 Jedynka gdy co najmniej jeden z bitów to jedynka, w przeciwnym razie zero. Operator |.
 
@@ -1233,16 +1242,16 @@ using namespace std;
 int main() {
 	int a = 7;
 	int b = 5;
-	
+
 	cout << bitset<8>(a) << endl; //00000111
 	cout << bitset<8>(b) << endl; //00000101
 	cout << bitset<8>(a | b) << endl; //00000111
-	
+
 	return 0;
 }
 ```
 
-###  Bramka AND 
+### Bramka AND
 
 Jedynka gdy oba bity to jedynki, w przeciwnym razie zero. Operator &.
 
@@ -1283,16 +1292,16 @@ using namespace std;
 int main() {
 	int a = 7;
 	int b = 5;
-	
+
 	cout << bitset<8>(a) << endl; //00000111
 	cout << bitset<8>(b) << endl; //00000101
 	cout << bitset<8>(a & b) << endl; //00000101
-	
+
 	return 0;
 }
 ```
 
-###  Bramka XOR 
+### Bramka XOR
 
 Jedynka gdy bity różne, w przeciwnym razie zero. Operator ^.
 
@@ -1333,16 +1342,16 @@ using namespace std;
 int main() {
 	int a = 7;
 	int b = 5;
-	
+
 	cout << bitset<8>(a) << endl; //00000111
 	cout << bitset<8>(b) << endl; //00000101
 	cout << bitset<8>(a ^ b) << endl; //00000010
-	
+
 	return 0;
 }
 ```
 
-###  Przesunięcia bitowe 
+### Przesunięcia bitowe
 
 Bity w lewo przesuwamy za pomocą operatora <<. </br>
 Bity w prawo przesuwamy za pomocą operatora >>. </br>
@@ -1358,32 +1367,30 @@ using namespace std;
 int main() {
 	int a = 14;
 	int b = 2;
-	
+
 	cout << bitset<8>(a) << endl; //00001110
 	cout << bitset<8>(b) << endl; //00000010
 	cout << bitset<8>(a << b) << endl; //00111000
 	cout << bitset<8>(a >> b) << endl; //00000011
-	
+
 	return 0;
 }
 ```
 
 ## Zawansowne wskaźniki
 
-
 ### Wskaźniki na funkcje
 
 ### Podsumowanie wskaźników
 
-| Kod                                 | Opis                                                           |
-|-------------------------------------| -------------------------------------------------------------- |
-| <code>int *wsk;</code>              | wskaźnik wskazujący na zmienną typu int                        |
-| <code>int **wskNaWsk;</code>        | wskaźnik wskazujący na wskaźnik wskazujący na zmienną typu int |
-| <code>int (*wskNaTablice)[];</code> | wskaźnik wskazujący na tablicę zmienną typu intów              |
-| <code>int (*wskNaFunkcje)();</code> | wskaźnik wskazujący na funkcję zwracającą zmienną typu int     |
-| <code>int *tab[];</code>            | tablica wskaźników na zmienną typu int                         |
-| <code>int *fun();</code>            | funkcja zwracająca wskaźnik na zmienną typu int                |
-
+| Kod                                  | Opis                                                           |
+| ------------------------------------ | -------------------------------------------------------------- |
+| <code>int \*wsk;</code>              | wskaźnik wskazujący na zmienną typu int                        |
+| <code>int \*\*wskNaWsk;</code>       | wskaźnik wskazujący na wskaźnik wskazujący na zmienną typu int |
+| <code>int (\*wskNaTablice)[];</code> | wskaźnik wskazujący na tablicę zmienną typu intów              |
+| <code>int (\*wskNaFunkcje)();</code> | wskaźnik wskazujący na funkcję zwracającą zmienną typu int     |
+| <code>int \*tab[];</code>            | tablica wskaźników na zmienną typu int                         |
+| <code>int \*fun();</code>            | funkcja zwracająca wskaźnik na zmienną typu int                |
 
 ### Sprytne wskaźniki
 
@@ -1392,7 +1399,7 @@ int main() {
 Pisanie programów, w których w interakcje ze sobą wchodzą różne <b>obiekty</b>.
 
 1. <b>Klasa</b> to szablon, w którym definiujemy <b>pola</b> (jakie dane mogą przechowywać obiekty danej klasy) oraz metody</b> (funkcje coś robiące z tymi polami).
-2. Zastosowania obiektów danej klasy dane są przez dostępne metody. 
+2. Zastosowania obiektów danej klasy dane są przez dostępne metody.
 
 Dlaczego?
 
@@ -1403,13 +1410,13 @@ Dlaczego?
 class Prostokat {
 	int a;
 	int b;
-	
+
 	public:
 		Prostokat(int a, int b) {
 			this->a = a;
 			this->b = b;
 		}
-		
+
 		int pole() {
 			return a * b;
 		}
@@ -1420,16 +1427,16 @@ class Prostokat {
 
 Konstruktor jest funkcją, która jest wywoływana przy tworzeniu obiektu. Konstruktor ma taką samą nazwę jak klasa i nie posiada zwracanego typu, gdyż nigdy nie zwraca wartości. Istnieje wiele typów konstruktorów:
 
-	- konstruktor domyślny (nie ma argumentów)
-	- konstruktor z parametrami (argumenty są przekazywane do konstruktora)
-	- konstruktor kopiujący (kopiuje wartości z innego obiektu)
-	- konstruktor przenoszący (kopiuje wartości z innego obiektu i ustawia pola innego obiektu na domyślne wartości)
+    - konstruktor domyślny (nie ma argumentów)
+    - konstruktor z parametrami (argumenty są przekazywane do konstruktora)
+    - konstruktor kopiujący (kopiuje wartości z innego obiektu)
+    - konstruktor przenoszący (kopiuje wartości z innego obiektu i ustawia pola innego obiektu na domyślne wartości)
 
 ```C++
 class Prostoka {
 	int a;
 	int b;
-	
+
 	public:
 		// konstruktor domyślny
 		Prostokat() {
@@ -1455,25 +1462,25 @@ class Prostoka {
 			b = p.b;
 			p.a = 1;
 			p.b = 1;
-		}	
+		}
 };
 ```
 
 ### Destruktor
 
-Destruktor jest funkcją, która jest wywoływana przy usuwaniu obiektu. Destruktor ma taką samą nazwę jak klasa i nie posiada zwracanego typu, gdyż nigdy nie zwraca wartości. 
+Destruktor jest funkcją, która jest wywoływana przy usuwaniu obiektu. Destruktor ma taką samą nazwę jak klasa i nie posiada zwracanego typu, gdyż nigdy nie zwraca wartości.
 
 ```C++
 class Prostokat {
 	int a;
 	int b;
-	
+
 	public:
 		Prostokat(int a, int b) {
 			this->a = a;
 			this->b = b;
 		}
-		
+
 		~Prostokat() {
 			cout << "Destruktor" << endl;
 		}
@@ -1484,9 +1491,9 @@ class Prostokat {
 
 Istnieją trzy poziomy dostępu do pól oraz metod:
 
-	- public
-	- protected
-	- private
+    - public
+    - protected
+    - private
 
 Do pól i metod zdefiniowanych w sekcji <code>public</code> dostęp jest zawsze możliwy. Możemy się do nich odwołać z poziomu klasy, jak i z poziomu obiektu. W przypadku pól i metod zdefiniowanych w sekcji <code>private</code> dostęp jest możliwy tylko z poziomu klasy. Sekcja <code>protected</code> ma znaczenie przy dziedziczeniu. Klasy pochodne mają dostęp do pól i metod zdefiniowanych w sekcji <code>protected</code>, podobnie jak tych zdefiniowanych w sekcji <code>public</code>, ale nie mają dostępu do pól i metod zdefiniowanych w sekcji <code>private</code>.
 
@@ -1494,13 +1501,13 @@ Do pól i metod zdefiniowanych w sekcji <code>public</code> dostęp jest zawsze 
 class Prostokat {
 	int a;
 	int b;
-	
+
 	public:
 		Prostokat(int a, int b) {
 			this->a = a;
 			this->b = b;
 		}
-		
+
 		int pole() {
 			return a * b;
 		}
@@ -1518,7 +1525,7 @@ int main() {
 
 ### Wskaźnik na obiekt
 
-Podbnie jak tworzyliśmy wskaźniki na typy wbudowane, możemy tworzyć wskaźniki na obiekty. Do pól obiektu, na który wskazuje wskaźnik, możemy się odwoływać za pomocą konstrukcji <code>*wsk.pole</code> lub <code>wsk->pole</code>.
+Podbnie jak tworzyliśmy wskaźniki na typy wbudowane, możemy tworzyć wskaźniki na obiekty. Do pól obiektu, na który wskazuje wskaźnik, możemy się odwoływać za pomocą konstrukcji <code>\*wsk.pole</code> lub <code>wsk->pole</code>.
 
 ```C++
 #include <iostream>
@@ -1553,10 +1560,9 @@ int main() {
 
 C++ daje nam możliwość definiowania nowego znaczenia różnych operatorów dla definiowanych przez nas klas. W naszym przykładzie, definiujemy operator <code>+</code> dla klasy <code>Prostokat</code>.
 
-	- operator + (Prostokat &p1, Prostokat &p2)
-	- operator + (Prostokat &p1, int a)
-	- operator + (int a, Prostokat &p1)
-
+    - operator + (Prostokat &p1, Prostokat &p2)
+    - operator + (Prostokat &p1, int a)
+    - operator + (int a, Prostokat &p1)
 
 ### Struktury
 
@@ -1608,11 +1614,11 @@ int main() {
 }
 ```
 
-Mogłoby się wydawać, że unie są tym samym co struktury. Różnica polega na tym, że w danej chwili tylko jedno pole unii może przechowywać wartość. Z tego powodu Unie są chudsze od struktur i unia zajmuje w pamięci tyle miejsca, ile wynosi rozmiar największego z jej pól. 
+Mogłoby się wydawać, że unie są tym samym co struktury. Różnica polega na tym, że w danej chwili tylko jedno pole unii może przechowywać wartość. Z tego powodu Unie są chudsze od struktur i unia zajmuje w pamięci tyle miejsca, ile wynosi rozmiar największego z jej pól.
 
 ## Dziedziczenie
 
-Dziedziczenie to 
+Dziedziczenie to
 
 ### Typy dziedziczenia
 
@@ -1620,14 +1626,14 @@ Dziedziczenie to
 
 DLACZEGO TAKI ISTOTNY? BO ROZWIAZUJE CODE SMELL Z IF
 
-	if obiekt.type == Kaczka:
-		obiekt.dziobaj()
-	if obiekt.type == Pies:
-		obiekt.skacz()
+    if obiekt.type == Kaczka:
+    	obiekt.dziobaj()
+    if obiekt.type == Pies:
+    	obiekt.skacz()
 
 Zamiast tego mamy:
 
-	obiekt.przywitaj()
+    obiekt.przywitaj()
 
 ### Metody wirtualne
 
@@ -1635,17 +1641,17 @@ Zamiast tego mamy:
 
 ## Lambdy
 
-Funkcje, które nie mają żadnych parametrów, można zapisać w nawiasach klamrowych. W tym przypadku funkcja nie posiada nazwy, a jest to zwykły wyrażenie. 
+Funkcje, które nie mają żadnych parametrów, można zapisać w nawiasach klamrowych. W tym przypadku funkcja nie posiada nazwy, a jest to zwykły wyrażenie.
 
-	[](int a, int b) {
-		return a + b;
-	}
+    [](int a, int b) {
+    	return a + b;
+    }
 
 Jeśli chcemy mieć bezpośredni dostęp do zmiennych z zewnętrznego kontekstu, możemy użyć <code>&</code> w nawiasie kwadratowym.
 
-	[&](int a, int b) {
-		return a + b;
-	}
+    [&](int a, int b) {
+    	return a + b;
+    }
 
 ## Szablony
 
@@ -1663,11 +1669,11 @@ int main() {
 	v.push_back("ala");
 	v.push_back("ma");
 	v.push_back("kota");
-	
+
 	for (auto it = v.begin(); it != v.end(); ++it) {
 		cout << *it << endl;
 	}
-	
+
 	return 0;
 }
 ```
@@ -1682,15 +1688,43 @@ Błędy składniowe – użycie kodu niezgodnego z konwencjami danego języka pr
 Błędy logiczne – kod, który miał zostać uruchomiony nie jest uruchomiony, błędy w ifach, zła kolejność wykonywania operacji
 Błędy semantyczne – program został błędnie zakodowany, nie robi tego co powinien robić
 
-
 Problemy z pamięcią:
 
-* Przepełnienie stosu (rekurencja, rozmiar zmiennych statycznych)
-* rozmiar zmiennych
+- Przepełnienie stosu (rekurencja, rozmiar zmiennych statycznych)
+- rozmiar zmiennych
+
+### Działanie wyjątków
+
+Wyrzucenie wyjątku powoduje przerwanie działania funkcji, w której wystąpiło wyrzucenie.
+Istnieje możliwość obsłużenia wyjątku przy pomocy bloku try-catch. Catch musi sprecyzować typ wyjątku, który ma zostać obsłużony. Jeśli typ pokrywa się z typem wyjątku, to blok catch zostanie wykonany.
+
+```c++
+#include <iostream>
+
+void funkcja()
+{
+    throw std::runtime_error("Wyjatek");
+}
+
+int main() {
+  try
+  {
+      funkcja();
+  }
+  catch(std::runtime_error& e)
+  {
+      std::cout << "Wyjątek: " << e.what() << std::endl;
+  }
+
+  std::cout << "Zycie toczy sie dalej" << std::endl;
+
+  return 0;
+}
+```
 
 ## Praca z plikami
 
-W C nazwy funkcji używanych do pracy z plikami zaczynają się od litery <i>f</i>, są to np. <code>fopen()</code>, <code>fread()</code> i <code>fclose()</code>. Struktura <code>FILE</code> używana jest jako uchwyt do pliku, za pomocą którego wykonujemy różne operacje na pliku. 
+W C nazwy funkcji używanych do pracy z plikami zaczynają się od litery <i>f</i>, są to np. <code>fopen()</code>, <code>fread()</code> i <code>fclose()</code>. Struktura <code>FILE</code> używana jest jako uchwyt do pliku, za pomocą którego wykonujemy różne operacje na pliku.
 
 ```c
 #include <stdio.h>
@@ -1758,64 +1792,116 @@ int main() {
 ```
 
 ## STL
+
+STL (Standard Template Library) jest biblioteką, która implementuje wiele przydatnych funkcji, algorytmów i struktur danych. Wiele innych bibliotek standardowych używa STL, np. <code>std::string</code> i <code>std::vector</code>.
+
 1. unordered_map
 
-DS : Hash Table
-Search : O(1)
-Insert : O(1)
-Delete : O(1)
+Kontener unordered_map implementuje tablicę mieszającą.
+
+\begin{tabular}{ |c|c| }
+\hline
+operacje & złożoność czasowa \\
+\hline
+wyszukiwanie & O(1) \\
+wstawianie & O(1) \\
+usuwanie & O(1) \\
+\hline
+\end{tabular}
+\end{tabular}
 
 2. map
 
-DS : Red Black Trees
-Search : O(log n)
-Insert : O(log n)
-Delete : O(log n )
+Kontener map implementuje drzewo czerwono-czarne.
+
+\begin{tabular}{ |c|c| }
+\hline
+operacje & złożoność czasowa \\
+\hline
+wyszukiwanie & O(log n) \\
+wstawianie & O(log n) \\
+usuwanie & O(log n) \\
+\hline
+\end{tabular}
 
 3. priority_queue
 
-DS : Heap
+Kontener priority_queue implementuje kopiec.
 
-Insert : O(log n )
-Extract : O(log n )
-Top : O(1)
+\begin{tabular}{ |c|c| }
+\hline
+operacje & złożoność czasowa \\
+\hline
+wstawianie & O(log n) \\
+zdejmowanie & O(log n) \\
+wierzchołek & O(1) \\
+\hline
+\end{tabular}
 
 4. list
 
-DS : doubly LinkedList
+Kontener list implementuje listę dwukierunkową.
 
-insert (front/back) : O(1) | insert at : O(n)
-delete : O(1) | delete at : O(n)
-search : O(n)
+\begin{tabular}{ |c|c| }
+\hline
+operacje & złożoność czasowa \\
+\hline
+wstawianie & O(n) \\
+usuwanie & O(n) \\
+wyszukiwanie & O(n) \\
+\hline
+\end{tabular}
 
 5. vector
 
-DS : dynamic array
+Kontener vector implementuje tablicę dynamiczną.
 
-insert (back) : O(1)
-delete (back) : O(1)
-search : O(n)
+\begin{tabular}{ |c|c| }
+\hline
+operacje & złożoność czasowa \\
+\hline
+dostawianie na koniec & O(1) \\
+usuwanie z końca & O(1) \\
+dostawianie (ogólnie) & O(n) \\
+usuwanie (ogólnie) & O(n) \\
+wyszukiwanie & O(n) \\
+\hline
+\end{tabular}
 
 6. unordered_set
 
-DS : Hash Table
-Search : O(1)
-Insert : O(1)
-Delete : O(1)
+Struktura unordered_set implementuje tablicę mieszającą.
+
+\begin{tabular}{ |c|c| }
+\hline
+operacje & złożoność czasowa \\
+\hline
+wyszukiwanie & O(1) \\
+wstawianie & O(1) \\
+usuwanie & O(1) \\
+\hline
+\end{tabular}
 
 7. set
 
-DS : Red Black Trees
-Search : O(log n)
-Insert : O(log n)
-Delete : O(log n )
+Struktura set implementuje drzewo czerwono-czarne.
+
+\begin{tabular}{ |c|c| }
+\hline
+operacje & złożoność czasowa \\
+\hline
+wyszukiwanie & O(log n) \\
+wstawianie & O(log n) \\
+usuwanie & O(log n) \\
+\hline
+\end{tabular}
 
 ## Bibliografia
-	
-* https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md
-* http://www.doc.ic.ac.uk/~wjk/C++Intro/index.html
-* https://rules.sonarsource.com/cpp/RSPEC-5184
-* https://pythontutor.com/cpp.html#mode=edit
-* https://beej.us/guide/bgc/html/split/
-* https://beej.us/guide/bgnet/html/
-* https://beej.us/guide/bgipc/html/multi/index.html
+
+- https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md
+- http://www.doc.ic.ac.uk/~wjk/C++Intro/index.html
+- https://rules.sonarsource.com/cpp/RSPEC-5184
+- https://pythontutor.com/cpp.html#mode=edit
+- https://beej.us/guide/bgc/html/split/
+- https://beej.us/guide/bgnet/html/
+- https://beej.us/guide/bgipc/html/multi/index.html
