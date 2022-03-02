@@ -1839,45 +1839,33 @@ Kontener list implementuje listę dwukierunkową.
 
 Kontener vector implementuje tablicę dynamiczną.
 
-\begin{tabular}{ |c|c| }
-\hline
-operacje & złożoność czasowa \\
-\hline
-dostawianie na koniec & O(1) \\
-usuwanie z końca & O(1) \\
-dostawianie (ogólnie) & O(n) \\
-usuwanie (ogólnie) & O(n) \\
-wyszukiwanie & O(n) \\
-\hline
-\end{tabular}
+| operacja | złożoność czasowa |
+|---|---|
+| dostawianie na koniec | O(1) |
+| usuwanie z końca | O(1) | 
+| dostawianie (ogólnie) | O(n) | 
+| usuwanie (ogólnie) | O(n) | 
+| wyszukiwanie | O(n) | 
 
 6. unordered_set
 
 Struktura unordered_set implementuje tablicę mieszającą.
 
-\begin{tabular}{ |c|c| }
-\hline
-operacje & złożoność czasowa \\
-\hline
-wyszukiwanie & O(1) \\
-wstawianie & O(1) \\
-usuwanie & O(1) \\
-\hline
-\end{tabular}
+| operacja | złożoność czasowa |
+|---|---|
+| wyszukiwanie | O(1) |
+| wstawianie | O(1) | 
+| usuwanie | O(1) | 
 
 7. set
 
 Struktura set implementuje drzewo czerwono-czarne.
 
-\begin{tabular}{ |c|c| }
-\hline
-operacje & złożoność czasowa \\
-\hline
-wyszukiwanie & O(log n) \\
-wstawianie & O(log n) \\
-usuwanie & O(log n) \\
-\hline
-\end{tabular}
+| operacja | złożoność czasowa |
+|---|---|
+| wyszukiwanie | O(log n) |
+| wstawianie | O(log n) | 
+| usuwanie | O(log n) | 
 
 ## Bibliografia
 
