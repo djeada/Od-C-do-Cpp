@@ -1799,7 +1799,7 @@ STL (Standard Template Library) jest biblioteką, która implementuje wiele przy
 
 Kontener unordered_map implementuje tablicę mieszającą.
 
-| operacje | złożoność czasowa |
+| operacja | złożoność czasowa |
 |---|---|
 | wyszukiwanie | O(1) |
 | wstawianie | O(1) | 
@@ -1809,43 +1809,31 @@ Kontener unordered_map implementuje tablicę mieszającą.
 
 Kontener map implementuje drzewo czerwono-czarne.
 
-\begin{tabular}{ |c|c| }
-\hline
-operacje & złożoność czasowa \\
-\hline
-wyszukiwanie & O(log n) \\
-wstawianie & O(log n) \\
-usuwanie & O(log n) \\
-\hline
-\end{tabular}
+| operacja | złożoność czasowa |
+|---|---|
+| wyszukiwanie | O(log n) |
+| wstawianie | O(log n) | 
+| usuwanie | O(log n) | 
 
 3. priority_queue
 
 Kontener priority_queue implementuje kopiec.
 
-\begin{tabular}{ |c|c| }
-\hline
-operacje & złożoność czasowa \\
-\hline
-wstawianie & O(log n) \\
-zdejmowanie & O(log n) \\
-wierzchołek & O(1) \\
-\hline
-\end{tabular}
+| operacja | złożoność czasowa |
+|---|---|
+| wstawianie | O(log n) |
+| zdejmowanie | O(log n) | 
+| wierzchołek | O(1) | 
 
 4. list
 
 Kontener list implementuje listę dwukierunkową.
 
-\begin{tabular}{ |c|c| }
-\hline
-operacje & złożoność czasowa \\
-\hline
-wstawianie & O(n) \\
-usuwanie & O(n) \\
-wyszukiwanie & O(n) \\
-\hline
-\end{tabular}
+| operacja | złożoność czasowa |
+|---|---|
+| wyszukiwanie | O(n) |
+| wstawianie | O(n) | 
+| usuwanie | O(n) | 
 
 5. vector
 
