@@ -236,101 +236,101 @@
 
 % title frame
 \begin{frame}
-    \titlepage
+	\titlepage
 \end{frame}
 
 \begin{frame}
-Potrzeba korzystania z narzędzi automatyzującyc proces budowania programów. 
-
-Często zaczynając programować w C, pierwszym sposobem na kompilację, którego się uczymy jest
-wywołanie gcc wraz z odpowiednimi flagami w terminalu.
-
-\begin{lstlisting}[language=C++]
+	Potrzeba korzystania z narzędzi automatyzującyc proces budowania programów. 
+	
+	Często zaczynając programować w C, pierwszym sposobem na kompilację, którego się uczymy jest
+	wywołanie gcc wraz z odpowiednimi flagami w terminalu.
+	
+	\begin{lstlisting}[language=C++]
 \begin{verbatim}
 gcc -Wall -Wextra -Werror -o program.exe main.c
-\end{verbatim}
-\end{lstlisting}
-
-Co mamy jednak zrobić, gdy lista plików z kodem źródłowym rośnie? Co jeśli używamy innych 
-flag w dwóch projektach nad którymi pracujemy jednocześnie? Czy mamy zapisywać je w jakimś
-pliku?
-
+		\end{verbatim}
+	\end{lstlisting}
+	
+	Co mamy jednak zrobić, gdy lista plików z kodem źródłowym rośnie? Co jeśli używamy innych 
+	flag w dwóch projektach nad którymi pracujemy jednocześnie? Czy mamy zapisywać je w jakimś
+	pliku?
+	
 \end{frame}
 
 \begin{frame}
-Proces kompilacji:
-
-\begin{enumerate}
-\item preprocesor — zajmuje się dyrektywami #include, #define itp. oraz usuwa komentarze.
-\item analiza — analizuje kod i znajduje w nim błędy.
-\item kompilacja — tłumaczy c na assembler.
-\item assembler — tłumaczy assembler na pliki obiektowe.
-\item linker — łączy pliki obiektowe.
-\end{enumerate}
-
-Różne flagi kompilatora gcc, pozwalają nam zatrzymać się na danym etapie kompilacji. Przykładowo 
-uruchomienie gcc z flagą -E zatrzyma kompilator na etapie analizy. Uruchomienie gcc z flagą -S 
-zatrzyma kompilator na etapie kompilacji. Uruchomienie gcc z flagą -c zatrzyma kompilator na
-etapie linkowania. Uruchomienie gcc bez flag, przejdzie przez wszystkie etapy kompilacji.
-
+	Proces kompilacji:
+	
+	\begin{enumerate}
+		\item preprocesor — zajmuje się dyrektywami #include, #define itp. oraz usuwa komentarze.
+		\item analiza — analizuje kod i znajduje w nim błędy.
+		\item kompilacja — tłumaczy c na assembler.
+		\item assembler — tłumaczy assembler na pliki obiektowe.
+		\item linker — łączy pliki obiektowe.
+	\end{enumerate}
+	
+	Różne flagi kompilatora gcc, pozwalają nam zatrzymać się na danym etapie kompilacji. Przykładowo 
+	uruchomienie gcc z flagą -E zatrzyma kompilator na etapie analizy. Uruchomienie gcc z flagą -S 
+	zatrzyma kompilator na etapie kompilacji. Uruchomienie gcc z flagą -c zatrzyma kompilator na
+	etapie linkowania. Uruchomienie gcc bez flag, przejdzie przez wszystkie etapy kompilacji.
+	
 \end{frame}
 
 \begin{frame}
-Make to narzędzie używane do budowy projektów i kompilacji pod systemami z rodziny Unix.
-
-\begin{itemize}
-\item nie jest częścią C;
-\item przydatny w pracy z wieloma plikami źródłowymi;
-\item pozwala wybrać listę plików potrzebnych do kompilacji;
-\item ponownie kompiluje dany plik tylko, gdy zajdzie potrzeba;
-\item może być wykorzystywany do automatycznego wywoływania testów i budowy dokumentacji;
-\end{itemize}
-
-Ogólnie wygląda to tak, tworzy się plik Makefile, za pomocą którego steruje się całym procesem.
-
-\begin{lstlisting}[language=C++]
+	Make to narzędzie używane do budowy projektów i kompilacji pod systemami z rodziny Unix.
+	
+	\begin{itemize}
+		\item nie jest częścią C;
+		\item przydatny w pracy z wieloma plikami źródłowymi;
+		\item pozwala wybrać listę plików potrzebnych do kompilacji;
+		\item ponownie kompiluje dany plik tylko, gdy zajdzie potrzeba;
+		\item może być wykorzystywany do automatycznego wywoływania testów i budowy dokumentacji;
+	\end{itemize}
+	
+	Ogólnie wygląda to tak, tworzy się plik Makefile, za pomocą którego steruje się całym procesem.
+	
+	\begin{lstlisting}[language=C++]
 \begin{verbatim}
 target: dependency_1 dependency_2 ... dependency_n
 \tcommand_1
 \tcommand_2
 \t...
 \tcommand_n
-\end{verbatim}
-\end{lstlisting}
-
+		\end{verbatim}
+	\end{lstlisting}
+	
 \end{frame}
 
 \begin{frame}
-
-Prosty przykład użycia Makefile.
-
-Powiedzmy, że mamy plik źródłowy main.c i chcemy go skompilować do pliku wykonywalnego executable.
-Musimy wskazać nazwę pliku wykonywalnego oraz od jakich plików źródłowych zależy. Dodatkowo
-wybieramy sposób, w jaki jest kompilowany (np. przy użyciu gcc).
-
-\begin{lstlisting}[language=C++]
+	
+	Prosty przykład użycia Makefile.
+	
+	Powiedzmy, że mamy plik źródłowy main.c i chcemy go skompilować do pliku wykonywalnego executable.
+	Musimy wskazać nazwę pliku wykonywalnego oraz od jakich plików źródłowych zależy. Dodatkowo
+	wybieramy sposób, w jaki jest kompilowany (np. przy użyciu gcc).
+	
+	\begin{lstlisting}[language=C++]
 \begin{verbatim}
 moj_program: main.c
 \tgcc -Wall -Wextra -Werror -o executable main.c
-\end{verbatim}
-\end{lstlisting}
-
-Aby wykorzystać Makefile, musimy w otworzyć terminal w folderze, w którym znajduje się nasz
-Makefile i użyć następującego polecenia:
-
-\begin{lstlisting}[language=C++]
+		\end{verbatim}
+	\end{lstlisting}
+	
+	Aby wykorzystać Makefile, musimy w otworzyć terminal w folderze, w którym znajduje się nasz
+	Makefile i użyć następującego polecenia:
+	
+	\begin{lstlisting}[language=C++]
 \begin{verbatim}
 make moj_program
-\end{verbatim}
-\end{lstlisting}
-
+		\end{verbatim}
+	\end{lstlisting}
+	
 \end{frame}
 
 \begin{frame}
-Innymi przydatnymi funkcjami Makefile jest możliwość definiowania zmiennych oraz reguła clean,
-dzięki której możemy automatycznie usuwać pliki obiektowe po zakończeniu kompilacji.
-
-\begin{lstlisting}[language=C++]
+	Innymi przydatnymi funkcjami Makefile jest możliwość definiowania zmiennych oraz reguła clean,
+	dzięki której możemy automatycznie usuwać pliki obiektowe po zakończeniu kompilacji.
+	
+	\begin{lstlisting}[language=C++]
 \begin{verbatim}
 CC=gcc
 
@@ -347,15 +347,15 @@ plik_2.o: plik_2.c
 
 clean:
 \trm -f *.o moj_program
-\end{verbatim}
-\end{lstlisting}
-
+		\end{verbatim}
+	\end{lstlisting}
+	
 \end{frame}
 
 \begin{frame}
-Makefile, który działa prawie zawsze:
-
-\begin{lstlisting}[language=C++]
+	Makefile, który działa prawie zawsze:
+	
+	\begin{lstlisting}[language=C++]
 \begin{verbatim}
 CC=gcc
 src = $(wildcard *.c)
@@ -369,17 +369,17 @@ moj_program: $(obj)
 .PHONY: clean
 clean:
 \trm -f $(obj) moj_program
-\end{verbatim}
-\end{lstlisting}
-
-\begin{frame}
-Na co zwracać uwagę przy pisaniu plików Makefile?
-
-\begin{itemize}
-\item nigdy nie zostawiaj spacji na końcu linii;
-\item pamiętaj o tabach przed komendami;
-\end{itemize}
-
-\end{frame}
-
+		\end{verbatim}
+	\end{lstlisting}
+	
+	\begin{frame}
+		Na co zwracać uwagę przy pisaniu plików Makefile?
+		
+		\begin{itemize}
+			\item nigdy nie zostawiaj spacji na końcu linii;
+			\item pamiętaj o tabach przed komendami;
+		\end{itemize}
+		
+	\end{frame}
+	
 \end{document}
