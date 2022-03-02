@@ -236,104 +236,104 @@
 
 % title frame
 \begin{frame}
-    \titlepage
+	\titlepage
 \end{frame}
 
 \begin{frame}
-Wskaźniki:
-\begin{itemize}
-\item są najważniejszym narzędziem w C/C++ (wiele popularnych języków nie dopuszcza bezpośredniego działania na wskaźnikach);
-\item umożliwiają konstrukcje struktur danych;
-\item pozwalają na tworzenie szybkiego i wydajnego kodu;
-\item są niezbędne do dynamicznej alokacji pamięci.
-\end{itemize}
-
+	Wskaźniki:
+	\begin{itemize}
+		\item są najważniejszym narzędziem w C/C++ (wiele popularnych języków nie dopuszcza bezpośredniego działania na wskaźnikach);
+		\item umożliwiają konstrukcje struktur danych;
+		\item pozwalają na tworzenie szybkiego i wydajnego kodu;
+		\item są niezbędne do dynamicznej alokacji pamięci.
+	\end{itemize}
+	
 \end{frame}
 
 \begin{frame}[fragile]
-O co w tym chodzi?
-\center
-\begin{table}[!htb]
-\begin{minipage}{.5\linewidth}
-\begin{figure}
-
-  \includegraphics[width=0.9\linewidth]{pudlo}
-\end{figure}
-\end{minipage}%
-\begin{minipage}{.5\linewidth}
-
-\begin{lstlisting}
+	O co w tym chodzi?
+	\center
+	\begin{table}[!htb]
+		\begin{minipage}{.5\linewidth}
+			\begin{figure}
+				
+				\includegraphics[width=0.9\linewidth]{pudlo}
+			\end{figure}
+		\end{minipage}%
+		\begin{minipage}{.5\linewidth}
+			
+			\begin{lstlisting}
 int A = 139;
 int *wsk = &A;
-\end{lstlisting}
-~\\
-Zmienna - pudełko z imieniem, do którego możemy włożyć jakąś wartość (liczbę, napis, wartość logiczną).\\~\\
-Wskaźnik - zmienna, która trzyma informacje o tym gdzie w pamięci siedzi inna zmienna.
-
-\end{minipage} 
-\end{table}
-
+			\end{lstlisting}
+			~\\
+			Zmienna - pudełko z imieniem, do którego możemy włożyć jakąś wartość (liczbę, napis, wartość logiczną).\\~\\
+			Wskaźnik - zmienna, która trzyma informacje o tym gdzie w pamięci siedzi inna zmienna.
+			
+		\end{minipage} 
+	\end{table}
+	
 \end{frame}
 
 
 \begin{frame}[fragile]
-Dlaczego wskaźnik musi mieć typ?\\
-Nie wszystkie pudełka mają taki sam rozmiar.\\
-Wskaźnik umożliwa nam skoczenie do pudełka za i przed, musi więc wiedzieć jak daleko ma skoczyć.
-\begin{center}
-\begin{tabular}{ |c |c | }
- \hline
- typ & ilość miejsca \\ 
-\hline
- char & 1 \\ 
- short & 2 \\  
- int, long, float & 4 \\
- double & 8  \\
-\hline
-\end{tabular}
-~\\~\\
-\flushleft
-Jak to sprawdzić?
-\begin{lstlisting}
+	Dlaczego wskaźnik musi mieć typ?\\
+	Nie wszystkie pudełka mają taki sam rozmiar.\\
+	Wskaźnik umożliwa nam skoczenie do pudełka za i przed, musi więc wiedzieć jak daleko ma skoczyć.
+	\begin{center}
+		\begin{tabular}{ |c |c | }
+			\hline
+			typ              & ilość miejsca \\ 
+			\hline
+			char             & 1               \\ 
+			short            & 2               \\  
+			int, long, float & 4               \\
+			double           & 8               \\
+			\hline
+		\end{tabular}
+		~\\~\\
+		\flushleft
+		Jak to sprawdzić?
+		\begin{lstlisting}
 printf("%d", sizeof(short));
-\end{lstlisting}
-
-\end{center}
-
+		\end{lstlisting}
+		
+	\end{center}
+	
 \end{frame}
 
 \begin{frame}[fragile]
-Wskaźniki, a tablice
-\center
-\begin{table}[!htb]
-\begin{minipage}{.5\linewidth}
-\begin{figure}
-
-  \includegraphics[width=0.9\linewidth]{tablice}
-\end{figure}
-\end{minipage}%
-\begin{minipage}{.5\linewidth}
-
-\begin{lstlisting}
+	Wskaźniki, a tablice
+	\center
+	\begin{table}[!htb]
+		\begin{minipage}{.5\linewidth}
+			\begin{figure}
+				
+				\includegraphics[width=0.9\linewidth]{tablice}
+			\end{figure}
+		\end{minipage}%
+		\begin{minipage}{.5\linewidth}
+			
+			\begin{lstlisting}
 int *p;
 int a[3] = {2,0,5};
 p = &a[0];
 int* p2 = p + 1;
-\end{lstlisting}
-~\\
-Zmienne w tablicy przechowywane są obok siebie.\\
-Możemy przypisać wskaźnikowi adres dowolnej zmiennej w tablicy, a następnie przesunąć się do innych elementów używając dodawania lub odejmowania.\\
-Co się stanie jeśli w ten sposób wyjdziemy poza granice naszej tablicy?\\
-\end{minipage} 
-\end{table}
+			\end{lstlisting}
+			~\\
+			Zmienne w tablicy przechowywane są obok siebie.\\
+			Możemy przypisać wskaźnikowi adres dowolnej zmiennej w tablicy, a następnie przesunąć się do innych elementów używając dodawania lub odejmowania.\\
+			Co się stanie jeśli w ten sposób wyjdziemy poza granice naszej tablicy?\\
+		\end{minipage} 
+	\end{table}
 \end{frame}
 
 \begin{frame}[fragile]
-Odejmowanie wskaźników\\
-
-Różnica wskaźników to liczba półek jakie się znajdują między półkami, na które wskazują.
-
-\begin{lstlisting}
+	Odejmowanie wskaźników\\
+	
+	Różnica wskaźników to liczba półek jakie się znajdują między półkami, na które wskazują.
+	
+	\begin{lstlisting}
 int a[] = {6, 2, 10};
 int *p0 = a;
 int *p1 = a+1;
@@ -341,62 +341,56 @@ int *p2 = a+2;
 printf("p2-p0: %d\n",p2-p0); // p2-p0: 2
 printf("p2-p1: %d\n",p2-p1); // p2-p1: 1
 printf("p0-p1: %d\n",p0-p1); // p0-p1: -1
-\end{lstlisting}
-
+	\end{lstlisting}
+	
 \end{frame}
 
 \begin{frame}[fragile]
-Cyz wskaźnik może nie wskazywać na nic?\\
-Może i często chcemy żeby tak było.
-\begin{lstlisting}
+	Cyz wskaźnik może nie wskazywać na nic?\\
+	Może i często chcemy żeby tak było.
+	\begin{lstlisting}
 int *p;
 p = NULL;
-\end{lstlisting}
-
-Przypisanie wartości NULL spowoduje, że wskaźnik nie będziena nic wskazywał.\\
-Dwa pusta wskaźniki są zawsze równe, stąd przydatność do wyznaczania granic różnych struktur.
-\begin{figure}
-
-  \includegraphics[width=0.9\linewidth]{lista}
-\end{figure}
-
+	\end{lstlisting}
+	
+	Przypisanie wartości NULL spowoduje, że wskaźnik nie będziena nic wskazywał.\\
+	Dwa pusta wskaźniki są zawsze równe, stąd przydatność do wyznaczania granic różnych struktur.
+	\begin{figure}
+		\includegraphics[width=0.9\linewidth]{lista}
+	\end{figure}
 \end{frame}
 
 \begin{frame}[fragile]
-Operatory wskaźników\\
-Czyli znaczki, które cos zrobią gdy użyjemy je razem ze wskaźnikiem.\\
-\center
-\begin{tabular}{ |c |c | c |}
-\hline
- znaczek & co to robi? & przykład \\ 
-\hline
- $*$ & deklaracja wskaźnika & $int *p;$ \\ 
-\hline
- $*$ & wyłuskanie wartości na którą wskazuje & $printf(" \% d", *p);$ \\ 
-\hline
-
-$+-$ & inkrementacja \textbackslash dekremntacja & $p = p + 1;$ \\ 
-\hline
- $==, !=$ & porównanie dwóch wskaźników & $if(p == NULL)$ \\ 
-\hline
-
-\end{tabular}
-
-
+	Operatory wskaźników\\
+	Czyli znaczki, które cos zrobią gdy użyjemy je razem ze wskaźnikiem.\\
+	\center
+	\begin{tabular}{ |c |c | c |}
+		\hline
+		znaczek  & co to robi?                               & przykład              \\ 
+		\hline
+		$*$      & deklaracja wskaźnika                     & $int *p;$              \\ 
+		\hline
+		$*$      & wyłuskanie wartości na którą wskazuje & $printf(" \% d", *p);$ \\ 
+		\hline
+		
+		$+-$     & inkrementacja \textbackslash dekremntacja & $p = p + 1;$           \\ 
+		\hline
+		$==, !=$ & porównanie dwóch wskaźników           & $if(p == NULL)$        \\ 
+		\hline
+		
+	\end{tabular}
 \end{frame}
-
 
 \begin{frame}
-Czego nie należy robić ze wskaźnikami?\\
-\begin{itemize}
-\item Wskaźniki nigdy nie powinny być używane przed inicjalizacją.\\
-\item Odwoływanie się do wskaźnika do którego nie przydzielono pamięci.\\
-\item Mylenie znaczków i zamienne stosowanie wskaźników i zmiennych na które wskazują.\\
-\item Wyjechanie wskaźnikiem za tablicę.
-\end{itemize}
-
-
+	Czego nie należy robić ze wskaźnikami?\\
+	\begin{itemize}
+		\item Wskaźniki nigdy nie powinny być używane przed inicjalizacją.\\
+		\item Odwoływanie się do wskaźnika do którego nie przydzielono pamięci.\\
+		\item Mylenie znaczków i zamienne stosowanie wskaźników i zmiennych na które wskazują.\\
+		\item Wyjechanie wskaźnikiem za tablicę.
+	\end{itemize}
+	
+	
 \end{frame}
-
 
 \end{document}
