@@ -99,7 +99,7 @@ Możemy również włączyć/wyłączyć część kodu w zależności od danego 
 Ogólna zasada: <code>Typ</code> + nazwa</code>.
 
 ```c++
-int x; // zmienna x typu int
+int x;    // zmienna x typu int
 double y; // zmienna y typu double
 ```
 
@@ -132,7 +132,7 @@ double y = 3.56;
 ```c++
 int x = 10;
 x = x + 3; // teraz x przechowuje 13
-x++; // teraz x przechowuje 14
+x++;       // teraz x przechowuje 14
 ```
 
 ### Typy zmiennych
@@ -237,39 +237,27 @@ x++; // teraz x przechowuje 14
 Zmienna, której wartość nie może zostać zmieniona w trakcie trwania programu zwana jest stałą.
 
 ```c++
-const double pi = 3.14; // Ok. Stała jest zadeklarowana i zainicjalizowana.
-const double doInicjalizacji; // Źle. Tak nie robimy!
+const double pi = 3.14;       // Ok. Stala jest zadeklarowana i zainicjalizowana.
+const double doInicjalizacji; // Zle. Tak nie robimy!
 ```
 
 W nowszych wersjach C++ (11+) dodano inne słowo kluczowe służące do określania stałości. Słowo kluczowe <code>constexpr</code> wymusza na kompilatorze sprawdzenie, czy potrafi on wyliczyć  wartość na etapie kompilacji. Jeśli nie, zostanie zgłoszony błąd.
 
 ```c++
-const double pi = 3.14; // Ok. Stała jest zadeklarowana i zainicjalizowana.
-const double doInicjalizacji; // Źle. Tak nie robimy!
+constexpr double pi = 3.14;
 ```
 
 ### Zakres życia zmiennych
 
 ```c++
-int liczba = 5;
-
-if(liczba % 2 == 1){
-	int liczba = 3; // zmienna lokalna!
-
-	cout << liczba << endl;	// 3
-}
-
-cout << liczba << endl;	// 5
-```
-
-```c++
 int a = 10; // zmienna globalna
 
-int main(){
-	int a = 3; // zmienna lokalna
+int main() {
+  int a = 3; // zmienna lokalna
 
-	cout << a << endl;	// 3
-  cout << ::a << endl;	// 10
+  cout << a << endl;   // 3
+  cout << ::a << endl; // 10
+  return 0;
 }
 ```
 
@@ -292,23 +280,23 @@ Biblioteka <code>iostream</code>zawiera definicje funkcji, które pozwalają na 
 
 using namespace std;
 
-int main(){
-    int liczba;
-    cout << "Podaj pojedynczą liczbę: "<< endl;
-    cin >> liczba;
+int main() {
+  int liczba;
+  cout << "Podaj pojedyncza liczbe: " << endl;
+  cin >> liczba;
 
-    cout << "Podałeś liczbę: " << liczba << endl;
+  cout << "Podales liczbe: " << liczba << endl;
 
-    cin.ignore();  //wyczyszczenie bufora
+  cin.ignore(); // wyczyszczenie bufora
 
-    string zadanie;
-    cout << "Podaj pełne zdanie: "<< endl;
+  string zadanie;
+  cout << "Podaj pelne zdanie: " << endl;
 
-    getline(cin, zdanie);
+  getline(cin, zdanie);
 
-    cout << "Podałeś zdanie: " << endl << zdanie << endl;
+  cout << "Podales zdanie: " << endl << zdanie << endl;
 
-    return 0;
+  return 0;
 }
 ```
 
@@ -321,19 +309,19 @@ Instrukcje warunkowe służą do włączania i wyłączania fragmentów kodu w z
 <code> If </code> to podstawowa instrukcja warunkowa, dostępna w wielu językach programowania. Warunek definiowany jest w nawiasach okrągłych. Jeśli warunek jest spełniony, to wykonany zostanie kod znajdujący się w nawiasach klamrowych. W przeciwnym razie program pomija kod znajdujący się w nawiasach klamrowych i przechodzi do następnych linii kodu.
 
 ```c++
-if (warunek) {
-	kod;
-}
+  if (warunek) {
+    kod;
+  }
 ```
 
 Konstrukcja <code>if-else</code> pozwala na wykonanie różnych bloków kodu w zależności od warunku. Jeśli warunek jest spełniony, to wykonany zostanie kod znajdujący się w nawiasach klamrowych za <code>if</code>. W przeciwnym razie wykonany zostanie kod znajdujący się w nawiasach klamrowych za <code>else</code>.
 
 ```c++
-if (warunek) {
-	kod;
-} else {
-	kod;
-}
+  if (warunek) {
+    kod;
+  } else {
+    kod;
+  }
 ```
 
 Jeśli kod jaki chcemy umieścić po słowach kluczowych <code>if</code> lub <code>else</code> składa się wyłącznie z pojedynczej linii, to nawiasy klamrowe mogą zostać pominięte.
@@ -341,19 +329,17 @@ Jeśli kod jaki chcemy umieścić po słowach kluczowych <code>if</code> lub <co
 ```c++
 #include <iostream>
 
-using namespace std;
+int main() {
+  int n;
+  std::cin >> n;
+  if (n % 3 == 0)
+    std::cout << "Liczba " << n << " jest podzielna przez 3 " << std::endl;
+  else {
+    n++;
+    std::cout << "Wczytana liczba powiekszona o 1 to: " << n << std::endl;
+  }
 
-int main(){
-	int n;
-	cin >> n;
-	if (n % 3 == 0)
-		cout << "Liczba " << n << " jest podzielna przez 3 " << endl;
-	else {
-		n++;
-		cout << "Wczytana liczba powiększona o 1 to: " << n << endl;
-	}
-
-	return 0;
+  return 0;
 }
 ```
 
@@ -364,37 +350,35 @@ Możemy sprawdzić wiele warunków jeden po drugim i uzleżnić od ich spełnien
 ```c++
 #include <iostream>
 
-using namespace std;
+int main() {
+  int n;
+  std::cout << "Podaj numer dnia tygodnia: " << std::endl;
+  std::cin >> n;
 
-int main(){
-	int n;
-	cout << "Podaj numer dnia tygodnia: " << endl;
-	cin >> n;
+  if (n == 0)
+    std::cout << "Poniedzialek." << std::endl;
 
-	if (n == 0)
-		cout << "Poniedziałek." << endl;
+  else if (n == 1)
+    std::cout << "Wtorek." << std::endl;
 
-	else if (n == 1)
-		cout << "Wtorek." << endl;
+  else if (n == 2)
+    std::cout << "Sroda. " << std::endl;
 
-	else if (n == 2)
-		cout << "Środa. " << endl;
+  else if (n == 3)
+    std::cout << "Czwartek." << std::endl;
 
-	else if (n == 3)
-		cout << "Czwartek." << endl;
+  else if (n == 4)
+    std::cout << "Piatek." << std::endl;
 
-	else if (n == 4)
-		cout << "Piątek." << endl;
+  else if (n == 5)
+    std::cout << "Sobota." << std::endl;
 
-	else if (n == 5)
-		cout << "Sobota." << endl;
+  else if (n == 6)
+    std::cout << "Niedziela." << std::endl;
+  else
+    std::cout << "Error! " << std::endl;
 
-	else if (n == 6)
-		cout << "Niedziela." << endl;
-	else
-		cout << "Error! " << endl;
-
-	return 0;
+  return 0;
 }
 ```
 
@@ -407,47 +391,45 @@ Mechanizm ten jest również niejednokrotnie uważany za bardziej elegancki.
 ```c++
 #include <iostream>
 
-using namespace std;
+int main() {
+  int n;
+  std::cout << "Podaj numer dnia tygodnia: " << std::endl;
+  std::cin >> n;
 
-int main(){
-	int n;
-	cout << "Podaj numer dnia tygodnia: " << endl;
-	cin >> n;
+  switch (n) {
+  case 0:
+    std::cout << "Poniedzialek." << std::endl;
+    break;
 
-	switch (n) {
-		case 0:
-			cout << "Poniedziałek." << endl;
-			break;
+  case 1:
+    std::cout << "Wtorek." << std::endl;
+    break;
 
-		case  1:
-			cout << "Wtorek." << endl;
-			break;
+  case 2:
+    std::cout << "Sroda. " << std::endl;
+    break;
 
-		case 2:
-			cout << "Środa. " << endl;
-			break;
+  case 3:
+    std::cout << "Czwartek." << std::endl;
+    break;
 
-		case 3:
-			cout << "Czwartek." << endl;
-			break;
+  case 4:
+    std::cout << "Piatek." << std::endl;
+    break;
 
-		case 4:
-			cout << "Piątek." << endl;
-			break;
+  case 5:
+    std::cout << "Sobota." << std::endl;
+    break;
 
-		case 5:
-			cout << "Sobota." << endl;
-			break;
+  case 6:
+    std::cout << "Niedziela." << std::endl;
+    break;
 
-		case 6:
-			cout << "Niedziela." << endl;
-			break;
+  default:
+    std::cout << "Error! " << std::endl;
+  }
 
-		default:
-			cout << "Error! " << endl;
-	}
-
-	return 0;
+  return 0;
 }
 ```
 
@@ -458,9 +440,9 @@ int main(){
 Po słowie kluczowym <code>for</code> w nawiasach okrągłych mamy do dyspozycji trzy miejsca oddzielone średnikami. Na pierwszym miejscu wstawiamy kod, który ma się wykonać przed pętlą. Najczęściej będzie to inicjalizacja licznika. Na drugim miejscu wstawiamy warunek, który będzie sprawdzany w każdej iteracji pętli. Jeśli warunek jest spełniony, to wykonany zostanie kod znajdujący się w nawiasach klamrowych za <code>for</code>. W przeciwnym razie pętla zostanie zakończona. Na trzecim miejscu wstawiamy kod, który ma się wykonać po każdej iteracji pętli.
 
 ```
-for (inicjalizaja; warunek; inkrementacja) {
-	kod;
-}
+  for (inicjalizaja; warunek; inkrementacja) {
+    kod;
+  }
 ```
 
 ### Pętla while
@@ -468,9 +450,9 @@ for (inicjalizaja; warunek; inkrementacja) {
 Pętla <code>while</code> jest podobna do pętli <code>for</code>, z tym, że nie musi mieć inicjalizacji, ani inkrementacji. Warunek jest również spradzany przed każdą iteracją pętli.
 
 ```
-while (warunek) {
-	kod;
-}
+  while (warunek) {
+    kod;
+  }
 ```
 
 ### Pętla do while
@@ -478,9 +460,9 @@ while (warunek) {
 Pętla <code>do while</code> jest niemalże identyczna jak pętla <code>while</code>, z tym, że kod wykonywany jest przed sprawdzeniem warunku. Z tej przyczyny ciało pętli będzie zawsze wykonane conajmniej raz, nawet jeśli warunek jest już na samym początku fałszywy.
 
 ```
-do {
-	kod;
-} while (warunek);
+  do {
+    kod;
+  } while (warunek);
 ```
 
 ### Continue
@@ -490,20 +472,18 @@ Słowo kluczowe <code>continue</code> pozwala przerwać aktualną iterację pęt
 ```c++
 #include <iostream>
 
-using namespace std;
+int main() {
+  int n;
+  std::cout << "Podaj liczbe: " << std::endl;
+  std::cin >> n;
 
-int main(){
-	int n;
-	cout << "Podaj liczbę: " << endl;
-	cin >> n;
+  for (int i = 0; i < n; i++) {
+    if (i % 2)
+      continue;
+    std::cout << i << std::endl;
+  }
 
-	for (int i = 0; i < n; i++) {
-		if (i % 2)
-			continue;
-		cout << i << endl;
-	}
-
-	return 0;
+  return 0;
 }
 ```
 
@@ -514,20 +494,18 @@ Podobnie jak <code>continue</code>, <code>break</code> przerywa aktualną iterac
 ```c++
 #include <iostream>
 
-using namespace std;
+int main() {
+  int n;
+  std::cout << "Podaj liczbe: " << std::endl;
+  std::cin >> n;
 
-int main(){
-	int n;
-	cout << "Podaj liczbę: " << endl;
-	cin >> n;
+  for (int i = 0; i < n; i++) {
+    if (i % 2)
+      break;
+    std::cout << i << std::endl;
+  }
 
-	for (int i = 0; i < n; i++) {
-		if (i % 2)
-			break;
-		cout << i << endl;
-	}
-
-	return 0;
+  return 0;
 }
 ```
 
@@ -536,20 +514,14 @@ int main(){
 ```c++
 #include <random>
 
-int losowa_z_przedzialu(int start, int end){
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dist(start,end);
-    return distr(gen);
+int losowa_z_przedzialu(int start, int end) {
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_real_distribution<> dist(start, end);
+  return distr(gen);
 }
 
-//Dwie opcje z równym prawdopodobieństwem
-int orzel_lub_reszka(){
-    if(randomInRange(-10001, 10000) >= 1){
-        return 1;
-    }
-    return -1;
-}
+bool orzel_lub_reszka() { return (randomInRange(-10001, 10000)); }
 ```
 
 ## Typ wyliczeniowy enum
@@ -559,32 +531,26 @@ Typ wyliczeniowy <code>enum</code> pozwala na tworzenie zmiennych, które mogą 
 ```c++
 #include <iostream>
 
-using namespace std;
+enum class Kolor { Czerwony, Zielony, Niebieski };
 
-enum class Kolor {
-	Czerwony,
-	Zielony,
-	Niebieski
-};
+int main() {
+  Kolor kolor = Color::Czerwony;
 
-int main(){
-	Kolor kolor = Color::Czerwony;
+  switch (kolor) {
+  case Color::Czerwony:
+    std::cout << "Wybrano czerwony." << std::endl;
+    break;
+  case Color::Zielony:
+    std::cout << "Wybrano zielony." << std::endl;
+    break;
+  case Color::Niebieski:
+    std::cout << "Wybrano niebieski." << std::endl;
+    break;
+  default:
+    std::cout << "Blad!" << std::endl;
+  }
 
-	switch (kolor) {
-		case Color::Czerwony:
-			cout << "Wybrano czerwony." << endl;
-			break;
-		case Color::Zielony:
-			cout << "Wybrano zielony." << endl;
-			break;
-		case Color::Niebieski:
-			cout << "Wybrano niebieski." << endl;
-			break;
-		default:
-			cout << "Blad!" << endl;
-	}
-
-	return 0;
+  return 0;
 }
 ```
 
@@ -597,53 +563,50 @@ Za pomocą funkcji możemy część kodu zamknąć pod jedną nazwą.
 Elementy składowe funkcji to:
 
 1. <code>Typ</code> zwracanej wartości.
-2. <code>Imię</code> funkcji, dzięki któremu jest rozpoznawalna.
-3. <code>Argumenty</code>, czyli zewnętrzne wartości, które chcemy użyć w funkcji i chcemy żeby zostały nam podane w momencie wywołania funkcji.
+1. <code>Imię</code> funkcji, dzięki któremu jest rozpoznawalna.
+1. <code>Argumenty</code>, czyli zewnętrzne wartości, które chcemy użyć w funkcji i chcemy żeby zostały nam podane w momencie wywołania funkcji.
+
+Ogólny schemat pracy z funkcjami:
 
 ```
-wybrany_typ nazwa_funkcji(argumenty){
-	//ciało czyli jaki kod chcemy żeby został uruchomiony po wywołaniu nazwa_funkcji
-	return wartosc_jaka_ma_zostac_zwrocona;
-
+wybrany_typ nazwa_funkcji(argumenty...) {
+  
+  ... // cialo czyli kod kotry chcemy zeby zostal uruchomiony 
+  ... // po wywolaniu nazwa_funkcji(argumenty...);
+  
+  return wartosc; // zwracamy wartosc ktora musi zgadzac sie z wybrany_typ
 }
 
-int main(){
-	wybrany_typ x = nazwa_funkcji(argumenty);
+int main() { 
+  wybrany_typ x = nazwa_funkcji(argumenty...));
+  return 0;  
 }
 ```
 
-### Deklaracja funkcji
+### Deklaracja i definicja funkcji
 
 Deklaracja funkcji to wyrażenie, które zawiera nazwę funkcji, jej argumenty oraz jej zwracany typ. Deklaracja musi pojawić się w kodzie przed wywołaniem funkcji. W przeciwnym razie kompilator wyświetli komunikat o błędzie. Definicja funkcji to deklaracja wraz z ciałem funkcji.
 
 ```c++
 #include <iostream>
 
-using namespace std;
-
 // definicja
-void fun1(){
-	cout << "fun1" << endl;
-}
+void fun1() { std::cout << "fun1" << std::endl; }
 
 // deklaracja
 void fun2();
 
 int main() {
-	fun1(); // OK
-	fun2(); // OK
-	fun3(); // ŹLE
+  fun1(); // OK
+  fun2(); // OK
+  fun3(); // ZLE
 
-	return 0;
+  return 0;
 }
 
-void fun2(){
-	cout << "fun2" << endl;
-}
+void fun2() { std::cout << "fun2" << std::endl; }
 
-void fun3(){
-	cout << "fun3" << endl;
-}
+void fun3() { std::cout << "fun3" << std::endl; }
 ```
 
 ### Funkcja zwracająca wartość
@@ -653,19 +616,15 @@ Do zwracania wartości poprzez funkcję używamy słowa kluczowego <code>return<
 ```c++
 #include <iostream>
 
-using namespace std;
-
-int suma(int x, int y){
-	return x + y;
-}
+int suma(int x, int y) { return x + y; }
 
 int main() {
-	int a = 5;
-	int b = 3;
+  int a = 5;
+  int b = 3;
 
-	cout << suma(a, b) << endl;
+  std::cout << suma(a, b) << std::endl;
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -676,17 +635,13 @@ Funkcje typu void nie zwracają żadnej wartości. Nie ma konieczności użycia 
 ```c++
 #include <iostream>
 
-using namespace std;
-
-void wypisz_imie(string s){
-	cout << s << endl;
-}
+void wypisz_imie(string s) { std::cout << s << std::endl; }
 
 int main() {
-	string imie = "Karol";
-	wypisz_imie(imie);
+  std::string imie = "Karol";
+  wypisz_imie(imie);
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -697,20 +652,16 @@ Domyślna wartość to taka, która zostanie użyta jeśli przy wywołaniu funkc
 ```c++
 #include <iostream>
 
-using namespace std;
-
-int pomnoz(int a, int b = 3){
-	return a*b;
-}
+int pomnoz(int a, int b = 3) { return a * b; }
 
 int main() {
-	int x = 2;
-	int y = 7;
+  int x = 2;
+  int y = 7;
 
-	cout << pomnoz(x, y) << endl;
-	cout << pomnoz(x) << endl;
+  std::cout << pomnoz(x, y) << std::endl; // Drugi argument ma wartosc y
+  std::cout << pomnoz(x) << std::endl;    // Drugi argument ma domyslna wartosc
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -721,18 +672,16 @@ Istnieją dwa sposoby na przekazywanie argumentów do funkcji. Pierwszy to przek
 Przykład przekazywania argumentów przez wartość:
 
 ```c++
-void pomnoz(int a, int b){
-	a = a*b;
-}
+void pomnoz(int a, int b) { a = a * b; }
 ```
 
 Przykład przekazywania argumentów przez referencję:
 
 ```c++
-void pomnoz(int &a, int &b){
-	a = a*b;
-}
+void pomnoz(int a, int b) { a = a * b; }
 ```
+
+Uwaga: przez referencję możemy przekazywać jedynie l-wartości.
 
 ## L-wartości i r-wartości
 
@@ -740,11 +689,11 @@ Niektóre wartości w C++ istnieją jedynie w obrębie jednego wyrażenia i nie 
 
 ```c++
 int main() {
-	int i = 3; // Poprawne
-	3 = i; // Niepoprawne;
-	i + 4 = 20; // Niepoprawne;
+  int i = 3;  // OK
+  3 = i;      // Zle
+  i + 4 = 20; // Zle
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -755,20 +704,26 @@ Wskaźnik to zmienna, która przechowuje adres innej zmiennej. Dodatkowo przy po
 <code>Typ_zmiennej_kt&oacute;rej_adres_przechowuje_wskaźnik \* nazwa_wskaźnika;</code>
 
 ```c++
-\\ Deklaracja
-int* p1;
-double* p2;
-string* p3;
+#include <string>
 
-int x = 4;
-double y = 3.5;
-string s = "napis";
+int main() {
+  // Deklaracja
+  int *p1;
+  double *p2;
+  string *p3;
 
-// Inicjalizacja
-// p1 = &y; // Crash. Niezgodne typy.
-p1 = &x; // OK. Typy się zgadzają
-p2 = &y;
-p3 = &s;
+  int x = 4;
+  double y = 3.5;
+  std::string s = "napis";
+
+  // Inicjalizacja
+  // p1 = &y; // Crash. Niezgodne typy.
+  p1 = &x; // OK. Typy się zgadzają
+  p2 = &y;
+  p3 = &s;
+  
+  return 0;
+}
 ```
 
 ### Dereferencja
@@ -779,33 +734,31 @@ Używane nie tylko do odczytu, ale również zmiany wartości tej zmiennej.
 <code>\*nazwa wskaźnika</code>
 
 ```c++
-#include<iostream>
-using namespace std;
+#include <iostream>
+#include <string>
 
-int main(){
-	int x = 4;
-	double y = 3.5;
-	string s = "napis";
+int main() {
+  int x = 4;
+  double y = 3.5;
+  std::string s = "napis";
 
-	int* p1 = &x;
-	double* p2 = &y;
-	string* p3 = &s;
+  int *p1 = &x;
+  double *p2 = &y;
+  std::string *p3 = &s;
 
-  	cout << "Co siedzi w zmiennych x, y, s: " << endl;
-	cout << p1* << endl;
-	cout << p2* << endl;
-	cout << p3* << endl;
+  std::cout << "Wartosc zmiennej x: " << *p1 << std::endl;
+  std::cout << "Wartosc zmiennej y: " * p2 << std::endl;
+  std::cout << "Wartosc zmiennej s: " * p3 << std::endl;
 
-  	*p1 = 7; //zmiana wartosci zmiennej x
-	*p2 = 8.123; //zmiana wartosci zmiennej y
-  	*p3 = "inny"; //zmiana wartosci zmiennej s
+  *p1 = 7;      // zmiana wartosci zmiennej x
+  *p2 = 8.123;  // zmiana wartosci zmiennej y
+  *p3 = "inny"; // zmiana wartosci zmiennej s
 
-	cout << "Co siedzi w zmiennych x, y, s: " << endl;
-	cout << p1* << endl;
-	cout << p2* << endl;
-	cout << p3* << endl;
+  std::cout << "Wartosc zmiennej x: " << *p1 << std::endl;
+  std::cout << "Wartosc zmiennej y: " * p2 << std::endl;
+  std::cout << "Wartosc zmiennej s: " * p3 << std::endl;
 
-  	return 0;
+  return 0;
 }
 ```
 
@@ -814,16 +767,13 @@ int main(){
 Operator \* pozwala również tworzyć wskaźniki przechowujące adresy innych wskaźników.
 
 ```c++
-#include<iostream>
-using namespace std;
+int main() {
+  int i = 20;
+  int *j = &i;
+  int **k = &j;
+  int ***l = &k;
 
-int main(){
-	int i = 20;
-	int* j = &i;
-	int** k = &j;
-	int*** l = &k;
-
-  	return 0;
+  return 0;
 }
 ```
 
@@ -835,13 +785,15 @@ W C, w zależności od implementacji <code>NULL</code> definiowany jest jako <co
 Z uwagi na to, że <code>NULL</code> to po prostu zero, możemy w taki sposób sprawdzić, czy wskaźnik <code>wsk</code> nie jest wskaźnikiem na <code>NULL</code>:
 
 ```c++
-if (wsk != 0) {}
+  if (wsk != 0) {
+  }
 ```
 
 Na pierwszy rzut oka nie widać jednak, czy <code>wsk</code> jest wskaźnikiem, czy zwykłą liczbą. Z tego powodu lepiej jest użyć następującej konstrukcji:
 
 ```c++
-if (wsk != NULL) {}
+  if (wsk != NULL) {
+  }
 ```
 
 C++ jest (prawie) nadzbiorem C, ale żyje własnym życie i ewoluuje w innym kierunku. <code>NULL</code> dalej istnieje w C++, ale oprócz niego mamy jeszcze jego młodszego brata <code>nullptr</code>. Pojawia się więc pytanie, po co wymyślono coś nowego, jeśli służy do tego samego co coś, co już istniało wcześniej. Otóż w C++ możemy przeciążać funkcje, tzn. definiować kilka funkcji z tą samą nazwą, ale różnymi typami parametrów.
@@ -860,14 +812,14 @@ Tak, więc jeśli piszesz kod w C++, to używaj <code>nullptr</code>.
 Podobnie jak możemy deklarować zwykłe stałe, tak samo możemy mieć stałe wskaźniki - jednak są ich dwa rodzaje. Wskaźniki na stałą wartość:
 
 ```c++
- const int *a;
- int const * a;  /* równoważnie */
+  const int *a;
+  int const *a; // rownowaznne do poprzedniego przykladu
 ```
 
 oraz stałe wskaźniki:
 
 ```c++
- int * const b;
+  int *const b;
 ```
 
 Słówko const przed typem działa jak w przypadku zwykłych stałych, tzn. nie możemy zmienić wartości wskazywanej przy pomocy wskaźnika.
@@ -875,19 +827,15 @@ Słówko const przed typem działa jak w przypadku zwykłych stałych, tzn. nie 
 W drugim przypadku słowo const jest tuż za gwiazdką oznaczającą typ wskaźnikowy, co skutkuje stworzeniem stałego wskaźnika, czyli takiego którego nie można przestawić na inny adres.
 
 ```c++
-#include <iostream>
-using namespace std;
-
 int main() {
-	int zmienna = 10;
-	const int stala = 15;
-	int * const wskaznik_na_stala = &stala;
-	int * const wskaznik_na_zmienna = &zmienna;
-	const int * const wskaznik_na_stala_wskaznik = &wskaznik_na_stala;
-	const int * const wskaznik_na_zmienna_wskaznik = &wskaznik_na_zmienna;
+  int zmienna = 10;
+  const int stala = 15;
+  int *const wskaznik_na_stala = &stala;
+  int *const wskaznik_na_zmienna = &zmienna;
+  const int *const wskaznik_na_stala_wskaznik = &wskaznik_na_stala;
+  const int *const wskaznik_na_zmienna_wskaznik = &wskaznik_na_zmienna;
 
-
-	return 0;
+  return 0;
 }
 ```
 
@@ -896,7 +844,7 @@ int main() {
 Jeśli zmienna to pudełko, to tablica to półka z pudełkami. Wszystkie pudełka na jednej półce przechowują dane tego samego typu. Do tworzenia tablic używamy nawiasów kwadratowych. Między nawiasy kwadratowe trafia liczba reprezentująca ilość elementów tablicy.
 
 ```c++
-int tab[3]; // Półka z 3 pudełkami typu int.
+int tab[3]; // Polka z 3 pudelkami typu int.
 ```
 
 W powyższym przykładzie miejsce w pamięci zostało zarezerwowane, ale pudełka są niezaincjalizowane. Co siedzi w środku? Śmieci.
@@ -917,27 +865,26 @@ Obie wersje są dopuszczalne.
 
 ```c++
 #include <iostream>
-using namespace std;
 
 const int n = 10;
 
 int main() {
 
-	int a[n];
+  int a[n];
 
-	cout << "Podaj " << n << " elementów: " << endl;
+  std::cout << "Podaj " << n << " elementów: " << std::endl;
 
-	// wczytywanie
-	for (int i = 0; i < n; i++)
-		cin >> a[i];
+  // wczytywanie
+  for (int i = 0; i < n; i++)
+    std::cin >> a[i];
 
-	cout << "Twoja tablica: " << endl;
+  std::cout << "Twoja tablica: " << std::endl;
 
-	// wypisywanie
-	for (int i = 0; i < n; i++)
-		cout << a[i] << endl;
+  // wypisywanie
+  for (int i = 0; i < n; i++)
+    std::cout << a[i] << std::endl;
 
-	return 0;
+  return 0;
 }
 ```
 
