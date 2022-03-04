@@ -1091,52 +1091,70 @@ int main() {
 
 ## Napisy
 
-Napis (string) to tablica znaków. Przydatne funkcje:
+Poznaliśmy już tablice, pozwalające pod jedną nazwą przechowywać wiele elementów tego samego typu. Napisy są specjalnym typem tablicy, który przechowuje znaki (char). Jako, że praca z tekstem jest nieunikniona w programowaniu, warto zapoznać się z funkcjami często używanymi do manipulacji napisów.
 
-<table style="height: 263px; width: 546px;">
-    <tbody>
-        <tr>
-            <td style="width: 155px; text-align: center;">Funkcja</td>
-            <td style="width: 385px; text-align: center;">Działanie</td>
-        </tr>
-        <tr>
-            <td style="width: 155px;">a.size()</td>
-            <td style="width: 385px;">z ilu znak&oacute;w składa się napis<code>a</code>(długość)</td>
-        </tr>
-        <tr>
-            <td style="width: 155px;">a.clear() </td>
-            <td style="width: 385px;">wyczyść napis a</td>
-        </tr>
-        <tr>
-            <td style="width: 155px;">a.empty() </td>
-            <td style="width: 385px;">prawda jeśli napis <code>a</code> jest pusty</td>
-        </tr>
-        <tr>
-            <td style="width: 155px;">a.append("czesc")</td>
-            <td style="width: 385px;">dostaw "czesc" na koniec napisu<code>a</code></td>
-        </tr>
-        <tr>
-            <td style="width: 155px;">a.insert(0, "hej")</td>
-            <td style="width: 385px;">wstaw "hej" na pozycje 0 do napisu<code>a</code></td>
-        </tr>
-        <tr>
-            <td style="width: 155px;">a.pop_back() </td>
-            <td style="width: 385px;">ściągnij ostatni znak z napisu<code>a</code></td>
-        </tr>
-        <tr>
-            <td style="width: 155px;">a.c_str() </td>
-            <td style="width: 385px;">konwersja<code>a</code> na char *</td>
-        </tr>
-        <tr>
-            <td style="width: 155px;">a.find("lol")</td>
-            <td style="width: 385px;">na jakiej pozyji w napisie<code>a </code>znajduje się napis "lol"</td>
-        </tr>
-        <tr>
-            <td style="width: 155px;">a.compare(b)</td>
-            <td style="width: 385px;">por&oacute;wnaj napis<code>a</code> z<code>b</code></td>
-        </tr>
-    </tbody>
-</table>
+### C-string
+
+W C napisy są tablicami charów zakończonymi znakiem '\0' (null-terminator).
+
+Sposoby inicjalizacji napisów:
+
+	char* napisA = "Ala ma kota"; 	// Niemodyfikowalny napis o długości 12 znaków
+	char  napisB[] = "Ala ma kota";  // Modyfikowalny napis o długości 12 znaków
+	char  napisC[] = {'A', 'l', 'a', ' ', 'm', 'a', ' ', 'k', 'o', 't', 'a', '\0'}; // tak samo jak napisB
+
+Przydatne biblioteki:
+
+	<string.h> - zawiera funkcje do manipulacji napisami
+	<ctype.h>  - zawiera funkcje do manipulacji znakami
+	<stdlib.h>  - zawiera funkcje do konwersji między typami
+
+Przykładowe funkcje:
+
+| funkcja | działanie |
+|---|---|
+| strlen(const char *s) | zwraca długość napisu s |
+| strcpy(char *dest, const char *src) | kopiuje zawartość napisu src do napisu dest |
+| strcmp(const char *s1, const char *s2) | porównuje zawartość napisów s1 i s2 |
+| strcat(char *dest, const char *src) | łączy zawartość napisów dest i src |
+| strchr(const char *s, int c) | zwraca wskaźnik na pierwsze wystąpienie znaku c w napisie s |
+| strstr(const char *s1, const char *s2) | zwraca wskaźnik na pierwsze wystąpienie napisu s2 w napisie s1 |
+| isalpha(int c) | zwraca 1 jeśli c jest literą alfabetu, 0 w przeciwnym wypadku |
+| isdigit(int c) | zwraca 1 jeśli c jest cyfrą, 0 w przeciwnym wypadku |
+| isalnum(int c) | zwraca 1 jeśli c jest literą alfabetu lub cyfrą, 0 w przeciwnym wypadku |
+| islower(int c) | zwraca 1 jeśli c jest małą literą alfabetu, 0 w przeciwnym wypadku |
+| isupper(int c) | zwraca 1 jeśli c jest dużą literą alfabetu, 0 w przeciwnym wypadku |
+| tolower(int c) | zamienia wielką literę na małą |
+| toupper(int c) | zamienia małą literę na wielką |
+| atoi(const char *s) | konwertuje napis s na liczbę całkowitą |
+| atof(const char *s) | konwertuje napis s na liczbę zmiennoprzecinkową |
+
+### Biblioteka string
+
+W języku C++ mamy klasę string dostępną w bibliotece standardowej. Praca z obiektami tej klasy jest łatwiejsza i bezpieczniejsza niż praca z tablicami charów w C.
+
+Aby utworzyć obiekt stringa, możemy użyć konstruktor string(const char *s) lub string(const string &s).
+
+	string napisA = "Ala ma kota";
+	string napisB = napisA;
+
+Przykładowe funkcje:
+
+| funkcja | działanie |
+|---|---|
+| s.length() | zwraca długość napisu s |
+| s.c_str() | zwraca wskaźnik na napis s |
+| s.empty() | zwraca true jeśli napis s jest pusty, false w przeciwnym wypadku |
+| s.find(char c) | zwraca indeks pierwszego wystąpienia znaku c w napisie s |
+| s.find(char c, int pos) | zwraca indeks pierwszego wystąpienia znaku c w napisie s od indeksu pos |
+| s.find(string s) | zwraca indeks pierwszego wystąpienia napisu s w napisie s |
+| s.find(string s, int pos) | zwraca indeks pierwszego wystąpienia napisu s w napisie s od indeksu pos |
+| a.compare(string b) | porównuje zawartość napisów a i b |
+| a.insert(int pos, string b) | wstawia napis b w miejsce pos w napisie a |
+| a.erase(int pos, int len) | usuwa len znaków z napisu a od indeksu pos |
+| a.replace(int pos, int len, string b) | zastąpi len znaków z napisu a od indeksu pos przez napis b |
+| a.substr(int pos, int len) | zwraca podnapis napisu a od indeksu pos o długości len |
+| a.clear() | usuwa wszystkie znaki z napisu a |
 
 ## Pole bitowe
 
@@ -1550,9 +1568,57 @@ int main() {
 
 C++ daje nam możliwość definiowania nowego znaczenia różnych operatorów dla definiowanych przez nas klas. W naszym przykładzie, definiujemy operator <code>+</code> dla klasy <code>Prostokat</code>.
 
-    - operator + (Prostokat &p1, Prostokat &p2)
-    - operator + (Prostokat &p1, int a)
-    - operator + (int a, Prostokat &p1)
+    operator + (Prostokat &p1, Prostokat &p2) {
+		return Prostokat(p1.a + p2.a, p1.b + p2.b);
+	}
+    operator + (Prostokat &p1, int a) {
+		return Prostokat(p1.a + a, p1.b + a);
+	}
+    operator + (int a, Prostokat &p1) {
+		return Prostokat(a + p1.a, a + p1.b);
+	}
+
+### Pola i metody statyczne
+
+Istnieje specjalny typ pól oraz metod definiowanych w obrębie klasy, są to pola i metody statyczne. Tworzymy je umieszczając przed typem danej zmiennej lub przed typem zwracanym przez funkcję słowem kluczowym <code>static</code>. Do pól statycznych możemy się odwoływać za pomocą konstrukcji <code>\*klasa::pole</code> lub <code>klasa::pole</code>. Nie wymagają one utworzenia obiektu klasy. Wartości pól statycznych są współdzielone przez wszystkie obiekty klasy.
+
+```C++
+#include <iostream>
+
+class Prostokat {
+	static unsigned int liczbaProstokatow;
+
+	public:
+		Prostokat() {
+			liczbaProstokatow++;
+		}
+
+		static int getLiczbaProstokatow() {
+			return liczbaProstokatow;
+		}
+};
+
+unsigned int Prostokat::liczbaProstokatow = 0;
+
+int main() {
+	
+	for (int i = 0; i < 10; i++) {
+		Prostokat prostokat;
+	}
+
+	std::cout << Prostokat::getLiczbaProstokatow() << std::endl; // 10
+	return 0;
+}
+```
+
+### Funkcje zaprzyjaźnione
+
+Istnieje specjalna klasa funkcji, tak zwane funkcje zaprzyjaźnione. Są to zewnętrzne funkcje, które mają dostęp do prywatnych pól i metod klasy. Przykład dla klasy <code>Prostokat</code>:
+
+	friend void swap(Prostokat &p1, Prostokat &p2) {
+		p1.a = p2.a;
+		p1.b = p2.b;
+	}
 
 ### Struktury
 
@@ -1885,19 +1951,53 @@ Innym typem przeciążania jest przeciążanie operatorów. W C++ możemy przeci
 
 ## Lambdy
 
-Funkcje, które nie mają żadnych parametrów, można zapisać w nawiasach klamrowych. W tym przypadku funkcja nie posiada nazwy, a jest to zwykły wyrażenie.
+W C++ mamy możliwość tworzenia funkcji w obrębie innych funkcji, a nawet w momencie wywołania funkcji w samym argumencie. Takie funkcje nie mają nazw i nie muszą być uprzednio zadeklarowane. Te funkcje zwane są lambdami.
+
+Ogólna postać funkcji anonimowej jest następująca:
+
+       [ domknięcie ] ( parametry ) -> typ { ciało }
+
+W nawiasach okrągłych mamy listę parametrów, która działa tak samo jak dla zwykłych funkcji. W wielu przypadkach możemy pominąć strzałkę wraz typem zwracanym, gdyż kompilator jest w stanie wydedukować typ na etapie kompilacji.
+
+Przykład funkcji lambda przyjmującej dwa argumenty i zwracającej wartość typu int:
 
     [](int a, int b) {
     	return a + b;
     }
 
-Jeśli chcemy mieć bezpośredni dostęp do zmiennych z zewnętrznego kontekstu, możemy użyć <code>&</code> w nawiasie kwadratowym.
+Jeśli chcemy mieć bezpośredni dostęp do zmiennych z zewnętrznego kontekstu, możemy użyć <code>&</code> w nawiasie kwadratowym. Wtedy nie musimy przekazywać takich zmiennych jako argumentów funkcji, a mimo to możemy ich użyć w ciele lambdy.
+
+	int x = 10;
 
     [&](int a, int b) {
-    	return a + b;
+    	return x*(a + b);
     }
 
+Możemy lambdę przypisać do nazwy i użyć ją wielokrotnie w obrębie kontekstu, w którym została zdefiniowana.
+
+	int x = 10;
+
+	auto nazwaFunkcji = [&](int a, int b) {
+		return x*(a + b);
+	};
+
+	nazwaFunkcji(10, 10); // 200
+	nazwaFunkcji(5, 2);   // 70
+
 ## Szablony
+
+Szablony umożliwiają tworzenie klas i funkcji, bez konieczności precyzowania typów argumentów i zwracanych wartości. Przykładowo możemy mieć funkcję max2(T arg1, T arg2) zwracającą największą z dwóch wartości typu T. Pod ogólnym typem T może kryć się dowolny konkretny typ.
+
+	template <typename T>
+	T max2(T arg1, T arg2) {
+		return arg1 > arg2 ? arg1 : arg2;
+	}
+
+	max2(10, 20); // 20
+	max2(16.2, 3.14); // 16.2
+	max2('a', 'b'); // 'b'
+
+Kompilator jest w stanie wywnioskować typy argumentów na podstawie podanych wartości. Jeśli  typy argumentów będą niezgodne, kompilator zgłosi błąd. Kompilator również zgłosi błąd jeśli operacja umieszczona w ciele funkcji nie jest zdefiniowana dla typu przekazanych przez nas argumentów.
 
 ## Iteratory
 
@@ -1957,7 +2057,7 @@ int main() {
   }
   catch(std::runtime_error& e)
   {
-      std::cout << "Wyjątek: " << e.what() << std::endl;
+      std::cout << "Wyjatek: " << e.what() << std::endl;
   }
 
   std::cout << "Zycie toczy sie dalej" << std::endl;
@@ -2110,6 +2210,107 @@ Struktura set implementuje drzewo czerwono-czarne.
 | wyszukiwanie | O(log n) |
 | wstawianie | O(log n) | 
 | usuwanie | O(log n) | 
+
+## C vs Cpp
+
+* C został stworzony w 1970 roku, a C++ w 1985 roku.
+* C++ jest (niemalże) nadzbiorem C. Kompilatory C++ prawie zawsze poradzą sobie z kodem napisanym w czystym C.
+
+### Dyrektywy #include
+
+W C załączając biblioteki standardowe dodajemy rozszerzenie '.h' po nazwie biblioteki. W C++ nie musimy dodawać rozszerzeń.
+
+Przykłady załączania bibliotek w C:
+
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
+
+Przykłady załączania bibliotek w C++:
+
+	#include <iostream>
+	#include <vector>
+	#include <string>
+
+Przykłady załączania bibliotek z C w C++:
+
+	#include <cstdlib>
+	#include <cstring>
+	#include <cmath>
+
+### Słowa kluczowe
+
+Przykłady słów kluczowych wykorzystywanych zarówno w C i C++:
+
+	auto
+	break
+	case
+	char
+	const
+	continue
+	default
+	do
+	double
+	else
+	enum
+	extern
+	float
+	for
+	goto
+	if
+	int
+	long
+	register
+	return
+	short
+	signed
+	sizeof
+	static
+	struct
+	switch
+	typedef
+	union
+	unsigned
+	void
+	volatile
+	while
+
+Przykłady słów kluczowych używanych jedynie w C++:
+
+	static_cast
+	dynamic_cast
+	const_cast
+	reinterpret_cast
+	bool
+	explicit
+	namespace
+	protected
+	throw
+	using
+	catch
+	false
+	new
+	public
+	true
+	virtual
+	class
+	friend
+	operator
+	template
+	try
+	delete
+	inline
+	private
+	this
+	typename
+
+### Funkcjonalności dostępne jedynie w C++
+
+* Przeciążanie funkcji
+* Przekazywanie zmiennych przez referencję
+* Inicjalizacja zmiennych przy pomocy nawiasów okrągłych
+	int x(5);
+* Domyślne wartości dla parametrów funkcji
 
 ## Bibliografia
 
