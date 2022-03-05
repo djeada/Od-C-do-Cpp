@@ -17,7 +17,6 @@ Kod źródłowy do programów z yt.
 - [Wskaźniki](#Wskaźniki)
 - [Tablice](#Tablice)
 - [Napisy](#Napisy)
-- [Pola bitowe](#Pola-bitowe)
 - [Operacje bitowe](#Operacje-bitowe)
 - [Iteratory](#Iteratory)
 
@@ -896,23 +895,22 @@ Za pomocą wskaźników można również odwoływać się do elementów tablicy.
 
 ```c++
 #include <iostream>
-using namespace std;
 
-int suma(int* tablica, int dlugosc) {
-	int suma = 0;
+int suma(int *tablica, int dlugosc) {
+  int suma = 0;
 
-	for (int i = 0; i < dlugosc; i++)
-		suma += tablica[i];
+  for (int i = 0; i < dlugosc; i++)
+    suma += tablica[i];
 
-	return suma;
+  return suma;
 }
 
 int main() {
 
-	int tab[] = {2, 4, 8, 16, 32};
-	cout << suma(tab, 5) << endl;
+  int tab[] = {2, 4, 8, 16, 32};
+  std::cout << suma(tab, 5) << std::endl;
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -924,15 +922,15 @@ Jeśli nazwa tablicy to wskaźnik do pierwszego elementu tablicy i elementy tabl
 
 ```c++
 #include <iostream>
-using namespace std;
+
 int main() {
-	int tab[] = {1, 2, 3, 4, 5};
-	int* wsk = tab;
+  int tab[] = {1, 2, 3, 4, 5};
+  int *wsk = tab;
 
-	cout << *wsk << endl;
-	cout << *(wsk+3) << endl;
+  std::cout << *wsk << std::endl;
+  std::cout << *(wsk + 3) << std::endl;
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -944,30 +942,28 @@ Gdy tablica nie jest nam już potrzebna, zarezerwowaną uprzednio pamięć uwaln
 ```c++
 #include <iostream>
 
-using namespace std;
-
 int main() {
 
-	cout << "Podaj liczbę elemntów tablicy: " << endl;
+  std::cout << "Podaj liczbę elemntów tablicy: " << std::endl;
 
-	int n;
-	cin >> n;
+  int n;
+  std::cin >> n;
 
-	int *tab = new int[n];
+  int *tab = new int[n];
 
-	cout << "Podaj " << n << " elementów: " << endl;
+  std::cout << "Podaj " << n << " elementów: " << std::endl;
 
-	for (int i = 0; i < n; i++)
-		cin >> tab[i];
+  for (int i = 0; i < n; i++)
+    std::cin >> tab[i];
 
-	cout << "Twoja tablica: " << endl;
+  std::cout << "Twoja tablica: " << std::endl;
 
-	for (int i = 0; i < n; i++)
-		cout << tab[i] << endl;
+  for (int i = 0; i < n; i++)
+    std::cout << tab[i] << std::endl;
 
-	delete[] tab;
+  delete[] tab;
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -980,30 +976,28 @@ Tablice mogą mieć dowolną ilość wymiarów. Najczęściej będziemy jednak s
 ```c++
 #include <iostream>
 
-using namespace std;
-
-int const n = 3;
-int const m = 4;
+const unsigned int n = 3;
+const unsigned int m = 4;
 
 int main() {
 
-	int a[n][m];
+  int a[n][m];
 
-	cout << "Podaj " << n*m << " elementów: " << endl;
+  std::cout << "Podaj " << n * m << " elementów: " << std::endl;
 
-	for (int i = 0; i < n; i++)
-		for (int j = 0; j < m; j++)
-			cin >> a[i][j];
+  for (int i = 0; i < n; i++)
+    for (int j = 0; j < m; j++)
+      std::cin >> a[i][j];
 
-	cout << "Twoja tablica: " << endl;
+  std::cout << "Twoja tablica: " << std::endl;
 
-	for (int i = 0; i < n; i++){
-		for (int j = 0; j < m; j++)
-			cout << a[i][j] << " ";
-		cout << endl;
-	}
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++)
+      std::cout << a[i][j] << " ";
+    std::cout << std::endl;
+  }
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -1011,28 +1005,27 @@ Dla tablic dwuwymiarowych alokacja i dealokacja pamięci odbywa się przy pomocy
 
 ```c++
 #include <iostream>
-using namespace std;
 
 int main() {
 
-	double** macierz;
-	int wysokosc, szerokosc;
+  double **macierz;
+  int wysokosc, szerokosc;
 
-	cin >> wysokosc >> szerokosc;
+  std::cin >> wysokosc >> szerokosc;
 
-	// Alokacja
-	macierz = new (double *)[wysokosc];
+  // Alokacja
+  macierz = new (double *)[wysokosc];
 
-	for (int i = 0; i < wysokosc; i++)
-		macierz[i] = new double[szerokosc];
+  for (int i = 0; i < wysokosc; i++)
+    macierz[i] = new double[szerokosc];
 
-	// Dealokacja
-	for (int i = 0; i < wysokosc; i++)
-		delete[] macierz[i];
+  // Dealokacja
+  for (int i = 0; i < wysokosc; i++)
+    delete[] macierz[i];
 
-	delete[] macierz;
+  delete[] macierz;
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -1103,38 +1096,6 @@ Przykładowe funkcje:
 | a.substr(int pos, int len) | zwraca podnapis napisu a od indeksu pos o długości len |
 | a.clear() | usuwa wszystkie znaki z napisu a |
 
-## Pole bitowe
-
-Możemy wskazać ile dokładnie bitów chcemy zarezerwować dla danego pola struktury.
-
-```c++
-#include <iostream>
-
-using namespace std;
-
-struct Data {
-	unsigned int Rok : 13; // 2^13 = 8192
-	unsigned int Miesiac : 4; // 2^4 = 16
-	unsigned int Dzien : 5; // 2^5 = 32
-};
-
-void wypiszDate(Data d) {
-	cout << "Mamy dziś: " << endl;
-	cout << d.Dzien << "-" << d.Miesiac << "-" << d.Rok << endl;
-}
-
-int main() {
-	Data d;
-	d.Rok = 2020;
-	d.Miesiac = 7;
-	d.Dzien = 18;
-
-	wypiszDate(d);
-
-	return 0;
-}
-```
-
 ## Operacje bitowe
 
 Mamy możliwość wykonywania operacji na pojedynczych bitach.
@@ -1159,17 +1120,15 @@ Zamienia zera na jedynki i na odwrót. Operator ~.
 </table>
 
 ```c++
-#include <iostream>
 #include <bitset>
-
-using namespace std;
+#include <iostream>
 
 int main() {
-	bitset<8> x(5);
-	cout << x << endl; //00000101
-	cout << ~x << endl; //11111010
+  bitset<8> x(5);
+  std::cout << x << std::endl;  // 00000101
+  std::cout << ~x << std::endl; // 11111010
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -1206,20 +1165,18 @@ Jedynka gdy co najmniej jeden z bitów to jedynka, w przeciwnym razie zero. Oper
 </table>
 
 ```c++
-#include <iostream>
 #include <bitset>
-
-using namespace std;
+#include <iostream>
 
 int main() {
-	int a = 7;
-	int b = 5;
+  int a = 7;
+  int b = 5;
 
-	cout << bitset<8>(a) << endl; //00000111
-	cout << bitset<8>(b) << endl; //00000101
-	cout << bitset<8>(a | b) << endl; //00000111
+  std::cout << bitset<8>(a) << std::endl;     // 00000111
+  std::cout << bitset<8>(b) << std::endl;     // 00000101
+  std::cout << bitset<8>(a | b) << std::endl; // 00000111
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -1256,20 +1213,18 @@ Jedynka gdy oba bity to jedynki, w przeciwnym razie zero. Operator &.
 </table>
 
 ```c++
-#include <iostream>
 #include <bitset>
-
-using namespace std;
+#include <iostream>
 
 int main() {
-	int a = 7;
-	int b = 5;
+  int a = 7;
+  int b = 5;
 
-	cout << bitset<8>(a) << endl; //00000111
-	cout << bitset<8>(b) << endl; //00000101
-	cout << bitset<8>(a & b) << endl; //00000101
+  std::cout << bitset<8>(a) << std::endl;     // 00000111
+  std::cout << bitset<8>(b) << std::endl;     // 00000101
+  std::cout << bitset<8>(a & b) << std::endl; // 00000101
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -1306,46 +1261,42 @@ Jedynka gdy bity różne, w przeciwnym razie zero. Operator ^.
 </table>
 
 ```c++
-#include <iostream>
 #include <bitset>
-
-using namespace std;
+#include <iostream>
 
 int main() {
-	int a = 7;
-	int b = 5;
+  int a = 7;
+  int b = 5;
 
-	cout << bitset<8>(a) << endl; //00000111
-	cout << bitset<8>(b) << endl; //00000101
-	cout << bitset<8>(a ^ b) << endl; //00000010
+  std::cout << bitset<8>(a) << std::endl;     // 00000111
+  std::cout << bitset<8>(b) << std::endl;     // 00000101
+  std::cout << bitset<8>(a ^ b) << std::endl; // 00000010
 
-	return 0;
+  return 0;
 }
 ```
 
 ### Przesunięcia bitowe
 
-Bity w lewo przesuwamy za pomocą operatora <<. </br>
-Bity w prawo przesuwamy za pomocą operatora >>. </br>
+Bity w lewo przesuwamy za pomocą operatora <code><<</code>. </br>
+Bity w prawo przesuwamy za pomocą operatora <code>>></code>. </br>
 Przesunięcie w lewo o 1 bit równoważne jest podzieleniu przez 2. </br>
 Przesuniecie w prawo o 1 bit równoważne jest przemnożeniu przez 2. </br>
 
 ```c++
-#include <iostream>
 #include <bitset>
-
-using namespace std;
+#include <iostream>
 
 int main() {
-	int a = 14;
-	int b = 2;
+  int a = 14;
+  int b = 2;
 
-	cout << bitset<8>(a) << endl; //00001110
-	cout << bitset<8>(b) << endl; //00000010
-	cout << bitset<8>(a << b) << endl; //00111000
-	cout << bitset<8>(a >> b) << endl; //00000011
+  std::cout << bitset<8>(a) << std::endl;      // 00001110
+  std::cout << bitset<8>(b) << std::endl;      // 00000010
+  std::cout << bitset<8>(a << b) << std::endl; // 00111000
+  std::cout << bitset<8>(a >> b) << std::endl; // 00000011
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -1363,18 +1314,16 @@ Dlaczego?
 
 ```C++
 class Prostokat {
-	int a;
-	int b;
+  int a;
+  int b;
 
-	public:
-		Prostokat(int a, int b) {
-			this->a = a;
-			this->b = b;
-		}
+public:
+  Prostokat(int a, int b) {
+    this->a = a;
+    this->b = b;
+  }
 
-		int pole() {
-			return a * b;
-		}
+  int pole() { return a * b; }
 };
 ```
 
@@ -1389,35 +1338,35 @@ Konstruktor jest funkcją, która jest wywoływana przy tworzeniu obiektu. Konst
 
 ```C++
 class Prostoka {
-	int a;
-	int b;
+  int a;
+  int b;
 
-	public:
-		// konstruktor domyślny
-		Prostokat() {
-			a = 1;
-			b = 1;
-		}
+public:
+  // konstruktor domyślny
+  Prostokat() {
+    a = 1;
+    b = 1;
+  }
 
-		// konstruktor z parametrem
-		Prostokat(int a, int b) {
-			this->a = a;
-			this->b = b;
-		}
+  // konstruktor z parametrem
+  Prostokat(int a, int b) {
+    this->a = a;
+    this->b = b;
+  }
 
-		// konstruktor kopiujący
-		Prostokat(const Prostokat &p) {
-			a = p.a;
-			b = p.b;
-		}
+  // konstruktor kopiujący
+  Prostokat(const Prostokat &p) {
+    a = p.a;
+    b = p.b;
+  }
 
-		// konstruktor przenoszący
-		Prostokat(Prostokat &&p) {
-			a = p.a;
-			b = p.b;
-			p.a = 1;
-			p.b = 1;
-		}
+  // konstruktor przenoszący
+  Prostokat(Prostokat &&p) {
+    a = p.a;
+    b = p.b;
+    p.a = 1;
+    p.b = 1;
+  }
 };
 ```
 
@@ -1427,18 +1376,16 @@ Destruktor jest funkcją, która jest wywoływana przy usuwaniu obiektu. Destruk
 
 ```C++
 class Prostokat {
-	int a;
-	int b;
+  int a;
+  int b;
 
-	public:
-		Prostokat(int a, int b) {
-			this->a = a;
-			this->b = b;
-		}
+public:
+  Prostokat(int a, int b) {
+    this->a = a;
+    this->b = b;
+  }
 
-		~Prostokat() {
-			cout << "Destruktor" << endl;
-		}
+  ~Prostokat() { cout << "Destruktor" << endl; }
 };
 ```
 
@@ -1454,27 +1401,25 @@ Do pól i metod zdefiniowanych w sekcji <code>public</code> dostęp jest zawsze 
 
 ```C++
 class Prostokat {
-	int a;
-	int b;
+  int a;
+  int b;
 
-	public:
-		Prostokat(int a, int b) {
-			this->a = a;
-			this->b = b;
-		}
+public:
+  Prostokat(int a, int b) {
+    this->a = a;
+    this->b = b;
+  }
 
-		int pole() {
-			return a * b;
-		}
+  int pole() { return a * b; }
 };
 
 int main() {
 
-	Prostokat prostokat(2, 3);
-	auto pole = prostokat.pole(); // Ok. Mamy dostęp do pól publicznych.
-	auto a = prostokat.a; // Źle. Nie mamy dostępu do pól prywatnych.
+  Prostokat prostokat(2, 3);
+  auto pole = prostokat.pole(); // Ok. Mamy dostęp do pól publicznych.
+  auto a = prostokat.a;         // Źle. Nie mamy dostępu do pól prywatnych.
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -1486,28 +1431,22 @@ Podbnie jak tworzyliśmy wskaźniki na typy wbudowane, możemy tworzyć wskaźni
 #include <iostream>
 
 class Foo {
-	int bar;
+  int bar;
 
-	public:
-		Foo() {
-			bar = 0;
-		}
+public:
+  Foo() { bar = 0; }
 
-		void setBar(int bar) {
-			this->bar = bar;
-		}
+  void setBar(int bar) { this->bar = bar; }
 
-		int getBar() {
-			return bar;
-		}
+  int getBar() { return bar; }
 };
 
 int main() {
-	Foo foo;
-	Foo *wsk = &foo;
-	wsk->setBar(10);
-	cout << wsk->getBar() << endl;
-	return 0;
+  Foo foo;
+  Foo *wsk = &foo;
+  wsk->setBar(10);
+  std::cout << wsk->getBar() << std::endl;
+  return 0;
 }
 ```
 
@@ -1516,14 +1455,14 @@ int main() {
 C++ daje nam możliwość definiowania nowego znaczenia różnych operatorów dla definiowanych przez nas klas. W naszym przykładzie, definiujemy operator <code>+</code> dla klasy <code>Prostokat</code>.
 
     operator + (Prostokat &p1, Prostokat &p2) {
-		return Prostokat(p1.a + p2.a, p1.b + p2.b);
-	}
+      return Prostokat(p1.a + p2.a, p1.b + p2.b);
+    }
     operator + (Prostokat &p1, int a) {
-		return Prostokat(p1.a + a, p1.b + a);
-	}
+      return Prostokat(p1.a + a, p1.b + a);
+    }
     operator + (int a, Prostokat &p1) {
-		return Prostokat(a + p1.a, a + p1.b);
-	}
+      return Prostokat(a + p1.a, a + p1.b);
+    }
 
 ### Pola i metody statyczne
 
@@ -1533,28 +1472,24 @@ Istnieje specjalny typ pól oraz metod definiowanych w obrębie klasy, są to po
 #include <iostream>
 
 class Prostokat {
-	static unsigned int liczbaProstokatow;
+  static unsigned int liczbaProstokatow;
 
-	public:
-		Prostokat() {
-			liczbaProstokatow++;
-		}
+public:
+  Prostokat() { liczbaProstokatow++; }
 
-		static int getLiczbaProstokatow() {
-			return liczbaProstokatow;
-		}
+  static int getLiczbaProstokatow() { return liczbaProstokatow; }
 };
 
 unsigned int Prostokat::liczbaProstokatow = 0;
 
 int main() {
-	
-	for (int i = 0; i < 10; i++) {
-		Prostokat prostokat;
-	}
 
-	std::cout << Prostokat::getLiczbaProstokatow() << std::endl; // 10
-	return 0;
+  for (int i = 0; i < 10; i++) {
+    Prostokat prostokat;
+  }
+
+  std::cout << Prostokat::getLiczbaProstokatow() << std::endl; // 10
+  return 0;
 }
 ```
 
@@ -1562,10 +1497,10 @@ int main() {
 
 Istnieje specjalna klasa funkcji, tak zwane funkcje zaprzyjaźnione. Są to zewnętrzne funkcje, które mają dostęp do prywatnych pól i metod klasy. Przykład dla klasy <code>Prostokat</code>:
 
-	friend void swap(Prostokat &p1, Prostokat &p2) {
-		p1.a = p2.a;
-		p1.b = p2.b;
-	}
+    friend void swap(Prostokat &p1, Prostokat &p2) {
+      p1.a = p2.a;
+      p1.b = p2.b;
+    }
 
 ### Struktury
 
@@ -1575,13 +1510,13 @@ Przykład w C
 
 ```c++
 struct Foo {
-	int bar;
+  int bar;
 };
 
 int main() {
-	struct Foo foo;
-	foo.bar = 10;
-	return 0;
+  struct Foo foo;
+  foo.bar = 10;
+  return 0;
 }
 ```
 
@@ -1599,21 +1534,52 @@ Foo zmienna_foo;
 
 W C istnieje jeszcze jeden sposób tworzenia struktur
 
+
+### Pole bitowe
+
+Możemy wskazać ile dokładnie bitów chcemy zarezerwować dla danego pola struktury.
+
+```c++
+#include <iostream>
+
+struct Data {
+  unsigned int Rok : 13;    // 2^13 = 8192
+  unsigned int Miesiac : 4; // 2^4 = 16
+  unsigned int Dzien : 5;   // 2^5 = 32
+};
+
+void wypiszDate(Data d) {
+  std::cout << "Mamy dziś: " << std::endl;
+  std::cout << d.Dzien << "-" << d.Miesiac << "-" << d.Rok << std::endl;
+}
+
+int main() {
+  Data d;
+  d.Rok = 2020;
+  d.Miesiac = 7;
+  d.Dzien = 18;
+
+  wypiszDate(d);
+
+  return 0;
+}
+```
+
 ### Unie
 
 Unie to kolejny sposób reprezentacji danych w pamięci.
 
 ```c++
 Union {
-	int a;
-	int b;
+  int a;
+  int b;
 };
 
 int main() {
-	Union unia;
-	unia.a = 10;
-	unia.b = 20;
-	return 0;
+  Union unia;
+  unia.a = 10;
+  unia.b = 20;
+  return 0;
 }
 ```
 
@@ -1624,31 +1590,29 @@ Mogłoby się wydawać, że unie są tym samym co struktury. Różnica polega na
 Dziedziczenie to mechanizm, który pozwala na tworzenie nowych klas wykorzystujących część kodu z klasy już istniejącej. Pierwotna klasa zwana jest klasą bazową (bądź rodzicem), a klasa dziedzicząca jest klasą pochodną (bądź dzieckiem). W C++ dziedziczenie jest zdefiniowane przez zapisanie klasy dziedziczącej w nawiasach klamrowych po nazwie klasy bazowej. W naszym przykładzie, klasa <code>Prostokat</code> dziedziczy po klasie <code>Figura</code>.
 
 ```c++
-	class Figura {
-		public:
-			virtual void wypisz() = 0;
-	};
+class Figura {
+public:
+  virtual void wypisz() = 0;
+};
 
-	class Prostokat : public Figura {
-		int a;
-		int b;
+class Prostokat : public Figura {
+  int a;
+  int b;
 
-		public:
-			Prostokat(int a, int b) {
-				this->a = a;
-				this->b = b;
-			}
+public:
+  Prostokat(int a, int b) {
+    this->a = a;
+    this->b = b;
+  }
 
-			void wypisz() {
-				cout << "Prostokat o boku " << a << " i boku " << b << endl;
-			}
-	};
+  void wypisz() { cout << "Prostokat o boku " << a << " i boku " << b << endl; }
+};
 
-	int main() {
-		Prostokat p(10, 20);
-		p.wypisz();
-		return 0;
-	}
+int main() {
+  Prostokat p(10, 20);
+  p.wypisz();
+  return 0;
+}
 ```
 
 ### Typy dziedziczenia
@@ -1658,9 +1622,9 @@ Dziedziczenie to mechanizm, który pozwala na tworzenie nowych klas wykorzystuj�
 DLACZEGO TAKI ISTOTNY? BO ROZWIAZUJE CODE SMELL Z IF
 
     if obiekt.type == Kaczka:
-    	obiekt.dziobaj()
+      obiekt.dziobaj()
     if obiekt.type == Pies:
-    	obiekt.skacz()
+      obiekt.skacz()
 
 Zamiast tego mamy:
 
@@ -1669,7 +1633,6 @@ Zamiast tego mamy:
 ### Metody wirtualne
 
 ### Klasy abstrakcyjne
-
 
 ## Zawansowne wskaźniki
 
@@ -1682,22 +1645,16 @@ Wskaźniki mogą wskazywać nie tylko na zmienne i obiekty, ale także na funkcj
 ```c++
 #include <iostream>
 
-void funkcja(void (*f)(int), int a) {
-	f(a);
-}
+void funkcja(void (*f)(int), int a) { f(a); }
 
-void zwieksz(int a) {
-	std::cout << a + 1 << std::endl;
-}
+void zwieksz(int a) { std::cout << a + 1 << std::endl; }
 
-void zmniejsz(int a) {
-	std::cout << a - 1 << std::endl;
-}
+void zmniejsz(int a) { std::cout << a - 1 << std::endl; }
 
 int main() {
-	funkcja(zwieksz, 10);
-	funkcja(zmniejsz, 10);
-	return 0;
+  funkcja(zwieksz, 10);
+  funkcja(zmniejsz, 10);
+  return 0;
 }
 ```
 
@@ -1709,25 +1666,25 @@ Możemy wskazywać na składowe klasy. Przykładowo jeśli mamy obiekt <code>foo
 #include <iostream>
 
 class Foo {
-	public:
-		int x;
-		int y;
+public:
+  int x;
+  int y;
 
-	Foo(int x, int y): x(x), y(y) {}
+  Foo(int x, int y) : x(x), y(y) {}
 };
 
 int main() {
-	Foo foo(10, 20);
+  Foo foo(10, 20);
 
-	// wskazniki na zwykle pola
-	int *x = &foo.x;
-	int *y = &foo.y;
-	*x = 100;
-	*y = 200;
-	std::cout << foo.x << std::endl;
-	std::cout << foo.y << std::endl;
+  // wskazniki na zwykle pola
+  int *x = &foo.x;
+  int *y = &foo.y;
+  *x = 100;
+  *y = 200;
+  std::cout << foo.x << std::endl;
+  std::cout << foo.y << std::endl;
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -1752,7 +1709,7 @@ Dzięki niemu, mamy pewność że zarezerwowana pamięć zostanie zwolniona przy
 
 Nie oznacza to jednak, że nie ma żadnej możliwości na popełnienie błędu przy pracy z unique_ptr. Jeśli utworzymy dwa obiekty unique_ptr poprzez przekazanie do konstruktora tego samego surowego wskaźnika, to nasz program zostanie zakończony z komunikatem o double free.
 
-	int* surowyWsk = new int;
+    int *surowyWsk = new int;
 
     std::unique_ptr<int> unikalnyWsk1(surowy_wsk);
     std::unique_ptr<int> unikalnyWsk2(surowy_wsk);
@@ -1792,24 +1749,22 @@ Innym typem sprytnych wskaźników jest weak_ptr. Jest to wskaźnik, który nie 
 #include <iostream>
 #include <memory>
 
-void czy_istnieje(std::weak_ptr<int> wsk)
-{
-	if (auto tmp = wsk.lock())
-		std::cout << "Obiekt istnieje: " << *tmp << std::endl;
-	else
-		std::cout << "Obiekt nie istnieje" << std::endl;
+void czy_istnieje(std::weak_ptr<int> wsk) {
+  if (auto tmp = wsk.lock())
+    std::cout << "Obiekt istnieje: " << *tmp << std::endl;
+  else
+    std::cout << "Obiekt nie istnieje" << std::endl;
 }
 
-int main()
-{
-    std::shared_ptr<int> dzielonyWsk(new int(42));
+int main() {
+  std::shared_ptr<int> dzielonyWsk(new int(42));
 
-    std::weak_ptr<int> slabyWsk = dzielonyWsk;
-	czy_istnieje(slabyWsk);
-    dzielonyWsk.reset();
-    czy_istnieje(slabyWsk);
+  std::weak_ptr<int> slabyWsk = dzielonyWsk;
+  czy_istnieje(slabyWsk);
+  dzielonyWsk.reset();
+  czy_istnieje(slabyWsk);
 
-	return 0;		
+  return 0;
 }
 ```
 
@@ -1821,79 +1776,67 @@ Przeciążanie odnosi się do sytuacji gdzie w kodzie używamy tej samej nazwy d
 W poniższym przykładzie, mamy trzy funckje, które są rozróżnialne dla kompilatora. W zależności od tego jaki będzie typ zmiennej przekazanej do funkcji, zostanie wywołana odpowiednia funkcja.
 
 ```c++
-	#include <iostream>
+#include <iostream>
 
-	// funkcja1
-	void f(int a) {
-		std::cout << "int" << std::endl;
-	}
+// funkcja1
+void f(int a) { std::cout << "int" << std::endl; }
 
-	// funkcja2
-	void f(double a) {
-		std::cout << "double" << std::endl;
-	}
+// funkcja2
+void f(double a) { std::cout << "double" << std::endl; }
 
-	// funkcja3
-	void f(int a, double b) {
-		std::cout << "int, double" << std::endl;
-	}
+// funkcja3
+void f(int a, double b) { std::cout << "int, double" << std::endl; }
 
-	int main() {
-		int a = 10;
-		double b = 10.0;
-		f(a); // wywolana zostanie funkcja1
-		f(b); // wywolana zostanie funkcja2
-		f(a, b); // wywolana zostanie funkcja3
-		return 0;
-	}
+int main() {
+  int a = 10;
+  double b = 10.0;
+  f(a);    // wywolana zostanie funkcja1
+  f(b);    // wywolana zostanie funkcja2
+  f(a, b); // wywolana zostanie funkcja3
+  return 0;
+}
 ```
 Przy przeciążaniu funkcji należy być szczególnie ostrożnym w przypadku domyślnych wartości parametrów. Jeśli do powyższego przykładu dodalibyśmy nową funkcję o następującej definicji:
 
-	// funkcja4
-	void f(int a, double b = 10.0) {
-		std::cout << "int, double" << std::endl;
-	}
+    // funkcja4
+    void f(int a, double b = 10.0) { std::cout << "int, double" << std::endl; }
 
 To w następującym przypadku mielibyśmy konflikt z funkcjami 1 i 3:
 
-	f(10); // konflikt między funkcjami 1 i 4
-	f(10, 10.0); // konflikt między funkcjami 3 i 4
+    f(10);       // konflikt między funkcjami 1 i 4
+    f(10, 10.0); // konflikt między funkcjami 3 i 4
 
 ### Przeciążanie operatorów
 
 Innym typem przeciążania jest przeciążanie operatorów. W C++ możemy przeciążyć operator przypisania, operatora dodawania, operatora mnożenia i wiele innych. To znaczy możemy dla różnych symboli zdefiniować całkowicie nowe zachowanie.
 
 ```c++
-	class Foo {
-		public:
-			Foo() {
-				std::cout << "Konstruktor" << std::endl;
-			}
-			Foo(const Foo& foo) {
-				std::cout << "Konstruktor kopiujący" << std::endl;
-			}
-			Foo& operator=(const Foo& foo) {
-				std::cout << "Operator przypisania" << std::endl;
-				return *this;
-			}
-			Foo operator+(const Foo& foo) {
-				std::cout << "Operator dodawania" << std::endl;
-				return *this;
-			}
-			Foo operator*(const Foo& foo) {
-				std::cout << "Operator mnożenia" << std::endl;
-				return *this;
-			}
-	};
+class Foo {
+public:
+  Foo() { std::cout << "Konstruktor" << std::endl; }
+  Foo(const Foo &foo) { std::cout << "Konstruktor kopiujący" << std::endl; }
+  Foo &operator=(const Foo &foo) {
+    std::cout << "Operator przypisania" << std::endl;
+    return *this;
+  }
+  Foo operator+(const Foo &foo) {
+    std::cout << "Operator dodawania" << std::endl;
+    return *this;
+  }
+  Foo operator*(const Foo &foo) {
+    std::cout << "Operator mnożenia" << std::endl;
+    return *this;
+  }
+};
 
-	int main() {
-		Foo foo1;
-		Foo foo2;
-		foo1 = foo2;
-		foo1 + foo2;
-		foo1 * foo2;
-		return 0;
-	}
+int main() {
+  Foo foo1;
+  Foo foo2;
+  foo1 = foo2;
+  foo1 + foo2;
+  foo1 *foo2;
+  return 0;
+}
 ```
 
 ## Lambdy
@@ -1902,47 +1845,39 @@ W C++ mamy możliwość tworzenia funkcji w obrębie innych funkcji, a nawet w m
 
 Ogólna postać funkcji anonimowej jest następująca:
 
-       [ domknięcie ] ( parametry ) -> typ { ciało }
+    [domknięcie](parametry) -> typ { ciało }
 
 W nawiasach okrągłych mamy listę parametrów, która działa tak samo jak dla zwykłych funkcji. W wielu przypadkach możemy pominąć strzałkę wraz typem zwracanym, gdyż kompilator jest w stanie wydedukować typ na etapie kompilacji.
 
 Przykład funkcji lambda przyjmującej dwa argumenty i zwracającej wartość typu int:
 
-    [](int a, int b) {
-    	return a + b;
-    }
+    [](int a, int b) { return a + b; } 
 
 Jeśli chcemy mieć bezpośredni dostęp do zmiennych z zewnętrznego kontekstu, możemy użyć <code>&</code> w nawiasie kwadratowym. Wtedy nie musimy przekazywać takich zmiennych jako argumentów funkcji, a mimo to możemy ich użyć w ciele lambdy.
 
-	int x = 10;
-
-    [&](int a, int b) {
-    	return x*(a + b);
-    }
+    int x = 10;
+    [&](int a, int b) { return x * (a + b); } 
 
 Możemy lambdę przypisać do nazwy i użyć ją wielokrotnie w obrębie kontekstu, w którym została zdefiniowana.
 
-	int x = 10;
+    int x = 10;
 
-	auto nazwaFunkcji = [&](int a, int b) {
-		return x*(a + b);
-	};
+    auto nazwaFunkcji = [&](int a, int b) { return x * (a + b); };
 
-	nazwaFunkcji(10, 10); // 200
-	nazwaFunkcji(5, 2);   // 70
+    nazwaFunkcji(10, 10); // 200
+    nazwaFunkcji(5, 2);   // 70
 
 ## Szablony
 
 Szablony umożliwiają tworzenie klas i funkcji, bez konieczności precyzowania typów argumentów i zwracanych wartości. Przykładowo możemy mieć funkcję max2(T arg1, T arg2) zwracającą największą z dwóch wartości typu T. Pod ogólnym typem T może kryć się dowolny konkretny typ.
 
-	template <typename T>
-	T max2(T arg1, T arg2) {
-		return arg1 > arg2 ? arg1 : arg2;
-	}
+    template <typename T> T max2(T arg1, T arg2) {
+      return arg1 > arg2 ? arg1 : arg2;
+    }
 
-	max2(10, 20); // 20
-	max2(16.2, 3.14); // 16.2
-	max2('a', 'b'); // 'b'
+    max2(10, 20);     // 20
+    max2(16.2, 3.14); // 16.2
+    max2('a', 'b');   // 'b'
 
 Kompilator jest w stanie wywnioskować typy argumentów na podstawie podanych wartości. Jeśli  typy argumentów będą niezgodne, kompilator zgłosi błąd. Kompilator również zgłosi błąd jeśli operacja umieszczona w ciele funkcji nie jest zdefiniowana dla typu przekazanych przez nas argumentów.
 
@@ -1952,20 +1887,19 @@ Iteratory to funkcje, które pozwalają na iterowanie po obiektach. Używając i
 
 ```c++
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
 
 int main() {
-	vector<string> v;
-	v.push_back("ala");
-	v.push_back("ma");
-	v.push_back("kota");
+  vector<string> v;
+  v.push_back("ala");
+  v.push_back("ma");
+  v.push_back("kota");
 
-	for (auto it = v.begin(); it != v.end(); ++it) {
-		cout << *it << endl;
-	}
+  for (auto it = v.begin(); it != v.end(); ++it)
+    std::cout << *it << std::endl;
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -1992,19 +1926,13 @@ Istnieje możliwość obsłużenia wyjątku przy pomocy bloku try-catch. Catch m
 ```c++
 #include <iostream>
 
-void funkcja()
-{
-    throw std::runtime_error("Wyjatek");
-}
+void funkcja() { throw std::runtime_error("Wyjatek"); }
 
 int main() {
-  try
-  {
-      funkcja();
-  }
-  catch(std::runtime_error& e)
-  {
-      std::cout << "Wyjatek: " << e.what() << std::endl;
+  try {
+    funkcja();
+  } catch (std::runtime_error &e) {
+    std::cout << "Wyjatek: " << e.what() << std::endl;
   }
 
   std::cout << "Zycie toczy sie dalej" << std::endl;
@@ -2021,30 +1949,30 @@ W C nazwy funkcji używanych do pracy z plikami zaczynają się od litery <i>f</
 #include <stdio.h>
 
 int main(int argc, char **argv) {
-	FILE *plik;
+  FILE *plik;
 
-	// otwieramy plik
-	plik = fopen("plik.txt", "r");
+  // otwieramy plik
+  plik = fopen("plik.txt", "r");
 
-	// sprawdzamy, czy plik został otwarty
-	if (plik == NULL) {
-		printf("Nie udało się otworzyć pliku");
-		return 1;
-	}
+  // sprawdzamy, czy plik został otwarty
+  if (plik == NULL) {
+    printf("Nie udało się otworzyć pliku");
+    return 1;
+  }
 
-	// wczytujemy zawartość pliku
-	char znak;
-	while ((znak = fgetc(plik)) != EOF) {
-		printf("%c", znak);
-	}
+  // wczytujemy zawartość pliku
+  char znak;
+  while ((znak = fgetc(plik)) != EOF) {
+    printf("%c", znak);
+  }
 
-	// wykonujemy operacje na pliku
-	fputs("test", plik);
+  // wykonujemy operacje na pliku
+  fputs("test", plik);
 
-	// zamykamy plik
-	fclose(plik);
+  // zamykamy plik
+  fclose(plik);
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -2055,30 +1983,30 @@ W C++ możemy używać funkcji z biblioteki <code>fstream</code>, która jest ba
 #include <iostream>
 
 int main() {
-	std::ifstream plik;
+  std::ifstream plik;
 
-	// otwieramy plik
-	plik.open("plik.txt", std::ios::in);
+  // otwieramy plik
+  plik.open("plik.txt", std::ios::in);
 
-	// sprawdzamy, czy plik został otwarty
-	if (!plik.is_open()) {
-		std::cout << "Nie udało się otworzyć pliku" << std::endl;
-		return 1;
-	}
+  // sprawdzamy, czy plik został otwarty
+  if (!plik.is_open()) {
+    std::cout << "Nie udało się otworzyć pliku" << std::endl;
+    return 1;
+  }
 
-	// wczytujemy zawartość pliku
-	char znak;
-	while (plik.get(znak)) {
-		std::cout << znak;
-	}
+  // wczytujemy zawartość pliku
+  char znak;
+  while (plik.get(znak)) {
+    std::cout << znak;
+  }
 
-	// wykonujemy operacje na pliku
-	plik << "test";
+  // wykonujemy operacje na pliku
+  plik << "test";
 
-	// zamykamy plik
-	plik.close();
+  // zamykamy plik
+  plik.close();
 
-	return 0;
+  return 0;
 }
 ```
 
@@ -2169,87 +2097,87 @@ W C załączając biblioteki standardowe dodajemy rozszerzenie '.h' po nazwie bi
 
 Przykłady załączania bibliotek w C:
 
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <string.h>
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
 
 Przykłady załączania bibliotek w C++:
 
-	#include <iostream>
-	#include <vector>
-	#include <string>
+    #include <iostream>
+    #include <vector>
+    #include <string>
 
 Przykłady załączania bibliotek z C w C++:
 
-	#include <cstdlib>
-	#include <cstring>
-	#include <cmath>
+    #include <cstdlib>
+    #include <cstring>
+    #include <cmath>
 
 ### Słowa kluczowe
 
 Przykłady słów kluczowych wykorzystywanych zarówno w C i C++:
 
-	auto
-	break
-	case
-	char
-	const
-	continue
-	default
-	do
-	double
-	else
-	enum
-	extern
-	float
-	for
-	goto
-	if
-	int
-	long
-	register
-	return
-	short
-	signed
-	sizeof
-	static
-	struct
-	switch
-	typedef
-	union
-	unsigned
-	void
-	volatile
-	while
+    auto
+    break
+    case
+    char
+    const
+    continue
+    default
+    do
+    double
+    else
+    enum
+    extern
+    float
+    for
+    goto
+    if
+    int
+    long
+    register
+    return
+    short
+    signed
+    sizeof
+    static
+    struct
+    switch
+    typedef
+    union
+    unsigned
+    void
+    volatile
+    while
 
 Przykłady słów kluczowych używanych jedynie w C++:
 
-	static_cast
-	dynamic_cast
-	const_cast
-	reinterpret_cast
-	bool
-	explicit
-	namespace
-	protected
-	throw
-	using
-	catch
-	false
-	new
-	public
-	true
-	virtual
-	class
-	friend
-	operator
-	template
-	try
-	delete
-	inline
-	private
-	this
-	typename
+    static_cast
+    dynamic_cast
+    const_cast
+    reinterpret_cast
+    bool
+    explicit
+    namespace
+    protected
+    throw
+    using
+    catch
+    false
+    new
+    public
+    true
+    virtual
+    class
+    friend
+    operator
+    template
+    try
+    delete
+    inline
+    private
+    this
+    typename
 
 ### Funkcjonalności dostępne jedynie w C++
 
