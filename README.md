@@ -716,8 +716,8 @@ int main() {
   std::string s = "napis";
 
   // Inicjalizacja
-  // p1 = &y; // Crash. Niezgodne typy.
-  p1 = &x; // OK. Typy się zgadzają
+  // p1 = &y; // Zle. Niezgodne typy.
+  p1 = &x;    // OK. Typy się zgadzają
   p2 = &y;
   p3 = &s;
   
@@ -1591,50 +1591,156 @@ Dziedziczenie to mechanizm, który pozwala na tworzenie nowych klas wykorzystuj�
 
 ```c++
 class Figura {
-public:
-  virtual void wypisz() = 0;
+  std::string nazwa;
+
+  public:
+    Figura(std::string nazwa) : nazwa(nazwa) {}
+    void info() { std::cout << "Figura: " << nazwa << std::endl; }
+    virtual double obliczPole() = 0;
 };
 
 class Prostokat : public Figura {
   int a;
   int b;
 
-public:
-  Prostokat(int a, int b) {
-    this->a = a;
-    this->b = b;
-  }
-
-  void wypisz() { cout << "Prostokat o boku " << a << " i boku " << b << endl; }
-};
-
-int main() {
-  Prostokat p(10, 20);
-  p.wypisz();
-  return 0;
+  public:
+    Prostokat(int a, int b, std::string nazwa) : Figura(nazwa), a(a), b(b) {}
+    void info() {
+      Figura::info(); // wywolanie metody bazowej
+      std::cout << "Prostokat: " << a << "x" << b << std::endl;
+    }
+    double obliczPole() { return a * b; }
 }
 ```
 
+W powyższym przykładzie <code>Prostokat</code> dziedziczy wszystkie pola i metody z klasy <code>Figura</code>. Przykładowo pole <code>nazwa</code> jest zdefiniowane w klasie <code>Figura</code>, ale posiadają je również obiekty klasy <code>Prostokat</code>. Dodatkowo w klasie <code>Prostokat</code> dodaliśmy nowe pola <code>a</code> i <code>b</code>. W ten sposób klasy pochodne poszerzają funkcjonalność klas bazowych. Inną rzeczą na którą możemy zwrócić uwagę jest to, że klasa metoda <code>info()</code> w klasie <code>Prostokat</code> zmienia definicję metody <code>info()</code> z klasy bazowej, wywołując implementację bazową, a następnie dodając do niej dodatkowe informacje.
+
 ### Typy dziedziczenia
+
+Istnieją trzy podstawowe typy dziedziczenia:
+
+1. publiczne (<code>public</code>)
+2. prywatne (<code>private</code>)
+3. chronione (<code>protected</code>)
+
+W poniższej tabeli znajdują się informacje o dostępności pól oraz metod klasy bazoowej w klasie pochodnej ze względu na typ dziedziczenia:
+
+| Typ Dziedziczenia | Prywatne pola i metody | Chronione pola i metody | Publiczne pola i metody |
+| ---------------- | ---------------------- | ---------------------- | ---------------------- |
+| publiczne | tak | tak | tak |
+| chronione | nie | tak | tak (ale ich dostępność zmienia się w chronioną) |
+| prywatne | nie | tak (ale ich dostępność zmienia się w prywatną) | tak (ale ich dostępność zmienia się w prywatną) |
 
 ### Polimorfizm
 
-DLACZEGO TAKI ISTOTNY? BO ROZWIAZUJE CODE SMELL Z IF
+Polimorfizm to mechanizm umożliwiający nadawcy wysłania tej samej wiadomości do odbiorców różnych typów, bez wiedzy o konkretnym typie danego odbiorcy. Każdy odbiorca może odpowiedzieć na wiadomość we własny sposób. Odpowiedzi mogą, ale nie muszą się pokrywać. Polimorfizm jest często defniowany w kontekście dziedziczenia. Mamy klasę bazową zawierającą defnicję pewnej metody oraz klasy pochodne, każda klasa pochodna może mieć swoją własną implementację tej metody. Załóżmy teraz, że mamy kolekcję obiektów klasy bazowej, część z tych obiektów jest obiektami klas pochodnych. Wywołując tą samą metodę na każdym elemencie kolekcji, otrzymamy różne rezeltuty w zależności od dokładnego typu obiektu.
 
-    if obiekt.type == Kaczka:
-      obiekt.dziobaj()
-    if obiekt.type == Pies:
-      obiekt.skacz()
+    class A {
+      public:
+        void foo() { std::cout << "A" << std::endl; }
+    };
 
-Zamiast tego mamy:
+    class B : public A {
+      public:
+        void foo() { std::cout << "B" << std::endl; }
+    };
 
-    obiekt.przywitaj()
+    class C : public A {
+      public:
+        void foo() { std::cout << "C" << std::endl; }
+    };
+
+    std::vector<A*> obiekty { new A, new B, new C };
+
+    for (auto obiekt : obiekty)
+      obiekt->foo();
+
+Ważnym problemem rozwiązanym przez polimorfizm jest zbędne rozgałęzienie kodu w celu sprawdzenia typu obiektu. Weźmy pod uwagę poniższy przykład:
+
+    class Kaczka {
+      public:
+        void kwacz() { std::cout << "Kwaczę" << std::endl; }
+    };
+
+    class Pies {
+      public:
+        void szczekaj() { std::cout << "Szczekam" << std::endl; }
+    };
+
+    void foo(void* obiekt) {
+      if (dynamic_cast<Kaczka*>(obiekt))
+        dynamic_cast<Kaczka*>(obiekt)->kwacz();
+      else if (dynamic_cast<Pies*>(obiekt))
+        dynamic_cast<Pies*>(obiekt)->szczekaj();
+    }
+
+Dla dwóch klas takie rozgałęzienie wygląda niegroźnie. Co jednak jeśli zdecydujemy dodać nowe klasy? Co więcej w większym programie może się okazać, że podobne rozgałęzienia pojawiają się w wielu miejscach. Prostym rozwiązaniem jest zastosowanie polimorfizmu.
+
+    class Zwierze {
+      public:
+        virtual void zachowanie() = 0;
+    };
+
+    class Kaczka : public Zwierze {
+      public:
+        void zachowanie() { std::cout << "Kwaczę" << std::endl; }
+    };
+
+    class Pies : public Zwierze {
+      public:
+        void zachowanie() { std::cout << "Szczekam" << std::endl; }
+    };
+
+    void foo(Zwierze* obiekt) {
+      obiekt->zachowanie();
+    }
 
 ### Metody wirtualne
 
+Jeśli mamy wskaźnik typu klasy bazowej, wskazujący na obiekt klasy pochodnej to jeśli wywołamy przy jego pomocy metodę zdefiniowaną w obu klasach, to wywołana zostanie implementacja klasy bazowej.
+
+    class A {
+      public:
+        void foo() { std::cout << "A" << std::endl; }
+    };
+
+    class B : public A {
+      public:
+        void foo() { std::cout << "B" << std::endl; }
+    };
+
+    B b;
+    A* wsk = &b;
+    wsk->foo(); // wyswietli "A"
+
+
+Aby nie uchronić się przed tym nieoczekiwanym zachowaniem musimy użyć słowa kluczowego <code>virtual</code> przed nazwą metody w klasie bazowej.
+
+    class A {
+      public:
+        virtual void foo() { std::cout << "A" << std::endl; }
+    };
+
+    class B : public A {
+      public:
+        void foo() { std::cout << "B" << std::endl; }
+    };
+
+    B b;
+    A* wsk = &b;
+    wsk->foo(); // wyswietli "B"
+
+Uwaga: Destruktor to też funkcja. Jeśli chcemy by przy usuwaniu obiektu została wywołana implementacja destruktora w klasie pochodnej musimy użyć słowa kluczowego <code>virtual</code> przed nazwą destruktora w klasie bazowej.
+
 ### Klasy abstrakcyjne
 
-## Zawansowne wskaźniki
+W C++ istnieje możliwość tworzenia klas dla których nie ma implementacji metod. Klasa ta jest tak zwana klasą abstrakcyjną.
+
+Abstract Class *will atleast have one pure virtual function and can have data members.
+
+Pure Abstract Class is just like an interface. Only pure virtual functions can be defined here. No data members or method definition can be done here.
+
+## Zaawansowne wskaźniki
 
 Poza zwykłymi, surowymi wskaźnikami istnieją jeszcze inne, bardziej zaawansowane typy wskaźników.
 
@@ -1839,6 +1945,75 @@ int main() {
 }
 ```
 
+## Konwersje
+
+Zarówno w C, jak i w C++ istnieją mechanizmy umożliwiające konwersje wartości z jednego typu na inny.
+
+### Rzutowanie
+
+W C możemy jawnie dokonać konwersji wartości z jednego typu na inny za pomocą rzutowania. Ogólny schemat to:
+
+       (typ) wartość;
+
+Przykład:
+
+       int a = 10;
+       double b = (double)a;
+
+ W powyższym przykładzie wszystko działa jak należy. Nie ma problemu z konwersją z typu int na typ double. W wielu innych przypadkach taki zabieg może okazać się niebezpieczny. W szczególności gdy bawimy się wskaźnikami na void. Czasami musimy ich użyć, jest jedyny sposób na osiągnięcie polimorfizmu w C. Przykładowo funkcje qsort() i bsearch() pracują z wskaźnikami na void, dzięki temu możemy przekazać do nich tablice dowolnego typu. Niebezpieczeństwo pojawia się gdy chemy rzutować wskaźnik na void z powrotem na inny typ. Nic nie powstrzymuje nas przed konwersją na zły typ i nieoczekiwanymi rezultatami.
+
+        void *ptr = malloc(sizeof(int)); // zaalokowanie pamięci dla typu int
+        char *ptr2 = (char *)ptr;        // rzutowanie na inny typ
+        *ptr2 = 'a';
+        printf("%c\n", *ptr2);           // wyswietlenie znaku 'a'
+        free(ptr); 
+
+
+### Konwersja statyczna
+
+Konwersja statyczna <code>static_cast</code> jest bardzo podobna do rzutowania, z tym że jej poprawność jest sprawdzana na etapie kompilacji. Jeśli konwersja nie jest możliwa, kompilator wygeneruje błąd.
+
+        int a = 10;
+        double b = static_cast<double>(a);
+
+### Konwersja dynamiczna
+
+Konwersje dynamiczne <code>dynamic_cast</code> są bardziej ograniczone niż konwersje statyczne, a ich poprawność jest sprawdzana na etapie wykonania. Dynamicznie możemy konwertować jedynie wskaźniki i referencje do obiektów klas polimorficznych.
+
+Popularnym zastosowaniem dynamicznego rzutowania jest sprawdzenie czy dany obiekt jest instacją jednej z klas pochodnych.
+
+```c++
+#include <iostream>
+#include <vector>
+
+class A {
+  virtual void vf() {}
+};
+class B : public A {};
+class C : public A {};
+int main() {
+
+  std::vector<A *> v{new B, new C};
+
+  for (auto a : v) {
+    if (auto b = dynamic_cast<B *>(a)) {
+      std::cout << "B" << std::endl;
+    } else if (auto c = dynamic_cast<C *>(a)) {
+      std::cout << "C" << std::endl;
+    }
+  }
+  return 0;
+}
+```
+
+### Konwersja wymuszona
+
+Konwersja wymuszona <code>reinterpret_cast</code> ma dość niszowe zastosowania i nie jest zalecana. Działa jedynie dla konwersji między różnymi wskaźnikami. Jest ona używana do konwersji typów, które nie są możliwe do wykonania za pomocą konwersji statycznej lub dynamicznej. Jej poprawność nie będzie sprawdzana i sami musimy wiedzieć czy konwersja jest możliwa.
+
+    void convert(ObscureType *obscure, FamiliarType *familiar) {
+        familiar = reinterpret_cast<FamiliarType *>(obscure);
+    }
+
 ## Lambdy
 
 W C++ mamy możliwość tworzenia funkcji w obrębie innych funkcji, a nawet w momencie wywołania funkcji w samym argumencie. Takie funkcje nie mają nazw i nie muszą być uprzednio zadeklarowane. Te funkcje zwane są lambdami.
@@ -1869,7 +2044,11 @@ Możemy lambdę przypisać do nazwy i użyć ją wielokrotnie w obrębie konteks
 
 ## Szablony
 
-Szablony umożliwiają tworzenie klas i funkcji, bez konieczności precyzowania typów argumentów i zwracanych wartości. Przykładowo możemy mieć funkcję max2(T arg1, T arg2) zwracającą największą z dwóch wartości typu T. Pod ogólnym typem T może kryć się dowolny konkretny typ.
+Szablony umożliwiają tworzenie klas i funkcji, bez konieczności precyzowania typów argumentów i zwracanych wartości. 
+
+### Szablon funkcji
+
+Przykładowo możemy mieć funkcję max2(T arg1, T arg2) zwracającą największą z dwóch wartości typu T. Pod ogólnym typem T może kryć się dowolny konkretny typ.
 
     template <typename T> T max2(T arg1, T arg2) {
       return arg1 > arg2 ? arg1 : arg2;
@@ -1880,6 +2059,21 @@ Szablony umożliwiają tworzenie klas i funkcji, bez konieczności precyzowania 
     max2('a', 'b');   // 'b'
 
 Kompilator jest w stanie wywnioskować typy argumentów na podstawie podanych wartości. Jeśli  typy argumentów będą niezgodne, kompilator zgłosi błąd. Kompilator również zgłosi błąd jeśli operacja umieszczona w ciele funkcji nie jest zdefiniowana dla typu przekazanych przez nas argumentów.
+
+### Szablon klasy
+
+Podobnie jak dla funkcji, możemy mieć jedną definicję klasy i decydować o typie pól w momencie tworzenia obiektu. 
+
+    template <typename T> class Foo {
+      T x;
+
+    public:
+      Foo(T x) : x(x) {
+        std::cout << "Utworzono obiekt Foo o typie pola x: " << typeid(T).name()
+                  << std::endl;
+      }
+      T getX() { return x; }
+    };
 
 ## Iteratory
 
@@ -1954,13 +2148,13 @@ int main(int argc, char **argv) {
   // otwieramy plik
   plik = fopen("plik.txt", "r");
 
-  // sprawdzamy, czy plik został otwarty
+  // sprawdzamy, czy plik zostal otwarty
   if (plik == NULL) {
-    printf("Nie udało się otworzyć pliku");
+    printf("Nie udalo sie otworzyc pliku");
     return 1;
   }
 
-  // wczytujemy zawartość pliku
+  // wczytujemy zawartosc pliku
   char znak;
   while ((znak = fgetc(plik)) != EOF) {
     printf("%c", znak);
@@ -1988,13 +2182,13 @@ int main() {
   // otwieramy plik
   plik.open("plik.txt", std::ios::in);
 
-  // sprawdzamy, czy plik został otwarty
+  // sprawdzamy, czy plik zostal otwarty
   if (!plik.is_open()) {
-    std::cout << "Nie udało się otworzyć pliku" << std::endl;
+    std::cout << "Nie udalo sie otworzyc pliku" << std::endl;
     return 1;
   }
 
-  // wczytujemy zawartość pliku
+  // wczytujemy zawartosc pliku
   char znak;
   while (plik.get(znak)) {
     std::cout << znak;
