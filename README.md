@@ -1734,11 +1734,28 @@ Uwaga: Destruktor to też funkcja. Jeśli chcemy by przy usuwaniu obiektu zosta�
 
 ### Klasy abstrakcyjne
 
-W C++ istnieje możliwość tworzenia klas dla których nie ma implementacji metod. Klasa ta jest tak zwana klasą abstrakcyjną.
+W C++ istnieje możliwość tworzenia klas, które zawierają jedynie deklaracje metod, ale same ich nie implementują. Co więcej, mogą one definiować metody, których implementacje w klasach pochodnych jest wymagana. Takie metody zwane czysto wirtualnymi, mają specjalną składnię, mianowicie zaczynają się od słowa kluczowego <code>virtual</code>, a kończą się przyrównaniem do zera.
 
-Abstract Class *will atleast have one pure virtual function and can have data members.
+    class A {
+      public:
+        virtual void foo() = 0;
+    };
 
-Pure Abstract Class is just like an interface. Only pure virtual functions can be defined here. No data members or method definition can be done here.
+    class B : public A {
+      public:
+        void foo() { std::cout << "B" << std::endl; }
+    };
+
+    B b;
+    A* wsk = &b;
+    wsk->foo(); // wyswietli "B"
+
+W powyższym przykładzie klasa A jest klasą abstrakcyjną. Istnieje tylko jeden warunek, aby klasa była uznana za klasę abstrakcyjną. Taka klasa musi zawierać przynajmniej jedną metodę czysto wirtualną. Co zmienia konwersja metody wirtualnej na czysto wirtualną?
+
+1. Nie można utworzyć obiektu klasy abstrakcyjnej.
+1. Klasy pochodne muszą zaimplementować metodę czysto wirtualną.
+
+Klasy czysto abstrakcyjne to klasy abstrakcyjne składające się wyłącznie z metod czysto wirtualnych i nieposiadające żadnych pól.
 
 ## Zaawansowne wskaźniki
 
@@ -2075,28 +2092,6 @@ Podobnie jak dla funkcji, możemy mieć jedną definicję klasy i decydować o t
       T getX() { return x; }
     };
 
-## Iteratory
-
-Iteratory to funkcje, które pozwalają na iterowanie po obiektach. Używając iteratory możemy zmieniać wartości obiektów. Inną funkcją jest <b>konstruktor kopiujący</b>.
-
-```c++
-#include <iostream>
-#include <string>
-#include <vector>
-
-int main() {
-  vector<string> v;
-  v.push_back("ala");
-  v.push_back("ma");
-  v.push_back("kota");
-
-  for (auto it = v.begin(); it != v.end(); ++it)
-    std::cout << *it << std::endl;
-
-  return 0;
-}
-```
-
 ## Wyjątki
 
 Błąd - wszystko co uniemożliwia poprawne działanie programu.
@@ -2130,6 +2125,203 @@ int main() {
   }
 
   std::cout << "Zycie toczy sie dalej" << std::endl;
+
+  return 0;
+}
+```
+
+## STL
+
+STL (Standard Template Library) jest biblioteką, która implementuje wiele przydatnych funkcji, algorytmów i struktur danych. W skład STL wchodzą między innymi:
+
+    <vector>
+    <list>
+    <map>
+    <set>
+    <queue>
+    <stack>
+    <algorithm>
+    <iterator>
+    <memory>
+
+### Kolekcje
+
+Kolekcje to implementacje struktur danych wraz z wieloma funkcjami, przeznaczonymi do pracy z nimi.
+
+1. unordered_map
+
+Kontener unordered_map implementuje tablicę mieszającą.
+
+| operacja | złożoność czasowa |
+|---|---|
+| wyszukiwanie | O(1) |
+| wstawianie | O(1) | 
+| usuwanie | O(1) | 
+
+2. map
+
+Kontener map implementuje drzewo czerwono-czarne.
+
+| operacja | złożoność czasowa |
+|---|---|
+| wyszukiwanie | O(log n) |
+| wstawianie | O(log n) | 
+| usuwanie | O(log n) | 
+
+3. priority_queue
+
+Kontener priority_queue implementuje kopiec.
+
+| operacja | złożoność czasowa |
+|---|---|
+| wstawianie | O(log n) |
+| zdejmowanie | O(log n) | 
+| wierzchołek | O(1) | 
+
+4. list
+
+Kontener list implementuje listę dwukierunkową.
+
+| operacja | złożoność czasowa |
+|---|---|
+| wyszukiwanie | O(n) |
+| wstawianie | O(n) | 
+| usuwanie | O(n) | 
+
+5. vector
+
+Kontener vector implementuje tablicę dynamiczną.
+
+| operacja | złożoność czasowa |
+|---|---|
+| dostawianie na koniec | O(1) |
+| usuwanie z końca | O(1) | 
+| dostawianie (ogólnie) | O(n) | 
+| usuwanie (ogólnie) | O(n) | 
+| wyszukiwanie | O(n) | 
+
+6. unordered_set
+
+Struktura unordered_set implementuje tablicę mieszającą.
+
+| operacja | złożoność czasowa |
+|---|---|
+| wyszukiwanie | O(1) |
+| wstawianie | O(1) | 
+| usuwanie | O(1) | 
+
+7. set
+
+Struktura set implementuje drzewo czerwono-czarne.
+
+| operacja | złożoność czasowa |
+|---|---|
+| wyszukiwanie | O(log n) |
+| wstawianie | O(log n) | 
+| usuwanie | O(log n) | 
+
+### Iteratory
+
+Iteratory to konstrukcje, które umożliwiają jednolitą iterację po elementach kolekcji. Dzięki temu nie musimy zamiast poznawać osobne mechanizmy dla każdej kolekcji, możemy zawsze użyć iteratorów.
+
+W poniższym przykładzie wykorzystano iterator do wyświetlenia elementów wektora:
+
+```c++
+#include <iostream>
+#include <string>
+#include <vector>
+
+int main() {
+  vector<string> v;
+  v.push_back("ala");
+  v.push_back("ma");
+  v.push_back("kota");
+
+  for (auto it = v.begin(); it != v.end(); ++it)
+    std::cout << *it << std::endl;
+
+  return 0;
+}
+```
+
+Iterator do pierwszego elementu kolekcji to:
+
+    kontener.begin()
+
+Iterator do następnego elementu za ostanim to:
+
+    kontener.end()
+
+Wartość na którą wskazuje iterator <code>it</code> to:
+
+    *it
+
+Dodanie elementu poprzez iterator <code>it</code>:
+
+    it = kontener.insert(it, "ala");
+
+Usunięcie elementu poprzez iterator <code>it</code>:
+
+    it = kontener.erase(it);
+
+### Algorytmy
+
+Biblioteka <code>algorithm</code> zawiera wiele funkcji, które mogą być użyte do pracy z kolekcjami. Przyjrzymy się teraz kilku przykładom.
+
+#### sort()
+
+Dzięki funkcji <code>sort()</code> możemy posortować częściowo lub całkowicie kolekcję. Pierwszym argumentem jest iterator od którego mamy zacząć sortowanie, a drugim to iterator na którym mamy zakończyć sortowanie.
+
+```c++
+#include <vector>
+#include <algorithm>
+
+int main() {
+
+  std::vector<int> wektor{8, 3, 5, 1, 2, 4, 6, 7};
+  auto kopia = wektor;
+
+  std::sort(wektor.begin(), wektor.begin() + 3); // posortowane zostana pierwsze 3 elementy
+  std::sort(kopia.begin(), kopia.end());         // posortowane zostana wszystkie elementy
+
+  return 0;
+}
+```
+
+### find()
+
+Funkcja <code>find()</code> zwróci nam iterator odpowiadający szukanemu elementowi. Pierwszym argumentem jest iterator od którego mamy zacząć szukanie, drugim jest iterator na którym mamy zakończyć szukanie, a trzecim szukany element.
+
+```c++
+#include <vector>
+#include <algorithm>
+
+int main() {
+
+  std::vector<int> wektor{8, 3, 5, 1, 2, 4, 6, 7};
+
+  auto it = std::find(wektor.begin(), wektor.end(), 3);
+
+  if (it != wektor.end())
+    std::cout << "Znaleziono element o wartości 3" << std::endl;
+
+  return 0;
+}
+```
+
+### for_each()
+
+Jeśli chcemy jakąś operację wykonać na każdym elemencie kolekcji, możemy użyć funkcji <code>for_each()</code>. Pierwszym argumentem jest iterator od którego mamy zacząć wykonywanie operacji, drugim jest iterator na którym mamy zakończyć wykonywanie operacji, a trzecim jest funkcja, która będzie wywoływana na każdym elemencie.
+
+```c++
+#include <vector>
+#include <algorithm>
+
+int main() {
+
+  std::vector<int> wektor{8, 3, 5, 1, 2, 4, 6, 7};
+  std::for_each(wektor.begin(), wektor.end(), [](int &x) { x *= 2; });
+  // wynik: [16, 6, 10, 2, 4, 8, 12, 14]
 
   return 0;
 }
@@ -2203,82 +2395,6 @@ int main() {
   return 0;
 }
 ```
-
-## STL
-
-STL (Standard Template Library) jest biblioteką, która implementuje wiele przydatnych funkcji, algorytmów i struktur danych. Wiele innych bibliotek standardowych używa STL, np. <code>std::string</code> i <code>std::vector</code>.
-
-1. unordered_map
-
-Kontener unordered_map implementuje tablicę mieszającą.
-
-| operacja | złożoność czasowa |
-|---|---|
-| wyszukiwanie | O(1) |
-| wstawianie | O(1) | 
-| usuwanie | O(1) | 
-
-2. map
-
-Kontener map implementuje drzewo czerwono-czarne.
-
-| operacja | złożoność czasowa |
-|---|---|
-| wyszukiwanie | O(log n) |
-| wstawianie | O(log n) | 
-| usuwanie | O(log n) | 
-
-3. priority_queue
-
-Kontener priority_queue implementuje kopiec.
-
-| operacja | złożoność czasowa |
-|---|---|
-| wstawianie | O(log n) |
-| zdejmowanie | O(log n) | 
-| wierzchołek | O(1) | 
-
-4. list
-
-Kontener list implementuje listę dwukierunkową.
-
-| operacja | złożoność czasowa |
-|---|---|
-| wyszukiwanie | O(n) |
-| wstawianie | O(n) | 
-| usuwanie | O(n) | 
-
-5. vector
-
-Kontener vector implementuje tablicę dynamiczną.
-
-| operacja | złożoność czasowa |
-|---|---|
-| dostawianie na koniec | O(1) |
-| usuwanie z końca | O(1) | 
-| dostawianie (ogólnie) | O(n) | 
-| usuwanie (ogólnie) | O(n) | 
-| wyszukiwanie | O(n) | 
-
-6. unordered_set
-
-Struktura unordered_set implementuje tablicę mieszającą.
-
-| operacja | złożoność czasowa |
-|---|---|
-| wyszukiwanie | O(1) |
-| wstawianie | O(1) | 
-| usuwanie | O(1) | 
-
-7. set
-
-Struktura set implementuje drzewo czerwono-czarne.
-
-| operacja | złożoność czasowa |
-|---|---|
-| wyszukiwanie | O(log n) |
-| wstawianie | O(log n) | 
-| usuwanie | O(log n) | 
 
 ## C vs Cpp
 
@@ -2385,6 +2501,7 @@ Przykłady słów kluczowych używanych jedynie w C++:
 
 - https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md
 - http://www.doc.ic.ac.uk/~wjk/C++Intro/index.html
+- https://www.cs.fsu.edu/~myers/cop3014/
 - https://rules.sonarsource.com/cpp/RSPEC-5184
 - https://pythontutor.com/cpp.html#mode=edit
 - https://beej.us/guide/bgc/html/split/
