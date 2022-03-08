@@ -2073,11 +2073,11 @@ Możemy lambdę przypisać do nazwy i użyć ją wielokrotnie w obrębie konteks
 
 ## Szablony
 
-Szablony umożliwiają tworzenie klas i funkcji, bez konieczności precyzowania typów argumentów i zwracanych wartości. 
+Szablony umożliwiają tworzenie klas i funkcji, bez konieczności precyzowania typów argumentów i zwracanych wartości. Zamiast konkretnego typu jak char, int, czy bool, możemy użyć typu uogólnionego o dowolnej nazwie, np. T. 
 
 ### Szablon funkcji
 
-Przykładowo możemy mieć funkcję max2(T arg1, T arg2) zwracającą największą z dwóch wartości typu T. Pod ogólnym typem T może kryć się dowolny konkretny typ.
+Przykładowo możemy mieć funkcję max2(T arg1, T arg2) zwracającą największą z dwóch wartości typu T. Pod ogólnym typem T może kryć się dowolny typ dla, którego zdefiniowane jest porównanie między dwoma elementami.
 
     template <typename T> T max2(T arg1, T arg2) {
       return arg1 > arg2 ? arg1 : arg2;
