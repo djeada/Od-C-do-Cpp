@@ -2509,6 +2509,19 @@ Przykłady słów kluczowych używanych jedynie w C++:
 	int x(5);
 * Domyślne wartości dla parametrów funkcji
 
+### Dlaczego C?
+
+* Minimalny język zawierający wszystko czego potrzebujesz do napisania dowolnego programu, bez zbędnych abstrakcji.
+* Mechanizmy języka są niezależne od siebie nawzajem.
+* Mała standardowa biblioteka.
+* Napotkane problemy możesz rozwiązać sam, w taki sposób jak chcesz bez dolepiania tysiąca zewnętrznych bibliotek i frameworków.
+* Jesteś kowalem własnego losu. Masz niemalże nieograniczoną kontrolę nad pamięcią wykorzystywaną przez twój program w tym, skąd jest brana i jak jest używana.
+* Niedościgniona stabilność. Programy skompilowane w latach 80'tych działają po dziś dzień.
+
+### Dlaczego C++?
+
+* C++ jest twoim przyjacielem, jeśli chcesz używać abstrakcji niedostępnych w C.
+
 ## Bibliografia
 
 - https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md
