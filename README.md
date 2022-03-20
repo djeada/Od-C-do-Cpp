@@ -2532,3 +2532,4 @@ Przykłady słów kluczowych używanych jedynie w C++:
 - https://beej.us/guide/bgc/html/split/
 - https://beej.us/guide/bgnet/html/
 - https://beej.us/guide/bgipc/html/multi/index.html
+- https://graphics.stanford.edu/~seander/bithacks.html
