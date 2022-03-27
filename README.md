@@ -1343,10 +1343,10 @@ public:
 
 Konstruktor jest funkcją, która jest wywoływana przy tworzeniu obiektu. Konstruktor ma taką samą nazwę jak klasa i nie posiada zwracanego typu, gdyż nigdy nie zwraca wartości. Istnieje wiele typów konstruktorów:
 
-    - konstruktor domyślny (nie ma argumentów)
-    - konstruktor z parametrami (argumenty są przekazywane do konstruktora)
-    - konstruktor kopiujący (kopiuje wartości z innego obiektu)
-    - konstruktor przenoszący (kopiuje wartości z innego obiektu i ustawia pola innego obiektu na domyślne wartości)
+- konstruktor domyślny (nie ma argumentów)
+- konstruktor z parametrami (argumenty są przekazywane do konstruktora)
+- konstruktor kopiujący (kopiuje wartości z innego obiektu)
+- konstruktor przenoszący (kopiuje wartości z innego obiektu i ustawia pola innego obiektu na domyślne wartości)
 
 ```C++
 class Prostoka {
