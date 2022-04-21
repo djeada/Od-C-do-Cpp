@@ -84,7 +84,7 @@ Dyrektywy mogą być umieszczane w dowolnym miejscu programu, ale przyjęło si�
 Najczęściej spotykaną dyrektywą będzie załączenie biblioteki.
 
 ```c++
-#include <something>
+#include <biblioteka>
 ```
 
 Za pomocą dyrektyw możemy definiować stałe.
@@ -2533,3 +2533,4 @@ Przykłady słów kluczowych używanych jedynie w C++:
 - https://beej.us/guide/bgnet/html/
 - https://beej.us/guide/bgipc/html/multi/index.html
 - https://graphics.stanford.edu/~seander/bithacks.html
+- https://hackingcpp.com/index.html
