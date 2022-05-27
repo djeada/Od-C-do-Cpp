@@ -2514,8 +2514,8 @@ Przykłady słów kluczowych używanych jedynie w C++:
 * Minimalny język zawierający wszystko czego potrzebujesz do napisania dowolnego programu, bez zbędnych abstrakcji.
 * Mechanizmy języka są niezależne od siebie nawzajem.
 * Mała standardowa biblioteka.
-* Napotkane problemy możesz rozwiązać sam, w taki sposób jak chcesz bez dolepiania tysiąca zewnętrznych bibliotek i frameworków.
-* Jesteś kowalem własnego losu. Masz niemalże nieograniczoną kontrolę nad pamięcią wykorzystywaną przez twój program w tym, skąd jest brana i jak jest używana.
+* Napotkane problemy możesz zawsze rozwiązać samemu, dokładnie tak jak chcesz. Nie ma potrzeby dolepiania tysiąca zewnętrznych bibliotek i frameworków.
+* Jesteś kowalem własnego losu. Masz niemalże nieograniczoną kontrolę nad pamięcią wykorzystywaną przez twój program. Możesz zadecydować o tym, skąd pamięć jest brana i jak jest używana.
 * Niedościgniona stabilność. Programy skompilowane w latach 80'tych działają po dziś dzień.
 
 ### Dlaczego C++?
