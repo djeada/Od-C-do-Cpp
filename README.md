@@ -2535,3 +2535,4 @@ Przykłady słów kluczowych używanych jedynie w C++:
 - https://graphics.stanford.edu/~seander/bithacks.html
 - https://hackingcpp.com/index.html
 - https://web.stanford.edu/class/archive/cs/cs106b/cs106b.1226/
+- https://eel.is/c++draft/
