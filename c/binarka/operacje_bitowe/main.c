@@ -1,13 +1,20 @@
 #include <stdio.h>
 
 /*
-duzo szybsze niz operacje arytmetyczne
+Wstep:
+Operacje bitowe sa duzo szybsze niz zwykle operacje arytmetyczne.
+Uzywajac maski mozemy operowac na wielu bitach jednoczesnie.
+
+Zastosowania:
 -niskopoziomowa kontrola urzadzen
--korekcja bledow
 -kompresja danych
 -szyfrowanie
-nie mozna dzuakac na floatach
-uzywajac maski mozemy operowac na wielu bitach
+
+Uwaga: liczby sa roznej dlugosci:
+
+- 1 bit: 1b
+- 4 bity: 1010b
+- 8 bitow: 00110101b
 */
 
 long long decNaBin(int liczba) {
