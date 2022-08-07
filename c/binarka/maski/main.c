@@ -50,12 +50,12 @@ int main() {
 
   // sprawdz czy 3 (od konca) bit jest ustawiony
   int n = 3;
-  int nowaMaska = 1 << 2;
+  int nowaMaska = 1 << (n-1);
   const char* nowaMaskaNapis = decNaBin(nowaMaska);
-  const char* trzeciBitNapis =  decNaBin(flaga & nowaMaska);
-  printf("%s\n&\n%s\n=\n%s\n\n", flagaNapis, nowaMaskaNapis, trzeciBitNapis);
+  const char* statusBituNapis =  decNaBin(flaga & nowaMaska);
+  printf("%s\n&\n%s\n=\n%s\n\n", flagaNapis, nowaMaskaNapis, statusBituNapis);
   free((char*)nowaMaskaNapis);
-  free((char*)trzeciBitNapis);
+  free((char*)statusBituNapis);
 
   free((char*)flagaNapis);
   free((char*)maskaNapis);
