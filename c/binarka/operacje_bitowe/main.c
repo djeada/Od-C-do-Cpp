@@ -47,16 +47,16 @@ int main() {
 
   // negacja bitowa
   printf("~%lld = %lld \n", binA, decNaBin(~decA));
-  
+
   // przesuniecie bitowe w lewo o 2 miejsca
   printf("%lld << 2 = %lld \n", binA, decNaBin(decA << 2));
 
   // AND
   printf("%lld & %lld = %lld \n", binA, binB, decNaBin(decA & decB));
-  
+
   // OR
   printf("%lld | %lld = %lld \n", binA, binB, decNaBin(decA | decB));
-  
+
   // XOR
   printf("%lld ^ %lld = %lld \n", binA, binB, decNaBin(decA ^ decB));
 
