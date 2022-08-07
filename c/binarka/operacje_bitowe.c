@@ -4,7 +4,6 @@
 duzo szybsze niz operacje arytmetyczne
 -niskopoziomowa kontrola urzadzen
 -korekcja bledow
--algorytmy korekcji
 -kompresja danych
 -szyfrowanie
 nie mozna dzuakac na floatach
@@ -39,11 +38,19 @@ int main() {
   printf("%d w systemie binarnym to %lld \n", decA, binA);
   printf("%d w systemie binarnym to %lld \n", decB, binB);
 
+  // negacja bitowa
   printf("~%lld = %lld \n", binA, decNaBin(~decA));
+  
+  // przesuniecie bitowe w lewo o 2 miejsca
   printf("%lld << 2 = %lld \n", binA, decNaBin(decA << 2));
 
+  // AND
   printf("%lld & %lld = %lld \n", binA, binB, decNaBin(decA & decB));
+  
+  // OR
   printf("%lld | %lld = %lld \n", binA, binB, decNaBin(decA | decB));
+  
+  // XOR
   printf("%lld ^ %lld = %lld \n", binA, binB, decNaBin(decA ^ decB));
 
   return 0;
