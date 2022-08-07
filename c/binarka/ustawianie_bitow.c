@@ -28,7 +28,7 @@ int main() {
   printf("Podaj pozycje bitu, ktory chcesz sprawdzic: \n");
   scanf("%d", &pozycja);
 
-  // Check if bit on position pozycja is 1 or 0
+  // sprawdz czy bit jest ustawiony
   int statusBitu = (liczba >> pozycja) & 1;
   printf("Bit na pozycji %d w liczbie %lld to %d \n", pozycja, bin, statusBitu);
 
