@@ -1544,9 +1544,9 @@ Istnieje specjalna klasa funkcji, tak zwane funkcje zaprzyjaźnione. Są to zewn
 
 Struktura jest protoplastą klasy. W C struktury pozwalają na łączenie pod jedną nazwą danych różnego typu. W C nie ma jednak możliwości definiowania funkcji w obrębie struktury. C++ zmienia znaczenie struktur. W C++ struktury i klasy są dokładnie tym samym, z wyjątkiem tego, że domyślnie wszystkie pola struktur są publiczne, a pola klas prywatne.
 
-Przykład w C
+Przykład w C:
 
-```c++
+```C
 struct Foo {
   int bar;
 };
@@ -1560,7 +1560,7 @@ int main() {
 
 W C nazwy struktur żyją we własnej przestrzeni nazw. Zmienną tego typu tworzymy, podając jako jej typ słowo kluczowe <code>struct</code>, nazwę struktury oraz nazwę zmiennej.
 
-```c++
+```C
 struct Foo zmienna_foo;
 ```
 
@@ -1569,9 +1569,6 @@ W C++ możemy dalej używać tej składni, ale nie jest to konieczne. Możemy po
 ```c++
 Foo zmienna_foo;
 ```
-
-W C istnieje jeszcze jeden sposób tworzenia struktur
-
 
 ### Pole bitowe
 
@@ -1608,15 +1605,21 @@ int main() {
 Unie to kolejny sposób reprezentacji danych w pamięci.
 
 ```c++
-Union {
+#include <iostream>
+
+union Przyklad {
   int a;
   int b;
 };
 
 int main() {
-  Union unia;
+  Przyklad unia;
   unia.a = 10;
   unia.b = 20;
+
+  std::cout << unia.a << std::endl; // 20
+  std::cout << unia.b << std::endl; // 20
+
   return 0;
 }
 ```
