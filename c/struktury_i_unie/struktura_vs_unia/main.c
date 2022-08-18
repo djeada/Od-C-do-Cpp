@@ -24,14 +24,13 @@ int main() {
     printf("\n");
   
     // porownaj rozmiar struktury i unii
-    printf("Rozmiar struktury Foo: %lu\n", sizeof(foo));
-    printf("Rozmiar unii Bar: %lu\n", sizeof(bar));
+    printf("Rozmiar struktury foo: %lu\n", sizeof(foo));
+    printf("Rozmiar unii bar: %lu\n", sizeof(bar));
     printf("\n");
 
     // pokaz adres pol w strukturze oraz w unii
-    printf("Adres pola liczba oraz pola znak w strukturze Foo: %p %p\n", &foo.liczba, &foo.znak);
-    printf("Adres pola liczba oraz pola znak w unii Bar: %p %p\n", &bar.liczba, &bar.znak);
-     printf("\n");
+    printf("Adres pola liczba oraz pola znak w strukturze foo:\n%p\n%p\n\n", &foo.liczba, &foo.znak);
+    printf("Adres pola liczba oraz pola znak w unii bar:\n%p\n%p\n", &bar.liczba, &bar.znak);
 
     return 0;
 }
