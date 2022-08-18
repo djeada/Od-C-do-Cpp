@@ -1542,7 +1542,7 @@ Istnieje specjalna klasa funkcji, tak zwane funkcje zaprzyjaźnione. Są to zewn
 
 ### Struktury
 
-Struktura jest protoplastą klasy. W C struktury pozwalają na łączenie pod jedną nazwą danych różnego typu. W C nie ma jednak możliwości definiowania funkcji w obrębie struktury. C++ zmienia znaczenie struktur. W C++ struktury i klasy są dokładnie tym samym, z wyjątkiem tego, że domyślnie wszystkie pola struktur są publiczne, a pola klas prywatne.
+Struktura jest protoplastą klasy. W C struktury pozwalają na łączenie pod jedną nazwą danych różnego typu. W C nie ma jednak możliwości definiowania funkcji w obrębie struktury. C++ zmienia znaczenie tego pojęcia. W C++ struktury i klasy są dokładnie tym samym, z wyjątkiem tego, że domyślnie wszystkie pola struktur są publiczne, a pola klas prywatne (mamy więc możliwość definiowania metod).
 
 Przykład w C:
 
@@ -1561,13 +1561,13 @@ int main() {
 W C nazwy struktur żyją we własnej przestrzeni nazw. Zmienną tego typu tworzymy, podając jako jej typ słowo kluczowe <code>struct</code>, nazwę struktury oraz nazwę zmiennej.
 
 ```C
-struct Foo zmienna_foo;
+struct Foo obiekt_foo;
 ```
 
 W C++ możemy dalej używać tej składni, ale nie jest to konieczne. Możemy po prostu napisać:
 
 ```c++
-Foo zmienna_foo;
+Foo obiekt_foo;
 ```
 
 ### Pole bitowe
