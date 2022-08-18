@@ -1,4 +1,4 @@
-#include <stdio.h>de
+#include <stdio.h>
 
 union Ocena {
   char litera;
