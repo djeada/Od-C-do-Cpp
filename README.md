@@ -2,7 +2,7 @@
 
 Kod źródłowy do programów z yt.
 
-![Screenshot from 2022-08-22 11-41-50](https://user-images.githubusercontent.com/37275728/185891430-7f77914e-f81b-4dcf-bd81-c86ac0d47b70.png)
+![Screenshot](https://user-images.githubusercontent.com/37275728/185892086-8dd25866-7b5d-41a3-81c1-bee07c8c88f7.png)
 
 # Spis Treści
 <!--ts-->
