@@ -1,0 +1,1 @@
+/* dodawanie i usuwanie znakow */
