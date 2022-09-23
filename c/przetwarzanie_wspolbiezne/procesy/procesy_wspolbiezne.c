@@ -31,8 +31,8 @@ void rownolegle() {
 }
 
 int main() {
-  
-  //szeregowo();
+
+  // szeregowo();
   rownolegle();
 
   return 0;

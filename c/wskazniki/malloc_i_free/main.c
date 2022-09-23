@@ -5,22 +5,21 @@
 
 int main() {
 
-    int* tab = malloc(rozmiar * sizeof(int));
+  int *tab = malloc(rozmiar * sizeof(int));
 
-    for (int i =0; i < rozmiar; i++)
-      tab[i] = i;
-  
-    int* dodatkowyWskaznik = tab;
-     // free(tab); // zle mamy jeszcze inne odniesienie do wsk
-  
-    for (int i=0; i < rozmiar; i++) {
-      printf("%d \n", *dodatkowyWskaznik);
-      dodatkowyWskaznik++;
-      }
+  for (int i = 0; i < rozmiar; i++)
+    tab[i] = i;
 
-        free(tab);
-    //free(dodatkowyWskaznik); // zle juz zwolnilismy ta pamiec
-  
-    return 0;
+  int *dodatkowyWskaznik = tab;
+  // free(tab); // zle mamy jeszcze inne odniesienie do wsk
+
+  for (int i = 0; i < rozmiar; i++) {
+    printf("%d \n", *dodatkowyWskaznik);
+    dodatkowyWskaznik++;
+  }
+
+  free(tab);
+  // free(dodatkowyWskaznik); // zle juz zwolnilismy ta pamiec
+
+  return 0;
 }
-  
