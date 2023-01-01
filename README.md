@@ -79,24 +79,19 @@ Poprawa formatowania, przy użyciu clang-format:
 
 ## Preprocesor
 
-Pan Preprocesor przetwarza kod źródłowy.
-
-Zadania Pana Preprocesora definiowane są za pomocą specjalnych zaklęć zwanych dyrektywami rozpoczynanych od kratki <i>#</i>.
-Dyrektywy mogą być umieszczane w dowolnym miejscu programu, ale przyjęło się, że najczęściej gromadzi się je u góry pliku źródłowego.
-
-Najczęściej spotykaną dyrektywą będzie załączenie biblioteki.
+Pan Preprocesor przetwarza kod źródłowy. Zadania Pana Preprocesora definiuje się za pomocą specjalnych zaklęć zwanych dyrektywami, rozpoczynających się od znaku #. Dyrektywy mogą znajdować się w dowolnym miejscu programu, ale zwykle umieszcza się je na początku pliku źródłowego. Najczęściej spotykane dyrektywy to np. załączenie biblioteki:
 
 ```c++
 #include <biblioteka>
 ```
 
-Za pomocą dyrektyw możemy definiować stałe.
+Dyrektywy służą również do definiowania stałych:
 
 ```c++
 #define TRUE 1
 ```
 
-Możemy również włączyć/wyłączyć część kodu w zależności od danego warunku. Działa to tak samo, jak zwykłe instrukcje warunkowe, z tym że podane warunki ustalane są przed uruchomieniem programu.
+oraz włączania/wyłączania części kodu w zależności od określonego warunku, działając podobnie do zwykłych instrukcji warunkowych, tyle że ustalane przed uruchomieniem programu:
 
 ```c++
 #if 1 == 1
@@ -110,7 +105,7 @@ Możemy również włączyć/wyłączyć część kodu w zależności od danego 
 
 ### Tworzenie zmiennej
 
-Ogólna zasada: <code>Typ</code> + nazwa</code>.
+Ogólna zasada: `Typ` + `nazwa`:
 
 ```c++
 int x;    // zmienna x typu int
@@ -119,20 +114,12 @@ double y; // zmienna y typu double
 
 ### Zasady nazewnictwa zmiennych
 
-Nazwy zmiennych mogą składać się z:
+Nazwy zmiennych mogą składać się z liter, liczb i podkreślnika "_". Powinny zaczynać się od litery lub podkreślnika. Powinny być zrozumiałe, np. `liczbaSamochodow` lub `kolorTla`.
 
-- liter </br>
-- liczb </br>
-- podkreślnika "\_"
+Istnieje wiele konwencji tworzenia złożonych nazw zmiennych. Dwie najpopularniejsze to:
 
-Muszą zaczynać się od litery bądź podkreślnika. </br>
-
-Nazwa zmiennej powinna coś znaczyć np. <i>liczbaSamochodow</i>, bądź <i>kolorTla</i>.
-
-Są różne konwencje tworzenie złożonych nazw zmiennych. Dwie najpopularniejsze współcześnie to:
-
-1. oddzielanie słów podkreślnikiem np. masa_czastki_alfa (tzw. snake_case).
-2. oddzielanie słów wielką literą np. masaCzastkiAlfa (tzw. camelCase).
+1. oddzielanie słów podkreślnikiem, np. `masa_czastki_alfa` (tzw. snake_case).
+2. oddzielanie słów wielką literą, np. `masaCzastkiAlfa` (tzw. camelCase).
 
 ### Inicjalizacja
 
@@ -141,7 +128,7 @@ int x = 10;
 double y = 3.56;
 ```
 
-### Nadpisanie:
+### Nadpisanie
 
 ```c++
 int x = 10;
@@ -169,7 +156,7 @@ x++;       // teraz x przechowuje 14
         </tr>
         <tr>
             <td>char32_t</td>
-            <td>Nie mniejszy niż <code>char16_t</code>.Co najmniej 32 bity.</td>
+            <td>Nie mniejszy niż <code>char16_t</code>. Co najmniej 32 bity.</td>
         </tr>
         <tr>
             <td>wchar_t</td>
@@ -181,22 +168,19 @@ x++;       // teraz x przechowuje 14
             <td>Taki sam rozmiar jak <code>char</code>. Co najmniej 8 bitów.</td>
         </tr>
         <tr>
-            <td>signed short int</code>
-            </td>
+            <td>signed short int</td>
             <td>Nie mniejszy niż <code>char</code>. Co najmniej 16 bitów.</td>
         </tr>
         <tr>
-            <td>signed int </td>
+            <td>signed int</td>
             <td>Nie mniejszy niż <code>short</code>. Co najmniej 16 bitów.</td>
         </tr>
         <tr>
-            <td>signed long int</code>
-            </td>
+            <td>signed long int</td>
             <td>Nie mniejszy niż <code>int</code>. Co najmniej 32 bitów.</td>
         </tr>
         <tr>
-            <td>signed long long int</code>
-            </td>
+            <td>signed long long int</td>
             <td>Nie mniejszy niż <code>long</code>. Co najmniej 64 bitów.</td>
         </tr>
         <tr>
@@ -205,20 +189,16 @@ x++;       // teraz x przechowuje 14
             <td rowspan="5">Tak jak całkowite.</td>
         </tr>
         <tr>
-            <td>unsigned short <code>int</code></code>
-            </td>
+            <td>unsigned short int</td>
         </tr>
         <tr>
-            <td>unsigned <code>int</code></code>
-            </td>
+            <td>unsigned int</td>
         </tr>
         <tr>
-            <td>unsigned long <code>int</code></code>
-            </td>
+            <td>unsigned long int</td>
         </tr>
         <tr>
-            <td>unsigned long long <code>int</code></code>
-            </td>
+            <td>unsigned long long int</td>
         </tr>
         <tr>
             <td rowspan="3">Liczby zmiennoprzecinkowe</td>
@@ -252,10 +232,10 @@ Zmienna, której wartość nie może zostać zmieniona w trakcie trwania program
 
 ```c++
 const double pi = 3.14;       // Ok. Stala jest zadeklarowana i zainicjalizowana.
-const double doInicjalizacji; // Zle. Tak nie robimy!
+const double doInicjalizacji; // Złe. Tak nie robimy!
 ```
 
-W nowszych wersjach C++ (11+) dodano inne słowo kluczowe służące do określania stałości. Słowo kluczowe <code>constexpr</code> wymusza na kompilatorze sprawdzenie, czy potrafi on wyliczyć  wartość na etapie kompilacji. Jeśli nie, zostanie zgłoszony błąd.
+W nowszych wersjach C++ (11+) dodano inne słowo kluczowe służące do określania stałości. Słowo kluczowe <code>constexpr</code> wymusza na kompilatorze sprawdzenie, czy potrafi on wyliczyć wartość na etapie kompilacji. Jeśli nie, zostanie zgłoszony błąd.
 
 ```c++
 constexpr double pi = 3.14;
@@ -292,24 +272,24 @@ using namespace std;
 
 int main() {
   int liczba;
-  cout << "Podaj pojedyncza liczbe: " << endl;
+  cout << "Podaj pojedynczą liczbę: " << endl;
   scanf("%d", &liczba);
 
-  printf("Podales liczbe: %d\n", liczba);	
+  printf("Podales liczbę: %d\n", liczba);	
 
   return 0;
 }
 ```
 
-| fromat | typ danych |
------------------------
+| Format | Typ danych |
+| ------ | ---------- |
 | <code>%d</code> | int |
 | <code>%l</code> | long |
 | <code>%f</code> | double |
 | <code>%c</code> | unsigned char |
 | <code>%s</code> | wskaźnik na char |
 
-W C++ biblioteka <code>iostream</code>zawiera definicje funkcji, które pozwalają na komunikację z tymi strumieniami:
+W C++ biblioteka <code>iostream</code> zawiera definicje funkcji, które pozwalają na komunikację z tymi strumieniami:
 
 - obiekt <code>cout</code> oraz operator <code><<</code> wypisuje tekst na standardowe wyjście;
 - obiekt <code>cin</code> oraz operator <code>>></code> wczytują pojedynczą wartość ze standardowego wejścia;
@@ -346,7 +326,7 @@ Instrukcje warunkowe służą do włączania i wyłączania fragmentów kodu w z
 
 ### If
 
-<code> If </code> to podstawowa instrukcja warunkowa, dostępna w wielu językach programowania. Warunek definiowany jest w nawiasach okrągłych. Jeśli warunek jest spełniony, to wykonany zostanie kod znajdujący się w nawiasach klamrowych. W przeciwnym razie program pomija kod znajdujący się w nawiasach klamrowych i przechodzi do następnych linii kodu.
+<code>If</code> to podstawowa instrukcja warunkowa, dostępna w wielu językach programowania. Warunek definiowany jest w nawiasach okrągłych. Jeśli warunek jest spełniony, to wykonany zostanie kod znajdujący się w nawiasach klamrowych. W przeciwnym razie program omija kod znajdujący się w nawiasach klamrowych i przechodzi do następnych linii kodu.
 
 ```c++
   if (warunek) {
@@ -385,7 +365,7 @@ int main() {
 
 ### Wielokrotne warunki
 
-Możemy sprawdzić wiele warunków jeden po drugim i uzleżnić od ich spełnienia różne bloki kodu.
+Możemy sprawdzić wiele warunków jeden po drugim i uzależnić od ich spełnienia różne bloki kodu.
 
 ```c++
 #include <iostream>
@@ -396,19 +376,19 @@ int main() {
   std::cin >> n;
 
   if (n == 0)
-    std::cout << "Poniedzialek." << std::endl;
+    std::cout << "Poniedziałek." << std::endl;
 
   else if (n == 1)
     std::cout << "Wtorek." << std::endl;
 
   else if (n == 2)
-    std::cout << "Sroda. " << std::endl;
+    std::cout << "Środa. " << std::endl;
 
   else if (n == 3)
     std::cout << "Czwartek." << std::endl;
 
   else if (n == 4)
-    std::cout << "Piatek." << std::endl;
+    std::cout << "Piątek." << std::endl;
 
   else if (n == 5)
     std::cout << "Sobota." << std::endl;
@@ -416,7 +396,7 @@ int main() {
   else if (n == 6)
     std::cout << "Niedziela." << std::endl;
   else
-    std::cout << "Error! " << std::endl;
+    std::cout << "Błąd! " << std::endl;
 
   return 0;
 }
@@ -480,14 +460,14 @@ int main() {
 Po słowie kluczowym <code>for</code> w nawiasach okrągłych mamy do dyspozycji trzy miejsca oddzielone średnikami. Na pierwszym miejscu wstawiamy kod, który ma się wykonać przed pętlą. Najczęściej będzie to inicjalizacja licznika. Na drugim miejscu wstawiamy warunek, który będzie sprawdzany w każdej iteracji pętli. Jeśli warunek jest spełniony, to wykonany zostanie kod znajdujący się w nawiasach klamrowych za <code>for</code>. W przeciwnym razie pętla zostanie zakończona. Na trzecim miejscu wstawiamy kod, który ma się wykonać po każdej iteracji pętli.
 
 ```
-  for (inicjalizaja; warunek; inkrementacja) {
+  for (inicjalizacja; warunek; inkrementacja) {
     kod;
   }
 ```
 
 ### Pętla while
 
-Pętla <code>while</code> jest podobna do pętli <code>for</code>, z tym, że nie musi mieć inicjalizacji, ani inkrementacji. Warunek jest również spradzany przed każdą iteracją pętli.
+Pętla <code>while</code> jest podobna do pętli <code>for</code>, z tym, że nie musi mieć inicjalizacji, ani inkrementacji. Warunek jest również sprawdzany przed każdą iteracją pętli.
 
 ```
   while (warunek) {
@@ -514,7 +494,7 @@ Słowo kluczowe <code>continue</code> pozwala przerwać aktualną iterację pęt
 
 int main() {
   int n;
-  std::cout << "Podaj liczbe: " << std::endl;
+  std::cout << "Podaj liczbę: " << std::endl;
   std::cin >> n;
 
   for (int i = 0; i < n; i++) {
@@ -536,7 +516,7 @@ Podobnie jak <code>continue</code>, <code>break</code> przerywa aktualną iterac
 
 int main() {
   int n;
-  std::cout << "Podaj liczbe: " << std::endl;
+  std::cout << "Podaj liczbę: " << std::endl;
   std::cin >> n;
 
   for (int i = 0; i < n; i++) {
@@ -558,10 +538,10 @@ int losowa_z_przedzialu(int start, int end) {
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_real_distribution<> dist(start, end);
-  return distr(gen);
+  return dist(gen);
 }
 
-bool orzel_lub_reszka() { return (randomInRange(-10001, 10000)); }
+bool orzel_lub_reszka() { return (losowa_z_przedzialu(-10001, 10000)); }
 ```
 
 ## Typ wyliczeniowy enum
@@ -603,7 +583,7 @@ Za pomocą funkcji możemy część kodu zamknąć pod jedną nazwą.
 Elementy składowe funkcji to:
 
 1. <code>Typ</code> zwracanej wartości.
-1. <code>Imię</code> funkcji, dzięki któremu jest rozpoznawalna.
+1. <code>Imię</code> funkcji, dzięki któremu jest ona rozpoznawalna.
 1. <code>Argumenty</code>, czyli zewnętrzne wartości, które chcemy użyć w funkcji i chcemy żeby zostały nam podane w momencie wywołania funkcji.
 
 Ogólny schemat pracy z funkcjami:
@@ -611,10 +591,10 @@ Ogólny schemat pracy z funkcjami:
 ```
 wybrany_typ nazwa_funkcji(argumenty...) {
   
-  ... // cialo czyli kod kotry chcemy zeby zostal uruchomiony 
-  ... // po wywolaniu nazwa_funkcji(argumenty...);
+  ... // ciało czyli kod, który chcemy, żeby został uruchomiony 
+  ... // po wywołaniu nazwa_funkcji(argumenty...);
   
-  return wartosc; // zwracamy wartosc ktora musi zgadzac sie z wybrany_typ
+  return wartość; // zwracamy wartość, która musi zgadzać się z wybranym typem
 }
 
 int main() { 
@@ -639,7 +619,7 @@ void fun2();
 int main() {
   fun1(); // OK
   fun2(); // OK
-  fun3(); // ZLE
+  fun3(); // BŁĄD
 
   return 0;
 }
@@ -651,7 +631,7 @@ void fun3() { std::cout << "fun3" << std::endl; }
 
 ### Funkcja zwracająca wartość
 
-Do zwracania wartości poprzez funkcję używamy słowa kluczowego <code>return</code>. Słowo kluczowe <code>return</code> przerywa działanie funkcji i zwraca wartość umieszczoną po nim w kodzie. Typ zwracanej wartości musi być taki sam jak typ funkcji. Funkcja nie będąca funkjcą typu void musi zawsze zwracać wartość.
+Do zwracania wartości poprzez funkcję używamy słowa kluczowego <code>return</code>. Słowo kluczowe <code>return</code> przerywa działanie funkcji i zwraca wartość umieszczoną po nim w kodzie. Typ zwracanej wartości musi być taki sam jak typ funkcji. Funkcja nie będąca funkcją typu void musi zawsze zwracać wartość.
 
 ```c++
 #include <iostream>
@@ -707,7 +687,7 @@ int main() {
 
 ### Przekazywanie argumentów funkcji przez wartość i referencję
 
-Istnieją dwa sposoby na przekazywanie argumentów do funkcji. Pierwszy to przekazywanie argumentów przez wartość, jeśli argumentem jest zmienna, to funkcja otrzymuje kopię jej wartości. Wszelkie zmianny na tą wartość w funkcji nie wpływają na oryginalną zmienną. Drugi sposób na przekazywanie argumentów to przekazywanie argumentów przez referencję. W tym przypadku funkcja otrzymuje referencję do oryginalnej zmiennej. Wszelkie zmiany na tą wartość w odbywają się bezpośrednio na oryginalnej zmiennej.
+Istnieją dwa sposoby na przekazywanie argumentów do funkcji. Pierwszy to przekazywanie argumentów przez wartość. Jeśli argumentem jest zmienna, to funkcja otrzymuje kopię jej wartości. Wszelkie zmiany na tą wartość w funkcji nie wpływają na oryginalną zmienną. Drugi sposób na przekazywanie argumentów to przekazywanie argumentów przez referencję. W tym przypadku funkcja otrzymuje referencję do oryginalnej zmiennej. Wszelkie zmiany na tą wartość w odbywają się bezpośrednio na oryginalnej zmiennej.
 
 Przykład przekazywania argumentów przez wartość:
 
@@ -718,7 +698,7 @@ void pomnoz(int a, int b) { a = a * b; }
 Przykład przekazywania argumentów przez referencję:
 
 ```c++
-void pomnoz(int a, int b) { a = a * b; }
+void pomnoz(int &a, int &b) { a = a * b; }
 ```
 
 Uwaga: przez referencję możemy przekazywać jedynie l-wartości.
@@ -730,8 +710,8 @@ Niektóre wartości w C++ istnieją jedynie w obrębie jednego wyrażenia i nie 
 ```c++
 int main() {
   int i = 3;  // OK
-  3 = i;      // Zle
-  i + 4 = 20; // Zle
+  3 = i;      // Złe
+  i + 4 = 20; // Złe
 
   return 0;
 }
@@ -741,7 +721,7 @@ int main() {
 
 Wskaźnik to zmienna, która przechowuje adres innej zmiennej. Dodatkowo przy pomocy wskaźników mamy możliwość modyfikowania zmiennych, których adresy przechowują wskaźniki.
 
-<code>Typ_zmiennej_kt&oacute;rej_adres_przechowuje_wskaźnik \* nazwa_wskaźnika;</code>
+<code>Typ_zmiennej_której_adres_przechowuje_wskaźnik * nazwa_wskaźnika;</code>
 
 ```c++
 #include <string>
@@ -757,7 +737,7 @@ int main() {
   std::string s = "napis";
 
   // Inicjalizacja
-  // p1 = &y; // Zle. Niezgodne typy.
+  // p1 = &y; // Złe. Niezgodne typy.
   p1 = &x;    // OK. Typy się zgadzają
   p2 = &y;
   p3 = &s;
@@ -768,10 +748,10 @@ int main() {
 
 ### Dereferencja
 
-Wyłuskanie wartości na, która znajduje się w zmiennej, na którą wskazuje nasz wskaźnik.
+Wyłuskanie wartości znajdującej się w zmiennej, na którą wskazuje nasz wskaźnik.
 Używane nie tylko do odczytu, ale również zmiany wartości tej zmiennej.
 
-<code>\*nazwa wskaźnika</code>
+<code>*nazwa wskaźnika</code>
 
 ```c++
 #include <iostream>
@@ -786,17 +766,17 @@ int main() {
   double *p2 = &y;
   std::string *p3 = &s;
 
-  std::cout << "Wartosc zmiennej x: " << *p1 << std::endl;
-  std::cout << "Wartosc zmiennej y: " * p2 << std::endl;
-  std::cout << "Wartosc zmiennej s: " * p3 << std::endl;
+  std::cout << "Wartość zmiennej x: " << *p1 << std::endl;
+  std::cout << "Wartość zmiennej y: " * p2 << std::endl;
+  std::cout << "Wartość zmiennej s: " * p3 << std::endl;
 
-  *p1 = 7;      // zmiana wartosci zmiennej x
-  *p2 = 8.123;  // zmiana wartosci zmiennej y
-  *p3 = "inny"; // zmiana wartosci zmiennej s
+  *p1 = 7;      // zmiana wartości zmiennej x
+  *p2 = 8.123;  // zmiana wartości zmiennej y
+  *p3 = "inny"; // zmiana wartości zmiennej s
 
-  std::cout << "Wartosc zmiennej x: " << *p1 << std::endl;
-  std::cout << "Wartosc zmiennej y: " * p2 << std::endl;
-  std::cout << "Wartosc zmiennej s: " * p3 << std::endl;
+  std::cout << "Wartość zmiennej x: " << *p1 << std::endl;
+  std::cout << "Wartość zmiennej y: " * p2 << std::endl;
+  std::cout << "Wartość zmiennej s: " * p3 << std::endl;
 
   return 0;
 }
@@ -821,7 +801,7 @@ int main() {
 
 <code>NULL</code> to specjalna wartość wskaźnika symbolizująca wskazywanie na nieistniejący obiekt. Dzięki tej wartości możemy sygnalizować koniec listy połączonej lub poinformować o niemożliwości przydziału pamięci, lub otwarcia pliku (współcześnie preferuje się wyjątki).
 
-W C, w zależności od implementacji <code>NULL</code> definiowany jest jako <code>0</code> lub <code>((void\*)0)</code>. W obu przypadkach używany jest dokładnie do tego samego.
+W C, w zależności od implementacji <code>NULL</code> definiowany jest jako <code>0</code> lub <code>((void*)0)</code>. W obu przypadkach używany jest dokładnie do tego samego.
 Z uwagi na to, że <code>NULL</code> to po prostu zero, możemy w taki sposób sprawdzić, czy wskaźnik <code>wsk</code> nie jest wskaźnikiem na <code>NULL</code>:
 
 ```c++
@@ -836,16 +816,16 @@ Na pierwszy rzut oka nie widać jednak, czy <code>wsk</code> jest wskaźnikiem, 
   }
 ```
 
-C++ jest (prawie) nadzbiorem C, ale żyje własnym życie i ewoluuje w innym kierunku. <code>NULL</code> dalej istnieje w C++, ale oprócz niego mamy jeszcze jego młodszego brata <code>nullptr</code>. Pojawia się więc pytanie, po co wymyślono coś nowego, jeśli służy do tego samego co coś, co już istniało wcześniej. Otóż w C++ możemy przeciążać funkcje, tzn. definiować kilka funkcji z tą samą nazwą, ale różnymi typami parametrów.
+C++ jest (prawie) nadzbiorem C, ale żyje własnym życiem i ewoluuje w innym kierunku. <code>NULL</code> dalej istnieje w C++, ale oprócz niego mamy jeszcze jego młodszego brata <code>nullptr</code>. Pojawia się więc pytanie, po co wymyślono coś nowego, jeśli służy do tego samego co coś, co już istniało wcześniej? Otóż w C++ możemy przeciążać funkcje, tzn. definiować kilka funkcji z tą samą nazwą, ale różnymi typami parametrów.
 
 ```c++
 void foo(void *wsk);
 void foo(int liczba);
 ```
 
-Która funkcja zostanie użyta, gdy wywołamy <code>foo(NULL)</code>? <code>NULL</code> to przecież zwykłe 0, więc zostanie użyta druga funkcja. Z tego powodu wprowadzono <code>nullptr</code>, który nigdy nie będzie zinterpretowany jako liczba.
+Która funkcja zostanie użyta, gdy wywołamy <code>foo(NULL)</code>? <code>NULL</code> jest zwykłym 0, więc zostanie użyta druga funkcja. Z tego powodu wprowadzono <code>nullptr</code>, który nigdy nie będzie zinterpretowany jako liczba.
 
-Tak, więc jeśli piszesz kod w C++, to używaj <code>nullptr</code>.
+Tak więc jeśli piszesz kod w C++, to używaj <code>nullptr</code>.
 
 ### Stałe wskaźniki
 
@@ -853,7 +833,7 @@ Podobnie jak możemy deklarować zwykłe stałe, tak samo możemy mieć stałe w
 
 ```c++
   const int *a;
-  int const *a; // rownowaznne do poprzedniego przykladu
+  int const *a; // równoważne do poprzedniego przykładu
 ```
 
 oraz stałe wskaźniki:
@@ -862,9 +842,9 @@ oraz stałe wskaźniki:
   int *const b;
 ```
 
-Słówko const przed typem działa jak w przypadku zwykłych stałych, tzn. nie możemy zmienić wartości wskazywanej przy pomocy wskaźnika.
+Słowo const przed typem działa jak w przypadku zwykłych stałych, tzn. nie możemy zmienić wartości wskazywanej przy pomocy wskaźnika.
 
-W drugim przypadku słowo const jest tuż za gwiazdką oznaczającą typ wskaźnikowy, co skutkuje stworzeniem stałego wskaźnika, czyli takiego którego nie można przestawić na inny adres.
+W drugim przypadku słowo const jest tuż za gwiazdką oznaczającą typ wskaźnikowy, co skutkuje stworzeniem stałego wskaźnika, czyli takiego, którego nie można przestawić na inny adres.
 
 ```c++
 int main() {
@@ -884,10 +864,10 @@ int main() {
 Jeśli zmienna to pudełko, to tablica to półka z pudełkami. Wszystkie pudełka na jednej półce przechowują dane tego samego typu. Do tworzenia tablic używamy nawiasów kwadratowych. Między nawiasy kwadratowe trafia liczba reprezentująca ilość elementów tablicy.
 
 ```c++
-int tab[3]; // Polka z 3 pudelkami typu int.
+int tab[3]; // Półka z 3 pudełkami typu int.
 ```
 
-W powyższym przykładzie miejsce w pamięci zostało zarezerwowane, ale pudełka są niezaincjalizowane. Co siedzi w środku? Śmieci.
+W powyższym przykładzie miejsce w pamięci zostało zarezerwowane, ale pudełka są niezainicjalizowane. Co siedzi w środku? Śmieci.
 
 Przykłady tablicy zadeklarowanej i zainicjalizowanej:
 
@@ -901,7 +881,7 @@ int tabB[] = {7, 8, 11};
 
 Obie wersje są dopuszczalne.
 
-### Wczytywanie i wypisywanie elemntów tablicy
+### Wczytywanie i wypisywanie elementów tablicy
 
 ```c++
 #include <iostream>
@@ -928,8 +908,7 @@ int main() {
 }
 ```
 
-Jeśli spróbujesz odnieść się do tablicy przy użyciu nieporawnego indeksu (mniejszego od 0 bądź większego lub równego długości tablicy) to zachowanie programu jest niezdefiniowane. Jeśli system operacyjny jest miły to w ten sposób możesz otrzymać przypadkowe liczby, które akurat siedzą w komórkach pamięci na lewo bądź prawo od twojej tablicy. W przeciwnym razie twój program po prostu przestanie działać (crash).
-
+Jeśli spróbujesz odnieść się do tablicy przy użyciu nieprawidłowego indeksu (mniejszego od 0 bądź większego lub równego długości tablicy) to zachowanie programu jest niezdefiniowane. Jeśli system operacyjny jest miły to w ten sposób możesz otrzymać przypadkowe liczby, które akurat siedzą w komórkach pamięci na lewo bądź prawo od twojej tablicy. W przeciwnym razie twój program po prostu przestanie działać (crash).
 ### Tablica jako wskaźnik
 
 Za pomocą wskaźników można również odwoływać się do elementów tablicy. Nazwa tablicy to wskaźnik do pierwszego elementu tablicy. Jeśli <code>tab</code> to nazwa tablicy, to <code>tab[0]</code> oraz <code>\*tab</code> są synonimami.
@@ -1050,18 +1029,18 @@ Dla tablic dwuwymiarowych alokacja i dealokacja pamięci odbywa się przy pomocy
 int main() {
 
   double **macierz;
-  int wysokosc, szerokosc;
+  int wysokość, szerokość;
 
-  std::cin >> wysokosc >> szerokosc;
+  std::cin >> wysokość >> szerokość;
 
   // Alokacja
-  macierz = new (double *)[wysokosc];
+  macierz = new double*[wysokość];
 
-  for (int i = 0; i < wysokosc; i++)
-    macierz[i] = new double[szerokosc];
+  for (int i = 0; i < wysokość; i++)
+    macierz[i] = new double[szerokość];
 
   // Dealokacja
-  for (int i = 0; i < wysokosc; i++)
+  for (int i = 0; i < wysokość; i++)
     delete[] macierz[i];
 
   delete[] macierz;
@@ -1114,7 +1093,7 @@ Przykładowe funkcje:
 
 W języku C++ mamy klasę string dostępną w bibliotece standardowej. Praca z obiektami tej klasy jest łatwiejsza i bezpieczniejsza niż praca z tablicami charów w C.
 
-Aby utworzyć obiekt stringa, możemy użyć konstruktor string(const char *s) lub string(const string &s).
+Aby utworzyć obiekt stringa, możemy użyć konstruktora string(const char *s) lub string(const string &s).
 
 	string napisA = "Ala ma kota";
 	string napisB = napisA;
@@ -1133,7 +1112,7 @@ Przykładowe funkcje:
 | a.compare(string b) | porównuje zawartość napisów a i b |
 | a.insert(int pos, string b) | wstawia napis b w miejsce pos w napisie a |
 | a.erase(int pos, int len) | usuwa len znaków z napisu a od indeksu pos |
-| a.replace(int pos, int len, string b) | zastąpi len znaków z napisu a od indeksu pos przez napis b |
+| a.replace(int pos, int len, string b) | zastępuje len znaków z napisu a od indeksu pos przez napis b |
 | a.substr(int pos, int len) | zwraca podnapis napisu a od indeksu pos o długości len |
 | a.clear() | usuwa wszystkie znaki z napisu a |
 
@@ -1143,7 +1122,7 @@ Mamy możliwość wykonywania operacji na pojedynczych bitach.
 
 ### Bramka NOT
 
-Zamienia zera na jedynki i na odwrót. Operator ~.
+Zamienia jedynki na zera i na odwrót. Operator ~.
 
 <table style="width:100%">
   <tr>
@@ -1271,7 +1250,7 @@ int main() {
 
 ### Bramka XOR
 
-Jedynka gdy bity różne, w przeciwnym razie zero. Operator ^.
+Jedynka, gdy bity są różne, w przeciwnym razie zero. Operator ^.
 
 <table style="width:100%">
   <tr>
@@ -1321,8 +1300,8 @@ int main() {
 
 Bity w lewo przesuwamy za pomocą operatora <code><<</code>. </br>
 Bity w prawo przesuwamy za pomocą operatora <code>>></code>. </br>
-Przesunięcie w lewo o 1 bit równoważne jest podzieleniu przez 2. </br>
-Przesuniecie w prawo o 1 bit równoważne jest przemnożeniu przez 2. </br>
+Przesunięcie w lewo o 1 bit jest równoważne podzieleniu przez 2. </br>
+Przesuniecie w prawo o 1 bit jest równoważne przemnożeniu przez 2. </br>
 
 ```c++
 #include <bitset>
@@ -1345,13 +1324,13 @@ int main() {
 
 Pisanie programów, w których w interakcje ze sobą wchodzą różne <b>obiekty</b>.
 
-1. <b>Klasa</b> to szablon, w którym definiujemy <b>pola</b> (jakie dane mogą przechowywać obiekty danej klasy) oraz metody</b> (funkcje coś robiące z tymi polami).
-2. Zastosowania obiektów danej klasy dane są przez dostępne metody.
+1. <b>Klasa</b> to szablon, w którym definiujemy <b>pola</b> (jakie dane mogą przechowywać obiekty danej klasy) oraz <b>metody</b> (funkcje coś robiące z tymi polami).
+2. Zastosowania obiektów danej klasy dostępne są przez dostępne metody.
 
 Dlaczego?
 
-1. Modularność: każda klasa ma jasno określony cel i wszystko, co z nim jest związane, zamknięte jest w tej klasie (przynajmniej w teorii).
-2. Łatwość wielokrotnego użytku: możemy tworzyć nieskończenie wiele obiektów danej klasy, ograniczają nas jedynie fizyczne możliwości naszej maszyny.
+1. Modularność: każda klasa ma jasno określony cel i wszystko, co z nim jest związane, jest zamknięte w tej klasie (przynajmniej w teorii).
+2. Łatwość wielokrotnego użytku: możemy tworzyć nieskończoną ilość obiektów danej klasy, ograniczają nas jedynie fizyczne możliwości naszej maszyny.
 
 ```C++
 class Prostokat {
@@ -1368,6 +1347,7 @@ public:
 };
 ```
 
+
 ### Konstruktor
 
 Konstruktor jest funkcją, która jest wywoływana przy tworzeniu obiektu. Konstruktor ma taką samą nazwę jak klasa i nie posiada zwracanego typu, gdyż nigdy nie zwraca wartości. Istnieje wiele typów konstruktorów:
@@ -1378,7 +1358,7 @@ Konstruktor jest funkcją, która jest wywoływana przy tworzeniu obiektu. Konst
 - konstruktor przenoszący (kopiuje wartości z innego obiektu i ustawia pola innego obiektu na domyślne wartości)
 
 ```C++
-class Prostoka {
+class Prostokat {
   int a;
   int b;
 
@@ -1426,7 +1406,7 @@ public:
     this->b = b;
   }
 
-  ~Prostokat() { cout << "Destruktor" << endl; }
+  ~Prostokat() { std::cout << "Destruktor" << std::endl; }
 };
 ```
 
@@ -1464,9 +1444,10 @@ int main() {
 }
 ```
 
+
 ### Wskaźnik na obiekt
 
-Podbnie jak tworzyliśmy wskaźniki na typy wbudowane, możemy tworzyć wskaźniki na obiekty. Do pól obiektu, na który wskazuje wskaźnik, możemy się odwoływać za pomocą konstrukcji <code>\*wsk.pole</code> lub <code>wsk->pole</code>.
+Podobnie jak tworzyliśmy wskaźniki na typy wbudowane, możemy tworzyć wskaźniki na obiekty. Do pól obiektu, na który wskazuje wskaźnik, możemy się odwoływać za pomocą konstrukcji <code>*wsk.pole</code> lub <code>wsk->pole</code>.
 
 ```C++
 #include <iostream>
@@ -1493,52 +1474,52 @@ int main() {
 
 ### Przeciążanie operatorów
 
-C++ daje nam możliwość definiowania nowego znaczenia różnych operatorów dla definiowanych przez nas klas. W naszym przykładzie, definiujemy operator <code>+</code> dla klasy <code>Prostokat</code>.
+C++ daje nam możliwość definiowania nowego znaczenia różnych operatorów dla definiowanych przez nas klas. W naszym przykładzie, definiujemy operator <code>+</code> dla klasy <code>Prostokąt</code>.
 
-    operator + (Prostokat &p1, Prostokat &p2) {
-      return Prostokat(p1.a + p2.a, p1.b + p2.b);
+    operator + (Prostokąt &p1, Prostokąt &p2) {
+      return Prostokąt(p1.a + p2.a, p1.b + p2.b);
     }
-    operator + (Prostokat &p1, int a) {
-      return Prostokat(p1.a + a, p1.b + a);
+    operator + (Prostokąt &p1, int a) {
+      return Prostokąt(p1.a + a, p1.b + a);
     }
-    operator + (int a, Prostokat &p1) {
-      return Prostokat(a + p1.a, a + p1.b);
+    operator + (int a, Prostokąt &p1) {
+      return Prostokąt(a + p1.a, a + p1.b);
     }
 
 ### Pola i metody statyczne
 
-Istnieje specjalny typ pól oraz metod definiowanych w obrębie klasy, są to pola i metody statyczne. Tworzymy je umieszczając przed typem danej zmiennej lub przed typem zwracanym przez funkcję słowem kluczowym <code>static</code>. Do pól statycznych możemy się odwoływać za pomocą konstrukcji <code>\*klasa::pole</code> lub <code>klasa::pole</code>. Nie wymagają one utworzenia obiektu klasy. Wartości pól statycznych są współdzielone przez wszystkie obiekty klasy.
+Istnieje specjalny typ pól oraz metod definiowanych w obrębie klasy, są to pola i metody statyczne. Tworzymy je umieszczając przed typem danej zmiennej lub przed typem zwracanym przez funkcję słowo kluczowe <code>static</code>. Do pól statycznych możemy się odwoływać za pomocą konstrukcji <code>*klasa::pole</code> lub <code>klasa::pole</code>. Nie wymagają one utworzenia obiektu klasy. Wartości pól statycznych są współdzielone przez wszystkie obiekty klasy.
 
 ```C++
 #include <iostream>
 
-class Prostokat {
-  static unsigned int liczbaProstokatow;
+class Prostokąt {
+  static unsigned int liczbaProstokątów;
 
 public:
-  Prostokat() { liczbaProstokatow++; }
+  Prostokąt() { liczbaProstokątów++; }
 
-  static int getLiczbaProstokatow() { return liczbaProstokatow; }
+  static int getLiczbaProstokątów() { return liczbaProstokątów; }
 };
 
-unsigned int Prostokat::liczbaProstokatow = 0;
+unsigned int Prostokąt::liczbaProstokątów = 0;
 
 int main() {
 
   for (int i = 0; i < 10; i++) {
-    Prostokat prostokat;
+    Prostokąt prostokąt;
   }
 
-  std::cout << Prostokat::getLiczbaProstokatow() << std::endl; // 10
+  std::cout << Prostokąt::getLiczbaProstokątów() << std::endl; // 10
   return 0;
 }
 ```
 
 ### Funkcje zaprzyjaźnione
 
-Istnieje specjalna klasa funkcji, tak zwane funkcje zaprzyjaźnione. Są to zewnętrzne funkcje, które mają dostęp do prywatnych pól i metod klasy. Przykład dla klasy <code>Prostokat</code>:
+Istnieje specjalna klasa funkcji, tak zwane funkcje zaprzyjaźnione. Są to zewnętrzne funkcje, które mają dostęp do prywatnych pól i metod klasy. Przykład dla klasy <code>Prostokąt</code>:
 
-    friend void swap(Prostokat &p1, Prostokat &p2) {
+    friend void swap(Prostokąt &p1, Prostokąt &p2) {
       p1.a = p2.a;
       p1.b = p2.b;
     }
@@ -1575,7 +1556,7 @@ Foo obiekt_foo;
 
 ### Pole bitowe
 
-Możemy wskazać ile dokładnie bitów chcemy zarezerwować dla danego pola struktury.
+Możemy wskazać dokładną liczbę bitów, które chcemy zarezerwować dla danego pola struktury.
 
 ```c++
 #include <iostream>
@@ -1605,7 +1586,7 @@ int main() {
 
 ### Unie
 
-Unie to kolejny sposób reprezentacji danych w pamięci.
+Unie to inny sposób reprezentacji danych w pamięci.
 
 ```c++
 #include <iostream>
@@ -1627,11 +1608,11 @@ int main() {
 }
 ```
 
-Mogłoby się wydawać, że unie są tym samym co struktury. Różnica polega na tym, że w danej chwili tylko jedno pole unii może przechowywać wartość. Z tego powodu Unie są chudsze od struktur i unia zajmuje w pamięci tyle miejsca, ile wynosi rozmiar największego z jej pól.
+Mogłoby się wydawać, że unie są tym samym co struktury. Różnica polega na tym, że w danej chwili tylko jedno pole unii może przechowywać wartość. Z tego powodu Unie są lżejsze od struktur i unia zajmuje w pamięci tyle miejsca, ile wynosi rozmiar największego z jej pól.
 
 ## Dziedziczenie
 
-Dziedziczenie to mechanizm, który pozwala na tworzenie nowych klas wykorzystujących część kodu z klasy już istniejącej. Pierwotna klasa zwana jest klasą bazową (bądź rodzicem), a klasa dziedzicząca jest klasą pochodną (bądź dzieckiem). W C++ dziedziczenie jest zdefiniowane przez zapisanie klasy dziedziczącej w nawiasach klamrowych po nazwie klasy bazowej. W naszym przykładzie, klasa <code>Prostokat</code> dziedziczy po klasie <code>Figura</code>.
+Dziedziczenie to mechanizm, który pozwala na tworzenie nowych klas wykorzystujących część kodu z klasy już istniejącej. Klasa pierwotna nazywana jest klasą bazową (bądź rodzicem), a klasa dziedzicząca jest klasą pochodną (bądź dzieckiem). W C++ dziedziczenie jest zdefiniowane przez zapisanie klasy dziedziczącej w nawiasach klamrowych po nazwie klasy bazowej. W naszym przykładzie, klasa <code>Prostokat</code> dziedziczy po klasie <code>Figura</code>.
 
 ```c++
 class Figura {
@@ -1650,14 +1631,14 @@ class Prostokat : public Figura {
   public:
     Prostokat(int a, int b, std::string nazwa) : Figura(nazwa), a(a), b(b) {}
     void info() {
-      Figura::info(); // wywolanie metody bazowej
+      Figura::info(); // wywołanie metody bazowej
       std::cout << "Prostokat: " << a << "x" << b << std::endl;
     }
     double obliczPole() { return a * b; }
 }
 ```
 
-W powyższym przykładzie <code>Prostokat</code> dziedziczy wszystkie pola i metody z klasy <code>Figura</code>. Przykładowo pole <code>nazwa</code> jest zdefiniowane w klasie <code>Figura</code>, ale posiadają je również obiekty klasy <code>Prostokat</code>. Dodatkowo w klasie <code>Prostokat</code> dodaliśmy nowe pola <code>a</code> i <code>b</code>. W ten sposób klasy pochodne poszerzają funkcjonalność klas bazowych. Inną rzeczą na którą możemy zwrócić uwagę jest to, że klasa metoda <code>info()</code> w klasie <code>Prostokat</code> zmienia definicję metody <code>info()</code> z klasy bazowej, wywołując implementację bazową, a następnie dodając do niej dodatkowe informacje.
+W powyższym przykładzie <code>Prostokat</code> dziedziczy wszystkie pola i metody z klasy <code>Figura</code>. Przykładowo pole <code>nazwa</code> jest zdefiniowane w klasie <code>Figura</code>, ale posiada je również obiekty klasy <code>Prostokat</code>. Dodatkowo w klasie <code>Prostokat</code> dodaliśmy nowe pola <code>a</code> i <code>b</code>. W ten sposób klasy pochodne poszerzają funkcjonalność klas bazowych. Inną rzeczą na którą możemy zwrócić uwagę jest to, że klasa metoda <code>info()</code> w klasie <code>Prostokat</code> zmienia definicję metody <code>info()</code> z klasy bazowej, wywołując implementację bazową, a następnie dodając do niej dodatkowe informacje.
 
 ### Typy dziedziczenia
 
@@ -1667,17 +1648,18 @@ Istnieją trzy podstawowe typy dziedziczenia:
 2. prywatne (<code>private</code>)
 3. chronione (<code>protected</code>)
 
-W poniższej tabeli znajdują się informacje o dostępności pól oraz metod klasy bazoowej w klasie pochodnej ze względu na typ dziedziczenia:
+Poniższa tabela zawiera informacje o dostępności pól oraz metod klasy bazowej w klasie pochodnej ze względu na typ dziedziczenia:
 
 | Typ Dziedziczenia | Prywatne pola i metody | Chronione pola i metody | Publiczne pola i metody |
 | ---------------- | ---------------------- | ---------------------- | ---------------------- |
 | publiczne | tak | tak | tak |
-| chronione | nie | tak | tak (ale ich dostępność zmienia się w chronioną) |
-| prywatne | nie | tak (ale ich dostępność zmienia się w prywatną) | tak (ale ich dostępność zmienia się w prywatną) |
+| chronione | nie | tak | tak (lecz ich dostępność zmienia się na chronioną) |
+| prywatne | nie | tak (lecz ich dostępność zmienia się na prywatną) | tak (lecz ich dostępność zmienia się na prywatną) |
+
 
 ### Polimorfizm
 
-Polimorfizm to mechanizm umożliwiający nadawcy wysłania tej samej wiadomości do odbiorców różnych typów, bez wiedzy o konkretnym typie danego odbiorcy. Każdy odbiorca może odpowiedzieć na wiadomość we własny sposób. Odpowiedzi mogą, ale nie muszą się pokrywać. Polimorfizm jest często defniowany w kontekście dziedziczenia. Mamy klasę bazową zawierającą defnicję pewnej metody oraz klasy pochodne, każda klasa pochodna może mieć swoją własną implementację tej metody. Załóżmy teraz, że mamy kolekcję obiektów klasy bazowej, część z tych obiektów jest obiektami klas pochodnych. Wywołując tą samą metodę na każdym elemencie kolekcji, otrzymamy różne rezeltuty w zależności od dokładnego typu obiektu.
+Polimorfizm to mechanizm umożliwiający nadawcy wysłania tej samej wiadomości do odbiorców różnych typów, bez wiedzy o konkretnym typie danego odbiorcy. Każdy odbiorca może odpowiedzieć na wiadomość we własny sposób. Odpowiedzi mogą, ale nie muszą się pokrywać. Polimorfizm jest często definiowany w kontekście dziedziczenia. Mamy klasę bazową zawierającą definicję pewnej metody oraz klasy pochodne, każda z tych klas może mieć swoją własną implementację tej metody. Załóżmy teraz, że mamy kolekcję obiektów klasy bazowej, część z nich jest obiektami klas pochodnych. Wywołując tą samą metodę na każdym elemencie kolekcji, otrzymamy różne rezultaty w zależności od dokładnego typu obiektu.
 
     class A {
       public:
@@ -1741,7 +1723,7 @@ Dla dwóch klas takie rozgałęzienie wygląda niegroźnie. Co jednak jeśli zde
 
 ### Metody wirtualne
 
-Jeśli mamy wskaźnik typu klasy bazowej, wskazujący na obiekt klasy pochodnej to jeśli wywołamy przy jego pomocy metodę zdefiniowaną w obu klasach, to wywołana zostanie implementacja klasy bazowej.
+Jeśli mamy wskaźnik typu klasy bazowej, wskazujący na obiekt klasy pochodnej, to jeśli wywołamy przy jego pomocy metodę zdefiniowaną w obu klasach, to wywołana zostanie implementacja klasy bazowej.
 
     class A {
       public:
@@ -1755,10 +1737,10 @@ Jeśli mamy wskaźnik typu klasy bazowej, wskazujący na obiekt klasy pochodnej 
 
     B b;
     A* wsk = &b;
-    wsk->foo(); // wyswietli "A"
+    wsk->foo(); // wyświetli "A"
 
 
-Aby nie uchronić się przed tym nieoczekiwanym zachowaniem musimy użyć słowa kluczowego <code>virtual</code> przed nazwą metody w klasie bazowej.
+Aby uniknąć tego nieoczekiwanego zachowania musimy użyć słowa kluczowego <code>virtual</code> przed nazwą metody w klasie bazowej.
 
     class A {
       public:
@@ -1772,9 +1754,9 @@ Aby nie uchronić się przed tym nieoczekiwanym zachowaniem musimy użyć słowa
 
     B b;
     A* wsk = &b;
-    wsk->foo(); // wyswietli "B"
+    wsk->foo(); // wyświetli "B"
 
-Uwaga: Destruktor to też funkcja. Jeśli chcemy by przy usuwaniu obiektu została wywołana implementacja destruktora w klasie pochodnej musimy użyć słowa kluczowego <code>virtual</code> przed nazwą destruktora w klasie bazowej.
+Uwaga: Destruktor to też funkcja. Jeśli chcemy, aby przy usuwaniu obiektu została wywołana implementacja destruktora w klasie pochodnej, musimy użyć słowa kluczowego <code>virtual</code> przed nazwą destruktora w klasie bazowej.
 
 ### Klasy abstrakcyjne
 
@@ -1794,14 +1776,14 @@ W C++ istnieje możliwość tworzenia klas, które zawierają jedynie deklaracje
     A* wsk = &b;
     wsk->foo(); // wyswietli "B"
 
-W powyższym przykładzie klasa A jest klasą abstrakcyjną. Istnieje tylko jeden warunek, aby klasa była uznana za klasę abstrakcyjną. Taka klasa musi zawierać przynajmniej jedną metodę czysto wirtualną. Co zmienia konwersja metody wirtualnej na czysto wirtualną?
+W powyższym przykładzie klasa A jest klasą abstrakcyjną. Istnieje tylko jeden warunek, aby klasa była uznana za klasę abstrakcyjną: musi zawierać przynajmniej jedną metodę czysto wirtualną. Co zmienia konwersja metody wirtualnej na czysto wirtualną?
 
 1. Nie można utworzyć obiektu klasy abstrakcyjnej.
-1. Klasy pochodne muszą zaimplementować metodę czysto wirtualną.
+2. Klasy pochodne muszą zaimplementować metodę czysto wirtualną.
 
 Klasy czysto abstrakcyjne to klasy abstrakcyjne składające się wyłącznie z metod czysto wirtualnych i nieposiadające żadnych pól.
 
-## Zaawansowne wskaźniki
+## Zaawansowane wskaźniki
 
 Poza zwykłymi, surowymi wskaźnikami istnieją jeszcze inne, bardziej zaawansowane typy wskaźników.
 
@@ -1866,33 +1848,34 @@ int main() {
 | <code>int \*tab[];</code>            | tablica wskaźników na zmienną typu int                         |
 | <code>int \*fun();</code>            | funkcja zwracająca wskaźnik na zmienną typu int                |
 
+
 ### Sprytne wskaźniki
 
-W C++11 wprowadzono tak zwane sprytne wskaźniki. Wskaźniki te to nakładki na znane nam surowe wskaźniki, poszerzone o dodatkowe funkcjonalności. Przykładowo sprytne wskaźniki w momencie śmierci (destruktor) uwalniają pamięć sterty zarezerowaną dla wskazywanych przez nie obiektów.
+W C++11 wprowadzono tak zwane sprytne wskaźniki. Wskaźniki te to nakładki na znane nam surowe wskaźniki, poszerzone o dodatkowe funkcjonalności. Przykładowo sprytne wskaźniki w momencie śmierci (destruktor) uwalniają pamięć sterty zarezerwowaną dla wskazywanych przez nie obiektów.
 
 #### unique_ptr
 
-Dzięki niemu, mamy pewność że zarezerwowana pamięć zostanie zwolniona przy gdy program wyjdzie poza zakres życia wskaźnika. Programista nie ma możliwości popełniania błędów, wynikających z nie użycia operatora delete. Pamięć zwalniana jest automatycznie.
+Dzięki niemu, mamy pewność że zarezerwowana pamięć zostanie zwolniona gdy program wyjdzie poza zakres życia wskaźnika. Programista nie ma możliwości popełniania błędów, wynikających z nieużycia operatora delete. Pamięć zwalniana jest automatycznie.
 
 Nie oznacza to jednak, że nie ma żadnej możliwości na popełnienie błędu przy pracy z unique_ptr. Jeśli utworzymy dwa obiekty unique_ptr poprzez przekazanie do konstruktora tego samego surowego wskaźnika, to nasz program zostanie zakończony z komunikatem o double free.
 
     int *surowyWsk = new int;
 
-    std::unique_ptr<int> unikalnyWsk1(surowy_wsk);
-    std::unique_ptr<int> unikalnyWsk2(surowy_wsk);
+    std::unique_ptr<int> unikalnyWsk1(surowyWsk);
+    std::unique_ptr<int> unikalnyWsk2(surowyWsk);
 
-Nawet jeśli nie popełnimy tak fatalnego, ale dość oczywistego błędu, to dalej istnieją inne błędy na które musimy uważać. Po utworzeniu obiektu unique_ptr poprzez przekazanie do konstruktora surowego wskaźnika, nigdy nie powinniśmy zwalniać pamięci poprzez operator delete.
+Nawet jeśli nie popełnimy tak fatalnego, ale dość oczywistego błędu, to wciąż istnieją inne błędy na które musimy uważać. Po utworzeniu obiektu unique_ptr poprzez przekazanie do konstruktora surowego wskaźnika, nigdy nie powinniśmy zwalniać pamięci poprzez operator delete.
 
 Bezpieczniejszą opcją tworzenia obiektu unique_ptr jest std::make_unique. Jest to funkcja zwracająca unique_ptr dla podanego typu. Załóżmy, że mamy klasę <code>Foo</code> z dwoma polami typu double <code>x</code> i <code>y</code>.
 
 	std::unique_ptr<Foo> unikalnyWsk = std::make_unique<Foo>(1.0, 2.0);
 
-Dlaczego te wskaźniki zwane są unikalnymi? Otóż, nie mamy możliwości inicalizacji obiektów uniqe_ptr poprzez przypisanie im wartości innego obiektu tego samego typu. Tzn. obiekty uniqe_ptr nie są kopiowalne.
+Dlaczego te wskaźniki są nazywane unikalnymi? Otóż, nie mamy możliwości inicjalizacji obiektów uniqe_ptr poprzez przypisanie im wartości innego obiektu tego samego typu. Tzn. obiekty uniqe_ptr nie są kopiowalne.
 
 	std::unique_ptr<Foo> unikalnyWsk1(new Foo);       // Ok
 	std::unique_ptr<Foo> unikalnyWsk2 = unikalnyWsk1; // Error
 
-Mamy za to możliwość przenoszenia jednego obiektu uniqe_ptr do drugiego.
+Mamy za to możliwość przenoszenia jednego obiektu unique_ptr do drugiego.
 
 	std::unique_ptr<Foo> unikalnyWsk1(new Foo);                  
 	std::unique_ptr<Foo> unikalnyWsk2 = std::move(unikalnyWsk1);
@@ -1936,11 +1919,11 @@ int main() {
 ```
 
 ## Przeciążanie
-Przeciążanie odnosi się do sytuacji gdzie w kodzie używamy tej samej nazwy dla kilku różnych definicji.
+Przeciążanie odnosi się do sytuacji, gdy w kodzie używamy tej samej nazwy dla kilku różnych definicji.
 
 ### Przeciążanie funkcji
 
-W poniższym przykładzie, mamy trzy funckje, które są rozróżnialne dla kompilatora. W zależności od tego jaki będzie typ zmiennej przekazanej do funkcji, zostanie wywołana odpowiednia funkcja.
+W poniższym przykładzie mamy trzy funkcje, które są rozróżnialne dla kompilatora. W zależności od tego, jaki będzie typ zmiennej przekazanej do funkcji, zostanie wywołana odpowiednia funkcja.
 
 ```c++
 #include <iostream>
@@ -1963,6 +1946,8 @@ int main() {
   return 0;
 }
 ```
+
+
 Przy przeciążaniu funkcji należy być szczególnie ostrożnym w przypadku domyślnych wartości parametrów. Jeśli do powyższego przykładu dodalibyśmy nową funkcję o następującej definicji:
 
     // funkcja4
@@ -2001,7 +1986,7 @@ int main() {
   Foo foo2;
   foo1 = foo2;
   foo1 + foo2;
-  foo1 *foo2;
+  foo1 * foo2;
   return 0;
 }
 ```
@@ -2021,12 +2006,12 @@ Przykład:
        int a = 10;
        double b = (double)a;
 
- W powyższym przykładzie wszystko działa jak należy. Nie ma problemu z konwersją z typu int na typ double. W wielu innych przypadkach taki zabieg może okazać się niebezpieczny. W szczególności gdy bawimy się wskaźnikami na void. Czasami musimy ich użyć, jest jedyny sposób na osiągnięcie polimorfizmu w C. Przykładowo funkcje qsort() i bsearch() pracują z wskaźnikami na void, dzięki temu możemy przekazać do nich tablice dowolnego typu. Niebezpieczeństwo pojawia się gdy chemy rzutować wskaźnik na void z powrotem na inny typ. Nic nie powstrzymuje nas przed konwersją na zły typ i nieoczekiwanymi rezultatami.
+W powyższym przykładzie wszystko działa jak należy. Nie ma problemu z konwersją z typu int na typ double. W wielu innych przypadkach taki zabieg może okazać się niebezpieczny. W szczególności, gdy bawimy się wskaźnikami na void. Czasami musimy ich użyć, jest to jedyny sposób na osiągnięcie polimorfizmu w C. Przykładowo funkcje qsort() i bsearch() pracują z wskaźnikami na void, dzięki temu możemy przekazać do nich tablice dowolnego typu. Niebezpieczeństwo pojawia się, gdy chcemy rzutować wskaźnik na void z powrotem na inny typ. Nic nie powstrzymuje nas przed konwersją na zły typ i nieoczekiwanymi rezultatami.
 
         void *ptr = malloc(sizeof(int)); // zaalokowanie pamięci dla typu int
         char *ptr2 = (char *)ptr;        // rzutowanie na inny typ
         *ptr2 = 'a';
-        printf("%c\n", *ptr2);           // wyswietlenie znaku 'a'
+        printf("%c\n", *ptr2);           // wyświetlenie znaku 'a'
         free(ptr); 
 
 
@@ -2041,7 +2026,7 @@ Konwersja statyczna <code>static_cast</code> jest bardzo podobna do rzutowania, 
 
 Konwersje dynamiczne <code>dynamic_cast</code> są bardziej ograniczone niż konwersje statyczne, a ich poprawność jest sprawdzana na etapie wykonania. Dynamicznie możemy konwertować jedynie wskaźniki i referencje do obiektów klas polimorficznych.
 
-Popularnym zastosowaniem dynamicznego rzutowania jest sprawdzenie czy dany obiekt jest instacją jednej z klas pochodnych.
+Popularnym zastosowaniem dynamicznego rzutowania jest sprawdzenie, czy dany obiekt jest instancją jednej z klas pochodnych.
 
 ```c++
 #include <iostream>
@@ -2067,9 +2052,8 @@ int main() {
 }
 ```
 
-### Konwersja wymuszona
 
-Konwersja wymuszona <code>reinterpret_cast</code> ma dość niszowe zastosowania i nie jest zalecana. Działa jedynie dla konwersji między różnymi wskaźnikami. Jest ona używana do konwersji typów, które nie są możliwe do wykonania za pomocą konwersji statycznej lub dynamicznej. Jej poprawność nie będzie sprawdzana i sami musimy wiedzieć czy konwersja jest możliwa.
+Konwersja wymuszona <code>reinterpret_cast</code> ma dość niszowe zastosowania i nie jest zalecana. Służy do konwersji typów, które nie są możliwe do wykonania za pomocą konwersji statycznej lub dynamicznej. Jej poprawność nie jest sprawdzana, a więc sami musimy wiedzieć czy konwersja jest możliwa.
 
     void convert(ObscureType *obscure, FamiliarType *familiar) {
         familiar = reinterpret_cast<FamiliarType *>(obscure);
@@ -2077,13 +2061,13 @@ Konwersja wymuszona <code>reinterpret_cast</code> ma dość niszowe zastosowania
 
 ## Lambdy
 
-W C++ mamy możliwość tworzenia funkcji w obrębie innych funkcji, a nawet w momencie wywołania funkcji w samym argumencie. Takie funkcje nie mają nazw i nie muszą być uprzednio zadeklarowane. Te funkcje zwane są lambdami.
+W C++ mamy możliwość tworzenia funkcji w obrębie innych funkcji, a nawet w momencie wywołania funkcji w samym argumencie. Takie funkcje nie mają nazwy i nie muszą być uprzednio zadeklarowane. Te funkcje zwane są lambdami.
 
 Ogólna postać funkcji anonimowej jest następująca:
 
     [domknięcie](parametry) -> typ { ciało }
 
-W nawiasach okrągłych mamy listę parametrów, która działa tak samo jak dla zwykłych funkcji. W wielu przypadkach możemy pominąć strzałkę wraz typem zwracanym, gdyż kompilator jest w stanie wydedukować typ na etapie kompilacji.
+W nawiasach okrągłych mamy listę parametrów, która działa tak samo jak dla zwykłych funkcji. W wielu przypadkach możemy pominąć strzałkę wraz z typem zwracanym, gdyż kompilator jest w stanie wydedukować typ na etapie kompilacji.
 
 Przykład funkcji lambda przyjmującej dwa argumenty i zwracającej wartość typu int:
 
@@ -2109,7 +2093,7 @@ Szablony umożliwiają tworzenie klas i funkcji, bez konieczności precyzowania 
 
 ### Szablon funkcji
 
-Przykładowo możemy mieć funkcję max2(T arg1, T arg2) zwracającą największą z dwóch wartości typu T. Pod ogólnym typem T może kryć się dowolny typ dla, którego zdefiniowane jest porównanie między dwoma elementami.
+Przykładowo możemy mieć funkcję max2(T arg1, T arg2) zwracającą największą z dwóch wartości typu T. Pod ogólnym typem T może kryć się dowolny typ, dla którego zdefiniowane jest porównanie między dwoma elementami.
 
     template <typename T> T max2(T arg1, T arg2) {
       return arg1 > arg2 ? arg1 : arg2;
@@ -2119,7 +2103,7 @@ Przykładowo możemy mieć funkcję max2(T arg1, T arg2) zwracającą największ
     max2(16.2, 3.14); // 16.2
     max2('a', 'b');   // 'b'
 
-Kompilator jest w stanie wywnioskować typy argumentów na podstawie podanych wartości. Jeśli  typy argumentów będą niezgodne, kompilator zgłosi błąd. Kompilator również zgłosi błąd jeśli operacja umieszczona w ciele funkcji nie jest zdefiniowana dla typu przekazanych przez nas argumentów.
+Kompilator jest w stanie wywnioskować typy argumentów na podstawie podanych wartości. Jeśli typy argumentów będą niezgodne, kompilator zgłosi błąd. Kompilator również zgłosi błąd jeśli operacja umieszczona w ciele funkcji nie jest zdefiniowana dla typu przekazanych przez nas argumentów.
 
 ### Szablon klasy
 
@@ -2138,18 +2122,18 @@ Podobnie jak dla funkcji, możemy mieć jedną definicję klasy i decydować o t
 
 ## Wyjątki
 
-Błąd - wszystko co uniemożliwia poprawne działanie programu.
+Błąd - wszystko, co uniemożliwia poprawne działanie programu.
 Sygnał - informacja przesyłana do procesu.
-Wyjątek - mechanizm języka programowania umożliwiający prgoramiście, że dana funkcja nie może poprawnie kontynuować działania.
+Wyjątek - mechanizm języka programowania umożliwiający programiście wyrażenie, że dana funkcja nie może poprawnie kontynuować działania.
 
-Błędy składniowe – użycie kodu niezgodnego z konwencjami danego języka programowania. wykrywane w czasie kompilacji.
+Błędy składniowe – użycie kodu niezgodnego z konwencjami danego języka programowania, wykrywane w czasie kompilacji.
 Błędy logiczne – kod, który miał zostać uruchomiony nie jest uruchomiony, błędy w ifach, zła kolejność wykonywania operacji
-Błędy semantyczne – program został błędnie zakodowany, nie robi tego co powinien robić
+Błędy semantyczne – program został błędnie zakodowany, nie robi tego, co powinien robić
 
 Problemy z pamięcią:
 
 - Przepełnienie stosu (rekurencja, rozmiar zmiennych statycznych)
-- rozmiar zmiennych
+- Rozmiar zmiennych
 
 ### Działanie wyjątków
 
@@ -2266,7 +2250,7 @@ Struktura set implementuje drzewo czerwono-czarne.
 
 ### Iteratory
 
-Iteratory to konstrukcje, które umożliwiają jednolitą iterację po elementach kolekcji. Dzięki temu nie musimy zamiast poznawać osobne mechanizmy dla każdej kolekcji, możemy zawsze użyć iteratorów.
+Iteratory to konstrukcje, które umożliwiają jednolitą iterację po elementach kolekcji. Dzięki temu nie musimy zapoznawać się z osobnymi mechanizmami dla każdej kolekcji, możemy zawsze użyć iteratorów.
 
 W poniższym przykładzie wykorzystano iterator do wyświetlenia elementów wektora:
 
@@ -2292,7 +2276,7 @@ Iterator do pierwszego elementu kolekcji to:
 
     kontener.begin()
 
-Iterator do następnego elementu za ostanim to:
+Iterator do następnego elementu za ostatnim to:
 
     kontener.end()
 
@@ -2310,7 +2294,7 @@ Usunięcie elementu poprzez iterator <code>it</code>:
 
 ### Algorytmy
 
-Biblioteka <code>algorithm</code> zawiera wiele funkcji, które mogą być użyte do pracy z kolekcjami. Przyjrzymy się teraz kilku przykładom.
+Biblioteka <code>algorithm</code> zawiera wiele funkcji, które mogą być użyte do pracy z kolekcjami. Przyjrzyjmy się teraz kilku przykładom.
 
 #### sort()
 
@@ -2325,8 +2309,8 @@ int main() {
   std::vector<int> wektor{8, 3, 5, 1, 2, 4, 6, 7};
   auto kopia = wektor;
 
-  std::sort(wektor.begin(), wektor.begin() + 3); // posortowane zostana pierwsze 3 elementy
-  std::sort(kopia.begin(), kopia.end());         // posortowane zostana wszystkie elementy
+  std::sort(wektor.begin(), wektor.begin() + 3); // posortowane zostaną pierwsze 3 elementy
+  std::sort(kopia.begin(), kopia.end());         // posortowane zostaną wszystkie elementy
 
   return 0;
 }
@@ -2334,7 +2318,7 @@ int main() {
 
 ### find()
 
-Funkcja <code>find()</code> zwróci nam iterator odpowiadający szukanemu elementowi. Pierwszym argumentem jest iterator od którego mamy zacząć szukanie, drugim jest iterator na którym mamy zakończyć szukanie, a trzecim szukany element.
+Funkcja <code>find()</code> zwróci nam iterator odpowiadający szukanemu elementowi. Pierwszym argumentem jest iterator, od którego mamy zacząć szukanie, drugim jest iterator, na którym mamy zakończyć szukanie, a trzecim jest szukany element.
 
 ```c++
 #include <vector>
@@ -2355,7 +2339,7 @@ int main() {
 
 ### for_each()
 
-Jeśli chcemy jakąś operację wykonać na każdym elemencie kolekcji, możemy użyć funkcji <code>for_each()</code>. Pierwszym argumentem jest iterator od którego mamy zacząć wykonywanie operacji, drugim jest iterator na którym mamy zakończyć wykonywanie operacji, a trzecim jest funkcja, która będzie wywoływana na każdym elemencie.
+Jeśli chcemy jakąś operację wykonać na każdym elemencie kolekcji, możemy użyć funkcji <code>for_each()</code>. Pierwszym argumentem jest iterator, od którego mamy zacząć wykonywanie operacji, drugim jest iterator, na którym mamy zakończyć wykonywanie operacji, a trzecim jest funkcja, która będzie wywoływana na każdym elemencie.
 
 ```c++
 #include <vector>
@@ -2373,7 +2357,7 @@ int main() {
 
 ## Praca z plikami
 
-W C nazwy funkcji używanych do pracy z plikami zaczynają się od litery <i>f</i>, są to np. <code>fopen()</code>, <code>fread()</code> i <code>fclose()</code>. Struktura <code>FILE</code> używana jest jako uchwyt do pliku, za pomocą którego wykonujemy różne operacje na pliku.
+W C nazwy funkcji używanych do pracy z plikami zaczynają się od litery <i>f</i>, są to np. <code>fopen()</code>, <code>fread()</code> i <code>fclose()</code>. Struktura <code>FILE</code> jest używana jako uchwyt do pliku, za pomocą którego wykonujemy różne operacje na pliku.
 
 ```c
 #include <stdio.h>
@@ -2384,13 +2368,13 @@ int main(int argc, char **argv) {
   // otwieramy plik
   plik = fopen("plik.txt", "r");
 
-  // sprawdzamy, czy plik zostal otwarty
+  // sprawdzamy, czy plik został otwarty
   if (plik == NULL) {
-    printf("Nie udalo sie otworzyc pliku");
+    printf("Nie udało się otworzyć pliku");
     return 1;
   }
 
-  // wczytujemy zawartosc pliku
+  // wczytujemy zawartość pliku
   char znak;
   while ((znak = fgetc(plik)) != EOF) {
     printf("%c", znak);
@@ -2418,13 +2402,13 @@ int main() {
   // otwieramy plik
   plik.open("plik.txt", std::ios::in);
 
-  // sprawdzamy, czy plik zostal otwarty
+  // sprawdzamy, czy plik został otwarty
   if (!plik.is_open()) {
-    std::cout << "Nie udalo sie otworzyc pliku" << std::endl;
+    std::cout << "Nie udało się otworzyć pliku" << std::endl;
     return 1;
   }
 
-  // wczytujemy zawartosc pliku
+  // wczytujemy zawartość pliku
   char znak;
   while (plik.get(znak)) {
     std::cout << znak;
@@ -2442,8 +2426,8 @@ int main() {
 
 ## C vs Cpp
 
-* C został stworzony w 1970 roku, a C++ w 1985 roku.
-* C++ jest (niemalże) nadzbiorem C. Kompilatory C++ prawie zawsze poradzą sobie z kodem napisanym w czystym C.
+* C został stworzony w 1970 roku, a C++ w 1985 roku. 
+* C++ jest (prawie) nadzbiorem C. Kompilatory C++ prawie zawsze poradzą sobie z kodem napisanym w czystym C.
 
 ### Dyrektywy #include
 
@@ -2537,18 +2521,18 @@ Przykłady słów kluczowych używanych jedynie w C++:
 
 * Przeciążanie funkcji
 * Przekazywanie zmiennych przez referencję
-* Inicjalizacja zmiennych przy pomocy nawiasów okrągłych
+* Inicjalizacja zmiennych przy użyciu nawiasów okrągłych
 	int x(5);
 * Domyślne wartości dla parametrów funkcji
 
 ### Dlaczego C?
 
-* Minimalny język zawierający wszystko czego potrzebujesz do napisania dowolnego programu, bez zbędnych abstrakcji.
+* Minimalny język zawierający wszystko, czego potrzebujesz do napisania dowolnego programu, bez zbędnych abstrakcji.
 * Mechanizmy języka są niezależne od siebie nawzajem.
 * Mała standardowa biblioteka.
-* Napotkane problemy możesz zawsze rozwiązać samemu, dokładnie tak jak chcesz. Nie ma potrzeby dolepiania tysiąca zewnętrznych bibliotek i frameworków.
+* Napotkane problemy możesz zawsze rozwiązać samemu, dokładnie tak jak chcesz. Nie ma potrzeby dolepiania tysięcy zewnętrznych bibliotek i frameworków.
 * Jesteś kowalem własnego losu. Masz niemalże nieograniczoną kontrolę nad pamięcią wykorzystywaną przez twój program. Możesz zadecydować o tym, skąd pamięć jest brana i jak jest używana.
-* Niedościgniona stabilność. Programy skompilowane w latach 80'tych działają po dziś dzień.
+* Niedościgniona stabilność. Programy skompilowane w latach 80'tych działają do dziś.
 
 ### Dlaczego C++?
 
