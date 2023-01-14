@@ -1,23 +1,23 @@
 ## Napisy
 
-Poznaliśmy już tablice, pozwalające pod jedną nazwą przechowywać wiele elementów tego samego typu. Napisy są specjalnym typem tablicy, który przechowuje znaki (char). Jako, że praca z tekstem jest nieunikniona w programowaniu, warto zapoznać się z funkcjami często używanymi do manipulacji napisów.
+Poznaliśmy już tablice, które pozwalają przechowywać wiele elementów tego samego typu pod jedną nazwą. Napisy są specjalnym typem tablicy, który przechowuje znaki (char). Praca z tekstem jest nieunikniona w programowaniu, dlatego warto zapoznać się z funkcjami często używanymi do manipulacji napisów.
 
 ### C-string
 
-W C napisy są tablicami charów zakończonymi znakiem '\0' (null-terminator).
+W języku C napisy są tablicami znaków (char) zakończonymi znakiem '\0' (null-terminator). Oznacza to, że napis kończy się znakiem '\0', który jest znakiem specjalnym oznaczającym koniec napisu.
 
-Sposoby inicjalizacji napisów:
+Istnieją różne sposoby inicjalizacji napisów:
 
-	char* napisA = "Ala ma kota"; 	// Niemodyfikowalny napis o długości 12 znaków
-	char  napisB[] = "Ala ma kota";  // Modyfikowalny napis o długości 12 znaków
-	char  napisC[] = {'A', 'l', 'a', ' ', 'm', 'a', ' ', 'k', 'o', 't', 'a', '\0'}; // tak samo jak napisB
+* `char* napisA = "Ala ma kota";` - jest to niemodyfikowalny napis o długości 12 znaków
+* `char napisB[] = "Ala ma kota";` - jest to modyfikowalny napis o długości 12 znaków
+* `char napisC[] = {'A', 'l', 'a', ' ', 'm', 'a', ' ', 'k', 'o', 't', 'a', '\0'};` - jest to tak samo jak napisB
 
 Przydatne biblioteki:
 
-	<string.h> - zawiera funkcje do manipulacji napisami
-	<ctype.h>  - zawiera funkcje do manipulacji znakami
-	<stdlib.h>  - zawiera funkcje do konwersji między typami
-
+* `<string.h>` - zawiera funkcje do manipulacji napisami, np. strlen() zwraca długość napisu, strcpy() kopiuje napis z jednej tablicy do drugiej
+* `<ctype.h>` - zawiera funkcje do manipulacji pojedynczymi znakami, np. isalpha() sprawdza czy znak jest literą, toupper() zamienia znak na wersję wielką
+* `<stdlib.h>` - zawiera funkcje do konwersji między typami, np. atoi() konwertuje napis na liczbę całkowitą
+    
 Przykładowe funkcje:
 
 | funkcja | działanie |
@@ -40,12 +40,12 @@ Przykładowe funkcje:
 
 ### Biblioteka string
 
-W języku C++ mamy klasę string dostępną w bibliotece standardowej. Praca z obiektami tej klasy jest łatwiejsza i bezpieczniejsza niż praca z tablicami charów w C.
+W języku C++ mamy dostępną klasę string w bibliotece standardowej, która ułatwia i zwiększa bezpieczeństwo pracy z napisami w porównaniu do tablic znaków w języku C.
 
-Aby utworzyć obiekt stringa, możemy użyć konstruktora string(const char *s) lub string(const string &s).
+Aby utworzyć obiekt string, możemy skorzystać z następujących konstruktorów:
 
-	string napisA = "Ala ma kota";
-	string napisB = napisA;
+* `string(const char *s)` - tworzy obiekt string na podstawie ciągu znaków
+* `string(const string &s)` - tworzy nowy obiekt string na podstawie istniejącego obiektu string.
 
 Przykładowe funkcje:
 
