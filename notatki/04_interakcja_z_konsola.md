@@ -1,21 +1,19 @@
 ## Interakcja z konsolą
+Interakcja z konsolą to mechanizm umożliwiający programowi komunikowanie się z użytkownikiem. Umożliwia wypisywanie danych na ekran i ich pobieranie z klawiatury. 
 
 Każdy program w momencie uruchomienia ma dostęp do trzech strumieni:
+- `stdin` - strumień wejściowy,
+- `stdout` - strumień wyjściowy,
+- `stderr` - strumień błędów.
 
-    1. stdin - strumień wejściowy
-    2. stdout - strumień wyjściowy
-    3. stderr - strumień błędów
+W C używamy funkcji `printf` oraz `scanf` odpowiednio do wypisywania danych na ekran i pobierania danych z klawiatury.
 
-W C używamy funkcji <code>printf</code> oraz <code>scanf</code> odpowiednio do wypisywania danych na ekran i pobierania danych z klawiatury.
-
-```
-#include <iostream>
-
-using namespace std;
+```c
+#include <stdio.h>
 
 int main() {
   int liczba;
-  cout << "Podaj pojedynczą liczbę: " << endl;
+  printf("Podaj pojedynczą liczbę: ");
   scanf("%d", &liczba);
 
   printf("Podales liczbę: %d\n", liczba);	
@@ -26,17 +24,16 @@ int main() {
 
 | Format | Typ danych |
 | ------ | ---------- |
-| <code>%d</code> | int |
-| <code>%l</code> | long |
-| <code>%f</code> | double |
-| <code>%c</code> | unsigned char |
-| <code>%s</code> | wskaźnik na char |
+| `%d` | int |
+| `%l` | long |
+| `%f` | double |
+| `%c` | unsigned char |
+| `%s` | wskaźnik na char |
 
-W C++ biblioteka <code>iostream</code> zawiera definicje funkcji, które pozwalają na komunikację z tymi strumieniami:
-
-- obiekt <code>cout</code> oraz operator <code><<</code> wypisuje tekst na standardowe wyjście;
-- obiekt <code>cin</code> oraz operator <code>>></code> wczytują pojedynczą wartość ze standardowego wejścia;
-- <code>getline(cin, string)</code> wczytuje ze standardowego wejścia cały wiersz wraz ze spacjami.
+W C++ biblioteka `iostream` zawiera definicje funkcji, które pozwalają na komunikację z tymi strumieniami:
+- obiekt `cout` oraz operator `<<` wypisuje tekst na standardowe wyjście;
+- obiekt `cin` oraz operator `>>` wczytują pojedynczą wartość ze standardowego wejścia;
+- `getline(cin, string)` wczytuje ze standardowego wejścia cały wiersz wraz ze spacjami.
 
 ```c++
 #include <iostream>
@@ -55,7 +52,7 @@ int main() {
   string zadanie;
   cout << "Podaj pelne zdanie: " << endl;
 
-  getline(cin, zdanie);
+  getline(cin, zadanie);
 
   cout << "Podales zdanie: " << endl << zdanie << endl;
 
