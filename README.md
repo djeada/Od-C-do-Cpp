@@ -17,12 +17,12 @@ Kod źródłowy do programów z yt.
 | 7 | Liczby losowe | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/07_liczby_losowe.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 8 | Typ wyliczeniowy | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/08_typ_wyliczeniowy.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 9 | Funkcje | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/09_funkcje.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
-| 10 | L wartości i R wartości | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/10_l_wartosci_i_r_wartosci.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 10 | L wartości i R wartości | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/10_l_wartosci_r_wartosci.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 11 | Wskaźniki | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/11_wskazniki.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 12 | Tablice | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/12_tablice.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 13 | Napisy | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/13_napisy.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 14 | Operacje bitowe | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/14_operacje_bitowe.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
-| 15 | Programowanie obiektowe | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/15_programowanie_obiektowe.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 15 | Programowanie obiektowe | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/15_programowanie_obietkowe.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 16 | Dziedziczenie | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/16_dziedziczenie.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 17 | Zaawanosowane wskaźniki | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/17_zaawansowane_wskaźniki.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 18 | Przeciążanie | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/18_przeciazanie.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
