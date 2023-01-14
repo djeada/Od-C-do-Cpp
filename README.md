@@ -8,32 +8,31 @@ Kod źródłowy do programów z yt.
 
 | Numer | Temat | Link |
 | --- | --- | --- |
-| 1 | Proces kompilacji | [01_proces_kompilacji.md](notatki/01_proces_kompilacji.md) |
-| 2 | Preprocesor | [02_preprocesor.md](notatki/02_preprocesor.md) |
-| 3 | Zmienne i typy danych | [03_zmienne_i_typy_danych.md](notatki/03_zmienne_i_typy_danych.md) |
-| 4 | Interakcja z konsolą | [04_interakcja_z_konsola.md](notatki/04_interakcja_z_konsola.md) |
-| 5 | Instrukcja warunkowa | [05_instrukcja_warunkowa.md](notatki/05_instrukcja_warunkowa.md) |
-| 6 | Pętle | [06_petle.md](notatki/06_petle.md) |
-| 7 | Liczby losowe | [07_liczby_losowe.md](notatki/07_liczby_losowe.md) |
-| 8 | Typ wyliczeniowy | [08_typ_wyliczeniowy.md](notatki/08_typ_wyliczeniowy.md) |
-| 9 | Funkcje | [09_funkcje.md](notatki/09_funkcje.md) |
-| 10 | L wartości i R wartości | [10_l_wartosci_i_r_wartosci.md](notatki/10_l_wartosci_i_r_wartosci.md) |
-| 11 | Wskaźniki | [11_wskazniki.md](notatki/11_wskazniki.md) |
-| 12 | Tablice | [12_tablice.md](notatki/12_tablice.md) |
-| 13 | Napisy | [13_napisy.md](notatki/13_napisy.md) |
-| 14 | Operacje bitowe | [14_operacje_bitowe.md](notatki/14_operacje_bitowe.md) |
-| 15 | Programowanie obiektowe | [15_programowanie_obiektowe.md](notatki/15_programowanie_obiektowe.md) |
-| 16 | Dziedziczenie | [16_dziedziczenie.md](notatki/16_dziedziczenie.md) |
-| 17 | Zaawanosowane wskaźniki | [17_zaawansowane_wskaźniki.md](notatki/17_zaawansowane_wskazniki.md) |
-| 18 | Przeciążanie | [18_przeciazanie.md](notatki/18_przeciazanie.md) |
-| 19 | Konwersje | [19_konwersje.md](notatki/19_konwersje.md) |
-| 20 | Lamdy | [20_lamdy.md](notatki/20_lamdy.md) |
-| 21 | Szablony | [21_szablony.md](notatki/21_szablony.md) |
-| 22 | Wyjątki | [22_wyjatki.md](notatki/22_wyjatki.md) |
-| 23 | STL | [23_stl.md](notatki/23_stl.md) |
-| 24 | Praca z plikami | [24_praca_z_plikami.md](notatki/24_praca_z_plikami.md) |
-| 25 | C vs C++ | [25_c_vs_cpp.md](notatki/25_c_vs_cpp.md) |
-
+| 1 | Proces kompilacji | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/01_proces_kompilacji.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 2 | Preprocesor | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/02_preprocesor.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 3 | Zmienne i typy danych | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/03_zmienne_i_typy_danych.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 4 | Interakcja z konsolą | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/04_interakcja_z_konsola.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 5 | Instrukcja warunkowa | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/05_instrukcja_warunkowa.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 6 | Pętle | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/06_petle.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 7 | Liczby losowe | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/07_liczby_losowe.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 8 | Typ wyliczeniowy | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/08_typ_wyliczeniowy.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 9 | Funkcje | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/09_funkcje.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 10 | L wartości i R wartości | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/10_l_wartosci_i_r_wartosci.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 11 | Wskaźniki | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/11_wskazniki.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 12 | Tablice | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/12_tablice.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 13 | Napisy | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/13_napisy.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 14 | Operacje bitowe | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/14_operacje_bitowe.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 15 | Programowanie obiektowe | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/15_programowanie_obiektowe.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 16 | Dziedziczenie | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/16_dziedziczenie.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 17 | Zaawanosowane wskaźniki | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/17_zaawansowane_wskaźniki.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 18 | Przeciążanie | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/18_przeciazanie.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 19 | Konwersje | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/19_konwersje.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 20 | Lamdy | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/20_lamdy.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 21 | Szablony | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/21_szablony.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 22 | Wyjątki | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/22_wyjatki.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 23 | STL | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/23_stl.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 24 | Praca z plikami | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/24_praca_z_plikami.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 25 | C vs C++ | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/25_c_vs_cpp.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 
 ## Literatura
 
@@ -50,4 +49,3 @@ Kod źródłowy do programów z yt.
 - https://web.stanford.edu/class/archive/cs/cs106b/cs106b.1226/
 - https://eel.is/c++draft/
 - https://www.cs.cmu.edu/~ab/15-123S09/annotatedNotes/
-
