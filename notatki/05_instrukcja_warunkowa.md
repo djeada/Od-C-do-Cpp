@@ -1,28 +1,8 @@
 ## Instrukcje warunkowe
 
-Instrukcje warunkowe służą do włączania i wyłączania fragmentów kodu w zależności od warunku.
+Instrukcje warunkowe to konstrukcje, które pozwalają na włączanie i wyłączanie fragmentów kodu w zależności od warunku. Są one dostępne w wielu językach programowania. Najpopularniejszą instrukcją warunkową jest słowo kluczowe `if`, które pozwala na wykonanie kodu w zależności od spełnienia określonego warunku. Warunek jest definiowany w nawiasach okrągłych, a kod, który ma być wykonany, jest umieszczony w nawiasach klamrowych. Jeśli warunek jest spełniony, to wykonany zostanie kod znajdujący się w nawiasach klamrowych; w przeciwnym razie program omija kod znajdujący się w nawiasach klamrowych i przechodzi do następnych linii kodu.
 
-### If
-
-<code>If</code> to podstawowa instrukcja warunkowa, dostępna w wielu językach programowania. Warunek definiowany jest w nawiasach okrągłych. Jeśli warunek jest spełniony, to wykonany zostanie kod znajdujący się w nawiasach klamrowych. W przeciwnym razie program omija kod znajdujący się w nawiasach klamrowych i przechodzi do następnych linii kodu.
-
-```c++
-  if (warunek) {
-    kod;
-  }
-```
-
-Konstrukcja <code>if-else</code> pozwala na wykonanie różnych bloków kodu w zależności od warunku. Jeśli warunek jest spełniony, to wykonany zostanie kod znajdujący się w nawiasach klamrowych za <code>if</code>. W przeciwnym razie wykonany zostanie kod znajdujący się w nawiasach klamrowych za <code>else</code>.
-
-```c++
-  if (warunek) {
-    kod;
-  } else {
-    kod;
-  }
-```
-
-Jeśli kod jaki chcemy umieścić po słowach kluczowych <code>if</code> lub <code>else</code> składa się wyłącznie z pojedynczej linii, to nawiasy klamrowe mogą zostać pominięte.
+Konstrukcja `if-else` pozwala na wykonanie różnych bloków kodu w zależności od warunku. Jeśli warunek jest spełniony, to wykonany zostanie kod znajdujący się w nawiasach klamrowych za `if`. W przeciwnym razie wykonany zostanie kod znajdujący się w nawiasach klamrowych za `else`. Jeśli kod jaki chcemy umieścić po słowach kluczowych `if` lub `else` składa się wyłącznie z pojedynczej linii, to nawiasy klamrowe mogą zostać pominięte. Przykład:
 
 ```c++
 #include <iostream>
@@ -43,7 +23,7 @@ int main() {
 
 ### Wielokrotne warunki
 
-Możemy sprawdzić wiele warunków jeden po drugim i uzależnić od ich spełnienia różne bloki kodu.
+Jeśli chcemy sprawdzić wiele warunków jeden po drugim i uzależnić od ich spełnienia różne bloki kodu, możemy użyć konstrukcji `if-else if-else`. Przykład:
 
 ```c++
 #include <iostream>
@@ -80,11 +60,12 @@ int main() {
 }
 ```
 
-### Switch
+Instrukcje warunkowe pozwalają programiście na skuteczny i łatwy dostęp do konkretnych bloków kodu w zależności od określonego warunku. Są one niezwykle przydatne w przypadku, gdy chcemy sprawdzić kilka warunków jeden po drugim i uzależnić od ich spełnienia różne bloki kodu.
 
-<code>Switch</code> daje nam również możliwość sprawdzenia wielokrotnych warunków.
-Niektóre kompilatory lepiej optymalizują kod z użyciem <code>switch</code> niż <code>else if</code>.
-Mechanizm ten jest również niejednokrotnie uważany za bardziej elegancki.
+### Switch
+Switch jest konstrukcją języka programowania, która pozwala na wykonanie określonego bloku kodu w zależności od wartości zmiennej. Umożliwia ona sprawdzenie wielokrotnych warunków bez potrzeby używania wielu instrukcji <code>if-else</code>.
+
+Dodatkowo, kompilatory lepiej optymalizują kod z wykorzystaniem <code>switch</code>. Przykładowy kod w C++ używający <code>switch</code> może wyglądać następująco:
 
 ```c++
 #include <iostream>
