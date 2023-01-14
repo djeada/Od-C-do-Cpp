@@ -128,7 +128,7 @@ int main() {
   int x = 2;
 
   pomnoz(x, 3);
-  std::cout << x << std::endl; // Wypisuje 2, poniewaz wartosc x w funkcji pomnoz nie zostala zmieniona
+  std::cout << x << std::endl; // Wypisuje 2, poniewaz wartosc x nie zostala zmieniona w funkcji pomnoz
 
   return 0;
 }
@@ -145,7 +145,7 @@ int main() {
   int x = 2;
 
   pomnoz(x, 3);
-  std::cout << x << std::endl; // Wypisuje 6, poniewaz wartosc x w funkcji pomnoz zostala zmieniona
+  std::cout << x << std::endl; // Wypisuje 6, poniewaz wartosc x zostala zmieniona w funkcji pomnoz
 
   return 0;
 }
