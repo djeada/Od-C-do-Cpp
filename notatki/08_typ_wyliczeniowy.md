@@ -1,7 +1,6 @@
 
 ## Typ wyliczeniowy enum
-
-Typ wyliczeniowy <code>enum</code> pozwala na tworzenie zmiennych, które mogą przyjmować jedynie z góry określone wartości. Wartości te mają czytelne nazwy, a dodatkowo <code>enum</code> jest bardzo szybki i opłaca się go używać nawet w krytycznych miejscach programu.
+Typ wyliczeniowy <code>enum</code> jest prostą i elastyczną strukturą danych, która pozwala na tworzenie zmiennych, które mogą przyjmować jedynie z góry określone wartości. Wartości te mają czytelne nazwy, a dodatkowo <code>enum</code> jest bardzo szybki i opłaca się go używać nawet w krytycznych miejscach programu.
 
 ```c++
 #include <iostream>
