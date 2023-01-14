@@ -1,8 +1,9 @@
 ## Zmienne i typy danych
+Zmienna to pojęcie informatyczne, które odnosi się do obszaru pamięci, w którym można zapisać dane. Każda zmienna ma swój typ, aby komputer wiedział, jak interpretować dane przechowywane w pamięci.
 
 ### Tworzenie zmiennej
 
-Ogólna zasada: `Typ` + `nazwa`:
+Aby utworzyć zmienną, należy połączyć typ i nazwę:
 
 ```c++
 int x;    // zmienna x typu int
@@ -15,10 +16,12 @@ Nazwy zmiennych mogą składać się z liter, liczb i podkreślnika "_". Powinny
 
 Istnieje wiele konwencji tworzenia złożonych nazw zmiennych. Dwie najpopularniejsze to:
 
-1. oddzielanie słów podkreślnikiem, np. `masa_czastki_alfa` (tzw. snake_case).
-2. oddzielanie słów wielką literą, np. `masaCzastkiAlfa` (tzw. camelCase).
+1. oddzielanie słów podkreślnikiem, np. `masa_czastki_alfa` (tzw. snake_case). Przykład: `cena_paliwa`, `nr_telefonu`.
+2. oddzielanie słów wielką literą, np. `masaCzastkiAlfa` (tzw. camelCase). Przykład: `cenaPaliwa`, `nrTelefonu`.
 
 ### Inicjalizacja
+
+Inicjalizacja to proces przypisywania wartości zmiennej:
 
 ```c++
 int x = 10;
@@ -27,6 +30,8 @@ double y = 3.56;
 
 ### Nadpisanie
 
+Aby zmienić wartość zmiennej, można wykorzystać operator przypisania:
+
 ```c++
 int x = 10;
 x = x + 3; // teraz x przechowuje 13
@@ -34,6 +39,8 @@ x++;       // teraz x przechowuje 14
 ```
 
 ### Typy zmiennych
+
+Istnieje wiele typów zmiennych, wśród nich można wymienić: pojedyncze znaki, liczby całkowite, liczby naturalne, liczby zmiennoprzecinkowe, typ logiczny i typ void.
 
 <table class="boxed">
     <tbody>
@@ -125,20 +132,16 @@ x++;       // teraz x przechowuje 14
 
 ### Stałe
 
-Zmienna, której wartość nie może zostać zmieniona w trakcie trwania programu zwana jest stałą.
+Stała jest to zmienna, której wartość nie może zostać zmieniona w trakcie trwania programu. Deklaruje się je za pomocą słowa kluczowego `const`, a w nowszych wersjach C++ (11+) także `constexpr`, które wymusza na kompilatorze sprawdzenie, czy potrafi on wyliczyć wartość na etapie kompilacji. Przykłady:
 
 ```c++
-const double pi = 3.14;       // Ok. Stala jest zadeklarowana i zainicjalizowana.
-const double doInicjalizacji; // Złe. Tak nie robimy!
-```
-
-W nowszych wersjach C++ (11+) dodano inne słowo kluczowe służące do określania stałości. Słowo kluczowe <code>constexpr</code> wymusza na kompilatorze sprawdzenie, czy potrafi on wyliczyć wartość na etapie kompilacji. Jeśli nie, zostanie zgłoszony błąd.
-
-```c++
+const double pi = 3.14; // Ok. Stala jest zadeklarowana i zainicjalizowana.
 constexpr double pi = 3.14;
 ```
 
 ### Zakres życia zmiennych
+
+Każda zmienna ma zakres życia, który określa, gdzie i jak długo będzie istnieć. Zmienne globalne istnieją cały czas, od rozpoczęcia do zakończenia programu, natomiast zmienne lokalne są tworzone i usuwane w trakcie działania programu.
 
 ```c++
 int a = 10; // zmienna globalna
@@ -151,3 +154,5 @@ int main() {
   return 0;
 }
 ```
+
+W powyższym przykładzie mamy dwie zmienne `a`, jedną globalną i jedną lokalną. Do zmiennej globalnej można odwołać się za pomocą operatora `::`.
