@@ -2,26 +2,29 @@
 
 Wskaźnik to zmienna, która przechowuje adres innej zmiennej. Dodatkowo przy pomocy wskaźników mamy możliwość modyfikowania zmiennych, których adresy przechowują wskaźniki.
 
-<code>Typ_zmiennej_której_adres_przechowuje_wskaźnik * nazwa_wskaźnika;</code>
+Aby zadeklarować wskaźnik, należy użyć operatora * przed nazwą zmiennej, która będzie przechowywać adres. Typ zmiennej, której adres przechowuje wskaźnik, musi być jawnie określony.
 
 ```c++
-#include <string>
+#include <iostream>
 
 int main() {
-  // Deklaracja
-  int *p1;
-  double *p2;
-  string *p3;
+  // Deklaracja wskaźników
+  int *p1;  // wskaźnik przechowujący adres zmiennej typu int
+  double *p2;  // wskaźnik przechowujący adres zmiennej typu double
+  std::string *p3;  // wskaźnik przechowujący adres zmiennej typu std::string
 
+  // Inicjalizacja wskaźników
   int x = 4;
   double y = 3.5;
   std::string s = "napis";
 
-  // Inicjalizacja
-  // p1 = &y; // Złe. Niezgodne typy.
   p1 = &x;    // OK. Typy się zgadzają
   p2 = &y;
   p3 = &s;
+  
+  std::cout << "Wartość zmiennej x: " << x << std::endl;
+  std::cout << "Wartość zmiennej y: " << y << std::endl;
+  std::cout << "Wartość zmiennej s: " << s << std::endl;
   
   return 0;
 }
@@ -29,10 +32,7 @@ int main() {
 
 ### Dereferencja
 
-Wyłuskanie wartości znajdującej się w zmiennej, na którą wskazuje nasz wskaźnik.
-Używane nie tylko do odczytu, ale również zmiany wartości tej zmiennej.
-
-<code>*nazwa wskaźnika</code>
+Aby odczytać wartość zmiennej, na którą wskazuje wskaźnik, należy użyć operatora * przed nazwą wskaźnika (<code>*nazwa_wskaznika</code>).
 
 ```c++
 #include <iostream>
@@ -48,16 +48,8 @@ int main() {
   std::string *p3 = &s;
 
   std::cout << "Wartość zmiennej x: " << *p1 << std::endl;
-  std::cout << "Wartość zmiennej y: " * p2 << std::endl;
-  std::cout << "Wartość zmiennej s: " * p3 << std::endl;
-
-  *p1 = 7;      // zmiana wartości zmiennej x
-  *p2 = 8.123;  // zmiana wartości zmiennej y
-  *p3 = "inny"; // zmiana wartości zmiennej s
-
-  std::cout << "Wartość zmiennej x: " << *p1 << std::endl;
-  std::cout << "Wartość zmiennej y: " * p2 << std::endl;
-  std::cout << "Wartość zmiennej s: " * p3 << std::endl;
+  std::cout << "Wartość zmiennej y: " << *p2 << std::endl;
+  std::cout << "Wartość zmiennej s: " << *p3 << std::endl;
 
   return 0;
 }
@@ -65,48 +57,60 @@ int main() {
 
 ### Wskaźnik na wskaźnik
 
-Operator \* pozwala również tworzyć wskaźniki przechowujące adresy innych wskaźników.
+Operator * pozwala również tworzyć wskaźniki przechowujące adresy innych wskaźników. W celu utworzenia wskaźnika na wskaźnik należy dodać kolejny operator * przed nazwą zmiennej.
 
 ```c++
 int main() {
   int i = 20;
-  int *j = &i;
-  int **k = &j;
-  int ***l = &k;
-
+  int *j = &i;  // j to wskaźnik na zmienną i
+  int **k = &j;  // k to wskaźnik na wskaźnik j
+  int ***l = &k;  // l to wskaźnik na wskaźnik k
+  
+  std::cout << "Wartość zmiennej i: " << **k << std::endl;
+  // równoważne z: std::cout << "Wartość zmiennej i: " << *j << std::endl;
+  
   return 0;
 }
 ```
 
 ### Wskaźnik na NULL
 
-<code>NULL</code> to specjalna wartość wskaźnika symbolizująca wskazywanie na nieistniejący obiekt. Dzięki tej wartości możemy sygnalizować koniec listy połączonej lub poinformować o niemożliwości przydziału pamięci, lub otwarcia pliku (współcześnie preferuje się wyjątki).
+`NULL` to specjalna wartość wskaźnika, która symbolizuje brak wskazywania na jakikolwiek obiekt. Może ona służyć do oznaczenia końca listy połączonej, sygnalizowania braku możliwości przydziału pamięci lub otwarcia pliku. W C, implementacja `NULL` jest zdefiniowana jako `0` lub `((void*)0)`, oba przypadki służą dokładnie do tego samego celu.
 
-W C, w zależności od implementacji <code>NULL</code> definiowany jest jako <code>0</code> lub <code>((void*)0)</code>. W obu przypadkach używany jest dokładnie do tego samego.
-Z uwagi na to, że <code>NULL</code> to po prostu zero, możemy w taki sposób sprawdzić, czy wskaźnik <code>wsk</code> nie jest wskaźnikiem na <code>NULL</code>:
-
-```c++
-  if (wsk != 0) {
-  }
-```
-
-Na pierwszy rzut oka nie widać jednak, czy <code>wsk</code> jest wskaźnikiem, czy zwykłą liczbą. Z tego powodu lepiej jest użyć następującej konstrukcji:
+Należy jednak pamiętać, że `NULL` jest po prostu zerem, co może być mylące szczególnie gdy chcemy sprawdzić czy wskaźnik jest pusty. Dlatego najlepiej jest używać konstrukcji:
 
 ```c++
-  if (wsk != NULL) {
-  }
+if (wsk != NULL) {
+}
 ```
 
-C++ jest (prawie) nadzbiorem C, ale żyje własnym życiem i ewoluuje w innym kierunku. <code>NULL</code> dalej istnieje w C++, ale oprócz niego mamy jeszcze jego młodszego brata <code>nullptr</code>. Pojawia się więc pytanie, po co wymyślono coś nowego, jeśli służy do tego samego co coś, co już istniało wcześniej? Otóż w C++ możemy przeciążać funkcje, tzn. definiować kilka funkcji z tą samą nazwą, ale różnymi typami parametrów.
+W C++ pojawił się również `nullptr`, który jest młodszym bratem `NULL`. `nullptr` został wprowadzony, ponieważ w C++ możliwe jest przeciążanie funkcji, czyli definiowanie kilku funkcji o tej samej nazwie, ale z różnymi typami parametrów.
 
 ```c++
 void foo(void *wsk);
 void foo(int liczba);
 ```
 
-Która funkcja zostanie użyta, gdy wywołamy <code>foo(NULL)</code>? <code>NULL</code> jest zwykłym 0, więc zostanie użyta druga funkcja. Z tego powodu wprowadzono <code>nullptr</code>, który nigdy nie będzie zinterpretowany jako liczba.
+Jeśli wywołamy `foo(NULL)`, to zostanie użyta druga funkcja. `nullptr` zapobiega takim sytuacjom, ponieważ nigdy nie jest interpretowany jako liczba.
 
-Tak więc jeśli piszesz kod w C++, to używaj <code>nullptr</code>.
+W związku z powyższym, jeśli piszesz kod w C++, to należy używać `nullptr` zamiast `NULL`.
+
+Przykład:
+
+```c++
+int *wsk = nullptr;
+if(wsk == nullptr)
+   cout << "wskaznik wsk jest pusty" << endl;
+```
+
+Przykład 2:
+
+```c++
+class A {};
+A *a = nullptr;
+if (a == nullptr)
+    cout << "wskaznik a jest pusty" << endl;
+```
 
 ### Stałe wskaźniki
 
@@ -114,7 +118,7 @@ Podobnie jak możemy deklarować zwykłe stałe, tak samo możemy mieć stałe w
 
 ```c++
   const int *a;
-  int const *a; // równoważne do poprzedniego przykładu
+  int const *a; // rownowazne do poprzedniego przykladu
 ```
 
 oraz stałe wskaźniki:
@@ -123,19 +127,34 @@ oraz stałe wskaźniki:
   int *const b;
 ```
 
-Słowo const przed typem działa jak w przypadku zwykłych stałych, tzn. nie możemy zmienić wartości wskazywanej przy pomocy wskaźnika.
+Słowo const przed typem działa tak samo jak w przypadku zwykłych stałych, oznacza to, że nie możemy zmienić wartości wskazywanej przez wskaźnik.
 
-W drugim przypadku słowo const jest tuż za gwiazdką oznaczającą typ wskaźnikowy, co skutkuje stworzeniem stałego wskaźnika, czyli takiego, którego nie można przestawić na inny adres.
+W drugim przypadku, słowo const jest tuż za gwiazdką oznaczającą typ wskaźnikowy, co skutkuje stworzeniem stałego wskaźnika, czyli takiego, którego nie można przestawić na inny adres.
 
 ```c++
-int main() {
-  int zmienna = 10;
-  const int stala = 15;
-  int *const wskaznik_na_stala = &stala;
-  int *const wskaznik_na_zmienna = &zmienna;
-  const int *const wskaznik_na_stala_wskaznik = &wskaznik_na_stala;
-  const int *const wskaznik_na_zmienna_wskaznik = &wskaznik_na_zmienna;
+#include <iostream>
 
-  return 0;
+int main() {
+    int x = 5;
+    int y = 10;
+    int* const ptr1 = &x; // stały wskaźnik na zmienną x
+    const int* ptr2 = &y; // wskaźnik na stałą y
+    
+    std::cout << "Wartość x: " << x << std::endl;
+    std::cout << "Wartość y: " << y << std::endl;
+    std::cout << "Wartość wskazywana przez ptr1: " << *ptr1 << std::endl;
+    std::cout << "Wartość wskazywana przez ptr2: " << *ptr2 << std::endl;
+    
+    *ptr1 = 7; // poprawne, możemy zmienić wartość wskazywaną przez stały wskaźnik
+    ptr2 = &x; // poprawne, możemy zmienic adres na ktory wskazuje wskaźnik na stałą
+    // *ptr2 = 7; // niepoprawne, nie możemy zmienić wartości wskazywanej przez wskaźnik na stałą
+    //ptr1 = &y; // niepoprawne, nie możemy zmienic adresu na ktory wskazuje wskaźnik na stałą
+
+    std::cout << "Wartość x po zmianie: " << x << std::endl;
+    std::cout << "Wartość y po zmianie: " << y << std::endl;
+    std::cout << "Wartość wskazywana przez ptr1 po zmianie: " << *ptr1 << std::endl;
+    std::cout << "Wartość wskazywana przez ptr2 po zmianie: " << *ptr2 << std::endl;
+    
+    return 0;
 }
 ```
