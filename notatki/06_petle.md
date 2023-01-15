@@ -1,6 +1,6 @@
 ## Pętle
 
-Pętle są konstrukcją programistyczną wykorzystywaną do wielokrotnego wykonywania danego zestawu instrukcji. Mamy dwa typy pętli: pętla `for` i pętla `while`.
+Pętle są konstrukcją programistyczną wykorzystywaną do wielokrotnego wykonywania bloku kodu. Mamy dwa typy pętli: pętla `for` i pętla `while`.
 
 ### Pętla for
 
