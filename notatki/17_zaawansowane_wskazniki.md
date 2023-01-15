@@ -5,27 +5,27 @@ Poza zwykłymi, surowymi wskaźnikami istnieją jeszcze inne, bardziej zaawansow
 
 ### Wskaźniki na funkcje
 
-Wskaźniki mogą wskazywać nie tylko na zmienne i obiekty, ale także na funkcje. Dzięki temu możemy na przykład przekazać jedną funkcję jako argument do innej funkcji.
+Wskaźniki mogą wskazywać nie tylko na zmienne i obiekty, ale także na funkcje. Dzięki temu możemy na przykład przekazać jedną funkcję jako argument do innej funkcji, co jest przydatne w przypadku, gdy chcemy przekazać do funkcji różne operacje do wykonania na danym argumencie. W przykładzie poniżej zdefiniowano dwie funkcje `zwieksz` i `zmniejsz`, które przyjmują jeden argument typu int i zwracają odpowiednio zwiększoną o jeden lub zmniejszoną o jeden wartość. Funkcja funkcja przyjmuje dwa argumenty, pierwszy z nich to wskaźnik na funkcję, a drugi to liczba, na której ta funkcja ma być wykonana. W mainie funkcje te są przekazywane jako argumenty do `funkcjaWysokopoziomowa`, co pozwala na wykonanie odpowiedniej operacji na liczbie 10.
 
 ```c++
 #include <iostream>
 
-void funkcja(void (*f)(int), int a) { f(a); }
+void funkcjaWysokopoziomowa(void (*f)(int), int a) { f(a); }
 
 void zwieksz(int a) { std::cout << a + 1 << std::endl; }
 
 void zmniejsz(int a) { std::cout << a - 1 << std::endl; }
 
 int main() {
-  funkcja(zwieksz, 10);
-  funkcja(zmniejsz, 10);
+  funkcjaWysokopoziomowa(zwieksz, 10);
+  funkcjaWysokopoziomowa(zmniejsz, 10);
   return 0;
 }
 ```
 
 ### Wskaźniki do składowych klasy
 
-Możemy wskazywać na składowe klasy. Przykładowo jeśli mamy obiekt <code>foo</code> klasy <code>Foo</code>, mającą pola <code>x</code> i <code>y</code> to możemy wskazać na <code>foo.x</code> i <code>foo.y</code>.
+Możemy wskazywać na składowe klasy. Przykładowo jeśli mamy obiekt `foo` klasy `Foo`, mającą pola `x` i `y`, to możemy wskazać na `foo.x` i `foo.y`. W przykładzie poniżej, klasa `Foo` posiada dwa pola publiczne `x` i `y`, które są inicjalizowane przy tworzeniu obiektu. W `main` tworzymy obiekt `foo` z wartościami 10 i 20 odpowiednio dla pól `x` i `y`. Następnie tworzymy dwa wskaźniki `x` i `y`, które wskazują na pola `foo.x` i `foo.y`. Przez dereferencję tych wskaźników, jesteśmy w stanie zmienić wartości tych pól (`*x = 100` oraz `*y = 200`). Możemy wyświetlić aktualne wartości przy pomocy `std::cout`.
 
 ```c++
 #include <iostream>
@@ -55,6 +55,8 @@ int main() {
 
 ### Podsumowanie wskaźników
 
+Jak widzimy, wskaźniki mogą być używane w różnych celach i w różnych kontekstach, od wskazywania na zmienne, przez funkcje, aż po składowe klas. Ważne jest, aby dobrze rozumieć jakiego typu wskaźnik jest potrzebny w danym kontekście, oraz jakie operacje możemy wykonać na danym wskaźniku.
+
 | Kod                                  | Opis                                                           |
 | ------------------------------------ | -------------------------------------------------------------- |
 | <code>int \*wsk;</code>              | wskaźnik wskazujący na zmienną typu int                        |
@@ -71,65 +73,85 @@ W C++11 wprowadzono tak zwane sprytne wskaźniki. Wskaźniki te to nakładki na 
 
 #### unique_ptr
 
-Dzięki niemu, mamy pewność że zarezerwowana pamięć zostanie zwolniona gdy program wyjdzie poza zakres życia wskaźnika. Programista nie ma możliwości popełniania błędów, wynikających z nieużycia operatora delete. Pamięć zwalniana jest automatycznie.
+`unique_ptr` to jeden z rodzajów sprytnych wskaźników, który zapewnia, że pamięć zarezerwowana przez wskaźnik zostanie automatycznie zwolniona w momencie, gdy wskaźnik przestanie istnieć (np. wyjdzie poza zakres życia). Dzięki temu, programista nie musi martwić się o ręczne zwalnianie pamięci za pomocą operatora `delete`, co zwiększa bezpieczeństwo kodu.
 
-Nie oznacza to jednak, że nie ma żadnej możliwości na popełnienie błędu przy pracy z unique_ptr. Jeśli utworzymy dwa obiekty unique_ptr poprzez przekazanie do konstruktora tego samego surowego wskaźnika, to nasz program zostanie zakończony z komunikatem o double free.
+```c++
+std::unique_ptr<int> unikalnyWsk(new int);
+*unikalnyWsk = 5;
+std::cout << *unikalnyWsk << std::endl;  // wyświetli 5
+```
 
-    int *surowyWsk = new int;
+Należy pamiętać, że `unique_ptr` nie jest w pełni bezpieczny. Przykładowo, próba utworzenia dwóch `unique_ptr` i przekazanie do nich tego samego surowego wskaźnika, spowoduje błąd `double free`.
 
-    std::unique_ptr<int> unikalnyWsk1(surowyWsk);
-    std::unique_ptr<int> unikalnyWsk2(surowyWsk);
+```c++
+int *surowyWsk = new int;
+std::unique_ptr<int> unikalnyWsk1(surowyWsk);
+std::unique_ptr<int> unikalnyWsk2(surowyWsk); // błąd: double free
+```
 
-Nawet jeśli nie popełnimy tak fatalnego, ale dość oczywistego błędu, to wciąż istnieją inne błędy na które musimy uważać. Po utworzeniu obiektu unique_ptr poprzez przekazanie do konstruktora surowego wskaźnika, nigdy nie powinniśmy zwalniać pamięci poprzez operator delete.
+Dlatego też, zamiast ręcznie tworzyć `unique_ptr`, lepiej skorzystać z funkcji `std::make_unique`, która zwraca `unique_ptr` dla podanego typu.
 
-Bezpieczniejszą opcją tworzenia obiektu unique_ptr jest std::make_unique. Jest to funkcja zwracająca unique_ptr dla podanego typu. Załóżmy, że mamy klasę <code>Foo</code> z dwoma polami typu double <code>x</code> i <code>y</code>.
+```c++
+std::unique_ptr<Foo> unikalnyWsk = std::make_unique<Foo>(1.0, 2.0);
+```
 
-	std::unique_ptr<Foo> unikalnyWsk = std::make_unique<Foo>(1.0, 2.0);
+Należy również pamiętać, że `unique_ptr` nie jest kopiowalny, tzn. nie możemy przypisać jednego `unique_ptr` do drugiego, ani przekazać go jako argument fo funkcji.
 
-Dlaczego te wskaźniki są nazywane unikalnymi? Otóż, nie mamy możliwości inicjalizacji obiektów uniqe_ptr poprzez przypisanie im wartości innego obiektu tego samego typu. Tzn. obiekty uniqe_ptr nie są kopiowalne.
-
-	std::unique_ptr<Foo> unikalnyWsk1(new Foo);       // Ok
-	std::unique_ptr<Foo> unikalnyWsk2 = unikalnyWsk1; // Error
-
-Mamy za to możliwość przenoszenia jednego obiektu unique_ptr do drugiego.
-
-	std::unique_ptr<Foo> unikalnyWsk1(new Foo);                  
-	std::unique_ptr<Foo> unikalnyWsk2 = std::move(unikalnyWsk1);
+```c++
+std::unique_ptr<Foo> unikalnyWsk1(new Foo);
+std::unique_ptr<Foo> unikalnyWsk2 = unikalnyWsk1;   // błąd: unique_ptr nie jest kopiowalny
+void func(std::unique_ptr<Foo> wsk) {}
+std::unique_ptr<Foo> unikalnyWsk3(new Foo);
+func(unikalnyWsk3);  // błąd: unique_ptr nie może być przekazany jako argument
+```
 
 #### shared_ptr
 
-Jeśli przyrównać uniqe_ptr do wozu pancernego, to shared_ptr jest czołgiem. Działa tak samo jak uniqe_ptr, ale daje nam więcej opcji. Możemy zarówno przenosić, jak i kopiować obiekty shared_ptr. Mamy też możliwość sprawdzenia ile aktualnie obiektów shared_ptr wskazuje na dany obiekt.
+Innym rodzajem sprytnego wskaźnika jest `shared_ptr`. Podobnie jak `unique_ptr`, `shared_ptr` również zarządza pamięcią i automatycznie ją zwalnia, jednak ma kilka dodatkowych funkcjonalności.
 
-	std::shared_ptr<Foo> dzielonyWsk1(new Foo);       // Ok
-	std::shared_ptr<Foo> dzielonyWsk2 = dzielonyWsk1; // Ok
+Przede wszystkim, `shared_ptr` pozwala na dzielenie własności obiektu między wieloma wskaźnikami. Dopóki istnieje przynajmniej jeden `shared_ptr` wskazujący na dany obiekt, pamięć zarezerwowana dla tego obiektu nie zostanie zwolniona.
 
-Aby sprawdzić ile obiektów wskazuje na dany obiekt, możemy użyć metody <code>use_count()</code>.
+```c++
+std::shared_ptr<Foo> wspolnyWsk1(new Foo);
+std::shared_ptr<Foo> wspolnyWsk2 = wspolnyWsk1;
+```
 
-	std::cout << dzielonyWsk.use_count() << std::endl;
+W przeciwieństwie do `unique_ptr`, `shared_ptr` jest kopiowalny i może być przekazywany jako argument do funkcji.
+
+```c++
+void func(std::shared_ptr<Foo> wsk) {}
+std::shared_ptr<Foo> wspolnyWsk3(new Foo);
+func(wspolnyWsk3); // ok
+```
+Jednakże, dzielenie własności obiektu między wieloma wskaźnikami może prowadzić do problemów związanych z "dangling pointers" (wskaźnikami wskazującymi na nieistniejący obiekt), dlatego należy być ostrożnym podczas pracy z tymi wskaźnikami.
 
 #### weak_ptr
 
-Innym typem sprytnych wskaźników jest weak_ptr. Jest to wskaźnik, który nie ma praw własności do żadnego obiektu. Zamiast tego możemy przypisać mu wartość sprytnego wskaźnika innego typu i za jego pomocą możemy sprawdzić, czy dane na które wskazuje inny wskaźnik dalej istnieją.
+`weak_ptr` to kolejny rodzaj sprytnego wskaźnika, który pojawił się w C++11. Jest on przeznaczony do pracy z obiektami, na które już wskazuje `shared_ptr`.
+
+`weak_ptr` pozwala na dostęp do obiektu, na który wskazuje `shared_ptr`, bez jednoczesnego zwiększania licznika właścicieli (ang. reference count) tego obiektu. Dzięki temu, unikamy problemu "dangling pointers", który może wystąpić przy pracy z `shared_ptr`.
 
 ```c++
-#include <iostream>
-#include <memory>
+std::shared_ptr<Foo> wspolnyWsk(new Foo);
+std::weak_ptr<Foo> slabyWsk = wspolnyWsk;
+```
 
-void czy_istnieje(std::weak_ptr<int> wsk) {
-  if (auto tmp = wsk.lock())
-    std::cout << "Obiekt istnieje: " << *tmp << std::endl;
-  else
-    std::cout << "Obiekt nie istnieje" << std::endl;
+Aby skorzystać z obiektu na który wskazuje `weak_ptr`, należy przedtem przekształcić go w `shared_ptr`.
+
+```c++
+std::shared_ptr<Foo> wspolnyWsk = slabyWsk.lock();
+if(wspolnyWsk)
+{
+    // mamy dostęp do obiektu
 }
-
-int main() {
-  std::shared_ptr<int> dzielonyWsk(new int(42));
-
-  std::weak_ptr<int> slabyWsk = dzielonyWsk;
-  czy_istnieje(slabyWsk);
-  dzielonyWsk.reset();
-  czy_istnieje(slabyWsk);
-
-  return 0;
+else
+{
+    // obiekt nie istnieje już
 }
 ```
+
+Warto zauważyć, że `weak_ptr` nie zwiększa licznika właścicieli obiektu, dlatego nie przedłuża życia obiektu i nie uniemożliwia jego zwolnienia przez `shared_ptr` w przypadku, gdy nie ma już żadnego innego `shared_ptr` wskazującego na ten obiekt.
+
+`weak_ptr` jest również niekopiowalny i nie może być przekazywany jako argument do funkcji.
+
+W przeciwieństwie do `unique_ptr` i `shared_ptr`, `weak_ptr` nie zarządza pamięcią i nie jest odpowiedzialny za jej zwolnienie. Jest to narzędzie pomocnicze, które pozwala na bezpieczne korzystanie z obiektów, na które już istnieje `shared_ptr` bez ryzyka utworzenia "dangling pointers".
