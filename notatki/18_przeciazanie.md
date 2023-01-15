@@ -1,9 +1,9 @@
 ## Przeciążanie
-Przeciążanie odnosi się do sytuacji, gdy w kodzie używamy tej samej nazwy dla kilku różnych definicji.
+Przeciążanie (ang. overloading) to mechanizm, który pozwala na posiadanie kilku definicji tej samej nazwy funkcji lub operatora, które są rozróżnialne dla kompilatora na podstawie typów argumentów. Przeciążanie jest często używane w językach takich jak C++, C# i Java.
 
 ### Przeciążanie funkcji
 
-W poniższym przykładzie mamy trzy funkcje, które są rozróżnialne dla kompilatora. W zależności od tego, jaki będzie typ zmiennej przekazanej do funkcji, zostanie wywołana odpowiednia funkcja.
+W poniższym przykładzie mamy trzy funkcje o tej samej nazwie "f", ale z różnymi typami argumentów. Kompilator jest w stanie rozróżnić, która z tych funkcji powinna zostać wywołana na podstawie typów przekazywanych argumentów.
 
 ```c++
 #include <iostream>
@@ -27,20 +27,23 @@ int main() {
 }
 ```
 
+Należy jednak pamiętać, że przy przeciążaniu funkcji należy być szczególnie ostrożnym w przypadku domyślnych wartości parametrów. Jeśli do powyższego przykładu dodalibyśmy nową funkcję o następującej definicji:
 
-Przy przeciążaniu funkcji należy być szczególnie ostrożnym w przypadku domyślnych wartości parametrów. Jeśli do powyższego przykładu dodalibyśmy nową funkcję o następującej definicji:
+```c++
+// funkcja4
+void f(int a, double b = 10.0) { std::cout << "int, double" << std::endl; }
+```
 
-    // funkcja4
-    void f(int a, double b = 10.0) { std::cout << "int, double" << std::endl; }
+To mielibyśmy konflikt z funkcjami 1 i 3, ponieważ kompilator nie będzie w stanie wybrać odpowiedniej funkcji dla następujących wywołań:
 
-To w następującym przypadku mielibyśmy konflikt z funkcjami 1 i 3:
-
-    f(10);       // konflikt między funkcjami 1 i 4
-    f(10, 10.0); // konflikt między funkcjami 3 i 4
+```c++
+f(10);       // konflikt między funkcjami 1 i 4
+f(10, 10.0); // konflikt między funkcjami 3 i 4
+```
 
 ### Przeciążanie operatorów
 
-Innym typem przeciążania jest przeciążanie operatorów. W C++ możemy przeciążyć operator przypisania, operatora dodawania, operatora mnożenia i wiele innych. To znaczy możemy dla różnych symboli zdefiniować całkowicie nowe zachowanie.
+Innym typem przeciążania jest przeciążanie operatorów. W C++ możemy przeciążyć operator przypisania, operatora dodawania, operatora mnożenia i wiele innych. Oznacza to, że możemy dla różnych symboli zdefiniować całkowicie nowe zachowanie.
 
 ```c++
 class Foo {
@@ -70,3 +73,7 @@ int main() {
   return 0;
 }
 ```
+
+W powyższym przykładzie zdefiniowaliśmy przeciążenie operatora przypisania i operatora dodawania dla klasy Foo. Dzięki temu, kiedy używamy tych operatorów w kodzie, odpowiednie metody zostaną automatycznie wywołane.
+
+Przeciążanie operatorów pozwala na stworzenie bardziej naturalnego i czytelnego kodu, ponieważ pozwala na użycie standardowych symboli matematycznych do reprezentowania operacji na obiektach.
