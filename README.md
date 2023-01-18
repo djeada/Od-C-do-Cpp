@@ -49,3 +49,5 @@ Kod źródłowy do programów z yt.
 - https://web.stanford.edu/class/archive/cs/cs106b/cs106b.1226/
 - https://eel.is/c++draft/
 - https://www.cs.cmu.edu/~ab/15-123S09/annotatedNotes/
+- https://hackingcpp.com/cpp/cheat_sheets.html
+
