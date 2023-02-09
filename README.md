@@ -27,7 +27,7 @@ Kod źródłowy do programów z yt.
 | 17 | Zaawanosowane wskaźniki | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/17_zaawansowane_wskaźniki.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 18 | Przeciążanie | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/18_przeciazanie.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 19 | Konwersje | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/19_konwersje.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
-| 20 | Lamdy | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/20_lamdy.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 20 | Lambdy | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/20_lamdby.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 21 | Szablony | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/21_szablony.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 22 | Wyjątki | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/22_wyjatki.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 23 | STL | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/23_stl.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
