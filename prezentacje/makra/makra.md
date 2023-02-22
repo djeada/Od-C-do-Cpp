@@ -1,6 +1,6 @@
-Konstrukcja 'include guard' pozwala na uniknięcie powtórzeń przy
-załączaniu plików. Jeśi wielokrotnie użyjemy dyrektywy `include` wraz z
-tą samą nazwą pliku, to domyślnie zostanie on wielokrotnie załączony.
+## Konstrukcja 'include guard'
+
+Konstrukcja 'include guard' pozwala na uniknięcie powtórzeń przy załączaniu plików. Jeśli wielokrotnie użyjemy dyrektywy include wraz z tą samą nazwą pliku, to domyślnie zostanie on wielokrotnie załączony.
 
 ```cpp
 #ifndef NAZWA_PLIKU
@@ -11,37 +11,34 @@ tą samą nazwą pliku, to domyślnie zostanie on wielokrotnie załączony.
 #endif
 ```
 
-Dzięki temu zabiegowi, ten plik zostanie załączony tylko raz.
-Preprocesor sprawdzi czy plik został już załączony. Jeśli tak, to
-zostanie pominiety.
+Dzięki temu zabiegowi, ten plik zostanie załączony tylko raz. Preprocesor sprawdzi, czy plik został już załączony. Jeśli tak, to zostanie pominięty.
 
-Dyrektywa `define` pozwala na definiowanie makr oraz stałych. Makra są
-wykonywane przed wykonaniem kodu.
+## Makra
+
+Dyrektywa define pozwala na definiowanie makr oraz stałych. Makra są wykonywane przed wykonaniem kodu.
 
 Ogólna postać makra:
 
 ```cpp
-# define + nazwa + cialo$
+# define + nazwa + cialo
 ```
 
-Nazwy pisane są często dużymi literami, ale nie jest to wymagane.
-Domyślnie, ciało makra definiowane jest w jednym wierszu, ale przy
-użyciu lewego ukośnika można poszerzyć ciało makra o nowe wiersze.
+Nazwy pisane są często dużymi literami, ale nie jest to wymagane. Domyślnie, ciało makra definiowane jest w jednym wierszu, ale przy użyciu lewego ukośnika można poszerzyć ciało makra o nowe wiersze.
 
 ```cpp
- // przyklad stalej
+// Przykład stałej
 #define PI 3.14
 
-// makro zwracajace stala wartosc, wynik dzielenia PI przez 2
+// Makro zwracające stałą wartość, wynik dzielenia PI przez 2
 #define PI_2 PI/2
 
-// makro zwracajace wartosc przekazanej liczby podniesionej do kwadratu
+// Makro zwracające wartość przekazanej liczby podniesionej do kwadratu
 #define KWADRAT(x) x*x
 
-// makro zwracajace wieksza z dwoch wartosci
+// Makro zwracające większą z dwóch wartości
 #define MAKS_2(x,y) (x>y?x:y)
 
-// makro zwracajace najwieksza z trzech wartosci
+// Makro zwracające największą z trzech wartości
 #define MAKS_3(x,y,z) MAKS_2(MAKS_2(x,y),z) 
 ```
 
@@ -49,12 +46,14 @@ użyciu lewego ukośnika można poszerzyć ciało makra o nowe wiersze.
 
   |               Makra               |            Funkcje            |   
   -----------------------------------|  --------------------------- | 
-  |      makra nie są kompilowane       |   funkcje są kompilowane       | 
-   |      typy nie są sprawdzane          |   typy są sprawdzane         | 
-  |  przy wywolaniu kod jest kopiowany    |   kod jest wykonywany        | 
-   |              szybkie                |  szybkie, ale wolniejsze      | 
-   |   brak wsparcia dla skalowania      |  wsparcie dla skalowania      | 
-  |   kompilator nie sprawdza błędów   |   kompilator sprawdza błędy     | 
+  |      Makra nie są kompilowane      |  Funkcje są kompilowane       | 
+   |      Typy nie są sprawdzane        |  Typy są sprawdzane        | 
+  |  Przy wywołaniu kod jest kopiowany    |  Kod jest wykonywany       | 
+   |          Szybkie              |  Szybkie, ale wolniejsze   | 
+   |   Brak wsparcia dla skalowania    |  Wsparcie dla skalowania      | 
+  |   Kompilator nie sprawdza błędów  |   Kompilator sprawdza błędy     | 
+
+## Dyrektywa if
 
 Dyrektywa `if` pozwala na warunkowe kompilacje.
 
