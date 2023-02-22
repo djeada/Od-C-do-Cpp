@@ -6,7 +6,7 @@ Po otrzymaniu sygnału proces ma trzy możliwości:
 
 3.  Zignorować sygnał (nie wszystkie sygnały są ignorowalne).
 
-Komunikacja między procesami
+## Komunikacja między procesami
 
 -   Każdy proces ma własną przestrzeń adresów.
 
@@ -19,7 +19,7 @@ Komunikacja między procesami
 -   Komunikacja może odbywać się zarówno między spokrewnionymi
     procesami, jak i między procesami, które nie są spokrewnione.
 
-Generowanie sygnałów
+## Generowanie sygnałów
 
 -   Biblioteka \<signal.h\> zawiera funkcje, które pozwalają na
     wywołanie sygnałów.
@@ -37,7 +37,7 @@ Generowanie sygnałów
 -   Po wysłaniu sygnału, wykonywanie aktualnego procesu zostaje
     zatrzymane.
 
-``` {.c++ language="C++"}
+```cpp
 #include <signal.h>
 #include <stdio.h>
 
@@ -53,9 +53,9 @@ Generowanie sygnałów
   }
 ```
 
-Obsługa sygnałów
+## Obsługa sygnałów
 
-``` {.c++ language="C++"}
+```cpp
 #include <signal.h>
 #include <stdio.h>
 
