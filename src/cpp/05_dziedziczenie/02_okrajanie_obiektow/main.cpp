@@ -3,8 +3,7 @@
 
 class KlasaBazowa {
 public:
-  // zmien na virtual by zadzialalo
-  void wiadomosc() { std::cout << "Brak informacji" << std::endl; }
+  virtual void wiadomosc() { std::cout << "Brak informacji" << std::endl; }
 };
 
 class KlasaPochodna : public KlasaBazowa {
@@ -13,7 +12,7 @@ private:
 
 public:
   KlasaPochodna(std::string imie) : imie(imie) {}
-  void wiadomosc() { std::cout << "Mam na imie: " << imie << std::endl; }
+  void wiadomosc() override { std::cout << "Mam na imie: " << imie << std::endl; }
 };
 
 int main() {
@@ -24,7 +23,7 @@ int main() {
   // tworzymy obiekt typu KlasaPochodna
   KlasaPochodna obiekt("James");
 
-  // dodajemy obiekt do kolejki
+  // dodajemy adres obiektu do kolejki
   kolejka.push_front(obiekt);
 
   // wyciagnij pierwszy element kolejki i wywolaj na nim metode wiadomosc
@@ -35,9 +34,9 @@ int main() {
   kolejka.front().wiadomosc();
 
   // rozwiazanie: przekazujemy adres zamiast kopiowac
-  std::deque<KlasaBazowa *> kolejka_wsk;
-  kolejka_wsk.push_front(&obiekt);
-  kolejka_wsk.front()->wiadomosc();
+  std::deque<KlasaBazowa *> kolejkaWsk;
+  kolejkaWsk.push_front(&obiekt);
+  kolejkaWsk.front()->wiadomosc();
 
   return 0;
 }
