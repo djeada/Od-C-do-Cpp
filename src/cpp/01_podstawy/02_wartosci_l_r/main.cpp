@@ -1,58 +1,57 @@
 /*
-Uproszczona definicja:
-- lwartosc: obiekt, ktory zajmuje pewna identyfikowalna lokalizacje w pamieci
-    - cos w pamieci, a nie cos w rejestrze
-    - ma mozliwy do zidentyfikowania adres
-- rvalue: dowolny obiekt, ktory nie jest lvalue
-    - jesli sprobuje uzyskac ich adres w ten sposob, kompilator wystapi blad
-    - Nie moge im tez przypisac innej wartosci
+Lvalue - obiekt, który ma przypisany adres w pamięci i może być identyfikowany jako pojedyncza wartość.
+Można do niego przypisać inną wartość lub zmienić jego wartość bez zmiany miejsca w pamięci.
+Rvalue - obiekt, który nie ma przypisanego adresu w pamięci i zazwyczaj jest wartością tymczasową lub stałą.
+Nie można przypisać do niego innego obiektu ani zmienić jego wartości bezpośrednio.
+
+Przykłady funkcji przyjmujących różne rodzaje parametrów:
 */
 
 class PrzykladowaKlasa {};
 
-int sum(int x, int y) { return x + y; }
+int suma(int x, int y) { return x + y; }
 
-int square(int &x) { return x * x; }
+int kwadrat(int& x) { return x * x; }
 
-int csquare(const int &x) { return x * x; }
+int stalyKwadrat(const int& x) { return x * x; }
 
-int myglobal;
+int zmiennaGlobalna;
 
-int &foo() { return myglobal; }
-int bar() { return myglobal; }
+int& foo() { return zmiennaGlobalna; }
+int bar() { return zmiennaGlobalna; }
 
 int main() {
-  int i;       // i is a lvalue
-  int *p = &i; // i's address is identifiable
-  i = 2;       // memory content is modified
+  int i;          // i jest lvalue
+  int* p = &i;    // adres i jest identyfikowalny
+  i = 2;          // modyfikacja zawartości pamięci
 
-  PrzykladowaKlasa d1; // lvalue of user defined type(class)
+  PrzykladowaKlasa d1; // lvalue użytkownika zdefiniowanego typu (klasy)
 
-  int x = 2;     // 2 is an rvalue
-  int c = i + 2; //(i+2) is an rvalue
-  *p = (i + 2);  // Error
-  // i + 2 = 4;      //Error
-  // 2 = i;          //Error
+  int x = 2;          // 2 jest rvalue
+  int c = i + 2;      // (i+2) jest rvalue
+  // *p = (i + 2);    // błąd, próba przypisania do rvalue
+  // i + 2 = 4;       // błąd, próba przypisania do rvalue
+  // 2 = i;           // błąd, próba przypisania do rvalue
 
   PrzykladowaKlasa d2;
-  d2 = PrzykladowaKlasa(); // Dog() is rvalue of user defined type(class)
-  i = sum(3, 4);           // sum is rvalue
+  d2 = PrzykladowaKlasa(); // PrzykladowaKlasa() jest rvalue użytkownika zdefiniowanego typu (klasy)
+  i = suma(3, 4);           // suma jest rvalue
 
-  // Rvalues: 2, i+2, PrzykladowaKlasa(), sum(3,4), x+y
-  // Lvalues: x, i, d1, , d2, p
+  // Rvalues: 2, i+2, PrzykladowaKlasa(), suma(3,4), x+y
+  // Lvalues: x, i, d1, d2, p
 
-  int &adress = i;
-  // int &adress = 5; //Error
+  int& adress = i;
+  // int& adress = 5; // błąd, próba przypisania do rvalue
 
-  // Exception: Constant lvalue reference can be assign a rvalue;
-  const int &r = 5;
+  // Wyjątek: Stała referencja lvalue może zostać przypisana do rvalue;
+  const int& r = 5;
 
-  square(i); // OK
-  // square(40); //Error
+  kwadrat(i);      // OK
+  //kwadrat(40);  // błąd, próba przypisania do rvalue
 
-  csquare(i);  // OK
-  csquare(40); // OK
+  stalyKwadrat(i);     // OK
+  stalyKwadrat(40);    // OK
 
-  foo() = 50; // this will compile, foo() is lvalue
-              // bar() = 50;   // Error
+  foo() = 50;     // to skompiluje się, foo() jest lvalue
+  // bar() = 50; // błąd, próba przypisania do rvalue
 }
