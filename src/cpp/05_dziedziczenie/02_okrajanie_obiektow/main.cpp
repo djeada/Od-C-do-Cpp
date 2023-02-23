@@ -12,7 +12,9 @@ private:
 
 public:
   KlasaPochodna(std::string imie) : imie(imie) {}
-  void wiadomosc() override { std::cout << "Mam na imie: " << imie << std::endl; }
+  void wiadomosc() override {
+    std::cout << "Mam na imie: " << imie << std::endl;
+  }
 };
 
 int main() {

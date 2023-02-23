@@ -2,13 +2,14 @@
 #include <string>
 class Osoba {
 
-std::string imie;
+  std::string imie;
+
 public:
-  Osoba(std::string imie): imie(imie) { std::cout << "Konstruktor " << imie << std::endl; }
+  Osoba(std::string imie) : imie(imie) {
+    std::cout << "Konstruktor " << imie << std::endl;
+  }
   ~Osoba() { std::cout << "Destruktor " << imie << std::endl; }
 };
-
-
 
 void funkcjaC() {
   Osoba c("C");
@@ -26,8 +27,7 @@ void funkcjaA() {
   std::cout << "Funkcja A przed wywolaniem funkcji B" << std::endl;
   try {
     funkcjaB();
-  }
-  catch (...) {
+  } catch (...) {
     std::cout << "Funkcja A obsluguje wyjatek" << std::endl;
   }
   std::cout << "Funkcja A po wywolaniu funkcji B" << std::endl;
