@@ -118,9 +118,26 @@ int main() {
 
 ## Defniowanie wyjątków
 
-Standardow wyjatki:
+Standardowe wyjątki:
 
 * `std::bad_alloc` - jest to wyjątek rzucony przez operację alokacji pamięci, gdy nie ma wystarczającej ilości wolnej pamięci.
 * `std::logic_error` - jest to rodzaj wyjątku, który jest zwykle związany z błędami programistycznymi, takimi jak błędna logika lub błędne użycie funkcji bibliotecznej.
 * `std::runtime_error` - jest to rodzaj wyjątku, który jest zwykle związany z błędami wynikającymi z sytuacji działania programu, takich jak błąd wewnętrzny lub nieznana sytuacja.
     
+Możemy definiować własne wyjątki, które pozwolą nam lepiej kontrolować błędy i wyjątkowe sytuacje w naszych programach. Definiowanie własnych wyjątków polega na stworzeniu klasy dziedziczącej po klasie `std::exception`.
+
+Przykładowa klasa wyjątku może wyglądać następująco:
+
+```cpp
+class WlasnyWyjatek : public std::exception {
+public:
+    WlasnyWyjatek(const char* wiadomosc) : wiadomosc(wiadomosc) {}
+    const char* what() const noexcept override {
+        return wiadomosc.c_str();
+    }
+private:
+    std::string wiadomosc;
+};
+```
+
+Konstruktor klasy `WlasnyWyjatek` przyjmuje jako argument wiadomość, która będzie przekazywana w przypadku rzucenia wyjątku. Metoda `what()` zwraca tę wiadomość jako `const char*`.
