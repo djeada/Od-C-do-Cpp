@@ -52,4 +52,4 @@ Oto niektóre ważne funkcje w programowaniu z gniazdami:
 
 ## Implementacja klient-serwer z użyciem TCP
 
-![Uploading client_server(1).png…]()
+![client_server(1)](https://user-images.githubusercontent.com/37275728/220887792-7a43fa1c-67fe-456c-9c3d-3f284d7460e5.png)
