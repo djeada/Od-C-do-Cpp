@@ -49,3 +49,7 @@ Oto niektóre ważne funkcje w programowaniu z gniazdami:
 * `send()` - funkcja ta wysyła dane przez gniazdo. Funkcja ta przyjmuje trzy argumenty: deskryptor pliku gniazda, wskaźnik na bufor z danymi do wysłania oraz rozmiar bufora.
 * `recv()` - funkcja ta odbiera dane przez gniazdo. Funkcja ta przyjmuje trzy argumenty: deskryptor pliku gniazda, wskaźnik na bufor, w którym zostaną umieszczone dane oraz maksymalny rozmiar bufora.
 * `close()` - funkcja ta zamyka deskryptor pliku gniazda. Funkcja ta przyjmuje jeden argument: deskryptor pliku gniazda, który ma zostać zamknięty.
+
+## Implementacja klient-serwer z użyciem TCP
+
+![Uploading client_server(1).png…]()
