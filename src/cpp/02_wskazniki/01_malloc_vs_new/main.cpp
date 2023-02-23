@@ -1,36 +1,49 @@
 #include <iostream>
 #include <cstdlib>
 
-class Czlowiek {
+class Osoba {
     std::string imie;
     std::string nazwisko;
 
-    public:
-        Czlowiek() {
-            imie = "Blank";
-            nazwisko = "Blank";
-        }
+public:
+    Osoba() {
+        imie = "Nieznane";
+        nazwisko = "Nieznane";
+              std::cout << "Osoba została stworzona" << std::endl;
+    }
 
-        ~Czlowiek() {
-            std::cout << "Czlowiek zostal zniszczony" << std::endl;
-        }
-        void wypisz() {
-            std::cout << "Imie: " << imie << std::endl;
-            std::cout << "Nazwisko: " << nazwisko << std::endl;
-        }
+    ~Osoba() {
+        std::cout << "Osoba została zniszczona" << std::endl;
+    }
+
+    void wypisz() {
+        std::cout << "Imię: " << imie << std::endl;
+        std::cout << "Nazwisko: " << nazwisko << std::endl;
+    }
 };
 
 int main() {
+    // alokacja pamięci dla osoby przy użyciu funkcji malloc
+    Osoba* osoba = (Osoba*)malloc(sizeof(Osoba));
+    //new (osoba) Osoba(); // placement new
+  
+    // wywołanie metody wypisz dla osoby
+    osoba->wypisz();
 
-Czlowiek* czlowiek = (Czlowiek*)malloc(sizeof(Czlowiek));
-czlowiek->wypisz();
-free(czlowiek);
+    //osoba->~Osoba();
+    // zwolnienie pamięci zaalokowanej przy użyciu malloc
+    free(osoba);
 
-czlowiek = new Czlowiek();
-czlowiek->wypisz();
-delete czlowiek;
+    std::cout << std::endl;
 
-return 0;
+    // alokacja pamięci dla osoby przy użyciu operatora new
+    osoba = new Osoba();
 
+    // wywołanie metody wypisz dla osoby
+    osoba->wypisz();
 
+    // zwolnienie pamięci zaalokowanej przy użyciu operatora new
+    delete osoba;
+
+    return 0;
 }
