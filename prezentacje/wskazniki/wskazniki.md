@@ -1,11 +1,19 @@
-
 # Wskaźniki
 
-## O co w tym chodzi?
-Zmienna to pudełko z imieniem, do którego możemy włożyć jakąś wartość (liczbę, napis, wartość logiczną). Wskaźnik to zmienna, która trzyma informacje o tym gdzie w pamięci siedzi inna zmienna.
+Wskaźnik to zmienna, która przechowuje informacje o tym, gdzie w pamięci komputera znajduje się inna zmienna. Zmienna jest jak pudełko, w którym możemy przechowywać określone wartości (liczby, napisy, wartości logiczne).
+
+```cpp
+int x = 10;
+int *p = &x;  // definicja wskaźnika p i przypisanie mu adresu zmiennej x
+
+printf("Wartość zmiennej x: %d\n", x);
+printf("Adres zmiennej x: %p\n", &x);
+printf("Wartość wskaźnika p: %p\n", p);
+printf("Wartość zmiennej wskazywanej przez wskaźnik p: %d\n", *p);
+```
 
 ## Dlaczego wskaźnik musi mieć typ?
-Nie wszystkie pudełka mają taki sam rozmiar. Wskaźnik umożliwa nam skoczenie do pudełka za i przed, musi więc wiedzieć jak daleko ma skoczyć.
+Wskaźnik musi wiedzieć jak daleko ma skoczyć, aby dostać się do odpowiedniego pudełka. Nie wszystkie pudełka mają taki sam rozmiar, dlatego wskaźnik musi mieć określony typ, aby wiedzieć, jaką ilość miejsca musi przeskoczyć. Poniżej znajduje się przykładowa tabela, która przedstawia ilość miejsca potrzebną dla każdego typu:
 
 | typ          | ilość miejsca |
 | ------------ | ------------- |
@@ -14,16 +22,15 @@ Nie wszystkie pudełka mają taki sam rozmiar. Wskaźnik umożliwa nam skoczenie
 | int, long, float | 4           |
 | double       | 8             |
 
-## Jak to sprawdzić?
+Możemy sprawdzić ilość miejsca potrzebną dla typu, używając funkcji `printf`: 
 
 `printf("%d", sizeof(short));`
 
 ## Wskaźniki, a tablice
-
-Zmienne w tablicy przechowywane są obok siebie. Możemy przypisać wskaźnikowi adres dowolnej zmiennej w tablicy, a następnie przesunąć się do innych elementów używając dodawania lub odejmowania. Co się stanie jeśli w ten sposób wyjdziemy poza granice naszej tablicy?
+Zmienne w tablicy są przechowywane obok siebie. Możemy przypisać wskaźnikowi adres dowolnej zmiennej w tablicy, a następnie przesunąć się do innych elementów, używając dodawania lub odejmowania. Jeśli w ten sposób wyjdziemy poza granice naszej tablicy, możemy spowodować błędy w programie.
 
 ### Odejmowanie wskaźników
-Różnica wskaźników to liczba półek jakie się znajdują między półkami, na które wskazują.
+Różnica dwóch wskaźników to liczba półek jakie się znajdują między półkami, na które wskazują. Na przykład: 
 
 ```cpp
 int a[] = {6, 2, 10};
@@ -35,11 +42,11 @@ printf("p2-p1: %d\n",p2-p1); // p2-p1: 1
 printf("p0-p1: %d\n",p0-p1); // p0-p1: -1
 ```
 
-### Cyz wskaźnik może nie wskazywać na nic?
-Tak, może. Możemy przypisać wskaźnikowi wartość NULL, co spowoduje, że wskaźnik nie będzie nic wskazywał. Dwa puste wskaźniki są zawsze równe, stąd przydatność do wyznaczania granic różnych struktur.
+### Czy wskaźnik może nie wskazywać na nic?
+Tak, może. Możemy przypisać wskaźnikowi wartość NULL, co spowoduje, że wskaźnik nie będzie nic wskazywał. Dwa puste wskaźniki są zawsze równe, stąd przydatność do wyznaczania granic różnych struktur danych.
 
 ## Operatory wskaźników
-Czyli znaczki, które coś zrobią gdy użyjemy je razem ze wskaźnikiem.
+Operatory wskaźników to znaczki, które wykonują określoną operację, gdy są użyte razem z wskaźnikiem. Oto kilka przykładowych operatorów:
 
 | znaczek | co to robi? | przykład |
 | ------- | ----------- | -------- |
