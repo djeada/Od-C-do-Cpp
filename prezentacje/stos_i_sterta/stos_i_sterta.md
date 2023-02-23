@@ -9,11 +9,21 @@ Pamięć wykorzystywana przez program podzielona jest m.in. na:
 
 ## Stos
 
-Stos to część pamięci przechowująca tymczasowe zmienne, argumenty przekazywane funkcjom oraz zmienne tworzone w obrębie funkcji. Jest to pamięć dostępna tylko lokalnie i łatwo wkładać oraz zdejmować. Kiedy zmienne nie są więcej wykorzystywane, ściągane są ze stosu. Jest to liniowa struktura danych, gdzie LIFO (Last In, First Out) określa porządek dodawania i usuwania elementów. Stos ma stałą wielkość określoną przez twój komputer, a przy próbie włożenia zbyt wiele na stos może wystąpić błąd stack overflow. Popularnym błędem jest próba użycia zmiennej zapisanej na stosie poza funkcją, która tą zmienną odłożyła na stos.
+* Stos to część pamięci, która przechowuje tymczasowe zmienne, argumenty przekazywane funkcjom oraz zmienne tworzone w obrębie funkcji.
+* Zmienne są dostępne tylko lokalnie i łatwo można je odkłać oraz zdejmować ze stosu.
+* Kiedy zmienne nie są już wykorzystywane, są automatycznie ściągane ze stosu.
+* Stos to liniowa struktura danych, gdzie LIFO (Last In, First Out) określa porządek dodawania i usuwania elementów.
+* Wielkość stosu jest stała i zależy od komputera, a próba włożenia zbyt wielu elementów może spowodować błąd stack overflow.
+* Użycie zmiennej zapisanej na stosie poza funkcją, która ją tam umieściła, jest błędem i może prowadzić do nieprzewidywalnego zachowania programu.
 
 ## Sterta
 
-Sterta to duże pole pamięci, które można wykorzystywać dynamicznie. Nikt za nas nie zarządza pamięcią, dlatego dostęp do pamięci odbywa się poprzez wskaźniki. Alokujemy pamięć przy użyciu funkcji malloc i dealokujemy przy użyciu funkcji free. W przeciwnym razie może wystąpić wyciek pamięci (pamięć której nie używamy jest dla nas trzymana). Sterta nie ma ograniczeń poza fizyczną pamięcią komputera i zmienne zdefiniowane na stercie są dostępne z całego programu. Jednakże, stos jest szybszy w dostępie od sterty.
+* Sterta to obszar pamięci, który może być dynamicznie wykorzystywany przez program.
+* Sterta wymaga ręcznego zarządzania pamięcią,Sterta wymaga ręcznego zarządzania pamięcią, co oznacza, że konieczne jest korzystanie z wskaźników w celu uzyskania dostępu do pamięci. co oznacza, że konieczne jest korzystanie z wskaźników w celu uzyskania dostępu do pamięci.
+* Alokacja pamięci na stercie odbywa się za pomocą funkcji malloc, a dealokacja przez funkcję free.
+* W przypadku braku dealokacji może wystąpić wyciek pamięci.
+* Zmienne zdefiniowane na stercie są dostępne z całego programu.
+* Stos jest szybszy w dostępie do pamięci niż sterta.
 
 ## Po co używać sterty?
 
@@ -24,7 +34,7 @@ Sterta to duże pole pamięci, które można wykorzystywać dynamicznie. Nikt za
     
 ## Przyklad
 
-``` {.c++ language="C++"}
+```c++
 int* utworz_tablice(int rozmiar) {
     int* tablica = (int*) malloc(rozmiar * sizeof(int));
     return tablica;
