@@ -123,6 +123,7 @@ void func(std::shared_ptr<Foo> wsk) {}
 std::shared_ptr<Foo> wspolnyWsk3(new Foo);
 func(wspolnyWsk3); // ok
 ```
+
 Jednakże, dzielenie własności obiektu między wieloma wskaźnikami może prowadzić do problemów związanych z "dangling pointers" (wskaźnikami wskazującymi na nieistniejący obiekt), dlatego należy być ostrożnym podczas pracy z tymi wskaźnikami.
 
 #### weak_ptr
