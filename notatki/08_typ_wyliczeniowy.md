@@ -61,4 +61,4 @@ Zalety użycia `enum class` w porównaniu do tradycyjnych `enum`:
 - Brak konfliktów nazewnictwa: wartości w `enum class` nie są wprowadzane do przestrzeni nazw, co eliminuje potencjalne konflikty nazw.
 - Silniejsze typowanie: nie można przypadkowo przekształcić wartości `enum class` na liczbę ani porównać wartości z różnych typów wyliczeniowych bez jawnej konwersji.
 - Możliwość określenia typu bazowego: `enum class` pozwala określić typ bazowy (np. `enum class Kolor : uint8_t`).
-- 
+
