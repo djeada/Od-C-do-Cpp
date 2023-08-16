@@ -1,113 +1,102 @@
 ## Instrukcje warunkowe
 
-Instrukcje warunkowe to konstrukcje, które pozwalają na włączanie i wyłączanie fragmentów kodu w zależności od warunku. Są one dostępne w wielu językach programowania. Najpopularniejszą instrukcją warunkową jest słowo kluczowe `if`, które pozwala na wykonanie kodu w zależności od spełnienia określonego warunku. Warunek jest definiowany w nawiasach okrągłych, a kod, który ma być wykonany, jest umieszczony w nawiasach klamrowych. Jeśli warunek jest spełniony, to wykonany zostanie kod znajdujący się w nawiasach klamrowych; w przeciwnym razie program omija kod znajdujący się w nawiasach klamrowych i przechodzi do następnych linii kodu.
+Instrukcje warunkowe pozwalają na dynamiczną kontrolę przepływu programu w oparciu o spełnienie określonych warunków. Są one nieodłącznym elementem większości języków programowania, umożliwiając tworzenie bardziej złożonych algorytmów.
 
-Konstrukcja `if-else` pozwala na wykonanie różnych bloków kodu w zależności od warunku. Jeśli warunek jest spełniony, to wykonany zostanie kod znajdujący się w nawiasach klamrowych za `if`. W przeciwnym razie wykonany zostanie kod znajdujący się w nawiasach klamrowych za `else`. Jeśli kod jaki chcemy umieścić po słowach kluczowych `if` lub `else` składa się wyłącznie z pojedynczej linii, to nawiasy klamrowe mogą zostać pominięte. Przykład:
+### Podstawowa instrukcja `if`
+
+Najprostszą instrukcją warunkową jest `if`, która pozwala na wykonywanie pewnego fragmentu kodu tylko wtedy, gdy dany warunek jest spełniony.
+
+```c++
+int x = 5;
+if (x > 3) {
+    std::cout << "x jest większe niż 3" << std::endl;
+}
+```
+
+### Rozszerzenie if-else
+
+W wielu przypadkach chcemy również określić, co ma się stać, gdy warunek nie jest spełniony. W tym celu używamy konstrukcji `else`.
+
+```c++
+if (x > 10) {
+    std::cout << "x jest większe niż 10" << std::endl;
+} else {
+    std::cout << "x nie jest większe niż 10" << std::endl;
+}
+```
+
+### Instrukcja if-else if-else
+
+Aby sprawdzić kilka różnych warunków jednocześnie, możemy użyć konstrukcji `else if`.
+
+```c++
+if (x > 10) {
+    std::cout << "x jest większe niż 10" << std::endl;
+} else if (x > 5) {
+    std::cout << "x jest większe niż 5, ale nie większe niż 10" << std::endl;
+} else {
+    std::cout << "x nie jest większe niż 5" << std::endl;
+}
+```
+
+### Operatory warunkowe
+
+W języku C++ istnieje również operator warunkowy `?:`, który pozwala wykonać krótką instrukcję warunkową bez konieczności stosowania pełnej składni if-else.
+
+```c++
+int max = (x > y) ? x : y;  // max przyjmie wartość x, jeśli x > y, w przeciwnym razie przyjmie wartość y
+```
+
+Instrukcje warunkowe umożliwiają tworzenie bardziej rozbudowanych i złożonych algorytmów, dostosowując zachowanie programu w zależności od spełnienia różnych kryteriów.
+
+### Konstrukcja `switch`
+
+Konstrukcja `switch` jest wysoce użytecznym narzędziem w językach programowania, które pozwala na wielokrotne sprawdzenie wartości zmiennej bez konieczności stosowania skomplikowanych łańcuchów instrukcji `if-else`. 
+
+Kluczowe cechy `switch`:
+- Służy do porównywania zmiennej z wieloma wartościami.
+- Działa najefektywniej z wartościami dyskretnymi (np. liczby całkowite, znaki).
+- Po znalezieniu pasującej wartości (`case`), instrukcje wykonywane są aż do napotkania słowa kluczowego `break` lub końca bloku `switch`.
+- Opcja `default` służy jako "wszystkie inne przypadki", jeśli żadne z wartości `case` nie pasuje.
+
+Przykład w C++ z użyciem `switch`:
 
 ```c++
 #include <iostream>
 
 int main() {
-  int n;
-  std::cin >> n;
-  if (n % 3 == 0)
-    std::cout << "Liczba " << n << " jest podzielna przez 3 " << std::endl;
-  else {
-    n++;
-    std::cout << "Wczytana liczba powiekszona o 1 to: " << n << std::endl;
-  }
+    int n;
+    std::cout << "Podaj numer dnia tygodnia (0-6): " << std::endl;
+    std::cin >> n;
 
-  return 0;
+    switch (n) {
+    case 0:
+        std::cout << "Poniedziałek." << std::endl;
+        break;
+    case 1:
+        std::cout << "Wtorek." << std::endl;
+        break;
+    case 2:
+        std::cout << "Środa." << std::endl;
+        break;
+    case 3:
+        std::cout << "Czwartek." << std::endl;
+        break;
+    case 4:
+        std::cout << "Piątek." << std::endl;
+        break;
+    case 5:
+        std::cout << "Sobota." << std::endl;
+        break;
+    case 6:
+        std::cout << "Niedziela." << std::endl;
+        break;
+    default:
+        std::cout << "Błąd! Numer dnia powinien być w zakresie 0-6." << std::endl;
+    }
+
+    return 0;
 }
 ```
 
-### Wielokrotne warunki
-
-Jeśli chcemy sprawdzić wiele warunków jeden po drugim i uzależnić od ich spełnienia różne bloki kodu, możemy użyć konstrukcji `if-else if-else`. Przykład:
-
-```c++
-#include <iostream>
-
-int main() {
-  int n;
-  std::cout << "Podaj numer dnia tygodnia: " << std::endl;
-  std::cin >> n;
-
-  if (n == 0)
-    std::cout << "Poniedziałek." << std::endl;
-
-  else if (n == 1)
-    std::cout << "Wtorek." << std::endl;
-
-  else if (n == 2)
-    std::cout << "Środa. " << std::endl;
-
-  else if (n == 3)
-    std::cout << "Czwartek." << std::endl;
-
-  else if (n == 4)
-    std::cout << "Piątek." << std::endl;
-
-  else if (n == 5)
-    std::cout << "Sobota." << std::endl;
-
-  else if (n == 6)
-    std::cout << "Niedziela." << std::endl;
-  else
-    std::cout << "Błąd! " << std::endl;
-
-  return 0;
-}
-```
-
-Instrukcje warunkowe pozwalają programiście na skuteczny i łatwy dostęp do konkretnych bloków kodu w zależności od określonego warunku. Są one niezwykle przydatne w przypadku, gdy chcemy sprawdzić kilka warunków jeden po drugim i uzależnić od ich spełnienia różne bloki kodu.
-
-### Switch
-Switch jest konstrukcją języka programowania, która pozwala na wykonanie określonego bloku kodu w zależności od wartości zmiennej. Umożliwia ona sprawdzenie wielokrotnych warunków bez potrzeby używania wielu instrukcji <code>if-else</code>.
-
-Dodatkowo, kompilatory lepiej optymalizują kod z wykorzystaniem <code>switch</code>. Przykładowy kod w C++ używający <code>switch</code> może wyglądać następująco:
-
-```c++
-#include <iostream>
-
-int main() {
-  int n;
-  std::cout << "Podaj numer dnia tygodnia: " << std::endl;
-  std::cin >> n;
-
-  switch (n) {
-  case 0:
-    std::cout << "Poniedzialek." << std::endl;
-    break;
-
-  case 1:
-    std::cout << "Wtorek." << std::endl;
-    break;
-
-  case 2:
-    std::cout << "Sroda. " << std::endl;
-    break;
-
-  case 3:
-    std::cout << "Czwartek." << std::endl;
-    break;
-
-  case 4:
-    std::cout << "Piatek." << std::endl;
-    break;
-
-  case 5:
-    std::cout << "Sobota." << std::endl;
-    break;
-
-  case 6:
-    std::cout << "Niedziela." << std::endl;
-    break;
-
-  default:
-    std::cout << "Error! " << std::endl;
-  }
-
-  return 0;
-}
-```
+Używanie `switch` jest szczególnie przydatne w sytuacjach, gdzie mamy do czynienia z wieloma konkretnymi wartościami, które wymagają różnych działań. Pomaga to uczynić kod bardziej zorganizowanym i czytelnym w porównaniu do długich łańcuchów instrukcji `if-else`.
