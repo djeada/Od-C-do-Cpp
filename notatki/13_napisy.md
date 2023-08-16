@@ -1,66 +1,146 @@
 ## Napisy
 
-Poznaliśmy już tablice, które pozwalają przechowywać wiele elementów tego samego typu pod jedną nazwą. Napisy są specjalnym typem tablicy, który przechowuje znaki (char). Praca z tekstem jest nieunikniona w programowaniu, dlatego warto zapoznać się z funkcjami często używanymi do manipulacji napisów.
+Napisy odgrywają kluczową rolę w większości aplikacji programistycznych. Służą do przechowywania tekstu, takiego jak dane wejściowe użytkownika, komunikaty, informacje o błędach i wiele innych. W języku C, napisy są często reprezentowane jako tablice znaków.
 
 ### C-string
 
-W języku C napisy są tablicami znaków (char) zakończonymi znakiem '\0' (null-terminator). Oznacza to, że napis kończy się znakiem '\0', który jest znakiem specjalnym oznaczającym koniec napisu.
+Tradycyjnie, w języku C napisy (zwane również "C-string") są przedstawiane jako tablice znaków, zakończone specjalnym znakiem o wartości `'\0'` (znany jako "null terminator"). Ten terminator wskazuje koniec napisu.
 
-Istnieją różne sposoby inicjalizacji napisów:
+Istnieje kilka sposobów deklarowania napisów w C:
 
-* `char* napisA = "Ala ma kota";` - jest to niemodyfikowalny napis o długości 12 znaków
-* `char napisB[] = "Ala ma kota";` - jest to modyfikowalny napis o długości 12 znaków
-* `char napisC[] = {'A', 'l', 'a', ' ', 'm', 'a', ' ', 'k', 'o', 't', 'a', '\0'};` - jest to tak samo jak napisB
+* `char* napisA = "Ala ma kota";` - niemodyfikowalny wskaźnik do stałego napisu, długość 12 znaków (nie licząc null terminatora).
+* `char napisB[] = "Ala ma kota";` - modyfikowalna tablica znaków, również o długości 12 znaków.
+* `char napisC[] = {'A', 'l', 'a', ' ', 'm', 'a', ' ', 'k', 'o', 't', 'a', '\0'};` - inny sposób deklarowania napisu podobny do `napisB`.
 
-Przydatne biblioteki:
+Do pracy z napisami w C przydatne są następujące biblioteki:
 
-* `<string.h>` - zawiera funkcje do manipulacji napisami, np. strlen() zwraca długość napisu, strcpy() kopiuje napis z jednej tablicy do drugiej
-* `<ctype.h>` - zawiera funkcje do manipulacji pojedynczymi znakami, np. isalpha() sprawdza czy znak jest literą, toupper() zamienia znak na wersję wielką
-* `<stdlib.h>` - zawiera funkcje do konwersji między typami, np. atoi() konwertuje napis na liczbę całkowitą
+* `<string.h>`:
+  * `strlen()` - zwraca długość napisu.
+  * `strcpy()` - kopiuje napis z jednej tablicy do drugiej.
+  * `strcat()` - dołącza jeden napis do drugiego.
+  * `strcmp()` - porównuje dwa napisy.
+  
+* `<ctype.h>`:
+  * `isalpha()` - sprawdza, czy dany znak to litera.
+  * `isdigit()` - sprawdza, czy dany znak to cyfra.
+  * `toupper()` - zamienia literę na jej wielką wersję.
+  * `tolower()` - zamienia literę na jej małą wersję.
+  
+* `<stdlib.h>`:
+  * `atoi()` - konwertuje napis na wartość typu int.
+  * `atof()` - konwertuje napis na wartość typu double.
+
+Inicjalizacja i wypisanie napisu:
+
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    char napis[] = "Witaj, świecie!";
+    cout << napis << endl;
+    return 0;
+}
+```
+
+Łączenie dwóch napisów:
+
+```cpp
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+int main() {
+    char napis1[] = "Witaj, ";
+    char napis2[] = "świecie!";
+    char wynik[50];
+
+    strcpy(wynik, napis1);
+    strcat(wynik, napis2);
     
-Przykładowe funkcje:
+    cout << wynik << endl;
+    return 0;
+}
+```
 
-| funkcja | działanie |
-|---|---|
-| strlen(const char *s) | zwraca długość napisu s |
-| strcpy(char *dest, const char *src) | kopiuje zawartość napisu src do napisu dest |
-| strcmp(const char *s1, const char *s2) | porównuje zawartość napisów s1 i s2 |
-| strcat(char *dest, const char *src) | łączy zawartość napisów dest i src |
-| strchr(const char *s, int c) | zwraca wskaźnik na pierwsze wystąpienie znaku c w napisie s |
-| strstr(const char *s1, const char *s2) | zwraca wskaźnik na pierwsze wystąpienie napisu s2 w napisie s1 |
-| isalpha(int c) | zwraca 1 jeśli c jest literą alfabetu, 0 w przeciwnym wypadku |
-| isdigit(int c) | zwraca 1 jeśli c jest cyfrą, 0 w przeciwnym wypadku |
-| isalnum(int c) | zwraca 1 jeśli c jest literą alfabetu lub cyfrą, 0 w przeciwnym wypadku |
-| islower(int c) | zwraca 1 jeśli c jest małą literą alfabetu, 0 w przeciwnym wypadku |
-| isupper(int c) | zwraca 1 jeśli c jest dużą literą alfabetu, 0 w przeciwnym wypadku |
-| tolower(int c) | zamienia wielką literę na małą |
-| toupper(int c) | zamienia małą literę na wielką |
-| atoi(const char *s) | konwertuje napis s na liczbę całkowitą |
-| atof(const char *s) | konwertuje napis s na liczbę zmiennoprzecinkową |
+Obliczanie długości napisu:
 
-### Biblioteka string
+```cpp
+#include <iostream>
+#include <cstring>
+using namespace std;
 
-W języku C++ mamy dostępną klasę string w bibliotece standardowej, która ułatwia i zwiększa bezpieczeństwo pracy z napisami w porównaniu do tablic znaków w języku C.
+int main() {
+    char napis[] = "Programowanie";
+    int dlugosc = strlen(napis);
+    
+    cout << "Długość napisu: " << dlugosc << endl;
+    return 0;
+}
+```
+
+Porównywanie dwóch napisów:
+
+```cpp
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+int main() {
+    char napis1[] = "ABC";
+    char napis2[] = "ABC";
+    
+    if (strcmp(napis1, napis2) == 0) {
+        cout << "Napisy są identyczne." << endl;
+    } else {
+        cout << "Napisy są różne." << endl;
+    }
+    return 0;
+}
+```
+
+Kiedy pracujesz z napisami w języku C, ważne jest, aby zawsze pamiętać o null terminatorze oraz o odpowiedniej alokacji pamięci, zwłaszcza przy operacjach, które mogą zmieniać rozmiar napisu.
+
+### C++ std::string
+
+Chociaż tradycyjne napisy typu C-string mają swoje zastosowania i są ważne z punktu widzenia zrozumienia podstaw języka C, programiści pracujący w C++ mają do dyspozycji znacznie bardziej wszechstronny i elastyczny obiekt do reprezentacji napisów: `std::string`.
 
 Aby utworzyć obiekt string, możemy skorzystać z następujących konstruktorów:
 
 * `string(const char *s)` - tworzy obiekt string na podstawie ciągu znaków
 * `string(const string &s)` - tworzy nowy obiekt string na podstawie istniejącego obiektu string.
 
-Przykładowe funkcje:
 
-| funkcja | działanie |
-|---|---|
-| s.length() | zwraca długość napisu s |
-| s.c_str() | zwraca wskaźnik na napis s |
-| s.empty() | zwraca true jeśli napis s jest pusty, false w przeciwnym wypadku |
-| s.find(char c) | zwraca indeks pierwszego wystąpienia znaku c w napisie s |
-| s.find(char c, int pos) | zwraca indeks pierwszego wystąpienia znaku c w napisie s od indeksu pos |
-| s.find(string s) | zwraca indeks pierwszego wystąpienia napisu s w napisie s |
-| s.find(string s, int pos) | zwraca indeks pierwszego wystąpienia napisu s w napisie s od indeksu pos |
-| a.compare(string b) | porównuje zawartość napisów a i b |
-| a.insert(int pos, string b) | wstawia napis b w miejsce pos w napisie a |
-| a.erase(int pos, int len) | usuwa len znaków z napisu a od indeksu pos |
-| a.replace(int pos, int len, string b) | zastępuje len znaków z napisu a od indeksu pos przez napis b |
-| a.substr(int pos, int len) | zwraca podnapis napisu a od indeksu pos o długości len |
-| a.clear() | usuwa wszystkie znaki z napisu a |
+Klasa `std::string` jest częścią standardowej biblioteki C++ i oferuje wiele funkcji umożliwiających łatwą manipulację napisami. Przykłady:
+
+```cpp
+#include <iostream>
+#include <string>
+
+int main() {
+    std::string napis = "Ala ma kota";
+    std::string napis2 = " i psa";
+
+    // Połącz napisy
+    napis += napis2;
+
+    // Wypisz połączony napis
+    std::cout << napis << std::endl; // "Ala ma kota i psa"
+
+    // Pobierz długość napisu
+    std::cout << "Długość napisu: " << napis.length() << std::endl; // 17
+
+    // Zamiana napisu
+    napis.replace(4, 2, "nie ma");
+
+    std::cout << napis << std::endl; // "Ala nie ma kota i psa"
+}
+```
+
+Kluczowe zalety używania std::string nad tradycyjnymi C-stringami to:
+
+- Bezpieczeństwo - Nie musisz martwić się o alokację pamięci czy `null terminator`.
+- Elastyczność - Łatwość manipulacji napisami dzięki dostępnym metodom.
+- Integracja z C++ - Możliwość użycia napisów w kontenerach standardowej biblioteki, takich jak `std::vector` czy `std::map`.
+
+Jednakże warto pamiętać, że podczas interakcji z kodem w czystym języku C czy z niektórymi bibliotekami, mogą być wymagane tradycyjne C-stringi. Na szczęście std::string oferuje metodę `.c_str()`, która zwraca wskaźnik do tradycyjnego napisu C-string, co ułatwia interakcję między obiema reprezentacjami napisów.
