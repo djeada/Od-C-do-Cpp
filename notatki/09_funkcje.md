@@ -1,65 +1,67 @@
-
 ## Funkcje
 
-Funkcje pozwalają nam na zamknięcie określonego fragmentu kodu pod jedną nazwą. Umożliwia to zmniejszenie złożoności programu i zwiększenie jego czytelności.
+Funkcje są jednym z kluczowych narzędzi w programowaniu, które pozwalają na podzielenie kodu na mniejsze, zarządzalne części. Funkcje składają się z deklaracji (nazwa, typ zwracany, argumenty) i definicji (ciało funkcji).
 
 ### Tworzenie i wywoływanie funkcji
 
-Elementy składowe funkcji to:
+Podstawowe składniki funkcji to:
 
-1. <code>Typ</code> zwracanej wartości - określa jaki typ danych ma zostać zwrócony przez funkcję.
-2. <code>Imię</code> funkcji, dzięki któremu jest ona rozpoznawalna.
-3. <code>Argumenty</code> - są to zewnętrzne wartości, które chcemy użyć w funkcji i chcemy żeby zostały nam podane w momencie jej wywołania.
+1. **Typ zwracanej wartości**: Określa, jaki typ danych zostanie zwrócony przez funkcję.
+2. **Nazwa funkcji**: Umożliwia jej identyfikację w kodzie.
+3. **Lista argumentów**: Są to wartości przekazywane do funkcji podczas jej wywołania.
 
-Ogólny schemat pracy z funkcjami:
+Struktura funkcji:
 
 ```c++
-wybrany_typ nazwa_funkcji(argumenty...) {
-  
-  ... // ciało czyli kod, który chcemy, żeby został uruchomiony 
-  ... // po wywołaniu nazwa_funkcji(argumenty...);
-  
-  return wartość; // zwracamy wartość, która musi zgadzać się z wybranym typem
+typ_zwracanej_wartości nazwa_funkcji(typ_argumentu nazwa_argumentu, ...) {
+    // ciało funkcji
+    return wartość; // zwracana wartość (jeśli funkcja nie jest typu void)
 }
 
 int main() { 
-  wybrany_typ x = nazwa_funkcji(argumenty...));
+  typ_zwracanej_wartości wynik = nazwa_funkcji(argumenty...);
   return 0;  
 }
 ```
 
-### Deklaracja i definicja funkcji
+### Deklaracja vs. Definicja funkcji
 
-Deklaracja funkcji to wyrażenie, które zawiera nazwę funkcji, jej argumenty oraz jej zwracany typ. Deklaracja musi pojawić się w kodzie przed wywołaniem funkcji. Definicja funkcji to deklaracja wraz z ciałem funkcji - czyli odpowiednim kodem, który ma zostać wykonany po wywołaniu funkcji.
+- Deklaracja funkcji mówi kompilatorowi o nazwie funkcji, jej zwracanym typie oraz o typach argumentów. Pozwala to wywoływać funkcję przed jej faktyczną definicją w kodzie.
+- Definicja funkcji zawiera rzeczywisty kod funkcji. Zawiera zarówno deklarację, jak i ciało funkcji.
 
 Przykład:
+
 ```c++
+
 #include <iostream>
 
-// definicja
+// definicja funkcji fun1
 void fun1() { std::cout << "fun1" << std::endl; }
 
-// deklaracja
+// deklaracja funkcji fun2 (jej definicja znajduje się poniżej funkcji main)
 void fun2();
 
 int main() {
-  fun1(); // OK
-  fun2(); // OK
-  fun3(); // BŁĄD
+  fun1(); // wywołanie fun1 - działa, ponieważ fun1 została zdefiniowana wcześniej
+  fun2(); // wywołanie fun2 - również działa, mimo że definicja jest poniżej, dzięki wcześniejszej deklaracji
 
   return 0;
 }
 
+// definicja funkcji fun2 (po funkcji main)
 void fun2() { std::cout << "fun2" << std::endl; }
 
-void fun3() { std::cout << "fun3" << std::endl; }
+// UWAGA: fun3 nie została ani zadeklarowana, ani zdefiniowana przed funkcją main, dlatego jej wywołanie by się nie powiodło
 ```
+
+W praktyce dobre jest umieszczanie deklaracji funkcji w plikach nagłówkowych (.h lub .hpp), a ich definicji w plikach źródłowych (.cpp), aby zachować porządek i modularność kodu.
 
 ### Funkcja zwracająca wartość
 
-Do zwracania wartości poprzez funkcję używamy słowa kluczowego <code>return</code>. Słowo kluczowe <code>return</code> przerywa działanie funkcji i zwraca wartość umieszczoną po nim w kodzie. Typ zwracanej wartości musi być taki sam jak typ funkcji. Funkcja nie będąca funkcją typu void musi zawsze zwracać wartość.
+Funkcje, które zwracają wartość, muszą określić swój typ zwracanej wartości w deklaracji. Aby zwrócić wartość, używamy słowa kluczowego `return`, które kończy wykonywanie funkcji i zwraca określoną wartość. Typ zwracanej wartości musi być zgodny z deklarowanym typem funkcji.
 
 Przykład:
+
 ```c++
 #include <iostream>
 
@@ -68,34 +70,34 @@ int suma(int x, int y) { return x + y; }
 int main() {
   int a = 5;
   int b = 3;
-
-  std::cout << suma(a, b) << std::endl;
-
+  std::cout << "Suma a + b: " << suma(a, b) << std::endl;
   return 0;
 }
 ```
 
-### Funkcja typu void
+### Funkcje typu void
 
-Funkcje typu void nie zwracają żadnej wartości. Nie ma konieczności użycia słowa kluczowego <code>return</code>. Jeśli jednak zostanie użyte, to nie może być podana za nim żadna wartość. W kontekście funkcji typu void <code>return</code> służy jedynie do przerywania jej działania.
+Funkcje typu void nie zwracają wartości. Słowo kluczowe return nie jest wymagane, chociaż może być używane do wczesnego zakończenia funkcji.
 
 Przykład:
+
 ```c++
 #include <iostream>
 
-void wypisz_imie(string s) { std::cout << s << std::endl; }
+void wypisz_imie(const std::string& s) { std::cout << "Imię: " << s << std::endl; }
 
 int main() {
   std::string imie = "Karol";
   wypisz_imie(imie);
-
   return 0;
 }
 ```
 
 ### Parametry z domyślną wartością
 
-Parametry z domyślną wartością to takie, które w przypadku niepodania ich wartości przy wywołaniu funkcji, używana jest wartość podana w definicji funkcji. Jest to bardzo przydatne, gdyż pozwala na przesłanie mniejszej liczby argumentów do funkcji. Przykładem użycia parametrów z domyślną wartością może być funkcja `pomnoz` zaprezentowana poniżej:
+Funkcje w C++ mogą mieć parametry z domyślnymi wartościami. Jeśli taki parametr nie jest dostarczany podczas wywoływania funkcji, używana jest jego domyślna wartość. Ułatwia to tworzenie funkcji bardziej elastycznych, które można dostosowywać do różnych potrzeb.
+
+Przykład:
 
 ```c++
 #include <iostream>
@@ -106,18 +108,24 @@ int main() {
   int x = 2;
   int y = 7;
 
-  std::cout << pomnoz(x, y) << std::endl; // Drugi argument ma wartosc y
-  std::cout << pomnoz(x) << std::endl;    // Drugi argument ma domyslna wartosc
+  std::cout << "x * y: " << pomnoz(x, y) << std::endl; // Używając wartości y jako drugiego argumentu
+  std::cout << "x * 3: " << pomnoz(x) << std::endl;    // Używając domyślnej wartości dla drugiego argumentu
 
   return 0;
 }
 ```
 
-Uwaga: parametry z domyślną wartością mogą być podane w dowolnej kolejności, o ile parametry bez domyślnej wartości będą podane w odpowiedniej kolejności.
+Uwaga: Jeśli chcemy ustawić domyślną wartość dla jednego parametru, wszystkie kolejne parametry (po nim) także muszą mieć domyślne wartości.
 
 ### Przekazywanie argumentów funkcji przez wartość i referencję
 
-Istnieją dwa sposoby na przekazywanie argumentów do funkcji. Pierwszy to przekazywanie argumentów przez wartość. W tym przypadku funkcja otrzymuje kopię wartości argumentu. Wszelkie zmiany na tą wartość w funkcji nie wpływają na oryginalną zmienną. Przykładem tego może być funkcja `pomnoz` zaprezentowana poniżej, gdzie zmiana wartości zmiennej `a` w funkcji nie wpływa na wartość zmiennej `x` w `main`:
+Podczas projektowania funkcji w C++, możemy wybrać, czy chcemy przekazać argumenty przez wartość, czy przez referencję.
+
+#### Przekazywanie przez wartość
+
+Przekazując argument przez wartość, funkcja otrzymuje **kopię** wartości argumentu. Wszelkie modyfikacje tej kopii w ciele funkcji nie wpływają na oryginalną zmienną.
+
+Przykład:
 
 ```c++
 #include <iostream>
@@ -126,29 +134,41 @@ void pomnoz(int a, int b) { a = a * b; }
 
 int main() {
   int x = 2;
-
   pomnoz(x, 3);
-  std::cout << x << std::endl; // Wypisuje 2, poniewaz wartosc x nie zostala zmieniona w funkcji pomnoz
+  
+  std::cout << x << std::endl;  // Wypisuje 2, ponieważ wartość x nie została zmieniona w funkcji pomnoz
 
   return 0;
 }
 ```
 
-Drugi sposób na przekazywanie argumentów to przekazywanie argumentów przez referencję. W tym przypadku funkcja otrzymuje referencję do oryginalnej zmiennej. Wszelkie zmiany na tą wartość w odbywają się bezpośrednio na oryginalnej zmiennej. Przykładem tego może być funkcja `pomnoz` zaprezentowana poniżej, gdzie zmiana wartości zmiennej `a` w funkcji wpływa na wartość zmiennej `x` w `main`:
+#### Przekazywanie przez referencję
+
+Jeśli argument jest przekazywany przez referencję, funkcja pracuje bezpośrednio na **oryginalnej** zmiennej, a nie na jej kopii. Dlatego modyfikacje tej zmiennej w ciele funkcji wpływają na oryginalną zmienną.
+
+Przykład:
 
 ```c++
 #include <iostream>
 
-void pomnoz(int &a, int &b) { a = a * b; }
+void pomnoz(int &a, int b) { a = a * b; }
 
 int main() {
   int x = 2;
-
   pomnoz(x, 3);
-  std::cout << x << std::endl; // Wypisuje 6, poniewaz wartosc x zostala zmieniona w funkcji pomnoz
+  
+  std::cout << x << std::endl;  // Wypisuje 6, ponieważ wartość x została zmieniona w funkcji pomnoz
 
   return 0;
 }
 ```
 
-Uwaga: przez referencję możemy przekazywać jedynie l-wartości.
+Uwaga: Referencje są idealne do przekazywania obiektów o dużym rozmiarze (np. duże wektory lub macierze), ponieważ unika się wtedy kosztownego kopiowania. Jednak trzeba być ostrożnym, aby nie modyfikować przekazanych danych bez zamierzenia. Jeśli chcesz użyć referencji, ale nie chcesz modyfikować oryginalnych danych, możesz użyć referencji stałej:
+
+```c++
+void funkcja(const int &param) {
+    // można odczytać wartość param, ale nie można jej modyfikować
+}
+```
+
+Dzięki temu funkcja ma dostęp do oryginalnych danych bez konieczności ich kopiowania, ale jednocześnie jest pewność, że dane nie zostaną przypadkowo zmienione wewnątrz funkcji.
