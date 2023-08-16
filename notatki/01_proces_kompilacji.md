@@ -48,6 +48,8 @@ Natomiast kompilacja programu napisanego w języku C++ przy użyciu kompilatora 
 g++ -pedantic -std=c++98 main.cpp -o exe
 ```
 
+lub:
+
 ```
 g++-10 -Wall -Wextra -std=c++20 main.cpp -o exe
 ```
