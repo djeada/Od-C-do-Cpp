@@ -1,212 +1,130 @@
 ## Operacje bitowe
 
-Operacje bitowe pozwalają na bezpośredni dostęp i modyfikację poszczególnych bitów w liczbie. W językach C i C++ dostępne są następujące operacje bitowe:
+Operacje bitowe umożliwiają manipulację poszczególnymi bitami w liczbie. Są one niezbędne w wielu niskopoziomowych zadaniach programistycznych, takich jak prace z rejestrach, komunikacja sprzętowa czy optymalizacje. W językach C i C++ dostępne są następujące operacje bitowe:
 
-* `& (AND)` - operacja AND pozwala na uzyskanie wartości 1 na danym bitach tylko wtedy, gdy obie liczby mają na tych bitach wartość 1. Przykład: `5 (0101) & 3 (0011) = 1 (0001)`
-* `| (OR)` - operacja OR pozwala na uzyskanie wartości 1 na danym bitach wtedy, gdy co najmniej jedna z liczb ma na tych bitach wartość 1. Przykład: `5 (0101) | 3 (0011) = 7 (0111)`
-* `^ (XOR)` - operacja XOR pozwala na uzyskanie wartości 1 na danym bitach tylko wtedy, gdy liczby mają na tych bitach różne wartości. Przykład: `5 (0101) ^ 3 (0011) = 6 (0110)`
-* `~ (NOT)` - operacja NOT pozwala na zmianę wartości bitów z 0 na 1 i odwrotnie. Przykład: ~5 (0101) = -6 (1010)
-* `<< (left shift)` - operacja left shift pozwala na przesunięcie wszystkich bitów w liczbie o określoną liczbę pozycji w lewo. Przykład: `5 (0101) << 2 = 20 (010100)`
-* `>> (right shift)` - operacja right shift pozwala na przesunięcie wszystkich bitów w liczbie o określoną liczbę pozycji w prawo. Przykład: `5 (0101) >> 2 = 1 (0001)`
+### AND
+Operacja AND zwraca 1 na określonych bitach, tylko jeśli obie liczby mają wartość 1 na tych samych bitach.
 
-Należy pamiętać, że operacje bitowe działają tylko na liczbach całkowitych i operacje te są niskopoziomowe, w związku z tym nie są tak często stosowane jak operacje arytmetyczne czy logiczne.
+| Wejście 1 | Wejście 2 | Wyjście |
+|-----------|-----------|---------|
+| 0         | 0         | 0       |
+| 0         | 1         | 0       |
+| 1         | 0         | 0       |
+| 1         | 1         | 1       |
 
-### Bramka NOT
+Przykład: `5 (0101) & 3 (0011) = 1 (0001)`
 
-Zamienia jedynki na zera i na odwrót. Operator `~`.
-
-<table style="width:100%">
-  <tr>
-    <th>Wejście</th>
-    <th>Wyjście</th>
-  </tr>
-  <tr>
-    <td>0</td>
-    <td>1</td>
-</tr>
-  <tr>
-    <td>1</td>
-    <td>0</td>
-  </tr>
-</table>
-
-```c++
-#include <bitset>
-#include <iostream>
+```c
+#include <stdio.h>
 
 int main() {
-  bitset<8> x(5);
-  std::cout << x << std::endl;  // 00000101
-  std::cout << ~x << std::endl; // 11111010
-
-  return 0;
+    int a = 5; // 0101 w binarnym
+    int b = 3; // 0011 w binarnym
+    printf("%d & %d = %d\n", a, b, a & b);  // Wynik: 1
+    return 0;
 }
 ```
 
-### Bramka OR
+### OR
+Operacja OR zwraca 1 na określonych bitach, jeśli przynajmniej jedna z liczb ma wartość 1 na tych bitach.
 
-Jedynka gdy co najmniej jeden z bitów to jedynka, w przeciwnym razie zero. Operator `|`.
+| Wejście 1 | Wejście 2 | Wyjście |
+|-----------|-----------|---------|
+| 0         | 0         | 0       |
+| 0         | 1         | 1       |
+| 1         | 0         | 1       |
+| 1         | 1         | 1       |
 
-<table style="width:100%">
-  <tr>
-    <th>Wejście 1</th>
-    <th>Wejście 2</th>
-    <th>Wyjście</th>
-  </tr>
-  <tr>
-    <td>0</td>
-    <td>0</td>
-    <td>0</td>
-</tr>
-  <tr>
-    <td>0</td>
-    <td>1</td>
-    <td>1</td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>0</td>
-    <td>1</td>
-  </tr>
-<tr>
-    <td>1</td>
-    <td>1</td>
-    <td>1</td>
-  </tr>
-</table>
+Przykład: `5 (0101) | 3 (0011) = 7 (0111)`
 
-```c++
-#include <bitset>
-#include <iostream>
+```c
+#include <stdio.h>
 
 int main() {
-  int a = 7;
-  int b = 5;
-
-  std::cout << bitset<8>(a) << std::endl;     // 00000111
-  std::cout << bitset<8>(b) << std::endl;     // 00000101
-  std::cout << bitset<8>(a | b) << std::endl; // 00000111
-
-  return 0;
+    int a = 5;
+    int b = 3;
+    printf("%d | %d = %d\n", a, b, a | b);  // Wynik: 7
+    return 0;
 }
 ```
 
-### Bramka AND
+### XOR
+Operacja XOR zwraca 1 na określonych bitach, jeśli tylko jedna z liczb ma wartość 1 na tych bitach.
 
-Jedynka gdy oba bity to jedynki, w przeciwnym razie zero. Operator `&`.
+| Wejście 1 | Wejście 2 | Wyjście |
+|-----------|-----------|---------|
+| 0         | 0         | 0       |
+| 0         | 1         | 1       |
+| 1         | 0         | 1       |
+| 1         | 1         | 0       |
 
-<table style="width:100%">
-  <tr>
-    <th>Wejście 1</th>
-    <th>Wejście 2</th>
-    <th>Wyjście</th>
-  </tr>
-  <tr>
-    <td>0</td>
-    <td>0</td>
-    <td>0</td>
-</tr>
-  <tr>
-    <td>0</td>
-    <td>1</td>
-    <td>0</td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>0</td>
-    <td>0</td>
-  </tr>
-<tr>
-    <td>1</td>
-    <td>1</td>
-    <td>1</td>
-  </tr>
-</table>
+Przykład: `5 (0101) ^ 3 (0011) = 6 (0110)`
 
-```c++
-#include <bitset>
-#include <iostream>
+```c
+#include <stdio.h>
 
 int main() {
-  int a = 7;
-  int b = 5;
-
-  std::cout << bitset<8>(a) << std::endl;     // 00000111
-  std::cout << bitset<8>(b) << std::endl;     // 00000101
-  std::cout << bitset<8>(a & b) << std::endl; // 00000101
-
-  return 0;
+    int a = 5;
+    int b = 3;
+    printf("%d ^ %d = %d\n", a, b, a ^ b);  // Wynik: 6
+    return 0;
 }
+
 ```
 
-### Bramka XOR
+### NOT
+Operacja NOT inwertuje każdy bit w liczbie.
 
-Jedynka, gdy bity są różne, w przeciwnym razie zero. Operator `^`.
+| Wejście | Wyjście |
+|:-------:|:-------:|
+|    0    |    1    |
+|    1    |    0    |
 
-<table style="width:100%">
-  <tr>
-    <th>Wejście 1</th>
-    <th>Wejście 2</th>
-    <th>Wyjście</th>
-  </tr>
-  <tr>
-    <td>0</td>
-    <td>0</td>
-    <td>0</td>
-</tr>
-  <tr>
-    <td>0</td>
-    <td>1</td>
-    <td>1</td>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>0</td>
-    <td>1</td>
-  </tr>
-<tr>
-    <td>1</td>
-    <td>1</td>
-    <td>0</td>
-  </tr>
-</table>
+Przykład: ~5 (0101) staje się (1010). Warto jednak zwrócić uwagę na to, że wynik takiej operacji zależy od systemu liczbowego i rozmiaru typu.
 
-```c++
-#include <bitset>
-#include <iostream>
+```c
+#include <stdio.h>
 
 int main() {
-  int a = 7;
-  int b = 5;
-
-  std::cout << bitset<8>(a) << std::endl;     // 00000111
-  std::cout << bitset<8>(b) << std::endl;     // 00000101
-  std::cout << bitset<8>(a ^ b) << std::endl; // 00000010
-
-  return 0;
+    int a = 5;
+    printf("~%d = %d\n", a, ~a);
+    return 0;
 }
+
 ```
 
-### Przesunięcia bitowe
+### Przesunięcie w lewo
+Operacja left shift przesuwa bity w liczbie o określoną liczbę pozycji w lewo, wypełniając prawą stronę zerami.
 
-* Bity w lewo przesuwamy za pomocą operatora `<<`.
-* Bity w prawo przesuwamy za pomocą operatora `>>`.
 * Przesunięcie w lewo o 1 bit jest równoważne podzieleniu przez 2.
+
+Przykład: `5 (0101) << 2 = 20 (10100)`
+
+```c
+#include <stdio.h>
+
+int main() {
+    int a = 5;
+    printf("%d >> 2 = %d\n", a, a >> 2);  // Wynik: 1
+    return 0;
+}
+```
+
+### Przesunięcie w prawo
+Operacja right shift przesuwa bity w liczbie o określoną liczbę pozycji w prawo. W przypadku liczb nieujemnych lewa strona jest wypełniana zerami, podczas gdy dla liczb ujemnych lewa strona jest wypełniana jedynkami (zachowanie to zależy od implementacji).
+
 * Przesuniecie w prawo o 1 bit jest równoważne przemnożeniu przez 2.
 
-```c++
-#include <bitset>
-#include <iostream>
+Przykład: `5 (0101) >> 2 = 1 (0001)`
+
+```c
+#include <stdio.h>
 
 int main() {
-  int a = 14;
-  int b = 2;
-
-  std::cout << bitset<8>(a) << std::endl;      // 00001110
-  std::cout << bitset<8>(b) << std::endl;      // 00000010
-  std::cout << bitset<8>(a << b) << std::endl; // 00111000
-  std::cout << bitset<8>(a >> b) << std::endl; // 00000011
-
-  return 0;
+    int a = 5;
+    printf("%d >> 2 = %d\n", a, a >> 2);  // Wynik: 1
+    return 0;
 }
 ```
+
+Operacje bitowe działają wyłącznie na liczbach całkowitych. Choć operacje bitowe nie są powszechnie używane w codziennym programowaniu, ich znajomość jest ważna, szczególnie w aplikacjach niskopoziomowych i systemowych.
