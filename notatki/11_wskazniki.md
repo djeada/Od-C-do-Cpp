@@ -14,7 +14,7 @@ std::string *ptrString;  // wskaźnik do zmiennej typu std::string
 
 ### Inicjalizacja wskaźników
 
-Wskaźniki inicjalizuje się poprzez przypisanie im adresu zmiennej za pomocą operatora &.
+Wskaźniki inicjalizuje się poprzez przypisanie im adresu zmiennej za pomocą operatora `&`.
 
 ```c++
 int number = 42;
@@ -23,7 +23,7 @@ int *ptr = &number;
 
 ### Dereferencja wskaźników
 
-Dereferencja wskaźnika polega na uzyskaniu dostępu do wartości zmiennej, na którą wskazuje wskaźnik. Wykorzystuje się do tego operator *.
+Dereferencja wskaźnika polega na uzyskaniu dostępu do wartości zmiennej, na którą wskazuje wskaźnik. Wykorzystuje się do tego operator `*`.
 
 ```c++
 int number = 5;
