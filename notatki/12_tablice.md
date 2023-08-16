@@ -1,59 +1,63 @@
-## Tablice
+## Tablice w C++
 
-Tablice to struktura danych przechowująca elementy tego samego typu, które mogą być dostępne przez indeks. W języku C++ tworzenie tablicy odbywa się przez umieszczenie liczby reprezentującej ilość elementów tablicy między nawiasy kwadratowe, po nazwie zmiennej.
+Tablice to kontenery przechowujące wiele elementów tego samego typu. Każdy element w tablicy można identyfikować za pomocą jego indeksu.
 
-```c++
-int tab[3]; // Polka z 3 pudelkami typu int.
-```
+### Deklaracja tablicy
 
-W powyższym przykładzie zostaje zarezerwowane miejsce w pamięci, jednak elementy tablicy nie są jeszcze zainicjalizowane. Oznacza to, że w środku znajdują się jakieś nieznane dane ("śmieci"). Aby uniknąć tego problemu, możemy zainicjalizować tablicę od razu po jej deklaracji, poprzez przypisanie jej wartości.
+Aby zadeklarować tablicę w C++, umieszczamy liczbę elementów w nawiasach kwadratowych po typie danych i nazwie tablicy.
 
 ```c++
-int tabA[3] = {7, 8, 11};
+int numbers[5]; // Tablica składająca się z 5 elementów typu int.
 ```
 
-lub
+Niezainicjalizowane tablice, zwłaszcza tablice lokalne (wewnątrz funkcji), mogą zawierać losowe wartości. Dlatego zaleca się inicjalizować tablicę podczas jej deklaracji.
 
 ```c++
-int tabB[] = {7, 8, 11};
+int arrayA[3] = {1, 2, 3};
 ```
 
-Obie wersje są dopuszczalne.
+Możemy również pominąć rozmiar tablicy podczas jej inicjalizacji, a kompilator sam obliczy odpowiedni rozmiar na podstawie liczby podanych elementów.
 
-### Wczytywanie i wypisywanie elementów tablicy
+```c++
+int arrayB[] = {4, 5, 6, 7}; // Rozmiar to 4.
+```
 
-Wczytywanie i wypisywanie elementów tablicy odbywa się przy użyciu pętli for i operatorów wejścia/wyjścia.
+### Przeszukiwanie i wyświetlanie tablicy
+
+Do przeszukiwania i wyświetlania tablicy często używa się pętli. Poniżej znajduje się przykład wczytywania i wyświetlania tablicy za pomocą pętli for.
 
 ```c++
 #include <iostream>
 
-const int n = 10;
+const int SIZE = 5;
 
 int main() {
+    int arr[SIZE];
 
-  int a[n];
+    std::cout << "Wprowadź " << SIZE << " liczb: " << std::endl;
 
-  std::cout << "Podaj " << n << " elementów: " << std::endl;
+    // Wczytywanie danych do tablicy
+    for (int i = 0; i < SIZE; i++) {
+        std::cin >> arr[i];
+    }
 
-  // wczytywanie
-  for (int i = 0; i < n; i++)
-    std::cin >> a[i];
+    std::cout << "Elementy tablicy to:" << std::endl;
 
-  std::cout << "Twoja tablica: " << std::endl;
+    // Wyświetlanie zawartości tablicy
+    for (int i = 0; i < SIZE; i++) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << std::endl;
 
-  // wypisywanie
-  for (int i = 0; i < n; i++)
-    std::cout << a[i] << std::endl;
-
-  return 0;
+    return 0;
 }
 ```
 
-Należy pamiętać, że dostęp do elementów tablicy poza jej zakresem (próba odwołania się do indeksu mniejszego od 0 lub większego od długości tablicy) może skutkować niezdefiniownym zachowaniem programu. W niektórych przypadkach możemy otrzymać przypadkowe wartości, które akurat znajdują się w komórkach pamięci obok naszej tablicy, natomiast w innych przypadkach program może po prostu zakończyć działanie (crash).
+Kiedy próbujemy uzyskać dostęp do indeksu tablicy poza jej zakresem, może to prowadzić do niezdefiniowanego zachowania programu. To zachowanie może być różne w zależności od sytuacji: od czytania nieprawidłowych danych, przez nadpisywanie pamięci poza tablicą, aż po awarię programu. Dlatego zawsze należy zachować ostrożność przy manipulacji indeksami tablicy. W wielu przypadkach warto rozważyć użycie kontenerów standardowych, takich jak std::vector, które oferują większe bezpieczeństwo i elastyczność niż tradycyjne tablice.
 
 ### Tablica jako wskaźnik
 
-Tablice również mogą być traktowane jako wskaźniki. Nazwa tablicy jest wskaźnikiem do pierwszego elementu tablicy. Oznacza to, że `tab[0]` oraz `*tab` są synonimami. Poniższy przykład przedstawia funkcję, która oblicza sumę elementów tablicy przyjmując jako argument wskaźnik do pierwszego elementu oraz długość tablicy.
+W C++, tablica to kontener przechowujący elementy tego samego typu. Jednak tablica sama w sobie może być traktowana jako wskaźnik do jej pierwszego elementu. Innymi słowy, `tab[0]` i `*tab` są równoważne. Poniżej znajduje się funkcja, która oblicza sumę elementów tablicy przyjmując jako argument wskaźnik do pierwszego elementu oraz długość tablicy.
 
 ```c++
 #include <iostream>
@@ -68,7 +72,6 @@ int suma(int *tablica, int dlugosc) {
 }
 
 int main() {
-
   int tab[] = {2, 4, 8, 16, 32};
   std::cout << suma(tab, 5) << std::endl;
 
@@ -76,63 +79,63 @@ int main() {
 }
 ```
 
-Zwróć uwagę, że w powyższym przykładzie przekazujemy do funkcji długość tablicy. Kompilator nie wie, czy `int* tablica` wskazuje na pojedynczą liczbę, czy na tablicę 10 liczb. Nie pomoże nawet operator <code>sizeof</code>, zwracający rozmiar danego obiektu lub typu podany w bajtach. Dla wskaźnika zwróci jedynie rozmiar typu, na który wskazuje wskaźnik.
+Jest ważne, by pamiętać, że przekazując tablicę jako wskaźnik do funkcji, kompilator nie jest w stanie określić jej rzeczywistego rozmiaru. W tym przypadku musimy jawnie przekazać długość tablicy jako drugi argument funkcji. Operator sizeof nie będzie tutaj pomocny, ponieważ dla wskaźnika zwróci jedynie rozmiar typu wskaźnika, a nie całej tablicy.
 
 ### Arytmetyka wskaźników
 
-Arytmetyka wskaźników polega na operowaniu na wartościach wskaźników za pomocą operatorów arytmetycznych. W języku C++ dostępne są następujące operatory arytmetyczne dla wskaźników:
+Wskaźniki w C++ umożliwiają wykonanie operacji arytmetycznych. Poniżej znajduje się lista dostępnych operacji:
 
-* `++` (inkrementacja) - zwiększa wartość wskaźnika o jeden, co oznacza, że przesuwa wskaźnik na kolejny element tablicy. Przykład: `int* wsk = &tab[0]; wsk++;` oznacza, że wsk teraz wskazuje na `tab[1]`.
-* -- (dekrementacja) - zmniejsza wartość wskaźnika o jeden, co oznacza, że przesuwa wskaźnik na poprzedni element tablicy. Przykład: `int* wsk = &tab[1]; wsk--;` oznacza, że wsk teraz wskazuje na `tab[0]`.
-* `+=` (dodawanie) - dodaje wartość do wskaźnika, co oznacza, że przesuwa wskaźnik o określoną liczbę elementów. Przykład: `int* wsk = &tab[0]; wsk += 2;` oznacza, że wsk teraz wskazuje na `tab[2]`.
-* `-=` (odejmowanie) - odejmuje wartość od wskaźnika, co oznacza, że przesuwa wskaźnik o określoną liczbę elementów wstecz. Przykład: `int* wsk = &tab[2]; wsk -= 1;` oznacza, że wsk teraz wskazuje na `tab[1]`.
-* `+` (dodawanie) - zwraca wskaźnik do elementu tablicy o określonej liczbie pozycji dalej. Przykład: `int* wsk = &tab[0]; int* wsk_plus = wsk + 2;` oznacza, że wsk_plus teraz wskazuje na `tab[2]`.
-* `-` (odejmowanie) - zwraca różnicę pomiędzy dwoma wskaźnikami, która jest liczbą elementów pomiędzy nimi. Przykład: `int* wsk1 = &tab[0]; int* wsk2 = &tab[2]; int roznica = wsk2 - wsk1;` oznacza, że roznica jest równa 2, co oznacza, że między wskaźnikami wsk1 i wsk2 znajdują się 2 elementy tablicy.
+- `++`: Przesuwa wskaźnik do następnego elementu.
+- `--`: Przesuwa wskaźnik do poprzedniego elementu.
+- `+=`: Przesuwa wskaźnik o określoną liczbę elementów do przodu.
+- `-=`: Przesuwa wskaźnik o określoną liczbę elementów do tyłu.
+- `+`: Zwraca nowy wskaźnik przesunięty o określoną liczbę elementów od obecnego miejsca.
+-  `-`: Jeśli użyte między dwoma wskaźnikami, zwraca różnicę (liczbę elementów) pomiędzy nimi.
 
-Arytmetyka wskaźników jest przydatna, ponieważ pozwala na łatwe przesuwanie się po tablicy i dostęp do poszczególnych elementów bez konieczności znajomości ich indeksów. Pamiętać jednak należy, że operowanie poza zakresem tablicy (np. próba dekrementacji wskaźnika wskazującego na pierwszy element) może prowadzić do niezdefiniowanego zachowania programu.
+Arytmetyka wskaźników jest szczególnie przydatna podczas operacji na tablicach. Umożliwia to przesuwanie się po tablicy bez konieczności korzystania z konkretnego indeksu. Jednak kluczowe jest przestrzeganie ostrożności i unikanie operacji poza zakresem tablicy, co może prowadzić do niezdefiniowanego zachowania programu.
 
 ### Dynamiczna alokacja pamięci
 
-Aby skorzystać z pamięci sterty, używamy operatora `new` do alokacji (rezerwacji) miejsc w pamięci komputera dla pojedynczej zmiennej lub tablicy. Użycie samego `new` zarezerwuje pamięć dla pojedynczej zmiennej, natomiast dla tablicy używamy `new [liczba]`, gdzie liczba to długość tablicy, jaką chcemy stworzyć.
+Dynamiczna alokacja pamięci w C++ pozwala na rezerwację przestrzeni w pamięci w czasie działania programu, zamiast podczas jego kompilacji. Aby zaalokować pamięć na stercie, korzystamy z operatora `new`. Do alokacji pojedynczej zmiennej używamy `new`, natomiast dla tablicy `new [liczba]`, gdzie "liczba" reprezentuje ilość elementów w tablicy.
 
 ```c++
 #include <iostream>
 
 int main() {
-
-  std::cout << "Podaj liczbę elemntów tablicy: " << std::endl;
-
+  std::cout << "Podaj liczbę elementów tablicy: ";
   int n;
   std::cin >> n;
 
   int *tab = new int[n];
-  //...
+  // Pozostała część kodu...
 ```
 
-Gdy tablica nie jest już potrzebna, zarezerwowaną uprzednio pamięć uwalniamy przy pomocy operatora `delete`. Dla pojedynczej zmiennej używamy `delete`, natomiast dla tablicy `delete[]`. Tym razem nie wstawiamy już żadnych liczb w nawiasy kwadratowe.
+Gdy dynamicznie zaalokowana pamięć nie jest już potrzebna, musimy ją zwolnić. Do tego służy operator delete. Dla pojedynczej zmiennej używamy delete, natomiast dla tablicy `delete[]` - bez podawania liczby elementów.
 
 ```c++
-  //...
+  // ... Koniec pracy z tablicą
   delete[] tab;
   return 0;
 }
 ```
 
-Ważne jest, aby pamięć zawsze była uwalniana po skończeniu pracy z nią. Zmienne na stercie mogą żyć dłużej niż wskazujące na nie wskaźniki. Jeśli nie uwolnimy dynamicznie zaalokowanej pamięci, system operacyjny będzie dalej ją trzymał i bronił przed nadpisaniem. Jeśli wskaźnik został usunięty, to z jednej strony nie mamy w programie możliwości dostania się do zmiennych, które stworzyliśmy na stercie, a z drugiej marnujemy zasoby komputera, bo system operacyjny nie dopuszcza innych programów do tego obszaru pamięci. Taką sytuację nazywamy "wyciekiem pamięci". Dla kilku zmiennych jest to nieodczuwalne, ale dla większych programów może szybko przeciążyć naszą maszynę.
+Zarządzanie dynamicznie alokowaną pamięcią jest kluczowe. Niezwalnianie pamięci może prowadzić do wycieków pamięci, które w skumulowaniu mogą obciążyć zasoby systemu. Wyciek pamięci występuje, gdy program zaalokuje pamięć, lecz nigdy jej nie zwolni, co może prowadzić do zużycia wszystkich dostępnych zasobów.
 
-Dodatkowo warto pamiętać, że korzystanie z dynamicznej alokacji pamięci wiąże się z dodatkowymi kosztami w postaci pamięci, którą trzeba zarezerwować oraz czasu, który trzeba poświęcić na alokację i dealokację pamięci. Dlatego ważne jest, aby dokładnie przemyśleć, czy dynamiczna alokacja jest konieczna dla danego problemu i czy nie lepiej skorzystać z innego rozwiązania.
+Dodatkowo warto podkreślić, że dynamiczna alokacja pamięci ma pewne koszty - nie tylko w postaci zużywanej pamięci, ale też czasu potrzebnego na jej alokację i dealokację. Z tego powodu warto rozważyć, czy dynamiczna alokacja jest rzeczywiście konieczna w danym przypadku. W wielu sytuacjach może być bardziej opłacalne korzystanie z gotowych kontenerów, takich jak std::vector, które automatycznie zarządzają pamięcią.
 
 ### Tablica 2D
 
-Tablica dwuwymiarowa (ang. two-dimensional array) jest to tablica, która składa się z innych tablic. Każda z tych tablic jest rzędem (ang. row) tablicy dwuwymiarowej. Ilustruje to poniższy przykład:
+Tablica dwuwymiarowa, inaczej znana jako "2D array" w języku angielskim, można sobie wyobrazić jako tablicę tablic. Składa się ona z pewnej liczby rzędów, gdzie każdy rząd to jednowymiarowa tablica.
+
+Przykładowa tablica 2D może wyglądać następująco:
 
 ```c++
 int a[3][4] = { {1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12} };
 ```
 
-w którym tablica a składa się z trzech rzędów, a każdy rząd składa się z 4 elementów.
+W tym przypadku mamy do czynienia z tablicą o trzech rzędach i czterech kolumnach.
 
-Poniższy przykład, pokazuje jak stworzyć tablicę dwuwymiarową:
+Aby stworzyć i wypełnić tablicę dwuwymiarową, można skorzystać z poniższego kodu:
 
 ```c++
 #include <iostream>
@@ -141,7 +144,6 @@ const unsigned int n = 3;
 const unsigned int m = 4;
 
 int main() {
-
   int a[n][m];
 
   std::cout << "Podaj " << n * m << " elementów: " << std::endl;
@@ -162,9 +164,7 @@ int main() {
 }
 ```
 
-W powyższym przykładzie tworzymy tablicę dwuwymiarową o wymiarach $n \times m$ (w tym przypadku `3x4`) i pozwalamy na wprowadzenie elementów przez użytkownika. Na koniec tablica jest wypisywana na konsoli.
-
-Tablica dwuwymiarowa może być również stworzona dynamicznie. Poniższy przykład pokazuje jak użyć operatora `new` do zbudowania dwuwymiarowej tablicy:
+Jednakże w niektórych przypadkach chcemy alokować pamięć dla tablicy dwuwymiarowej dynamicznie. Można to osiągnąć przy pomocy operatora new. Oto sposób dynamicznej alokacji i dealokacji dla tablicy 2D:
 
 ```c++
 #include <iostream>
@@ -174,6 +174,7 @@ int main() {
   double **macierz;
   int wysokość, szerokość;
 
+  std::cout << "Podaj wysokość i szerokość macierzy: ";
   std::cin >> wysokość >> szerokość;
 
   // Alokacja
@@ -181,6 +182,8 @@ int main() {
 
   for (int i = 0; i < wysokość; i++)
     macierz[i] = new double[szerokość];
+
+  // Tu można wypełnić tablicę wartościami
 
   // Dealokacja
   for (int i = 0; i < wysokość; i++)
@@ -192,4 +195,4 @@ int main() {
 }
 ```
 
-W powyższym kodzie, zmienne `wysokość` i `szerokość` służą do określenia liczby rzędów i kolumn tworzonej tablicy dwuwymiarowej. Następnie, za pomocą operatora `new`, alokujemy pamięć dla tablicy i przypisujemy ją do zmiennej `macierz`. Warto zwrócić uwagę na fakt, że alokacja pamięci dla tablicy dwuwymiarowej wykonywana jest za pomocą dwóch pętli.
+W tym kodzie użytkownik określa wymiary macierzy (wysokość i szerokość), po czym następuje dynamiczna alokacja pamięci dla niej. Ważne jest, aby po skończonej pracy z tablicą dynamiczną odpowiednio zwolnić zajmowaną przez nią pamięć, korzystając z operatora delete[].
