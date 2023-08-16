@@ -1,158 +1,89 @@
 ## Zmienne i typy danych
-Zmienna to pojęcie informatyczne, które odnosi się do obszaru pamięci, w którym można zapisać dane. Każda zmienna ma swój typ, aby komputer wiedział, jak interpretować dane przechowywane w pamięci.
 
-### Tworzenie zmiennej
+W języku programowania, zmienna to identyfikator reprezentujący określony obszar pamięci, w którym przechowywane są dane. Każda zmienna ma przypisany konkretny typ danych, który informuje komputer o rodzaju i zakresie informacji przechowywanej w zmiennej.
 
-Aby utworzyć zmienną, należy połączyć typ i nazwę:
+### Deklaracja i inicjalizacja zmiennej
+
+Deklaracja zmiennej polega na określeniu jej typu i nazwy. Opcjonalnie, podczas deklaracji możemy również przypisać zmiennej jej początkową wartość, co nazywane jest inicjalizacją.
 
 ```c++
-int x;    // zmienna x typu int
-double y; // zmienna y typu double
+int liczba;         // deklaracja zmiennej typu int
+double wspolczynnik = 2.5; // deklaracja i inicjalizacja zmiennej typu double
 ```
 
 ### Zasady nazewnictwa zmiennych
 
-Nazwy zmiennych mogą składać się z liter, liczb i podkreślnika "_". Powinny zaczynać się od litery lub podkreślnika. Powinny być zrozumiałe, np. `liczbaSamochodow` lub `kolorTla`.
+Podczas nazywania zmiennych, warto przestrzegać pewnych zasad:
 
-Istnieje wiele konwencji tworzenia złożonych nazw zmiennych. Dwie najpopularniejsze to:
+- Nazwy zmiennych mogą składać się z liter, cyfr i podkreślnika "_" i powinny zaczynać się od litery lub podkreślnika.
+- Unikaj używania słów kluczowych języka programowania.
+- Nazwy powinny być opisowe i zrozumiałe, takie jak liczbaDni, wspolczynnikZmiany.
 
-1. oddzielanie słów podkreślnikiem, np. `masa_czastki_alfa` (tzw. snake_case). Przykład: `cena_paliwa`, `nr_telefonu`.
-2. oddzielanie słów wielką literą, np. `masaCzastkiAlfa` (tzw. camelCase). Przykład: `cenaPaliwa`, `nrTelefonu`.
+Istnieje kilka popularnych konwencji nazewnictwa:
 
-### Inicjalizacja
+- `snake_case`: oddzielanie słów podkreślnikiem, np. masa_czastki, adres_email.
+- `camelCase`: pierwsze słowo małą literą, następne wielką, np. masaCzastki, adresEmail.
+- `PascalCase`: każde słowo zaczyna się wielką literą, np. MasaCzastki, AdresEmail (często stosowane dla nazw klas).
 
-Inicjalizacja to proces przypisywania wartości zmiennej:
+### Przypisanie i modyfikacja wartości
 
-```c++
-int x = 10;
-double y = 3.56;
-```
-
-### Nadpisanie
-
-Aby zmienić wartość zmiennej, można wykorzystać operator przypisania:
+Po zadeklarowaniu zmiennej, można jej przypisać wartość lub modyfikować istniejącą wartość.
 
 ```c++
-int x = 10;
-x = x + 3; // teraz x przechowuje 13
-x++;       // teraz x przechowuje 14
+int liczba = 5;   // inicjalizacja zmiennej wartością 5
+liczba = liczba + 3; // modyfikacja wartości na 8
+liczba++;           // inkrementacja wartości o 1; teraz liczba to 9
 ```
 
 ### Typy zmiennych
 
-Istnieje wiele typów zmiennych, wśród nich można wymienić: pojedyncze znaki, liczby całkowite, liczby naturalne, liczby zmiennoprzecinkowe, typ logiczny i typ void.
+W języku C++ istnieje wiele różnorodnych typów zmiennych, które odpowiadają różnym kategoriom danych. Wśród nich można wymienić m.in.: pojedyncze znaki, liczby całkowite, liczby zmiennoprzecinkowe, typ logiczny oraz typ void.
 
-<table class="boxed">
-    <tbody>
-        <tr>
-            <th>Grupa</th>
-            <th>Deklaracja w kodzie</th>
-            <th>Precyzja oraz rozmiar</th>
-        </tr>
-        <tr>
-            <td rowspan="4">Pojedyncze znaki</td>
-            <td>char</td>
-            <td>Jeden bajt. Najczęściej 8 bitów.</td>
-        </tr>
-        <tr>
-            <td>char16_t</td>
-            <td>Nie mniejszy niż <code>char</code>. Co najmniej 16 bitów.</td>
-        </tr>
-        <tr>
-            <td>char32_t</td>
-            <td>Nie mniejszy niż <code>char16_t</code>. Co najmniej 32 bity.</td>
-        </tr>
-        <tr>
-            <td>wchar_t</td>
-            <td>Najwięcej znaków pod jedną nazwą.</td>
-        </tr>
-        <tr>
-            <td rowspan="5">Liczby całkowite</td>
-            <td>signed char</td>
-            <td>Taki sam rozmiar jak <code>char</code>. Co najmniej 8 bitów.</td>
-        </tr>
-        <tr>
-            <td>signed short int</td>
-            <td>Nie mniejszy niż <code>char</code>. Co najmniej 16 bitów.</td>
-        </tr>
-        <tr>
-            <td>signed int</td>
-            <td>Nie mniejszy niż <code>short</code>. Co najmniej 16 bitów.</td>
-        </tr>
-        <tr>
-            <td>signed long int</td>
-            <td>Nie mniejszy niż <code>int</code>. Co najmniej 32 bitów.</td>
-        </tr>
-        <tr>
-            <td>signed long long int</td>
-            <td>Nie mniejszy niż <code>long</code>. Co najmniej 64 bitów.</td>
-        </tr>
-        <tr>
-            <td rowspan="5">Liczby naturalne</td>
-            <td>unsigned char</td>
-            <td rowspan="5">Tak jak całkowite.</td>
-        </tr>
-        <tr>
-            <td>unsigned short int</td>
-        </tr>
-        <tr>
-            <td>unsigned int</td>
-        </tr>
-        <tr>
-            <td>unsigned long int</td>
-        </tr>
-        <tr>
-            <td>unsigned long long int</td>
-        </tr>
-        <tr>
-            <td rowspan="3">Liczby zmiennoprzecinkowe</td>
-            <td>float</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>double</td>
-            <td>Precyzja nie mniejsza niż dla<code>float</code>.</td>
-        </tr>
-        <tr>
-            <td>long double</td>
-            <td>Precyzja nie mniejsza niż dla <code>double</code>.</td>
-        </tr>
-        <tr>
-            <td>Typ logiczny</td>
-            <td>bool</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Typ void</td>
-            <td>void</td>
-            <td>nic nie przechowuje</td>
-        </tr>
-    </tbody>
-</table>
+| Grupa                     | Deklaracja w kodzie       | Precyzja oraz rozmiar                                                |
+|---------------------------|---------------------------|----------------------------------------------------------------------|
+| Pojedyncze znaki          | char                      | Jeden bajt. Najczęściej 8 bitów.                                     |
+|                           | char16_t                 | Co najmniej 16 bitów.                                                |
+|                           | char32_t                 | Co najmniej 32 bity.                                                 |
+|                           | wchar_t                  | Zależy od implementacji, ale służy do przechowywania znaków szerokich.|
+| Liczby całkowite          | signed char               | Co najmniej 8 bitów.                                                 |
+|                           | signed short int          | Co najmniej 16 bitów.                                                |
+|                           | signed int                | Co najmniej 16 bitów.                                                |
+|                           | signed long int           | Co najmniej 32 bitów.                                                |
+|                           | signed long long int      | Co najmniej 64 bitów.                                                |
+| Liczby naturalne          | unsigned char             | Tak jak całkowite.                                                   |
+|                           | unsigned short int        |                                                                      |
+|                           | unsigned int              |                                                                      |
+|                           | unsigned long int         |                                                                      |
+|                           | unsigned long long int    |                                                                      |
+| Liczby zmiennoprzecinkowe | float                     | 32-bitowa precyzja (zależy od platformy).                            |
+|                           | double                    | Co najmniej taka sama precyzja jak `float`, ale zwykle większa.      |
+|                           | long double               | Precyzja nie mniejsza niż dla `double`.                              |
+| Typ logiczny              | bool                      | Reprezentuje wartości `true` lub `false`.                            |
+| Typ void                  | void                      | Nie przechowuje żadnych wartości.                                    |
 
 ### Stałe
 
-Stała jest to zmienna, której wartość nie może zostać zmieniona w trakcie trwania programu. Deklaruje się je za pomocą słowa kluczowego `const`, a w nowszych wersjach C++ (11+) także `constexpr`, które wymusza na kompilatorze sprawdzenie, czy potrafi on wyliczyć wartość na etapie kompilacji. Przykłady:
+Stała to zmienna, której wartość jest niezmienna przez cały czas trwania programu. W języku C++ deklaruje się je za pomocą słowa kluczowego `const`. Istnieje też słowo kluczowe `constexpr` (wprowadzone w C++11), które pozwala kompilatorowi obliczyć wartość stałej w trakcie kompilacji.
 
 ```c++
-const double pi = 3.14; // Ok. Stala jest zadeklarowana i zainicjalizowana.
-constexpr double pi = 3.14;
+const double pi = 3.14159; 
+constexpr double euler = 2.71828;
 ```
 
 ### Zakres życia zmiennych
 
-Każda zmienna ma zakres życia, który określa, gdzie i jak długo będzie istnieć. Zmienne globalne istnieją cały czas, od rozpoczęcia do zakończenia programu, natomiast zmienne lokalne są tworzone i usuwane w trakcie działania programu.
+Zmienna posiada zakres życia, który określa, kiedy jest ona dostępna w trakcie działania programu. Zmienne globalne istnieją od momentu rozpoczęcia programu do jego zakończenia, natomiast zmienne lokalne istnieją tylko w obrębie funkcji lub bloku, w którym zostały zadeklarowane.
 
 ```c++
-int a = 10; // zmienna globalna
+int globalna = 10; // zmienna globalna
 
 int main() {
-  int a = 3; // zmienna lokalna
+  int lokalna = 3; // zmienna lokalna
 
-  cout << a << endl;   // 3
-  cout << ::a << endl; // 10
+  cout << lokalna << endl;   // 3
+  cout << ::globalna << endl; // 10
   return 0;
 }
 ```
 
-W powyższym przykładzie mamy dwie zmienne `a`, jedną globalną i jedną lokalną. Do zmiennej globalnej można odwołać się za pomocą operatora `::`.
+W powyższym przykładzie mamy zmienną globalną globalna oraz zmienną lokalną lokalna. Jeśli chcemy odwołać się do zmiennej globalnej w sytuacji, gdy w danej funkcji istnieje zmienna o tej samej nazwie, używamy operatora zakresu `::`.
