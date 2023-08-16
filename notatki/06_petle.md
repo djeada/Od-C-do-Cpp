@@ -1,123 +1,121 @@
 ## Pętle
 
-Pętle są konstrukcją programistyczną wykorzystywaną do wielokrotnego wykonywania bloku kodu. Mamy dwa typy pętli: pętla `for` i pętla `while`.
+Pętle to kluczowe konstrukcje w programowaniu, które pozwalają na wielokrotne wykonanie określonego fragmentu kodu. Istnieją różne typy pętli: `for`, `while` oraz `do-while`.
 
-### Pętla for
+### Pętla `for`
 
-Pętla `for` jest używana w celu wykonania czynności określoną liczbę razy. Składa się z trzech elementów oddzielonych średnikami: inicjalizacji licznika, warunku oraz inkrementacji licznika.
+Pętla `for` jest szczególnie przydatna, gdy znamy z góry liczbę powtórzeń danej operacji. Składa się z trzech głównych elementów: inicjalizacji, warunku i operacji po każdej iteracji (zwykle inkrementacji).
 
-Poniższy przykład pokazuje jak wykorzystać pętlę `for` do wyświetlenia wszystkich parzystych liczb z zakresu od 0 do n.
+Przykład: wypisanie wszystkich parzystych liczb od 0 do `n`.
 
 ```c++
 #include <iostream>
 
 int main() {
-  int n;
-  std::cout << "Podaj liczbe: " << std::endl;
-  std::cin >> n;
+    int n;
+    std::cout << "Podaj liczbe: " << std::endl;
+    std::cin >> n;
 
-  for (int i = 0; i < n; i++) {
-    if (i % 2)
-      continue;
-    std::cout << i << std::endl;
-  }
+    for (int i = 0; i <= n; i++) {
+        if (i % 2 == 0)
+            std::cout << i << std::endl;
+    }
 
-  return 0;
+    return 0;
 }
 ```
 
 ### Pętla while
 
-Pętla `while` jest używana w celu wykonywania czynności, dopóki określony warunek jest spełniony. Składa się z jednego elementu - warunku.
+Pętla `while` powtarza blok instrukcji, dopóki podany warunek jest prawdziwy.
 
-Poniższy przykład pokazuje jak wykorzystać pętlę `while` do wyświetlenia wszystkich liczb z zakresu od 0 do n.
+Przykład: wypisanie wszystkich liczb od 0 do n.
 
 ```c++
 #include <iostream>
 
 int main() {
-  int n;
-  std::cout << "Podaj liczbe: " << std::endl;
-  std::cin >> n;
-  
-  int i = 0;
-  while (i < n) {
-    std::cout << i << std::endl;
-    i++;
-  }
+    int n;
+    std::cout << "Podaj liczbe: " << std::endl;
+    std::cin >> n;
+    
+    int i = 0;
+    while (i <= n) {
+        std::cout << i << std::endl;
+        i++;
+    }
 
-  return 0;
+    return 0;
 }
 ```
 
-### Pętla do while
+### Pętla do-while
 
-Pętla `do while` jest używana w celu wykonywania czynności, dopóki określony warunek jest spełniony. Jest ona zbliżona do pętli `while`, z tą różnicą, że ciało pętli jest wykonane przed sprawdzeniem warunku, dzięki czemu jest ona wykonana co najmniej raz.
+Pętla `do-while` jest podobna do pętli `while`, z tą różnicą, że warunek sprawdzany jest na końcu iteracji. Dlatego blok instrukcji wykona się przynajmniej raz, niezależnie od warunku.
 
-Poniższy przykład pokazuje jak wykorzystać pętlę `do while` do wyświetlenia wszystkich liczb z zakresu od 0 do n.
+Przykład: Prośba o podanie liczby dodatniej przez użytkownika.
 
 ```c++
 #include <iostream>
 
 int main() {
-  int n;
-  std::cout << "Podaj liczbę: " << std::endl;
-  std::cin >> n;
+    int n;
 
-  int i = 0;
-  do {
-    std::cout << i << std::endl;
-    i++;
-  } while (i < n);
+    do {
+        std::cout << "Podaj liczbe dodatnia: " << std::endl;
+        std::cin >> n;
+    } while (n <= 0);
 
-  return 0;
+    std::cout << "Dziękuję! Podana liczba to: " << n << std::endl;
+
+    return 0;
 }
 ```
 
 ### Continue
 
-Słowo kluczowe `continue` pozwala na natychmiastowe przejście do następnej iteracji pętli.
+Instrukcja continue umożliwia natychmiastowe przejście do następnej iteracji pętli, pomijając pozostałe instrukcje w bieżącym cyklu.
 
-Poniższy przykład pokazuje jak wykorzystać `continue` do wyświetlenia wszystkich parzystych liczb z zakresu od 0 do n.
+Przykład użycia `continue` do wypisania wszystkich parzystych liczb od 0 do n:
 
 ```c++
 #include <iostream>
 
 int main() {
-  int n;
-  std::cout << "Podaj liczbę: " << std::endl;
-  std::cin >> n;
+    int n;
+    std::cout << "Podaj liczbę: " << std::endl;
+    std::cin >> n;
 
-  for (int i = 0; i < n; i++) {
-    if (i % 2)
-      continue;
-    std::cout << i << std::endl;
-  }
+    for (int i = 0; i <= n; i++) {
+        if (i % 2 != 0)
+            continue;
+        std::cout << i << std::endl;
+    }
 
-  return 0;
+    return 0;
 }
 ```
 
 ### Break
 
-Słowo kluczowe `break` pozwala przerwać wykonywanie pętli.
+Instrukcja `break` pozwala na zakończenie wykonywania pętli przedwcześnie, nie czekając na spełnienie warunku zakończenia.
 
-Poniższy przykład pokazuje jak wykorzystać `break` do wyświetlenia wszystkich nieparzystych liczb z zakresu od 0 do n.
+Przykład: Wypisz wszystkie liczby od 0 do n lub zakończ pętlę po napotkaniu pierwszej nieparzystej liczby:
 
 ```c++
 #include <iostream>
 
 int main() {
-  int n;
-  std::cout << "Podaj liczbę: " << std::endl;
-  std::cin >> n;
+    int n;
+    std::cout << "Podaj liczbę: " << std::endl;
+    std::cin >> n;
 
-  for (int i = 0; i < n; i++) {
-    if (i % 2)
-      break;
-    std::cout << i << std::endl;
-  }
+    for (int i = 0; i <= n; i++) {
+        if (i % 2 != 0)
+            break;
+        std::cout << i << std::endl;
+    }
 
-  return 0;
+    return 0;
 }
 ```
