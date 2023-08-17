@@ -1,8 +1,8 @@
 ## Dziedziczenie
 
-Dziedziczenie to mechanizm, który pozwala na tworzenie nowych klas wykorzystujących część kodu z klasy już istniejącej. Klasa pierwotna nazywana jest klasą bazową (bądź rodzicem), a klasa dziedzicząca jest klasą pochodną (bądź dzieckiem). Dziedziczenie pozwala na udzielanie klasom pochodnym dostępu do pol i metod klasy bazowej, jednocześnie pozwalając na rozszerzenie bądź modyfikację funkcjonalności klasy bazowej.
+Dziedziczenie to mechanizm w programowaniu obiektowym, który pozwala na tworzenie nowych klas, wykorzystując część kodu z klasy już istniejącej. Klasa, z której dziedziczymy, nazywana jest klasą bazową lub rodzicem, natomiast klasa dziedzicząca to klasa pochodna lub dziecko. Dziedziczenie pozwala klasom pochodnym na wykorzystanie pól i metod klasy bazowej oraz rozszerzenie lub modyfikację jej funkcjonalności.
 
-W C++ dziedziczenie jest zdefiniowane przez zapisanie klasy dziedziczącej w nawiasach klamrowych po nazwie klasy bazowej. W naszym przykładzie, klasa Prostokat dziedziczy po klasie Figura.
+W języku C++ dziedziczenie reprezentowane jest poprzez umieszczenie nazwy klasy dziedziczącej w nawiasach klamrowych po nazwie klasy bazowej. W poniższym przykładzie, klasa `Prostokat` dziedziczy po klasie `Figura`.
 
 ```c++
 class Figura {
@@ -28,50 +28,50 @@ class Prostokat : public Figura {
 }
 ```
 
-W powyższym przykładzie `Prostokat` dziedziczy wszystkie pola i metody z klasy `Figura`, takie jak pole `nazwa`, a także rozszerza ją o nowe pola `a` i `b`. Klasa `Prostokat` nadpisuje również metodę `info()` klasy bazowej, wywołując implementację bazową i dodając do niej dodatkowe informacje.
+W powyższym przykładzie, Prostokat dziedziczy wszystkie pola i metody z klasy Figura, takie jak nazwa, a także dodaje nowe pola a i b. Klasa Prostokat nadpisuje również metodę info() z klasy bazowej, wywołując jej pierwotną implementację i dodając nowe informacje.
 
 ### Typy dziedziczenia
 
-Istnieją trzy podstawowe typy dziedziczenia:
+Istnieją trzy podstawowe typy dziedziczenia w C++:
 
-1. publiczne (public) - pozwala na dostęp do pol i metod klasy bazowej zarówno wewnątrz klasy pochodnej, jak i z zewnątrz.
-2. prywatne (private) - ogranicza dostęp do pol i metod klasy bazowej tylko dla wewnętrznych elementów klasy pochodnej.
-3. chronione (protected) - pozwala na dostęp do pol i metod klasy bazowej tylko dla klas pochodnych oraz elementów wewnątrz klasy bazowej.
+- publiczne (`public`) - pozwala na dostęp do pol i metod klasy bazowej zarówno wewnątrz klasy pochodnej, jak i z zewnątrz.
+- prywatne (`private`) - ogranicza dostęp do pol i metod klasy bazowej tylko do wnętrza klasy pochodnej.
+- chronione (`protected`) - udostępnia pola i metody klasy bazowej dla klas pochodnych oraz dla samej klasy bazowej.
 
-Poniższa tabela zawiera informacje o dostępności pol i metod klasy bazowej dla poszczególnych typów dziedziczenia:
+Poniższa tabela przedstawia dostępność pol i metod klasy bazowej w zależności od typu dziedziczenia:
 
-| Typ Dziedziczenia | Prywatne pola i metody | Chronione pola i metody | Publiczne pola i metody |
+| Typ Dziedziczenia | Dostęp do prywatnych pól i metod	 | Dostęp do chronionych pól i metod | Dostęp do publicznych pól i metod |
 | ---------------- | ---------------------- | ---------------------- | ---------------------- |
 | publiczne | tak | tak | tak |
-| chronione | nie | tak | tak (lecz ich dostępność zmienia się na chronioną) |
-| prywatne | nie | tak (lecz ich dostępność zmienia się na prywatną) | tak (lecz ich dostępność zmienia się na prywatną) |
-
+| chronione | nie | tak | tak (ale zmienia się na chronioną) |
+| prywatne | nie | tak (ale zmienia się na prywatną) | tak (ale zmienia się na prywatną) |
 
 ### Polimorfizm
 
-Polimorfizm to mechanizm umożliwiający nadawaniu tej samej wiadomości do różnych typów odbiorców, bez wiedzy o konkretnym typie danego odbiorcy. Każdy odbiorca może odpowiedzieć na wiadomość we własny sposób. Odpowiedzi mogą, ale nie muszą się pokrywać. Polimorfizm jest często definiowany w kontekście dziedziczenia.
+Polimorfizm to jedno z kluczowych zagadnień programowania obiektowego, które umożliwia obiektom różnych klas reagowanie na te same wywołania metod w indywidualny sposób. Polimorfizm pozwala na interakcję z obiektami poprzez interfejs ich klas bazowych, nie znając ich rzeczywistej klasy. W praktyce oznacza to, że różne klasy mogą implementować metody o tej samej nazwie, lecz różnej funkcjonalności.
 
-Na przykład, mamy klasę bazową zawierającą definicję metody `foo()`, oraz klasy pochodne `B` i `C` które dziedziczą po klasie bazowej `A`. Klasa `B` i `C` mogą mieć swoje własne implementacje metody `foo()`.
+W kontekście języków programowania takich jak C++, polimorfizm osiągany jest głównie za pomocą funkcji wirtualnych i dziedziczenia. 
+
+Przykładowo, możemy mieć klasę bazową `A` z metodą wirtualną `foo()`, oraz klasy pochodne `B` i `C`, które nadpisują tę metodę.
 
 ```c++
-
 class A {
   public:
-    void foo() { std::cout << "A" << std::endl; }
+    virtual void foo() { std::cout << "A" << std::endl; }
 };
 
 class B : public A {
   public:
-    void foo() { std::cout << "B" << std::endl; }
+    void foo() override { std::cout << "B" << std::endl; }
 };
 
 class C : public A {
   public:
-    void foo() { std::cout << "C" << std::endl; }
+    void foo() override { std::cout << "C" << std::endl; }
 };
 ```
 
-Jeśli utworzymy kolekcję obiektów klasy bazowej `A` oraz klas pochodnych `B` i `C`, to wywołując metodę `foo()` na każdym elemencie kolekcji, otrzymamy różne rezultaty w zależności od dokładnego typu obiektu.
+Gdy mamy kolekcję wskaźników do klasy bazowej A, które w rzeczywistości wskazują na obiekty klas A, B i C, wywołanie metody foo() da różne rezultaty w zależności od rzeczywistego typu obiektu.
 
 ```c++
 std::vector<A*> obiekty { new A, new B, new C };
@@ -80,47 +80,26 @@ for (auto obiekt : obiekty)
   obiekt->foo();
 ```
 
-Wynik tego kodu będzie wyświetlenie "A", "B", "C" w kolejności.
+To podejście eliminuje potrzebę ręcznego sprawdzania typu obiektu i decydowania, jaką metodę wywołać. Dla porównania, bez polimorfizmu, musielibyśmy użyć instrukcji warunkowych, aby obsłużyć każdy typ obiektu indywidualnie.
 
-Ważnym problemem rozwiązanym przez polimorfizm jest zbędne rozgałęzienie kodu w celu sprawdzenia typu obiektu. Weźmy pod uwagę poniższy przykład:
+Polimorfizm zapewnia elastyczność i skalowalność kodu. Dzięki temu, nowe klasy mogą być dodawane z minimalnym wpływem na istniejący kod, pod warunkiem, że przestrzegają one tego samego interfejsu (wirtualne metody klasy bazowej).
 
-```c++
-class Kaczka {
-  public:
-    void kwacz() { std::cout << "Kwaczę" << std::endl; }
-};
-
-class Pies {
-  public:
-    void szczekaj() { std::cout << "Szczekam" << std::endl; }
-};
-
-void foo(void* obiekt) {
-  if (dynamic_cast<Kaczka*>(obiekt))
-    dynamic_cast<Kaczka*>(obiekt)->kwacz();
-  else if (dynamic_cast<Pies*>(obiekt))
-    dynamic_cast<Pies*>(obiekt)->szczekaj();
-}
-```
-
-W tym przykładzie, aby wykonać odpowiednią akcję dla danego obiektu, kod musi sprawdzić typ obiektu i dopiero wtedy wykonać odpowiednią akcję. Przy większej liczbie klas i typów obiektów, takie rozgałęzienie kodu staje się coraz bardziej skomplikowane i trudne do utrzymania.
-
-Dlatego też, polimorfizm pozwala na uniknięcie tego problemu poprzez wykorzystanie wirtualnych metod, które są implementowane przez klasy pochodne i wywoływane przez obiekty bazowej klasy, dzięki czemu kod jest bardziej czytelny i łatwiejszy do utrzymania.
+W praktycznym przykładzie, zamiast tworzyć różne metody dla każdego typu zwierzęcia (jak kwacz() dla kaczki czy szczekaj() dla psa), możemy stworzyć uniwersalną metodę zachowanie() i odpowiednio ją zaimplementować w każdej klasie dziedziczącej.
 
 ```c++
 class Zwierze {
   public:
-    virtual void zachowanie() = 0;
+    virtual void zachowanie() = 0; // czysta funkcja wirtualna
 };
 
 class Kaczka : public Zwierze {
   public:
-    void zachowanie() { std::cout << "Kwaczę" << std::endl; }
+    void zachowanie() override { std::cout << "Kwaczę" << std::endl; }
 };
 
 class Pies : public Zwierze {
   public:
-    void zachowanie() { std::cout << "Szczekam" << std::endl; }
+    void zachowanie() override { std::cout << "Szczekam" << std::endl; }
 };
 
 void foo(Zwierze* obiekt) {
@@ -128,9 +107,13 @@ void foo(Zwierze* obiekt) {
 }
 ```
 
+W skrócie, polimorfizm sprzyja tworzeniu bardziej ogólnych, reużywalnych i łatwiejszych do rozwijania aplikacji.
+
 ### Metody wirtualne
 
-Jeśli mamy wskaźnik typu klasy bazowej, wskazujący na obiekt klasy pochodnej, to jeśli wywołamy przy jego pomocy metodę zdefiniowaną w obu klasach, to wywołana zostanie implementacja klasy bazowej.
+W języku C++, metody wirtualne pozwalają na dynamiczne wiązanie metod. Oznacza to, że jeśli mamy wskaźnik lub referencję do klasy bazowej, który w rzeczywistości wskazuje (lub odnosi się) do obiektu klasy pochodnej, to wywołanie metody wirtualnej odwołuje się do odpowiedniej implementacji w zależności od rzeczywistego typu obiektu.
+
+Przykład ilustrujący zachowanie bez używania metody wirtualnej:
 
 ```c++
 class A {
@@ -148,7 +131,7 @@ A* wsk = &b;
 wsk->foo(); // wyświetli "A"
 ```
 
-Aby uniknąć tego nieoczekiwanego zachowania musimy użyć słowa kluczowego `virtual` przed nazwą metody w klasie bazowej.
+Aby uzyskać oczekiwane zachowanie, musimy zastosować słowo kluczowe virtual w deklaracji metody klasy bazowej:
 
 ```c++
 class A {
@@ -158,7 +141,7 @@ class A {
 
 class B : public A {
   public:
-    void foo() { std::cout << "B" << std::endl; }
+    void foo() override { std::cout << "B" << std::endl; }
 };
 
 B b;
@@ -166,13 +149,25 @@ A* wsk = &b;
 wsk->foo(); // wyświetli "B"
 ```
 
-Jest to tak zwany mechanizm dynamic binding, który pozwala na wywołanie odpowiedniej implementacji metody w zależności od rzeczywistego typu obiektu.
+Pamiętaj również, że jeśli w klasie bazowej zdefiniowano destruktor jako wirtualny, destruktor w klasie pochodnej również stanie się wirtualny:
 
-Uwaga: Destruktor to też funkcja. Jeśli chcemy, aby przy usuwaniu obiektu została wywołana implementacja destruktora w klasie pochodnej, musimy użyć słowa kluczowego <code>virtual</code> przed nazwą destruktora w klasie bazowej.
+```c++
+class A {
+  public:
+    virtual ~A() { /* ... */ }
+};
+
+class B : public A {
+  public:
+    ~B() override { /* ... */ }
+};
+```
 
 ### Klasy abstrakcyjne
 
-W C++ istnieje możliwość tworzenia klas, które zawierają jedynie deklaracje metod, ale same ich nie implementują. Co więcej, mogą one definiować metody, których implementacje w klasach pochodnych jest wymagana. Takie metody zwane czysto wirtualnymi, mają specjalną składnię, mianowicie zaczynają się od słowa kluczowego <code>virtual</code>, a kończą się przyrównaniem do zera.
+W C++ klasy abstrakcyjne służą jako szablony dla innych klas. Nie można tworzyć obiektów klasy abstrakcyjnej, ale można tworzyć wskaźniki i referencje do niej. Klasy abstrakcyjne są zwykle używane jako bazy dla klas pochodnych.
+
+Aby uczynić klasę abstrakcyjną, musisz zdefiniować przynajmniej jedną jej metodę jako czysto wirtualną, co oznacza, że nie ma ona implementacji w klasie bazowej.
 
 ```c++
 class A {
@@ -182,25 +177,21 @@ class A {
 
 class B : public A {
   public:
-    void foo() { std::cout << "B" << std::endl; }
+    void foo() override { std::cout << "B" << std::endl; }
 };
 
 B b;
 A* wsk = &b;
-wsk->foo(); // wyswietli "B"
+wsk->foo(); // wyświetli "B"
 ```
 
-W powyższym przykładzie klasa A jest klasą abstrakcyjną. Istnieje tylko jeden warunek, aby klasa była uznana za klasę abstrakcyjną: musi zawierać przynajmniej jedną metodę czysto wirtualną. Co zmienia konwersja metody wirtualnej na czysto wirtualną?
+Czy warto stosować klasy abstrakcyjne?
 
-1. Nie można utworzyć obiektu klasy abstrakcyjnej.
-2. Klasy pochodne muszą zaimplementować metodę czysto wirtualną.
+- **Kapsułkowanie**: Umożliwiają zdefiniowanie interfejsu bez narzucania konkretnej implementacji.
+- **Rozszerzalność**: Klasy pochodne mogą dostarczać własne implementacje metod, jednocześnie zachowując interfejs klasy bazowej.
+- **Zachowanie spójności**: Wymagają od klas pochodnych zaimplementowania określonych metod.
 
-W jakim celu stosujemy klasy abstrakcyjne?
-
-1. Tworzymy hierarchie klas, w których klasy bazowe mają wspólne cechy, jednak nie chcemy tworzyć obiektów tych klas
-2. Chcemy, aby klasy pochodne implementowały pewne metody
-
-Klasa czysto wirtualna to taki rodzaj klasy abstrakcyjnej, która zawiera tylko metody czysto wirtualne, i nie ma żadnych składowych (pól).
+Klasa czysto wirtualna to specyficzny rodzaj klasy abstrakcyjnej, która nie zawiera żadnych składowych ani implementacji, tylko deklaracje czysto wirtualnych metod:
 
 ```c++
 class A {
@@ -209,3 +200,5 @@ class A {
     virtual void bar() = 0;
 };
 ```
+
+W praktyce klasy czysto wirtualne są rzadko stosowane, ale mogą być użyteczne w bardzo specyficznych scenariuszach, gdzie wymagana jest wyłącznie definicja interfejsu bez jakiejkolwiek implementacji.
