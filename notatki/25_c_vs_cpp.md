@@ -152,4 +152,4 @@ typename
 
 * **Zgodność z C:** C++ zachowuje dużą zgodność wsteczną z językiem C, co oznacza, że większość kodów napisanych w C można skompilować w kompilatorze C++ z niewielkimi modyfikacjami.
 
-* **Biblioteki i ramy:** C++ posiada bogaty ekosystem bibliotek i frameworków, które pomagają w tworzeniu aplikacji od grafiki komputerowej po rozwój gier czy systemy baz danych.
+* **Biblioteki i frameworki:** C++ posiada bogaty ekosystem bibliotek i frameworków, które pomagają w tworzeniu aplikacji od grafiki komputerowej po rozwój gier czy systemy baz danych.
