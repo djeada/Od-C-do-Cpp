@@ -1,55 +1,73 @@
+## Wyjątki w programowaniu
 
-## Wyjątki
-W językach programowania, pojęcie błędu oznacza wszystko, co uniemożliwia poprawne działanie programu. Błędy mogą być podzielone na kilka kategorii, takie jak: błędy składniowe, błędy logiczne, błędy semantyczne oraz problemy z pamięcią.
+W programowaniu, wyjątki służą jako mechanizm do sygnalizowania i obsługi nieoczekiwanych sytuacji, które mogą wystąpić podczas działania programu. Choć wyjątki często są używane w odpowiedzi na błędy, nie każdy wyjątek musi wynikać z błędu. Wyjątek może być również środkiem do poinformowania innych części kodu o pewnych warunkach lub sytuacjach, które wymagają specjalnej uwagi.
 
-* Błędy składniowe to użycie kodu niezgodnego z konwencjami danego języka programowania, które są wykrywane podczas kompilacji. Błędy logiczne to błędy, które uniemożliwiają uruchomienie programu lub powodują, że kod nie działa tak, jak powinien. Błędy semantyczne to błędy, które powstają z powodu niepoprawnego zakodowania programu.
-* Problemy z pamięcią to między innymi przepełnienie stosu (np. przez rekurencję lub zbyt duże rozmiary zmiennych statycznych) oraz brak dostatecznej ilości pamięci dla programu.
+### Rodzaje błędów w programowaniu
 
-Aby radzić sobie z tymi błędami, do niektórych języków programowania zostało wprowadzone pojęcie oraz mechanizm wyjątku. Pojęcie wyjątku odnosi się do sytuacji, w której program nie jest w stanie dalej działać poprawnie. Mechanizm natomiast pozwala programiście na zasygnalizowanie, że dana funkcja nie jest w stanie kontynuować swojego działania. 
+1. **Błędy składniowe:** Są to błędy związane z nieprawidłowym użyciem składni języka. Takie błędy zwykle są łatwe do wykrycia, gdyż kompilatory i interpretery zgłaszają je przed uruchomieniem programu. Przykład: niezamknięty nawias lub brakujący średnik.
 
-### Działanie wyjątków
+2. **Błędy logiczne:** Odnoszą się do sytuacji, gdy program działa inaczej, niż tego oczekiwano, mimo że nie zawiera błędów składniowych. Przykład: niewłaściwie zaprogramowana pętla `for` powodująca nieskończoną iterację.
 
-Wyrzucenie wyjątku powoduje natychmiastowe przerwanie działania funkcji. Możliwe jest jednak obsłużenie wyjątku przy pomocy bloku `try-catch`. Aby to zrobić, należy określić typ wyjątku, który ma zostać obsłużony w bloku `catch`. Jeśli typ pokrywa się z typem wyjątku, to blok `catch` zostanie wykonany.
+3. **Błędy semantyczne:** Są to błędy, w których kod jest technicznie poprawny, ale nie wykonuje zamierzonej akcji. Przykład: zastosowanie niewłaściwej zmiennej w obliczeniach.
 
-Poniższy kod przedstawia przykład użycia wyjątku:
+4. **Wyjątki:** Są najczęściej związane z błędami podczas wykonywania programu, nie z innymi rodzajami błędów.
+
+### Rodzaje problemów, które mogą prowadzić do wyjątków
+
+1. **Problemy z pamięcią:** Takie jak próba dostępu do niezainicjowanej pamięci, wycieki pamięci czy korzystanie z wskaźnika po jego dealokacji.
+
+2. **Nieprzewidziane sytuacje wejścia/wyjścia:** Przykładem może być próba odczytu pliku, który nie istnieje, lub próba zapisu do pliku, gdy brakuje uprawnień.
+
+3. **Nieprawidłowe operacje:** Jak dzielenie przez zero lub operacje na niekompatybilnych typach danych.
+
+4. **Zewnętrzne warunki:** Takie jak utrata połączenia z bazą danych lub przerwanie połączenia sieciowego.
+
+Wyjątki w programowaniu służą do sygnalizowania takich problemów. Pozwalają programistom na określenie, jak program powinien reagować w takich sytuacjach, umożliwiając bardziej kontrolowane i eleganckie zarządzanie niespodziewanymi warunkami.
+
+### Mechanizm wyjątków
+
+W momencie wystąpienia wyjątku w programie, normalny przepływ kontroli jest przerywany. Wyjątek, jeśli nie zostanie obsłużony w odpowiednim miejscu, może doprowadzić do zakończenia działania programu. Jednak dzięki mechanizmowi `try-catch` można przechwytywać i obsługiwać te wyjątki.
+
+Poniżej znajduje się przykład działania wyjątków w C++:
 
 ```c++
 #include <iostream>
+#include <stdexcept>
 
-void funkcja() { throw std::runtime_error("wystapila wyjatkowa sytuacja!"); }
+void funkcja() { throw std::runtime_error("Wystąpiła wyjątkowa sytuacja!"); }
 
 int main() {
   try {
     funkcja();
-  } catch (std::runtime_error &e) {
-    std::cout << "Wyjatek: " << e.what() << std::endl;
+  } catch (const std::runtime_error &e) {
+    std::cout << "Przechwycono wyjątek: " << e.what() << std::endl;
   }
 
-  std::cout << "Zycie toczy sie dalej" << std::endl;
+  std::cout << "Życie toczy się dalej" << std::endl;
 
   return 0;
 }
 ```
 
-W powyższym przykładzie, funkcja `funkcja()` wyrzuca wyjątek typu `std::runtime_error` z komunikatem "Wyjatek". Następnie, w bloku `try-catch`, wyjątek jest obsługiwany. W bloku `catch`, jest wyświetlany komunikat "Wyjatek: wystapila wyjatkowa sytuacja!". Na końcu, program wyświetla komunikat "Zycie toczy sie dalej" co sugeruje że program nie zakończył działania po napotkaniu błędu.
+W powyższym kodzie, funkcja `funkcja()` rzuca wyjątek typu `std::runtime_error`. Ten wyjątek jest następnie przechwytywany i obsługiwany w bloku `try-catch` w funkcji `main()`. Dzięki temu program nie kończy swojego działania po wystąpieniu wyjątku, co potwierdza komunikat "Życie toczy się dalej".
 
-Warto również zauważyć, że istnieje kilka różnych typów wyjątków, a programiści mogą tworzyć własne typy wyjątków, aby dostosować je do potrzeb swojego kodu. Obsługa wyjątków pozwala na zwiększenie niezawodności programów, ponieważ pozwala na przechwytywanie i obsługę błędów w sposób, który nie kończy działania programu.
+Programiści mają możliwość korzystania z wielu wbudowanych typów wyjątków w C++, ale także mogą definiować własne typy wyjątków, dostosowane do specyficznych potrzeb swojego kodu.
 
-### Własne wyjątki
+### Tworzenie własnych wyjątków
 
-Tak jak wspomniano wcześniej, programiści mogą tworzyć własne typy wyjątków, aby dostosować je do potrzeb swojego kodu. Można to zrobić poprzez dziedziczenie po już istniejących klasach wyjątków lub tworzenie własnej klasy wyjątku od podstaw.
+Definiowanie własnych typów wyjątków w C++ jest prostym procesem, który polega na dziedziczeniu po istniejących klasach wyjątków. Najczęściej używaną klasą bazową dla własnych wyjątków jest `std::exception`.
 
-W C++, można dziedziczyć po klasie `std::exception` lub `std::runtime_error`, aby utworzyć własny typ wyjątku. Poniżej mamy przykład tworzenia własnego typu wyjątku dziedziczącego po `std::exception`:
+Oto jak można zdefiniować własny wyjątek:
 
 ```c++
-class WlasnyWyjatek : public std::exception
+class MojWyjatek : public std::exception
 {
 public:
-    WlasnyWyjatek(const std::string& wiadomosc) : wiadomosc(wiadomosc) {}
-    virtual const char* what() const throw() { return wiadomosc.c_str(); }
+    MojWyjatek(const std::string& komunikat) : komunikat_(komunikat) {}
+    virtual const char* what() const throw() { return komunikat_.c_str(); }
 private:
-    std::string wiadomosc;
+    std::string komunikat_;
 };
 ```
 
-W powyższym przykładzie, klasa `WlasnyWyjatek` dziedziczy po klasie `std::exception` i posiada konstruktor, który przyjmuje wiadomość opisową. Nadpisujemy metodę `what()`, aby użyć naszej wiadomości. OD teraz można używać obiektów `WlasnyWyjatek` w kodzie w taki sam sposób jak standardowe typy wyjątków.
+W tym przykładzie, klasa `MojWyjatek` dziedziczy po `std::exception` i umożliwia przekazanie indywidualnego komunikatu, który jest następnie zwracany przez przesłoniętą funkcję `what()`. Tak zdefiniowany wyjątek może być rzucony i przechwycony w taki sam sposób, jak wbudowane typy wyjątków.
