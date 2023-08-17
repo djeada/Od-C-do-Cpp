@@ -127,7 +127,7 @@ typename
 7. **Inicjalizacja Zmiennych:** C++ oferuje różne sposoby inicjalizacji zmiennych, w tym przy użyciu nawiasów okrągłych, np. `int x(5);`.
 
 8. **Domyślne Wartości Parametrów:** W C++ można definiować domyślne wartości dla parametrów funkcji, co pozwala na pominięcie niektórych argumentów podczas wywołania funkcji, jeśli chcemy skorzystać z wartości domyślnych.
-9. 
+
 ### Dlaczego C?
 
 * **Minimalizm:** Język C został zaprojektowany z myślą o minimalizmie. Składa się z niewielkiej liczby kluczowych słów i prostych struktur, co czyni go idealnym narzędziem do nauki podstaw programowania i zrozumienia, jak działa komputer na niższym poziomie.
