@@ -1,152 +1,152 @@
+## STL (Standard Template Library)
 
-## STL
+STL to biblioteka szablonów w języku C++, która dostarcza gotowych do użycia implementacji wielu funkcji, algorytmów i struktur danych. Najważniejsze komponenty biblioteki STL to:
 
-STL (Standard Template Library) jest biblioteką, która implementuje wiele przydatnych funkcji, algorytmów i struktur danych. W skład STL wchodzą między innymi:
+- `vector`
+- `list`
+- `map`
+- `set`
+- `queue`
+- `stack`
+- `algorithm`
+- `iterator`
+- `memory`
 
-    <vector>
-    <list>
-    <map>
-    <set>
-    <queue>
-    <stack>
-    <algorithm>
-    <iterator>
-    <memory>
+### Kolekcje w STL
 
-### Kolekcje
+Kolekcje w STL to zbiory implementacji struktur danych wraz z funkcjami operującymi na tych strukturach.
 
-Kolekcje to implementacje struktur danych wraz z wieloma funkcjami, przeznaczonymi do pracy z nimi.
+1. **unordered_map**
 
-1. unordered_map
+    Kontener `unordered_map` implementuje tablicę mieszającą (hash table).
 
-Kontener unordered_map implementuje tablicę mieszającą.
+    | Operacja        | Złożoność czasowa |
+    |-----------------|-------------------|
+    | Wyszukiwanie    | O(1)              |
+    | Wstawianie      | O(1)              |
+    | Usuwanie        | O(1)              |
 
-| operacja | złożoność czasowa |
-|---|---|
-| wyszukiwanie | O(1) |
-| wstawianie | O(1) | 
-| usuwanie | O(1) | 
+2. **map**
 
-2. map
+    Kontener `map` implementuje drzewo czerwono-czarne.
 
-Kontener map implementuje drzewo czerwono-czarne.
+    | Operacja        | Złożoność czasowa |
+    |-----------------|-------------------|
+    | Wyszukiwanie    | O(log n)          |
+    | Wstawianie      | O(log n)          |
+    | Usuwanie        | O(log n)          |
 
-| operacja | złożoność czasowa |
-|---|---|
-| wyszukiwanie | O(log n) |
-| wstawianie | O(log n) | 
-| usuwanie | O(log n) | 
+3. **priority_queue**
 
-3. priority_queue
+    Kontener `priority_queue` implementuje kopiec binarny.
 
-Kontener priority_queue implementuje kopiec.
+    | Operacja        | Złożoność czasowa |
+    |-----------------|-------------------|
+    | Wstawianie      | O(log n)          |
+    | Zdejmowanie     | O(log n)          |
+    | Wierzchołek     | O(1)              |
 
-| operacja | złożoność czasowa |
-|---|---|
-| wstawianie | O(log n) |
-| zdejmowanie | O(log n) | 
-| wierzchołek | O(1) | 
+4. **list**
 
-4. list
+    Kontener `list` implementuje dwukierunkową listę wiązaną.
 
-Kontener list implementuje listę dwukierunkową.
+    | Operacja        | Złożoność czasowa |
+    |-----------------|-------------------|
+    | Wyszukiwanie    | O(n)              |
+    | Wstawianie      | O(1)              |
+    | Usuwanie        | O(1)              |
 
-| operacja | złożoność czasowa |
-|---|---|
-| wyszukiwanie | O(n) |
-| wstawianie | O(n) | 
-| usuwanie | O(n) | 
+5. **vector**
 
-5. vector
+    Kontener `vector` implementuje dynamiczną tablicę.
 
-Kontener vector implementuje tablicę dynamiczną.
+    | Operacja               | Złożoność czasowa |
+    |------------------------|-------------------|
+    | Dodawanie na koniec    | O(1) (amortyzowana)|
+    | Usuwanie z końca       | O(1)              |
+    | Dodawanie (ogólnie)    | O(n)              |
+    | Usuwanie (ogólnie)     | O(n)              |
+    | Wyszukiwanie           | O(n)              |
 
-| operacja | złożoność czasowa |
-|---|---|
-| dostawianie na koniec | O(1) |
-| usuwanie z końca | O(1) | 
-| dostawianie (ogólnie) | O(n) | 
-| usuwanie (ogólnie) | O(n) | 
-| wyszukiwanie | O(n) | 
+6. **unordered_set**
 
-6. unordered_set
+    Kontener `unordered_set` implementuje tablicę mieszającą.
 
-Struktura unordered_set implementuje tablicę mieszającą.
+    | Operacja        | Złożoność czasowa |
+    |-----------------|-------------------|
+    | Wyszukiwanie    | O(1)              |
+    | Wstawianie      | O(1)              |
+    | Usuwanie        | O(1)              |
 
-| operacja | złożoność czasowa |
-|---|---|
-| wyszukiwanie | O(1) |
-| wstawianie | O(1) | 
-| usuwanie | O(1) | 
+7. **set**
 
-7. set
+    Kontener `set` implementuje drzewo czerwono-czarne.
 
-Struktura set implementuje drzewo czerwono-czarne.
-
-| operacja | złożoność czasowa |
-|---|---|
-| wyszukiwanie | O(log n) |
-| wstawianie | O(log n) | 
-| usuwanie | O(log n) | 
+    | Operacja        | Złożoność czasowa |
+    |-----------------|-------------------|
+    | Wyszukiwanie    | O(log n)          |
+    | Wstawianie      | O(log n)          |
+    | Usuwanie        | O(log n)          |
 
 ### Iteratory
 
-Iteratory to konstrukcje, które umożliwiają jednolitą iterację po elementach kolekcji. Dzięki temu nie musimy zapoznawać się z osobnymi mechanizmami dla każdej kolekcji, możemy zawsze użyć iteratorów.
+Iteratory w języku C++ to obiekty umożliwiające sekwencyjny dostęp do elementów kontenerów. Dzięki nim możliwe jest jednolite przeglądanie zawartości różnych typów kolekcji, niezależnie od ich wewnętrznej implementacji.
 
-W poniższym przykładzie wykorzystano iterator do wyświetlenia elementów wektora:
+Podstawowe operacje na iteratorach:
+- Inicjalizacja iteratora początkowym elementem kontenera: `kontener.begin()`
+- Inicjalizacja iteratora elementem za ostatnim w kontenerze: `kontener.end()`
+- Odwołanie do elementu, na który wskazuje iterator: `*it`
+- Przesunięcie iteratora do następnego elementu: `++it`
+- Wstawienie elementu w miejscu wskazywanym przez iterator: `it = kontener.insert(it, wartość)`
+- Usunięcie elementu w miejscu wskazywanym przez iterator: `it = kontener.erase(it)`
+
+Przykład użycia iteratora do przeglądania i modyfikowania zawartości wektora:
 
 ```c++
 #include <iostream>
-#include <string>
 #include <vector>
 
 int main() {
-  vector<string> v;
-  v.push_back("ala");
-  v.push_back("ma");
-  v.push_back("kota");
+    std::vector<std::string> v = {"ala", "ma", "kota"};
 
-  for (auto it = v.begin(); it != v.end(); ++it)
-    std::cout << *it << std::endl;
+    // Wyświetlenie zawartości wektora przy użyciu iteratora
+    for (auto it = v.begin(); it != v.end(); ++it) {
+        std::cout << *it << std::endl;
+    }
 
-  return 0;
+    // Dodanie nowego elementu przed "ma"
+    auto it = v.begin() + 1;
+    v.insert(it, "nie");
+
+    // Usunięcie słowa "ala"
+    it = v.begin();
+    v.erase(it);
+
+    std::cout << "\nPo modyfikacjach:\n";
+    for (const auto& word : v) {
+        std::cout << word << std::endl;
+    }
+
+    return 0;
 }
 ```
 
-Iterator do pierwszego elementu kolekcji to:
-
-    kontener.begin()
-
-Iterator do następnego elementu za ostatnim to:
-
-    kontener.end()
-
-Wartość na którą wskazuje iterator <code>it</code> to:
-
-    *it
-
-Dodanie elementu poprzez iterator <code>it</code>:
-
-    it = kontener.insert(it, "ala");
-
-Usunięcie elementu poprzez iterator <code>it</code>:
-
-    it = kontener.erase(it);
+Warto pamiętać, że po niektórych operacjach, takich jak insert czy erase, używane wcześniej iteratory mogą stać się nieaktualne i ich dalsze użycie może prowadzić do niezdefiniowanego zachowania programu.
 
 ### Algorytmy
 
-Biblioteka <code>algorithm</code> zawiera wiele funkcji, które mogą być użyte do pracy z kolekcjami. Przyjrzyjmy się teraz kilku przykładom.
+Biblioteka `algorithm` dostarcza bogaty zestaw funkcji, które służą do manipulacji i analizy kolekcji. Oto kilka przykładów najbardziej popularnych algorytmów z tej biblioteki:
 
 #### sort()
 
-Dzięki funkcji <code>sort()</code> możemy posortować częściowo lub całkowicie kolekcję. Pierwszym argumentem jest iterator od którego mamy zacząć sortowanie, a drugim to iterator na którym mamy zakończyć sortowanie.
+Funkcja `sort()` służy do sortowania elementów kolekcji. Jej podstawowe użycie polega na przekazaniu dwóch iteratorów: początkowego i końcowego, określających zakres sortowania.
 
 ```c++
+#include <iostream>
 #include <vector>
 #include <algorithm>
 
 int main() {
-
   std::vector<int> wektor{8, 3, 5, 1, 2, 4, 6, 7};
   auto kopia = wektor;
 
@@ -157,16 +157,16 @@ int main() {
 }
 ```
 
-### find()
+#### find()
 
-Funkcja <code>find()</code> zwróci nam iterator odpowiadający szukanemu elementowi. Pierwszym argumentem jest iterator, od którego mamy zacząć szukanie, drugim jest iterator, na którym mamy zakończyć szukanie, a trzecim jest szukany element.
+Algorytm `find()` przeszukuje kolekcję w poszukiwaniu określonego elementu i zwraca iterator wskazujący na pierwsze wystąpienie tego elementu.
 
 ```c++
+#include <iostream>
 #include <vector>
 #include <algorithm>
 
 int main() {
-
   std::vector<int> wektor{8, 3, 5, 1, 2, 4, 6, 7};
 
   auto it = std::find(wektor.begin(), wektor.end(), 3);
@@ -178,16 +178,16 @@ int main() {
 }
 ```
 
-### for_each()
+#### for_each()
 
-Jeśli chcemy jakąś operację wykonać na każdym elemencie kolekcji, możemy użyć funkcji <code>for_each()</code>. Pierwszym argumentem jest iterator, od którego mamy zacząć wykonywanie operacji, drugim jest iterator, na którym mamy zakończyć wykonywanie operacji, a trzecim jest funkcja, która będzie wywoływana na każdym elemencie.
+Funkcja `for_each()` pozwala na wykonanie określonej operacji na każdym elemencie kolekcji. Operacja ta jest określana za pomocą funkcji lub wyrażenia lambda.
 
 ```c++
+#include <iostream>
 #include <vector>
 #include <algorithm>
 
 int main() {
-
   std::vector<int> wektor{8, 3, 5, 1, 2, 4, 6, 7};
   std::for_each(wektor.begin(), wektor.end(), [](int &x) { x *= 2; });
   // wynik: [16, 6, 10, 2, 4, 8, 12, 14]
@@ -195,3 +195,24 @@ int main() {
   return 0;
 }
 ```
+
+#### count_if()
+
+Algorytm `count_if()` pozwala zliczyć, ile razy spełniony jest określony warunek w kolekcji.
+
+```c++
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+int main() {
+  std::vector<int> wektor{8, 3, 5, 1, 2, 4, 6, 7};
+  int parzyste = std::count_if(wektor.begin(), wektor.end(), [](int x) { return x % 2 == 0; });
+
+  std::cout << "Liczba parzystych elementów: " << parzyste << std::endl;
+
+  return 0;
+}
+```
+
+Powyższy kod wykorzystuje `count_if()` do zliczenia parzystych elementów w wektorze.
