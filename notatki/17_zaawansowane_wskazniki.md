@@ -1,11 +1,10 @@
-
 ## Zaawansowane wskaźniki
 
-Poza zwykłymi, surowymi wskaźnikami istnieją jeszcze inne, bardziej zaawansowane typy wskaźników.
+Wskaźniki w C++ nie służą jedynie do przechowywania adresów zmiennych czy obiektów. Są one znacznie bardziej wszechstronne i umożliwiają wskaźnikom na funkcje, metody klasy czy składowe klas.
 
 ### Wskaźniki na funkcje
 
-Wskaźniki mogą wskazywać nie tylko na zmienne i obiekty, ale także na funkcje. Dzięki temu możemy na przykład przekazać jedną funkcję jako argument do innej funkcji, co jest przydatne w przypadku, gdy chcemy przekazać do funkcji różne operacje do wykonania na danym argumencie. W przykładzie poniżej zdefiniowano dwie funkcje `zwieksz` i `zmniejsz`, które przyjmują jeden argument typu int i zwracają odpowiednio zwiększoną o jeden lub zmniejszoną o jeden wartość. Funkcja funkcja przyjmuje dwa argumenty, pierwszy z nich to wskaźnik na funkcję, a drugi to liczba, na której ta funkcja ma być wykonana. W mainie funkcje te są przekazywane jako argumenty do `funkcjaWysokopoziomowa`, co pozwala na wykonanie odpowiedniej operacji na liczbie 10.
+Wskaźniki na funkcje pozwalają na dynamiczne wywoływanie różnych funkcji w zależności od potrzeb. Jest to szczególnie przydatne, gdy chcemy przekazać operację jako argument do innej funkcji.
 
 ```c++
 #include <iostream>
@@ -25,7 +24,7 @@ int main() {
 
 ### Wskaźniki do składowych klasy
 
-Możemy wskazywać na składowe klasy. Przykładowo jeśli mamy obiekt `foo` klasy `Foo`, mającą pola `x` i `y`, to możemy wskazać na `foo.x` i `foo.y`. W przykładzie poniżej, klasa `Foo` posiada dwa pola publiczne `x` i `y`, które są inicjalizowane przy tworzeniu obiektu. W `main` tworzymy obiekt `foo` z wartościami 10 i 20 odpowiednio dla pól `x` i `y`. Następnie tworzymy dwa wskaźniki `x` i `y`, które wskazują na pola `foo.x` i `foo.y`. Przez dereferencję tych wskaźników, jesteśmy w stanie zmienić wartości tych pól (`*x = 100` oraz `*y = 200`). Możemy wyświetlić aktualne wartości przy pomocy `std::cout`.
+Wskaźniki mogą również wskazywać na składowe klas, co pozwala na dynamiczny dostęp do różnych składowych obiektu.
 
 ```c++
 #include <iostream>
@@ -53,106 +52,97 @@ int main() {
 }
 ```
 
-### Podsumowanie wskaźników
+### Podsumowanie 'zwykłych' wskaźników
 
-Jak widzimy, wskaźniki mogą być używane w różnych celach i w różnych kontekstach, od wskazywania na zmienne, przez funkcje, aż po składowe klas. Ważne jest, aby dobrze rozumieć jakiego typu wskaźnik jest potrzebny w danym kontekście, oraz jakie operacje możemy wykonać na danym wskaźniku.
+Wskaźniki są jednym z kluczowych elementów w języku C++, umożliwiając programistom na dynamiczne zarządzanie pamięcią, dostęp do funkcji oraz składowych klas. Poniżej znajduje się zestawienie różnych rodzajów wskaźników w C++.
 
 | Kod                                  | Opis                                                           |
 | ------------------------------------ | -------------------------------------------------------------- |
-| <code>int \*wsk;</code>              | wskaźnik wskazujący na zmienną typu int                        |
-| <code>int \*\*wskNaWsk;</code>       | wskaźnik wskazujący na wskaźnik wskazujący na zmienną typu int |
-| <code>int (\*wskNaTablice)[];</code> | wskaźnik wskazujący na tablicę zmienną typu intów              |
-| <code>int (\*wskNaFunkcje)();</code> | wskaźnik wskazujący na funkcję zwracającą zmienną typu int     |
-| <code>int \*tab[];</code>            | tablica wskaźników na zmienną typu int                         |
-| <code>int \*fun();</code>            | funkcja zwracająca wskaźnik na zmienną typu int                |
+| `int *wsk;`                          | wskaźnik na zmienną typu int                                   |
+| `int **wskNaWsk;`                    | wskaźnik na wskaźnik typu int                                  |
+| `int (*wskNaTablice)[];`             | wskaźnik na tablicę intów                                      |
+| `int (*wskNaFunkcje)();`             | wskaźnik na funkcję zwracającą int                             |
+| `int *tab[];`                        | tablica wskaźników na int                                      |
+| `int *fun();`                        | funkcja zwracająca wskaźnik na int                             |
 
+Zrozumienie wskaźników i ich różnorodności jest kluczem do tworzenia efektywnych i optymalnych aplikacji w C++.
 
 ### Sprytne wskaźniki
 
-W C++11 wprowadzono tak zwane sprytne wskaźniki. Wskaźniki te to nakładki na znane nam surowe wskaźniki, poszerzone o dodatkowe funkcjonalności. Przykładowo sprytne wskaźniki w momencie śmierci (destruktor) uwalniają pamięć sterty zarezerwowaną dla wskazywanych przez nie obiektów.
+W standardzie C++11 wprowadzono koncept sprytnych wskaźników (`smart pointers`). Te wskaźniki są bardziej zaawansowanymi wersjami tradycyjnych surowych wskaźników, oferując automatyczne zarządzanie pamięcią oraz inne dodatkowe funkcjonalności. Gdy sprytny wskaźnik jest niszczony (w momencie wywołania jego destruktora), automatycznie zwalnia on przydzieloną pamięć sterty, co eliminuje wiele problemów związanych z zarządzaniem pamięcią.
 
 #### unique_ptr
 
-`unique_ptr` to jeden z rodzajów sprytnych wskaźników, który zapewnia, że pamięć zarezerwowana przez wskaźnik zostanie automatycznie zwolniona w momencie, gdy wskaźnik przestanie istnieć (np. wyjdzie poza zakres życia). Dzięki temu, programista nie musi martwić się o ręczne zwalnianie pamięci za pomocą operatora `delete`, co zwiększa bezpieczeństwo kodu.
+`unique_ptr` to rodzaj sprytnego wskaźnika, który gwarantuje unikatowość posiadania przydzielonej pamięci. Oznacza to, że w każdym momencie tylko jeden `unique_ptr` może wskazywać na dany obszar pamięci. Gdy `unique_ptr` przestaje istnieć (np. wyjdzie poza zakres życia), automatycznie zwalnia on przydzieloną pamięć. Programista nie musi więc używać operatora `delete`, co zwiększa bezpieczeństwo kodu.
 
-```c++
-std::unique_ptr<int> unikalnyWsk(new int);
-*unikalnyWsk = 5;
+```cpp
+std::unique_ptr<int> unikalnyWsk = std::make_unique<int>(5);
 std::cout << *unikalnyWsk << std::endl;  // wyświetli 5
 ```
 
-Należy pamiętać, że `unique_ptr` nie jest w pełni bezpieczny. Przykładowo, próba utworzenia dwóch `unique_ptr` i przekazanie do nich tego samego surowego wskaźnika, spowoduje błąd `double free`.
+Używanie unique_ptr wymaga jednak pewnej ostrożności. Jeżeli dwie instancje unique_ptr będą wskazywać na ten sam obszar pamięci, może to prowadzić do błędu zwolnienia tej samej pamięci wielokrotnie (tzw. double free).
 
-```c++
-int *surowyWsk = new int;
+```cpp
+int *surowyWsk = new int(5);
 std::unique_ptr<int> unikalnyWsk1(surowyWsk);
 std::unique_ptr<int> unikalnyWsk2(surowyWsk); // błąd: double free
 ```
 
-Dlatego też, zamiast ręcznie tworzyć `unique_ptr`, lepiej skorzystać z funkcji `std::make_unique`, która zwraca `unique_ptr` dla podanego typu.
+Dlatego zaleca się korzystanie z funkcji std::make_unique do tworzenia unique_ptr, ponieważ gwarantuje ona, że pamięć zostanie przydzielona jednokrotnie.
 
-```c++
+```cpp
 std::unique_ptr<Foo> unikalnyWsk = std::make_unique<Foo>(1.0, 2.0);
 ```
 
-Należy również pamiętać, że `unique_ptr` nie jest kopiowalny, tzn. nie możemy przypisać jednego `unique_ptr` do drugiego, ani przekazać go jako argument fo funkcji.
+Warto podkreślić, że unique_ptr nie jest kopiowalny. Nie możemy więc przypisać jednego unique_ptr do drugiego ani przekazać go do funkcji przez wartość. Możemy jednak przenosić własność pamięci za pomocą semantyki przenoszenia (move semantics).
 
-```c++
-std::unique_ptr<Foo> unikalnyWsk1(new Foo);
-std::unique_ptr<Foo> unikalnyWsk2 = unikalnyWsk1;   // błąd: unique_ptr nie jest kopiowalny
+```cpp
+std::unique_ptr<Foo> unikalnyWsk1 = std::make_unique<Foo>();
+std::unique_ptr<Foo> unikalnyWsk2 = std::move(unikalnyWsk1);   // poprawne przeniesienie własności
+
 void func(std::unique_ptr<Foo> wsk) {}
-std::unique_ptr<Foo> unikalnyWsk3(new Foo);
-func(unikalnyWsk3);  // błąd: unique_ptr nie może być przekazany jako argument
+func(std::move(unikalnyWsk2));  // poprawne przekazanie przez przeniesienie
 ```
 
 #### shared_ptr
 
-Innym rodzajem sprytnego wskaźnika jest `shared_ptr`. Podobnie jak `unique_ptr`, `shared_ptr` również zarządza pamięcią i automatycznie ją zwalnia, jednak ma kilka dodatkowych funkcjonalności.
+`shared_ptr` to kolejny rodzaj sprytnego wskaźnika dostępnego w C++. Charakteryzuje się tym, że pozwala wielu wskaźnikom `shared_ptr` współdzielić własność jednego obiektu. Gdy ostatni `shared_ptr` wskazujący na dany obiekt jest niszczony, pamięć zajmowana przez ten obiekt jest zwalniana.
 
-Przede wszystkim, `shared_ptr` pozwala na dzielenie własności obiektu między wieloma wskaźnikami. Dopóki istnieje przynajmniej jeden `shared_ptr` wskazujący na dany obiekt, pamięć zarezerwowana dla tego obiektu nie zostanie zwolniona.
+W odróżnieniu od `unique_ptr`, `shared_ptr` jest kopiowalny, co umożliwia jego przekazywanie jako argument do funkcji.
 
-```c++
-std::shared_ptr<Foo> wspolnyWsk1(new Foo);
+```cpp
+std::shared_ptr<Foo> wspolnyWsk1 = std::make_shared<Foo>();
 std::shared_ptr<Foo> wspolnyWsk2 = wspolnyWsk1;
-```
 
-W przeciwieństwie do `unique_ptr`, `shared_ptr` jest kopiowalny i może być przekazywany jako argument do funkcji.
-
-```c++
 void func(std::shared_ptr<Foo> wsk) {}
-std::shared_ptr<Foo> wspolnyWsk3(new Foo);
-func(wspolnyWsk3); // ok
+func(wspolnyWsk2); // poprawne
 ```
 
-Jednakże, dzielenie własności obiektu między wieloma wskaźnikami może prowadzić do problemów związanych z "dangling pointers" (wskaźnikami wskazującymi na nieistniejący obiekt), dlatego należy być ostrożnym podczas pracy z tymi wskaźnikami.
+Chociaż `shared_ptr` oferuje wiele zalet, warto być ostrożnym. Nieumiejętne używanie wielu shared_ptr-ów może prowadzić do cyklicznych referencji, gdzie dwa obiekty nawzajem na siebie wskazują, uniemożliwiając ich zwolnienie.
 
 #### weak_ptr
 
-`weak_ptr` to kolejny rodzaj sprytnego wskaźnika, który pojawił się w C++11. Jest on przeznaczony do pracy z obiektami, na które już wskazuje `shared_ptr`.
+`weak_ptr` działa w tandemie z `shared_ptr`. Jego główną cechą jest to, że pozwala obserwować obiekt wskazywany przez `shared_ptr`, ale nie wpływa na licznik odniesień (ang. reference count) tego obiektu. Dzięki temu, `weak_ptr` nie zapobiega destrukcji obiektu, gdy wszystkie `shared_ptr`-y wskazujące na ten obiekt zostaną zniszczone.
 
-`weak_ptr` pozwala na dostęp do obiektu, na który wskazuje `shared_ptr`, bez jednoczesnego zwiększania licznika właścicieli (ang. reference count) tego obiektu. Dzięki temu, unikamy problemu "dangling pointers", który może wystąpić przy pracy z `shared_ptr`.
-
-```c++
-std::shared_ptr<Foo> wspolnyWsk(new Foo);
+```cpp
+std::shared_ptr<Foo> wspolnyWsk = std::make_shared<Foo>();
 std::weak_ptr<Foo> slabyWsk = wspolnyWsk;
 ```
 
-Aby skorzystać z obiektu na który wskazuje `weak_ptr`, należy przedtem przekształcić go w `shared_ptr`.
+Aby uzyskać dostęp do obiektu wskazywanego przez weak_ptr, należy przekształcić go w shared_ptr za pomocą metody `lock()`. Jeżeli obiekt wciąż istnieje (tj. jest na niego jakiś `shared_ptr`), `lock()` zwróci ważny `shared_ptr`. W przeciwnym razie zwróci pusty wskaźnik.
 
-```c++
-std::shared_ptr<Foo> wspolnyWsk = slabyWsk.lock();
-if(wspolnyWsk)
+```cpp
+std::shared_ptr<Foo> tempWsk = slabyWsk.lock();
+if(tempWsk)
 {
     // mamy dostęp do obiektu
 }
 else
 {
-    // obiekt nie istnieje już
+    // obiekt już nie istnieje
 }
 ```
 
-Warto zauważyć, że `weak_ptr` nie zwiększa licznika właścicieli obiektu, dlatego nie przedłuża życia obiektu i nie uniemożliwia jego zwolnienia przez `shared_ptr` w przypadku, gdy nie ma już żadnego innego `shared_ptr` wskazującego na ten obiekt.
+Dzięki `weak_ptr`, można unikać problemów z cyklicznymi referencjami w `shared_ptr`, ponieważ `weak_ptr` nie zwiększa licznika odniesień obiektu. Gdy obiekt przestaje być potrzebny (wszystkie `shared_ptr`-y zostaną zniszczone), pamięć zostaje zwolniona, nawet jeśli istnieją `weak_ptr`-y wskazujące na ten obiekt.
 
-`weak_ptr` jest również niekopiowalny i nie może być przekazywany jako argument do funkcji.
-
-W przeciwieństwie do `unique_ptr` i `shared_ptr`, `weak_ptr` nie zarządza pamięcią i nie jest odpowiedzialny za jej zwolnienie. Jest to narzędzie pomocnicze, które pozwala na bezpieczne korzystanie z obiektów, na które już istnieje `shared_ptr` bez ryzyka utworzenia "dangling pointers".
+Mimo swojej użyteczności, `weak_ptr` sam w sobie nie jest właścicielem obiektu i nie jest odpowiedzialny za zarządzanie pamięcią – służy jedynie jako obserwator.
