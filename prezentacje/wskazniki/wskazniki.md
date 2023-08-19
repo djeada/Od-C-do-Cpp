@@ -125,7 +125,7 @@ Warto pamiętać, że podczas operacji na wskaźnikach, jak dodawanie czy odejmo
 Wskaźniki są jednym z najpotężniejszych i jednocześnie jednym z najbardziej skomplikowanych aspektów języka C (i C++). Właściwe korzystanie z wskaźników może prowadzić do efektywnych i wydajnych programów, ale ich nieprawidłowe używanie może prowadzić do trudnych do zidentyfikowania błędów. Oto kilka wskazówek, czego unikać przy pracy z wskaźnikami:
 
 1. **Nie korzystaj z niezainicjowanych wskaźników.** Przed użyciem wskaźnika upewnij się, że został zainicjowany. Wskaźniki niezainicjowane wskazują na nieznane miejsca w pamięci i ich używanie może prowadzić do nieprzewidywalnych błędów.
-2. **Nie dereferencjuj wskaźników nullowych.** Próbując dostać się do wartości, na którą wskazuje wskaźnik `NULL`, napotkasz błąd wyjątku naruszenia segmentu.
+2. **Nie używaj dereferencji dla wskaźników NULL.** Próbując dostać się do wartości, na którą wskazuje wskaźnik `NULL`, napotkasz błąd naruszenia segmentu.
 3. **Uważaj na wycieki pamięci.** Jeśli przydzielasz pamięć dynamicznie (np. za pomocą `malloc` w C lub `new` w C++), pamiętaj, by ją później zwolnić (za pomocą `free` lub `delete`).
 4. **Nie korzystaj z pamięci po jej zwolnieniu.** Odnoszenie się do obszaru pamięci po jego zwolnieniu jest błędem i może prowadzić do nieprzewidywalnego zachowania.
 5. **Bądź ostrożny z arytmetyką wskaźników.** Przesuwając wskaźnik, upewnij się, że nie wskazuje on na miejsce poza zakresem zaalokowanej pamięci lub tablicy.
