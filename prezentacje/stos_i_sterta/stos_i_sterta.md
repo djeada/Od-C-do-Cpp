@@ -1,38 +1,41 @@
-## Pamiec operacyjna
+## Pamięć operacyjna
 
-Pamięć operacyjna, zwana również pamięcią RAM (Random Access Memory), to rodzaj pamięci komputera, w której programy przechowują dane podczas wykonywania.
+Pamięć operacyjna, często nazywana pamięcią RAM (Random Access Memory), to rodzaj pamięci komputera, w którym system operacyjny, aplikacje i dane w użyciu są tymczasowo przechowywane, by mogły być szybko dostępne dla procesora.
 
-Pamięć wykorzystywana przez program podzielona jest m.in. na:
+Pamięć, w której programy przechowują dane podczas wykonywania, podzielona jest głównie na:
 
 - Stos
 - Stertę
 
 ## Stos
 
-* Stos to część pamięci, która przechowuje tymczasowe zmienne, argumenty przekazywane funkcjom oraz zmienne tworzone w obrębie funkcji.
-* Zmienne są dostępne tylko lokalnie i łatwo można je odkłać oraz zdejmować ze stosu.
-* Kiedy zmienne nie są już wykorzystywane, są automatycznie ściągane ze stosu.
-* Stos to liniowa struktura danych, gdzie LIFO (Last In, First Out) określa porządek dodawania i usuwania elementów.
-* Wielkość stosu jest stała i zależy od komputera, a próba włożenia zbyt wielu elementów może spowodować błąd stack overflow.
-* Użycie zmiennej zapisanej na stosie poza funkcją, która ją tam umieściła, jest błędem i może prowadzić do nieprzewidywalnego zachowania programu.
+* Stos to część pamięci, która przechowuje tymczasowe zmienne, argumenty przekazywane funkcjom oraz zmienne lokalne tworzone w obrębie funkcji.
+* Zmienne są dostępne tylko lokalnie, tzn. wewnątrz funkcji, w której zostały zadeklarowane.
+* Kiedy funkcja kończy swoje działanie, jej zmienne są automatycznie usuwane ze stosu.
+* Jest to liniowa struktura danych, działająca według zasady LIFO (Last In, First Out), co określa porządek dodawania i usuwania elementów.
+* Wielkość stosu jest ograniczona i zależy od systemu oraz architektury komputera. Przekroczenie tego limitu prowadzi do błędu "stack overflow".
+* Dostęp do zmiennej zapisanej na stosie poza jej zakresem funkcji jest błędem i może prowadzić do nieprzewidywalnego zachowania programu.
 
 ## Sterta
 
-* Sterta to obszar pamięci, który może być dynamicznie wykorzystywany przez program.
-* Sterta wymaga ręcznego zarządzania pamięcią,Sterta wymaga ręcznego zarządzania pamięcią, co oznacza, że konieczne jest korzystanie z wskaźników w celu uzyskania dostępu do pamięci. co oznacza, że konieczne jest korzystanie z wskaźników w celu uzyskania dostępu do pamięci.
-* Alokacja pamięci na stercie odbywa się za pomocą funkcji malloc, a dealokacja przez funkcję free.
-* W przypadku braku dealokacji może wystąpić wyciek pamięci.
-* Zmienne zdefiniowane na stercie są dostępne z całego programu.
-* Stos jest szybszy w dostępie do pamięci niż sterta.
+* Sterta to obszar pamięci, który może być dynamicznie zarządzany przez program.
+* Sterta wymaga ręcznego zarządzania pamięcią, co oznacza, że programista musi jawnie alokować i zwalniać pamięć. Do tego celu używane są wskaźniki.
+* Pamięć na stercie jest alokowana przy użyciu funkcji, takich jak `malloc`, a zwalniana za pomocą funkcji `free` w języku C.
+* Niewłaściwe zarządzanie stertą, np. niezwalnianie zaalokowanej pamięci, może prowadzić do wycieków pamięci.
+* Zmienne zdefiniowane na stercie są dostępne z różnych części programu, aż do momentu ich dealokacji.
+* Chociaż stos jest zazwyczaj szybszy w dostępie do pamięci niż sterta, sterta oferuje większą elastyczność, umożliwiając dynamiczne alokowanie i dealokowanie pamięci w trakcie działania programu.
 
 ## Po co używać sterty?
 
-- Dzięki stercie zmienna stworzona w funkcji może żyć dłużej niż wywołanie funkcji.
-- Nie musisz się przejmować długością życia zmiennych odłożonych na stertę, będą one żyć tak długo, aż explicite zwolnisz pamięć.
-- Stos jest mniejszy niż sterta. Gdy mamy dostęp z dużymi danymi (np. dla obrazów) możemy użyć sterty.
-- Struktury danych zaimplementowane w bibliotece standardowej (np. std::vector) trzymają swoje dane na stercie.
-    
-## Przyklad
+- Dzięki stercie, zmienna lub obiekt stworzony w funkcji może przetrwać dłużej niż czas trwania tej funkcji.
+- Sterta umożliwia dynamiczną alokację pamięci. Oznacza to, że możemy przydzielić pamięć w trakcie działania programu, w zależności od aktualnych potrzeb.
+- Pamięć zaalokowana na stercie będzie dostępna aż do momentu, kiedy jawnie zostanie zwolniona przez programistę.
+- Sterta jest znacznie większa niż stos. W przypadku pracy z dużymi ilościami danych, takimi jak obrazy czy filmy, używanie sterty jest niezbędne.
+- Wiele struktur danych i klas w bibliotece standardowej (np. `std::vector`, `std::string`) trzyma swoje dane na stercie, aby zapewnić elastyczność w zarządzaniu pamięcią.
+
+## Przykład
+
+W poniższym przykładzie pierwsza funkcja `utworz_tablice` tworzy tablicę na stercie, a druga, `utworz_tablice_zle`, próbuje stworzyć tablicę na stosie o zmiennej długości i zwrócić wskaźnik do niej, co jest nieprawidłowe.
 
 ```c++
 int* utworz_tablice(int rozmiar) {
@@ -40,26 +43,31 @@ int* utworz_tablice(int rozmiar) {
     return tablica;
 }
 
-// Nielegalne w C++, g++ z flagą -pedantic nie skompiluje tego kodu
+// Nielegalne w C++. Gdy kompilujesz z flagą -pedantic, g++ zgłosi błąd
 int* utworz_tablice_zle(int rozmiar) {
     int tablica[rozmiar] = {0};
     return tablica;
 }
 ```
 
+Warto zwrócić uwagę, że dynamiczna alokacja pamięci, choć potężna, niesie za sobą odpowiedzialność za odpowiednie zarządzanie pamięcią, w tym zwalnianie pamięci, która nie jest już potrzebna.
+
 ## Malloc vs new (free vs delete)
 
- | malloc                                 |   new| 
- |  ----------------------------------------|  --------------------------------| 
- |  funkcja      |                             operator| 
-|   zwraca void*   |                          nic nie zwraca| 
-|   w razie błędu zwraca NULL  |               w razie błędu wyrzuca wyjątek| 
- |  nie może być nadpisany         |           może być nadpisany| 
- |  sami podejmy liczbę bajtów do alokacji |   kompilator liczy za nas| 
+| Kategoria                                | malloc                               | new                              |
+| ---------------------------------------- | ------------------------------------ | -------------------------------- |
+| Rodzaj                                   | funkcja                              | operator                         |
+| Typ zwracany                             | zwraca `void*`                       | nic nie zwraca                   |
+| Reakcja na błąd                          | w razie błędu zwraca `NULL`          | w razie błędu wyrzuca wyjątek    |
+| Nadpisywanie                             | nie może być nadpisany              | może być nadpisany              |
+| Określenie liczby bajtów do alokacji     | sami podajemy liczbę bajtów         | kompilator liczy za nas         |
 
-1. Rezerwacja pamięci: new i malloc 
-2. Inicjalizacja zasobów: tylko new 
-3. Niszczenie zasobów: tylko delete 
-4. Zwalnianie pamięci: delete i free
+### Kluczowe różnice:
 
-Warto zwrócić uwagę, że stosowanie new i delete zamiast malloc i free jest zalecane w C++, ponieważ pozwala to na korzystanie z mechanizmu zarządzania pamięcią zwanej RAII (Resource Acquisition Is Initialization). Dzięki temu można uniknąć problemów związanych z wyciekami pamięci, a także poprawić czytelność i bezpieczeństwo kodu.
+1. **Rezerwacja pamięci:** Obydwie funkcje - `new` i `malloc` - służą do rezerwacji pamięci.
+2. **Inicjalizacja zasobów:** Tylko `new` po rezerwacji pamięci dodatkowo inicjalizuje zasoby (np. wywołując konstruktor w przypadku obiektów).
+3. **Niszczenie zasobów:** Tylko `delete` przed zwolnieniem pamięci niszczy zasoby (np. wywołując destruktor w przypadku obiektów).
+4. **Zwalnianie pamięci:** Obydwa - `delete` i `free` - służą do zwalniania pamięci, ale powinny być używane w parach odpowiednio z `new` i `malloc`.
+
+### Dlaczego zaleca się `new` i `delete` w C++?
+Stosowanie `new` i `delete` zamiast `malloc` i `free` jest zalecane w C++, ponieważ pozwala to na korzystanie z mechanizmu zarządzania pamięcią zwanej RAII (Resource Acquisition Is Initialization). Dzięki temu można uniknąć problemów związanych z wyciekami pamięci, a także poprawić czytelność i bezpieczeństwo kodu.
