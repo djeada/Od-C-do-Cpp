@@ -50,4 +50,5 @@ Kod źródłowy do programów z yt.
 - https://eel.is/c++draft/
 - https://www.cs.cmu.edu/~ab/15-123S09/annotatedNotes/
 - https://hackingcpp.com/cpp/cheat_sheets.html
+- https://www.andreinc.net/2023/02/01/demystifying-bitwise-ops
 
