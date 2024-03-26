@@ -14,21 +14,24 @@ Istnieje kilka sposobów deklarowania napisów w C:
 
 Do pracy z napisami w C przydatne są następujące biblioteki:
 
-* `<string.h>`:
-  * `strlen()` - zwraca długość napisu.
-  * `strcpy()` - kopiuje napis z jednej tablicy do drugiej.
-  * `strcat()` - dołącza jeden napis do drugiego.
-  * `strcmp()` - porównuje dwa napisy.
+#### `<string.h>`
+
+* `strlen()` - zwraca długość napisu.
+* `strcpy()` - kopiuje napis z jednej tablicy do drugiej.
+* `strcat()` - dołącza jeden napis do drugiego.
+* `strcmp()` - porównuje dwa napisy.
   
-* `<ctype.h>`:
-  * `isalpha()` - sprawdza, czy dany znak to litera.
-  * `isdigit()` - sprawdza, czy dany znak to cyfra.
-  * `toupper()` - zamienia literę na jej wielką wersję.
-  * `tolower()` - zamienia literę na jej małą wersję.
+#### `<ctype.h>`
+
+* `isalpha()` - sprawdza, czy dany znak to litera.
+* `isdigit()` - sprawdza, czy dany znak to cyfra.
+* `toupper()` - zamienia literę na jej wielką wersję.
+* `tolower()` - zamienia literę na jej małą wersję.
   
-* `<stdlib.h>`:
-  * `atoi()` - konwertuje napis na wartość typu int.
-  * `atof()` - konwertuje napis na wartość typu double.
+#### `<stdlib.h>`
+
+* `atoi()` - konwertuje napis na wartość typu int.
+* `atof()` - konwertuje napis na wartość typu double.
 
 Inicjalizacja i wypisanie napisu:
 
@@ -109,7 +112,6 @@ Aby utworzyć obiekt string, możemy skorzystać z następujących konstruktoró
 
 * `string(const char *s)` - tworzy obiekt string na podstawie ciągu znaków
 * `string(const string &s)` - tworzy nowy obiekt string na podstawie istniejącego obiektu string.
-
 
 Klasa `std::string` jest częścią standardowej biblioteki C++ i oferuje wiele funkcji umożliwiających łatwą manipulację napisami. Przykłady:
 
