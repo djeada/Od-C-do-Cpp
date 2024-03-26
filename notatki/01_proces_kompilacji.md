@@ -4,15 +4,17 @@ Kompilator to narzędzie przekształcające kod źródłowy napisany w danym ję
 
 ### 1. Etap preprocesowania 
 Na tym etapie wchodzi w grę preprocesor, który odpowiada za:
-  * Włączanie zawartości plików nagłówkowych, np. przez dyrektywę `#include "plik.h"`.
-  * Przetwarzanie makr, które są instrukcjami umożliwiającymi m.in. definiowanie stałych.
-  * Usuwanie zakomentowanego kodu.
+
+* Włączanie zawartości plików nagłówkowych, np. przez dyrektywę `#include "plik.h"`.
+* Przetwarzanie makr, które są instrukcjami umożliwiającymi m.in. definiowanie stałych.
+* Usuwanie zakomentowanego kodu.
 
 ### 2. Analiza składni
 Analiza kodu źródłowego odbywa się w trzech krokach:
-  * **Analiza leksykalna** - dzieli kod na najmniejsze jednostki, tzw. tokeny.
-  * **Analiza składniowa** - sprawdza zgodność kodu z gramatyką języka.
-  * **Analiza semantyczna** - weryfikuje poprawność typów i struktur w kodzie.
+
+* **Analiza leksykalna** - dzieli kod na najmniejsze jednostki, tzw. tokeny.
+* **Analiza składniowa** - sprawdza zgodność kodu z gramatyką języka.
+* **Analiza semantyczna** - weryfikuje poprawność typów i struktur w kodzie.
 
 ### 3. Generacja plików obiektowych
 Na tym etapie kompilator tworzy pliki obiektowe (często z rozszerzeniem `.o` lub `.obj`), które są reprezentacją kodu w postaci języka assembler.
@@ -28,6 +30,7 @@ Pliki obiektowe łączone są z kodem z zewnętrznych bibliotek, tworząc finaln
 
 ## Dyrektywy preprocesora
 Dyrektywy rozpoczynające się od znaku `#` służą do instruowania preprocesora. Typowe przykłady to:
+
 * `#include` - załączanie plików
 * `#define` - definiowanie makr
 * `#ifdef` - warunkowe kompilowanie kodu
