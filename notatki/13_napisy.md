@@ -15,23 +15,37 @@ Istnieje kilka sposobów deklarowania napisów w C:
 Do pracy z napisami w C przydatne są następujące biblioteki:
 
 #### `<string.h>`
+Funkcje do manipulacji i porównywania napisów:
 
-* `strlen()` - zwraca długość napisu.
-* `strcpy()` - kopiuje napis z jednej tablicy do drugiej.
-* `strcat()` - dołącza jeden napis do drugiego.
-* `strcmp()` - porównuje dwa napisy.
-  
+- `strlen()` - Zwraca długość napisu.
+- `strcpy()` - Kopiuje napis do innej tablicy.
+- `strcat()` - Dołącza jeden napis do drugiego.
+- `strcmp()` - Porównuje dwa napisy.
+- `strncpy()` - Kopiuje określoną liczbę znaków napisu.
+- `strncat()` - Dołącza część napisu do drugiego.
+- `strncmp()` - Porównuje części dwóch napisów.
+- `strstr()` - Szuka podciągu w napisie.
+- `strchr()` - Wyszukuje znak w napisie.
+- `strrchr()` - Wyszukuje ostatnie wystąpienie znaku.
+
 #### `<ctype.h>`
+Funkcje do sprawdzania i zmiany znaków:
 
-* `isalpha()` - sprawdza, czy dany znak to litera.
-* `isdigit()` - sprawdza, czy dany znak to cyfra.
-* `toupper()` - zamienia literę na jej wielką wersję.
-* `tolower()` - zamienia literę na jej małą wersję.
-  
+- `isalpha()` - Sprawdza, czy znak to litera.
+- `isdigit()` - Sprawdza, czy znak to cyfra.
+- `isalnum()` - Sprawdza, czy znak jest alfanumeryczny.
+- `isspace()` - Sprawdza, czy znak jest białym znakiem.
+- `toupper()` - Zamienia literę na wielką.
+- `tolower()` - Zamienia literę na małą.
+
 #### `<stdlib.h>`
+Funkcje do konwersji napisów i zarządzania pamięcią:
 
-* `atoi()` - konwertuje napis na wartość typu int.
-* `atof()` - konwertuje napis na wartość typu double.
+- `atoi()` - Konwertuje napis na `int`.
+- `atof()` - Konwertuje napis na `double`.
+- `strtol()` - Konwertuje napis na `long`.
+- `strtod()` - Konwertuje napis na `double` z większą dokładnością.
+- `strtok()` - Dzieli napis na tokeny według separatorów.
 
 Inicjalizacja i wypisanie napisu:
 
