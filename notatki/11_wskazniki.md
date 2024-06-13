@@ -71,7 +71,7 @@ int main() {
     return 0;
 }
 ```
-### NULL i nullptr w C++
+### NULL i nullptr
 
 `NULL` to specjalna wartość wskaźnika, która wskazuje na brak obiektu. Jest używana w wielu sytuacjach, takich jak oznaczanie końca listy połączonej lub sygnalizowanie problemów z alokacją pamięci. `NULL` jest zdefiniowany jako `0` w standardowych nagłówkach C i C++, co może prowadzić do pewnych niejednoznaczności, szczególnie w kontekście przeciążania funkcji.
 
