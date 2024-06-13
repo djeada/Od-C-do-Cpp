@@ -1,4 +1,4 @@
-## Tablice w C++
+## Tablice
 
 Tablice to kontenery przechowujące wiele elementów tego samego typu, uporządkowane w określonej kolejności. Każdy element w tablicy można identyfikować za pomocą jego indeksu, przy czym indeksy zaczynają się od zera. Tablice są fundamentalnym elementem języka C++, umożliwiającym przechowywanie i zarządzanie zestawami danych w sposób zorganizowany.
 
@@ -221,7 +221,7 @@ Dodatkowo warto podkreślić, że dynamiczna alokacja pamięci ma pewne koszty -
 
 W C++ istnieje kilka sposobów na zwracanie tablic z funkcji. Możemy używać wskaźników, dynamicznie alokowanej pamięci, struktur lub nowoczesnych kontenerów, takich jak `std::vector`. Każde podejście ma swoje zalety i wady, które zostaną omówione poniżej.
 
-### 1. Zwracanie wskaźnika do tablicy
+#### I. Zwracanie wskaźnika do tablicy
 
 Jednym z najprostszych sposobów jest zwracanie wskaźnika do pierwszego elementu tablicy. Należy jednak pamiętać, że tablica musi być dynamicznie alokowana, aby jej zawartość była dostępna poza funkcją.
 
@@ -259,11 +259,9 @@ int main() {
 - Odpowiedzialność za zarządzanie pamięcią spoczywa na użytkowniku funkcji.
 - Potencjalne wycieki pamięci, jeśli zapomni się zwolnić zaalokowaną pamięć.
 
-### 2. Zwracanie tablicy przez strukturę
+#### II. Zwracanie tablicy przez strukturę
 
-Innym podejściem jest opakowanie tablicy w strukturę i zwracanie tej struktury. Pozwala to na ominięcie problemów związanych z dynamiczną alokacją pamię
-
-ci.
+Innym podejściem jest opakowanie tablicy w strukturę i zwracanie tej struktury. Pozwala to na ominięcie problemów związanych z dynamiczną alokacją pamięci.
 
 ```c++
 #include <iostream>
@@ -299,7 +297,7 @@ int main() {
 - Rozmiar tablicy musi być znany w czasie kompilacji.
 - Nieelastyczne, jeśli rozmiar tablicy ma być zmienny.
 
-### 3. Zwracanie wskaźnika do dynamicznie alokowanej tablicy z zarządzaniem pamięcią w funkcji wywołującej
+#### III. Zwracanie wskaźnika do dynamicznie alokowanej tablicy z zarządzaniem pamięcią w funkcji wywołującej
 
 Zamiast zwracać wskaźnik do dynamicznie alokowanej pamięci, możemy przekazać wskaźnik do funkcji, która wypełni tablicę danymi.
 
