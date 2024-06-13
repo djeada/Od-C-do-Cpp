@@ -27,9 +27,9 @@ W języku C do interakcji z konsolą używamy funkcji z biblioteki `stdio.h`. Na
 | `%s`                 | char*               | Łańcuch znaków                              |
 | `%p`                 | void*               | Adres wskaźnika                             |
 
-### Funkcje wejścia/wyjścia
+#### Funkcje wejścia/wyjścia
 
-#### `printf`
+##### `printf`
 
 Funkcja `printf` służy do wyświetlania danych na standardowym wyjściu. Może ona przyjmować różne specyfikatory formatu, które określają sposób wyświetlania danych. Przykłady użycia:
 
@@ -51,7 +51,7 @@ int main() {
 }
 ```
 
-#### `scanf`
+##### `scanf`
 
 Funkcja `scanf` służy do odczytywania danych ze standardowego wejścia. Także używa specyfikatorów formatu do określania typu danych, które mają być odczytane. Przykład użycia:
 
@@ -85,7 +85,7 @@ int main() {
 }
 ```
 
-### Obsługa błędów
+#### Obsługa błędów
 
 Podczas pracy z wejściem i wyjściem warto obsługiwać błędy, które mogą wystąpić, na przykład w przypadku niepoprawnego formatu danych. Przykład obsługi błędów w C:
 
@@ -106,7 +106,7 @@ int main() {
 }
 ```
 
-### Przykład zaawansowanego programu
+#### Przykład zaawansowanego programu
 
 Poniżej znajduje się bardziej zaawansowany przykład, który ilustruje użycie różnych typów danych oraz bardziej rozbudowanej logiki:
 
@@ -163,7 +163,7 @@ int main() {
 
 W powyższym przykładzie program prosi użytkownika o podanie imienia, wieku i wzrostu, a następnie wyświetla te informacje. Dzięki `getline(cin, imie)`, możemy wczytać pełne imię wraz ze spacjami.
 
-### Obsługa błędów
+#### Obsługa błędów
 
 Podczas pracy z wejściem i wyjściem warto również obsługiwać błędy, które mogą wystąpić, na przykład w przypadku niepoprawnego formatu danych. Poniżej znajduje się przykład obsługi błędów w C++:
 
@@ -190,7 +190,7 @@ int main() {
 
 W tym przykładzie, jeśli użytkownik poda nieprawidłowy format danych, program wyświetli komunikat o błędzie i zakończy działanie.
 
-### Użycie manipulacji wejścia/wyjścia
+#### Użycie manipulacji wejścia/wyjścia
 
 Biblioteka `iomanip` dostarcza manipulatory, które pozwalają formatować wyjście:
 
@@ -211,7 +211,7 @@ int main() {
 }
 ```
 
-### Obsługa wejścia z buforowaniem
+#### Obsługa wejścia z buforowaniem
 
 Można również używać `cin.sync()` oraz `cin.ignore()`, aby radzić sobie z problemami buforowania wejścia:
 
@@ -240,11 +240,11 @@ int main() {
 ```
 
 
-### Kolorowanie tekstu w konsoli (C/C++)
+#### Kolorowanie tekstu w konsoli (C/C++)
 
 Kolorowanie tekstu w konsoli można zrealizować za pomocą kodów ANSI (na systemach uniksowych) lub funkcji konsolowych systemu Windows.
 
-#### Przykład użycia kodów ANSI (Linux/Unix)
+##### Przykład użycia kodów ANSI (Linux/Unix)
 
 ```c++
 #include <iostream>
@@ -260,7 +260,7 @@ int main() {
 }
 ```
 
-#### Przykład kolorowania w systemie Windows
+##### Przykład kolorowania w systemie Windows
 
 ```c++
 #include <iostream>
