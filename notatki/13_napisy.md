@@ -155,8 +155,8 @@ int main() {
 
 Kluczowe zalety używania std::string nad tradycyjnymi C-stringami to:
 
-- Bezpieczeństwo - Nie musisz martwić się o alokację pamięci czy `null terminator`.
-- Elastyczność - Łatwość manipulacji napisami dzięki dostępnym metodom.
-- Integracja z C++ - Możliwość użycia napisów w kontenerach standardowej biblioteki, takich jak `std::vector` czy `std::map`.
+- **Bezpieczeństwo** - Nie musisz martwić się o alokację pamięci czy `null terminator`.
+- **Elastyczność** - Łatwość manipulacji napisami dzięki dostępnym metodom.
+- **Integracja z C++** - Możliwość użycia napisów w kontenerach standardowej biblioteki, takich jak `std::vector` czy `std::map`.
 
-Jednakże warto pamiętać, że podczas interakcji z kodem w czystym języku C czy z niektórymi bibliotekami, mogą być wymagane tradycyjne C-stringi. Na szczęście std::string oferuje metodę `.c_str()`, która zwraca wskaźnik do tradycyjnego napisu C-string, co ułatwia interakcję między obiema reprezentacjami napisów.
+Warto jednakże pamiętać, że podczas interakcji z kodem w czystym języku C czy z niektórymi bibliotekami, mogą być wymagane tradycyjne C-stringi. Na szczęście std::string oferuje metodę `.c_str()`, która zwraca wskaźnik do tradycyjnego napisu C-string, co ułatwia interakcję między obiema reprezentacjami napisów.
