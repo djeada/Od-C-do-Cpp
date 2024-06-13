@@ -14,18 +14,18 @@ Ogólny schemat rzutowania wygląda następująco:
 (typ)wartość;
 ```
 
-Przykład rzutowania zmiennej typu int na double:
+Przykład rzutowania zmiennej typu `int` na `double`:
 
 ```c
 int a = 10;
 double b = (double)a;
 ```
 
-W tym przypadku rzutowanie z typu int na double jest bezpieczne i nie prowadzi do utraty danych.
+W tym przypadku rzutowanie z typu `int` na `double` jest bezpieczne i nie prowadzi do utraty danych.
 
 #### Rzutowanie wskaźników
 
-Kiedy pracujemy z wskaźnikami, rzutowanie może stać się bardziej skomplikowane. Wskaźnik typu void jest ogólnym wskaźnikiem, który może wskazywać obiekt dowolnego typu. Często używane jest w funkcjach biblioteki standardowej, takich jak `qsort()` i `bsearch()`, aby umożliwić przechowywanie wskaźników do dowolnych danych.
+Kiedy pracujemy z wskaźnikami, rzutowanie może stać się bardziej skomplikowane. Wskaźnik typu `void` jest ogólnym wskaźnikiem, który może wskazywać obiekt dowolnego typu. Często używane jest w funkcjach biblioteki standardowej, takich jak `qsort()` i `bsearch()`, aby umożliwić przechowywanie wskaźników do dowolnych danych.
 
 Niebezpieczeństwo pojawia się, gdy próbujemy rzutować wskaźnik na `void` z powrotem na inny, konkretny typ. Jeśli wskaźnik zostanie niepoprawnie zrzutowany, może to prowadzić do niezdefiniowanego zachowania.
 
@@ -39,9 +39,13 @@ printf("%c\n", *ptr2);            // wyświetlenie znaku 'a'
 free(ptr); 
 ```
 
-Chociaż powyższy kod jest technicznie poprawny, jego celem jest jedynie ilustracja. W praktyce rzutowanie wskaźników powinno być wykonywane z dużą ostrożnością. Przed przekształceniem wskaźnika na void na wskaźnik innego typu, należy upewnić się, że pierwotnie wskaźnik ten wskazywał na odpowiedni typ danych.
+Chociaż powyższy kod jest technicznie poprawny, jego celem jest jedynie ilustracja. W praktyce rzutowanie wskaźników powinno być wykonywane z dużą ostrożnością. Przed przekształceniem wskaźnika na `void` na wskaźnik innego typu, należy upewnić się, że pierwotnie wskaźnik ten wskazywał na odpowiedni typ danych.
 
-### Konwersja statyczna w C++
+### Konwersja w C++
+
+Konwersje w C++ są bardziej złożone i wszechstronne niż w C. C++ wprowadza szereg operatorów rzutowania, które są bezpieczniejsze i bardziej przejrzyste niż tradycyjne rzutowanie w C.
+
+#### static_cast
 
 `static_cast` jest jednym z operatorów konwersji w C++ służącym do przeprowadzania konwersji między typami, których konwersja jest znana i sprawdzana w czasie kompilacji. Jest to najbardziej ogólny operator konwersji w C++.
 
@@ -50,11 +54,11 @@ int a = 10;
 double b = static_cast<double>(a);
 ```
 
-static_cast może być stosowany do konwersji między podstawowymi typami danych oraz do konwersji między wskaźnikami na klasy w ramach drzewa dziedziczenia, ale tylko w jednym kierunku (z bazowego do pochodnego lub odwrotnie).
+`static_cast` może być stosowany do konwersji między podstawowymi typami danych oraz do konwersji między wskaźnikami na klasy w ramach drzewa dziedziczenia, ale tylko w jednym kierunku (z bazowego do pochodnego lub odwrotnie).
 
-### Konwersja dynamiczna w C++
+#### dynamic_cast
 
-dynamic_cast to operator konwersji, który służy do konwersji wskaźników i referencji w hierarchii dziedziczenia klas. Poprawność tej konwersji jest sprawdzana w czasie działania programu, co oznacza, że program sprawdzi w trakcie wykonania, czy rzutowanie jest właściwe.
+`dynamic_cast` to operator konwersji, który służy do konwersji wskaźników i referencji w hierarchii dziedziczenia klas. Poprawność tej konwersji jest sprawdzana w czasie działania programu, co oznacza, że program sprawdzi w trakcie wykonania, czy rzutowanie jest właściwe.
 
 ```c++
 #include <iostream>
@@ -86,11 +90,23 @@ int main() {
 }
 ```
 
-Jak widać w powyższym przykładzie, dynamic_cast pozwala na sprawdzenie, czy dany obiekt jest instancją określonej klasy pochodnej w hierarchii dziedziczenia. Warto zwrócić uwagę na obecność wirtualnej funkcji w klasie bazowej - jest ona niezbędna do umożliwienia rzutowania dynamicznego.
+Jak widać w powyższym przykładzie, `dynamic_cast` pozwala na sprawdzenie, czy dany obiekt jest instancją określonej klasy pochodnej w hierarchii dziedziczenia. Warto zwrócić uwagę na obecność wirtualnej funkcji w klasie bazowej - jest ona niezbędna do umożliwienia rzutowania dynamicznego.
 
-Używanie dynamic_cast jest związane z dodatkowymi kosztami wydajnościowymi ze względu na sprawdzanie typu w trakcie działania programu. Włącza to mechanizm RTTI (Run-Time Type Identification), który pozwala na identyfikację typu obiektu w czasie wykonania.
+Używanie `dynamic_cast` jest związane z dodatkowymi kosztami wydajnościowymi ze względu na sprawdzanie typu w trakcie działania programu. Włącza to mechanizm RTTI (Run-Time Type Identification), który pozwala na identyfikację typu obiektu w czasie wykonania.
 
-### Konwersja `reinterpret_cast` w C++
+#### const_cast
+
+`const_cast` to operator rzutowania używany do dodawania lub usuwania kwalifikatora `const` z typu. Jest to jedyny sposób na usunięcie `const` i pozwala na zmianę obiektu, który został pierwotnie zadeklarowany jako `const`.
+
+```c++
+const int a = 10;
+int *b = const_cast<int*>(&a);
+*b = 20;  // Niebezpieczne - zmiana wartości zmiennej const
+```
+
+Należy pamiętać, że modyfikacja wartości, która została zadeklarowana jako `const`, może prowadzić do niezdefiniowanego zachowania, jeśli zmienna została pierwotnie zadeklarowana jako `const`.
+
+#### reinterpret_cast
 
 `reinterpret_cast` to jedno z narzędzi do wymuszania konwersji w C++. Jest to najbardziej "brutalny" sposób konwersji, pozwalający programiście na wymuszenie konwersji między dowolnymi typami. Oznacza to, że nie dokonuje ona rzeczywistej konwersji wartości, ale jedynie traktuje dane w pamięci jako inny typ.
 
@@ -108,8 +124,33 @@ int* b = &a;
 char* c = reinterpret_cast<char*>(b);
 ```
 
-W powyższym kodzie wskaźnik b wskazuje na int, natomiast c po operacji `reinterpret_cast` wskazuje na te same bajty w pamięci, ale traktuje je jako char.
+W powyższym kodzie wskaźnik `b` wskazuje na `int`, natomiast `c` po operacji `reinterpret_cast` wskazuje na te same bajty w pamięci, ale traktuje je jako `char`.
 
 Użycie `reinterpret_cast` może być przydatne w niskopoziomowym programowaniu, gdy potrzebujemy bezpośredniego dostępu do surowych bajtów danych. Może być też niezbędne w przypadku interakcji z bibliotekami napisanymi w innych językach lub przy operacjach na sprzęcie.
 
-Jednak należy pamiętać, że `reinterpret_cast` jest niebezpieczny. Łatwo można uzyskać nieprzewidywalne wyniki, jeśli dane nie są odpowiednio interpretowane. Ponadto, użycie tego operatora często wskazuje na to, że struktura programu nie jest optymalna lub że programista boryka się z problemem, który mógłby zostać rozwiązany w bardziej elegancki sposób. Dlatego zaleca się ostrożność i stosowanie reinterpret_cast tylko wtedy, gdy jest to absolutnie konieczne.
+Należy jednak pamiętać, że `reinterpret_cast` jest niebezpieczny. Łatwo można uzyskać nieprzewidywalne wyniki, jeśli dane nie są odpowiednio interpretowane. Ponadto, użycie tego operatora często wskazuje na to, że struktura programu nie jest optymalna lub że programista boryka się z problemem, który mógłby zostać rozwiązany w bardziej elegancki sposób. Dlatego zaleca się ostrożność i stosowanie `reinterpret_cast` tylko wtedy, gdy jest to absolutnie konieczne.
+
+### Własne konwersje
+
+C++ pozwala także na definiowanie własnych konwersji typów poprzez przeciążanie operatorów konwersji. Przykład:
+
+```c++
+class Complex {
+public:
+    double real, imag;
+    Complex(double r, double i) : real(r), imag(i) {}
+
+    operator double() const {
+        return real;
+    }
+};
+
+int main() {
+    Complex c(3.0, 4.0);
+    double r = c;  // używa operatora konwersji
+    std::cout << r;  // wyświetli 3.0
+    return 0;
+}
+```
+
+W powyższym przykładzie zdefiniowano konwersję z `Complex` do `double`, która zwraca część rzeczywistą liczby zespolonej.
