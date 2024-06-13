@@ -176,7 +176,7 @@ int main() {
 
 W tym przykładzie, dla każdej wartości `i` w pętli zewnętrznej, pętla wewnętrzna wykonuje pełny cykl iteracji dla wartości `j`, co pozwala na wypisanie wyników mnożenia `i * j` w formacie tablicy.
 
-### Zagnieżdżone pętle `while`
+#### Zagnieżdżone pętle `while`
 
 Podobnie jak pętle `for`, możemy również zagnieżdżać pętle `while`. Poniżej znajduje się przykład, który osiąga ten sam efekt co powyższy, ale przy użyciu pętli `while`.
 
@@ -203,7 +203,7 @@ int main() {
 }
 ```
 
-### Na co uważać przy zagnieżdżonych pętlach
+#### Na co uważać przy zagnieżdżonych pętlach
 
 1. **Złożoność obliczeniowa**: Zagnieżdżone pętle mogą prowadzić do dużej liczby iteracji, co może wpłynąć na wydajność programu, zwłaszcza przy dużych wartościach zmiennych kontrolnych.
 2. **Czytelność kodu**: Zagnieżdżone pętle mogą szybko stać się trudne do zrozumienia. Warto zadbać o odpowiednie komentarze i nazewnictwo zmiennych.
