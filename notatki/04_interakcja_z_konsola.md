@@ -239,8 +239,7 @@ int main() {
 }
 ```
 
-
-#### Kolorowanie tekstu w konsoli (C/C++)
+#### Kolorowanie tekstu w konsoli
 
 Kolorowanie tekstu w konsoli można zrealizować za pomocą kodów ANSI (na systemach uniksowych) lub funkcji konsolowych systemu Windows.
 
