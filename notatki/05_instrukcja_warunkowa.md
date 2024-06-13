@@ -39,7 +39,21 @@ if (x > 10) {
 }
 ```
 
-### Operatory warunkowe
+### Złożone warunki logiczne
+
+Możemy łączyć wiele warunków w jednej instrukcji `if` za pomocą operatorów logicznych `&&` (AND) oraz `||` (OR).
+
+```c++
+if (x > 5 && x < 10) {
+    std::cout << "x jest większe niż 5 i mniejsze niż 10" << std::endl;
+}
+
+if (x < 5 || x > 10) {
+    std::cout << "x jest mniejsze niż 5 lub większe niż 10" << std::endl;
+}
+```
+
+### Operator warunkowy (trójargumentowy)
 
 W języku C++ istnieje również operator warunkowy `?:`, który pozwala wykonać krótką instrukcję warunkową bez konieczności stosowania pełnej składni if-else.
 
@@ -47,7 +61,149 @@ W języku C++ istnieje również operator warunkowy `?:`, który pozwala wykona�
 int max = (x > y) ? x : y;  // max przyjmie wartość x, jeśli x > y, w przeciwnym razie przyjmie wartość y
 ```
 
-Instrukcje warunkowe umożliwiają tworzenie bardziej rozbudowanych i złożonych algorytmów, dostosowując zachowanie programu w zależności od spełnienia różnych kryteriów.
+### Instrukcja warunkowa z wartością logiczną
+
+W języku C++ możemy również używać wartości logicznych jako warunków w instrukcjach `if`.
+
+```c++
+bool warunek = true;
+if (warunek) {
+    std::cout << "Warunek jest prawdziwy" << std::endl;
+} else {
+    std::cout << "Warunek jest fałszywy" << std::endl;
+}
+```
+
+### Na co uważać przy używaniu instrukcji warunkowych
+
+#### Kolejność ewaluacji warunków
+
+Kolejność ewaluacji warunków w instrukcjach `if`, `else if`, `else` ma znaczenie. Program przestaje sprawdzać warunki po znalezieniu pierwszego, który jest spełniony.
+
+```c++
+int x = 10;
+
+if (x > 5) {
+    std::cout << "x jest większe niż 5" << std::endl;
+} else if (x > 8) {
+    std::cout << "x jest większe niż 8" << std::endl;  // Ten blok nie zostanie wykonany, mimo że warunek jest prawdziwy.
+}
+```
+
+#### Ewaluacja wartości logicznych
+
+Wartości logiczne w C++ są ewaluowane na podstawie wartości liczbowych:
+- `0` jest interpretowane jako `false`.
+- Każda inna liczba jest interpretowana jako `true`.
+
+```c++
+int liczba = 0;
+
+if (liczba) {
+    std::cout << "To jest prawdziwe" << std::endl;
+} else {
+    std::cout << "To jest fałszywe" << std::endl;  // Ten blok zostanie wykonany.
+}
+```
+
+#### Potencjalne pułapki przy użyciu `==` i `=`
+
+Pomyłki przy użyciu operatora przypisania `=` zamiast operatora porównania `==` mogą prowadzić do trudnych do wykrycia błędów.
+
+```c++
+int x = 5;
+
+// Błąd: przypisanie zamiast porównania
+if (x = 10) {
+    std::cout << "x jest równe 10" << std::endl;  // Ten blok zawsze zostanie wykonany, ponieważ x = 10 jest prawdziwe.
+}
+
+// Poprawne porównanie
+if (x == 10) {
+    std::cout << "x jest równe 10" << std::endl;
+}
+```
+
+#### Porównywanie zmiennych zmiennoprzecinkowych
+
+Porównywanie zmiennych zmiennoprzecinkowych (`float`, `double`) bezpośrednio za pomocą operatora `==` może prowadzić do nieoczekiwanych rezultatów z powodu ograniczeń precyzji zmiennoprzecinkowej.
+
+```c++
+double a = 0.1;
+double b = 0.1 + 0.1 + 0.1 - 0.3;
+
+if (a == b) {
+    std::cout << "a jest równe b" << std::endl;  // Ten blok może nie zostać wykonany, mimo że a i b są teoretycznie równe.
+} else {
+    std::cout << "a nie jest równe b" << std::endl;
+}
+
+// Poprawne porównanie zmiennych zmiennoprzecinkowych
+const double epsilon = 1e-9;
+if (fabs(a - b) < epsilon) {
+    std::cout << "a jest równe b (z tolerancją)" << std::endl;
+}
+```
+
+#### Efekty uboczne w warunkach
+
+Unikaj umieszczania wyrażeń z efektami ubocznymi w warunkach, aby uniknąć trudnych do znalezienia błędów.
+
+```c++
+int x = 5;
+if (x++ > 5) {
+    std::cout << "x jest większe niż 5" << std::endl;  // Efekt uboczny: wartość x jest zwiększana.
+}
+std::cout << "x = " << x << std::endl;  // x = 6
+```
+
+#### Złożone warunki logiczne
+
+Złożone warunki logiczne mogą być trudne do odczytania i zrozumienia. Rozważ ich rozbicie na mniejsze, bardziej czytelne fragmenty.
+
+```c++
+int a = 5, b = 10, c = 15;
+
+// Złożony warunek logiczny
+if (a > 0 && b > 0 && c > 0 && (a + b > c) && (a + c > b) && (b + c > a)) {
+    std::cout << "Wszystkie liczby są dodatnie i spełniają nierówności trójkąta" << std::endl;
+}
+
+// Bardziej czytelne
+bool wszystkieDodatnie = (a > 0) && (b > 0) && (c > 0);
+bool spelniaNierownosciTrojkata = (a + b > c) && (a + c > b) && (b + c > a);
+
+if (wszystkieDodatnie && spelniaNierownosciTrojkata) {
+    std::cout << "Wszystkie liczby są dodatnie i spełniają nierówności trójkąta" << std::endl;
+}
+```
+
+#### Unikanie powtórzeń kodu
+
+Często w blokach `if` i `else` powtarza się ten sam kod. Warto wyekstrahować wspólny kod poza instrukcje warunkowe.
+
+```c++
+int x = 5;
+
+if (x > 10) {
+    std::cout << "x jest większe niż 10" << std::endl;
+    // wspólny kod
+    std::cout << "To jest wspólny kod" << std::endl;
+} else {
+    std::cout << "x nie jest większe niż 10" << std::endl;
+    // wspólny kod
+    std::cout << "To jest wspólny kod" << std::endl;
+}
+
+// Refaktoryzacja
+if (x > 10) {
+    std::cout << "x jest większe niż 10" << std::endl;
+} else {
+    std::cout << "x nie jest większe niż 10" << std::endl;
+}
+// wspólny kod
+std::cout << "To jest wspólny kod" << std::endl;
+```
 
 ### Konstrukcja `switch`
 
