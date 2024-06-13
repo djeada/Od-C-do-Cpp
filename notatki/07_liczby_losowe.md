@@ -17,23 +17,54 @@ int losowa_z_przedzialu(int start, int end) {
 }
 ```
 
-### Przykład: Rzut monetą
+### Przykłady zastosowania
 
-Przykładowa funkcja `orzel_lub_reszka()` symuluje rzut monetą. Jeśli funkcja zwróci true, oznacza to "orzeł", w przeciwnym razie "reszka".
+#### Rzut monetą
+
+Przykładowa funkcja `orzel_lub_reszka()` symuluje rzut monetą. Jeśli funkcja zwróci `true`, oznacza to "orzeł", w przeciwnym razie "reszka".
 
 ```c++
-bool orzel_lub_reszka() { return (losowa_z_przedzialu(0, 1)); }
+#include <iostream>
+
+bool orzel_lub_reszka() {
+    return (losowa_z_przedzialu(0, 1) == 1);
+}
+
+int main() {
+    if (orzel_lub_reszka()) {
+        std::cout << "Orzeł" << std::endl;
+    } else {
+        std::cout << "Reszka" << std::endl;
+    }
+    return 0;
+}
 ```
 
-### Przykład: Rzut kostką
+#### Rzut kostką
 
-W symulacji rzutu kostką sześciościenną możemy użyć funkcji `losowa_z_przedzialu(1, 6)`.
+Symulacja rzutu kostką sześciościenną może być zrealizowana przy użyciu funkcji `losowa_z_przedzialu(1, 6)`.
 
-### Przykład: Generator haseł
+```c++
+#include <iostream>
+
+int rzut_kostka() {
+    return losowa_z_przedzialu(1, 6);
+}
+
+int main() {
+    std::cout << "Wynik rzutu kostką: " << rzut_kostka() << std::endl;
+    return 0;
+}
+```
+
+#### Generator haseł
 
 Liczby losowe mogą służyć jako podstawa dla generatorów haseł, gdzie każda liczba losowa może być mapowana na określony znak z zestawu dozwolonych znaków.
 
 ```c++
+#include <iostream>
+#include <string>
+
 std::string generuj_haslo(int dlugosc) {
     const char zestaw_znakow[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+";
     std::string haslo;
@@ -42,6 +73,117 @@ std::string generuj_haslo(int dlugosc) {
     }
     return haslo;
 }
+
+int main() {
+    std::cout << "Wygenerowane hasło: " << generuj_haslo(12) << std::endl;
+    return 0;
+}
 ```
 
-W powyższym przykładzie, losujemy znaki z zestawu do tworzenia haseł o zadanej długości.
+### Zastosowanie różnych dystrybucji
+
+Biblioteka `<random>` oferuje różne typy dystrybucji do generowania liczb losowych, takie jak:
+
+#### Dystrybucja równomierna
+
+```c++
+#include <iostream>
+#include <random>
+
+int main() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dist(1, 100);
+
+    for (int i = 0; i < 10; ++i) {
+        std::cout << dist(gen) << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
+```
+
+#### Dystrybucja normalna (Gaussa)
+
+```c++
+#include <iostream>
+#include <random>
+
+int main() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::normal_distribution<> dist(50, 10); // średnia 50, odchylenie standardowe 10
+
+    for (int i = 0; i < 10; ++i) {
+        std::cout << dist(gen) << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
+```
+
+#### Dystrybucja Bernoulliego
+
+```c++
+#include <iostream>
+#include <random>
+
+int main() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::bernoulli_distribution dist(0.5); // prawdopodobieństwo sukcesu 0.5
+
+    for (int i = 0; i < 10; ++i) {
+        std::cout << dist(gen) << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
+```
+
+### Zalety i wady różnych metod
+
+#### Korzystanie z `std::random`
+
+**Zalety:**
+
+- Wysoka jakość generowanych liczb losowych.
+- Różnorodność dostępnych dystrybucji.
+- Wsparcie dla zaawansowanych potrzeb, takich jak kryptografia (przy użyciu odpowiednich generatorów).
+
+**Wady:**
+
+- Złożoność i mniejsza wydajność w porównaniu do prostszych metod (np. `rand()`).
+
+### Porównanie z `rand()`
+
+Starsza funkcja `rand()` również może być używana do generowania liczb losowych, choć ma pewne ograniczenia.
+
+```c++
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+
+int main() {
+    std::srand(std::time(0));
+    for (int i = 0; i < 10; ++i) {
+        std::cout << std::rand() % 100 << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
+```
+
+**Zalety `rand()`:**
+
+- Prostota użycia.
+- Szeroka dostępność i wsparcie.
+
+**Wady `rand()`:**
+
+- Niższa jakość generowanych liczb losowych.
+- Mniejsza elastyczność (brak wsparcia dla różnych dystrybucji).
