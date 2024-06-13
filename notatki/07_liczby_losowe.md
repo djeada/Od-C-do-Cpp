@@ -158,7 +158,7 @@ int main() {
 
 - Złożoność i mniejsza wydajność w porównaniu do prostszych metod (np. `rand()`).
 
-### Porównanie z `rand()`
+#### Porównanie z `rand()`
 
 Starsza funkcja `rand()` również może być używana do generowania liczb losowych, choć ma pewne ograniczenia.
 
