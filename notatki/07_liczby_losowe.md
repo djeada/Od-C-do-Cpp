@@ -2,7 +2,7 @@
 
 Liczby losowe to liczby generowane w sposób, który sprawia wrażenie przypadkowości. Choć są one wytwarzane za pomocą algorytmów (i tym samym są w rzeczywistości "pseudolosowe"), są nieprzewidywalne dla użytkowników. Znajdują zastosowanie w wielu dziedzinach: od symulacji komputerowych, przez loterie, po kryptografię.
 
-### Generowanie liczb losowych w C++
+### Generowanie liczb losowych
 
 W C++ do generowania liczb losowych można wykorzystać bibliotekę `<random>`. Poniżej znajduje się funkcja `losowa_z_przedzialu()`, która zwraca losową liczbę całkowitą z podanego zakresu:
 
