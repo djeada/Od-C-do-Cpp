@@ -15,6 +15,7 @@ Dzięki dyrektywie `#include`, możemy załączyć zawartość innych plików do
   ```c++
   #include <iostream>
   ```
+  
   Ta dyrektywa mówi preprocesorowi, aby dołączył plik nagłówkowy `iostream` z bibliotek standardowych.
 
 - **Załączanie plików lokalnych**:
@@ -22,6 +23,7 @@ Dzięki dyrektywie `#include`, możemy załączyć zawartość innych plików do
   ```c++
   #include "moj_plik.h"
   ```
+  
   Ta dyrektywa mówi preprocesorowi, aby dołączył plik `moj_plik.h` znajdujący się w bieżącym katalogu lub w określonej ścieżce.
 
 ### 2. Definiowanie stałych i makr
