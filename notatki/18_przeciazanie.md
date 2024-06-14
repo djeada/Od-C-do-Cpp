@@ -1,13 +1,14 @@
 ## Przeciążanie
-Przeciążanie (ang. overloading) to mechanizm, który pozwala na posiadanie kilku definicji tej samej nazwy funkcji lub operatora, które są rozróżnialne dla kompilatora na podstawie typów argumentów. Przeciążanie jest często używane w językach takich jak C++, C# i Java.
+
+Przeciążanie (ang. *overloading*) to mechanizm, który pozwala na posiadanie kilku definicji tej samej nazwy funkcji lub operatora, które są rozróżnialne dla kompilatora na podstawie typów argumentów. Przeciążanie jest często używane w językach takich jak C++, C# i Java, aby zwiększyć elastyczność i czytelność kodu.
 
 ### Przeciążanie funkcji
 
-Przeciążanie funkcji (ang. *function overloading*) pozwala definiować wiele funkcji o tej samej nazwie, lecz różniących się typem i/lub liczbą argumentów. Jest to cecha charakterystyczna dla wielu języków programowania takich jak C++, C# czy Java.
+Przeciążanie funkcji (ang. *function overloading*) pozwala definiować wiele funkcji o tej samej nazwie, lecz różniących się typem i/lub liczbą argumentów. Jest to cecha charakterystyczna dla wielu języków programowania, takich jak C++, C# czy Java.
 
 Dzięki przeciążaniu można tworzyć funkcje bardziej uniwersalne, które radzą sobie z różnymi typami danych, a jednocześnie zachowują jednolitą nazwę, co przyczynia się do czytelności kodu.
 
-Poniżej znajduje się przykład trzech przeciążonych funkcji o nazwie "f", różniących się typami i liczbą argumentów:
+Poniżej znajduje się przykład trzech przeciążonych funkcji o nazwie `f`, różniących się typami i liczbą argumentów:
 
 ```cpp
 #include <iostream>
@@ -83,6 +84,33 @@ public:
     std::cout << "Operator mnożenia" << std::endl;
     // Tutaj powinno być właściwe mnożenie atrybutów i zwrócenie nowego obiektu
     return *this;
+  }
+};
+
+int main() {
+  Foo foo1;
+  Foo foo2;
+
+  Foo foo3 = foo1 + foo2; // Wywołuje operator dodawania
+  Foo foo4 = foo1 * foo2; // Wywołuje operator mnożenia
+  foo1 = foo2;            // Wywołuje operator przypisania
+
+  return 0;
+}
 ```
 
 Należy pamiętać, że podczas przeciążania operatorów ważne jest dbanie o poprawność logiczną i matematyczną operacji. Na przykład, jeśli przeciążamy operator dodawania dla klasy reprezentującej macierze, powinniśmy dbać o to, by dodawane były jedynie macierze o tych samych wymiarach i że wynik był poprawny matematycznie.
+
+### Zalety i Wady Przeciążania
+
+Zalety:
+
+1. **Czytelność kodu:** Przeciążanie pozwala na używanie tych samych nazw funkcji lub operatorów dla różnych operacji, co sprawia, że kod jest bardziej intuicyjny i łatwiejszy do zrozumienia.
+2. **Elastyczność:** Umożliwia tworzenie bardziej elastycznych i wszechstronnych funkcji, które mogą pracować z różnymi typami danych.
+3. **Konsystencja:** Używanie jednolitych nazw dla podobnych operacji pomaga w utrzymaniu spójności w kodzie.
+
+Wady:
+
+1. **Złożoność:** Może wprowadzać złożoność i niejednoznaczności, szczególnie gdy funkcje mają wiele wersji z domyślnymi argumentami.
+2. **Debugowanie:** Może utrudniać debugowanie, ponieważ trzeba być świadomym wszystkich wersji przeciążonych funkcji, aby zrozumieć, która wersja jest wywoływana.
+3. **Kompatybilność:** Przeciążanie operatorów może wprowadzać problemy z kompatybilnością i przewidywalnością działania, szczególnie gdy inne osoby pracujące z kodem nie są świadome przeciążonych wersji.
