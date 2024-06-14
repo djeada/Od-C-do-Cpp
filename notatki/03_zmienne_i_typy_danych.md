@@ -71,15 +71,19 @@ Stała to zmienna, której wartość jest niezmienna przez cały czas trwania pr
 #### Deklaracja stałych
 
 - **Stałe z `const`**: Słowo kluczowe `const` jest używane do deklaracji zmiennych, które nie mogą zmieniać swojej wartości po inicjalizacji.
+  
   ```c++
   const double pi = 3.14159;
   ```
+  
   W powyższym przykładzie `pi` jest stałą typu `double` o wartości 3.14159.
 
 - **Stałe z `constexpr`**: Słowo kluczowe `constexpr` wskazuje, że wartość zmiennej może być obliczona podczas kompilacji, co jest szczególnie przydatne w kontekście optymalizacji i zapewnienia, że dane są dostępne w czasie kompilacji.
+  
   ```c++
   constexpr double euler = 2.71828;
   ```
+  
   W powyższym przykładzie `euler` jest stałą typu `double`, której wartość zostanie obliczona podczas kompilacji.
 
 #### Korzyści z używania stałych
