@@ -73,14 +73,14 @@ W standardzie C++11 wprowadzono koncept sprytnych wskaźników (`smart pointers`
 
 #### unique_ptr
 
-`unique_ptr` to rodzaj sprytnego wskaźnika, który gwarantuje unikatowość posiadania przydzielonej pamięci. Oznacza to, że w każdym momencie tylko jeden `unique_ptr` może wskazywać na dany obszar pamięci. Gdy `unique_ptr` przestaje istnieć (np. wyjdzie poza zakres życia), automatycznie zwalnia on przydzieloną pamięć. Programista nie musi więc używać operatora `delete`, co zwiększa bezpieczeństwo kodu.
+`unique_ptr` to rodzaj sprytnego wskaźnika, który gwarantuje wyłączność posiadania przydzielonej pamięci. Oznacza to, że w każdym momencie tylko jeden `unique_ptr` może wskazywać na dany obszar pamięci. Gdy `unique_ptr` przestaje istnieć (np. wyjdzie poza zakres życia), automatycznie zwalnia on przydzieloną pamięć. Programista nie musi więc używać operatora `delete`, co zwiększa bezpieczeństwo kodu.
 
 ```cpp
 std::unique_ptr<int> unikalnyWsk = std::make_unique<int>(5);
 std::cout << *unikalnyWsk << std::endl;  // wyświetli 5
 ```
 
-Używanie unique_ptr wymaga jednak pewnej ostrożności. Jeżeli dwie instancje unique_ptr będą wskazywać na ten sam obszar pamięci, może to prowadzić do błędu zwolnienia tej samej pamięci wielokrotnie (tzw. double free).
+Używanie `unique_ptr` wymaga jednak pewnej ostrożności. Jeżeli dwie instancje `unique_ptr` będą wskazywać na ten sam obszar pamięci, może to prowadzić do błędu zwolnienia tej samej pamięci wielokrotnie (tzw. double free).
 
 ```cpp
 int *surowyWsk = new int(5);
@@ -88,13 +88,13 @@ std::unique_ptr<int> unikalnyWsk1(surowyWsk);
 std::unique_ptr<int> unikalnyWsk2(surowyWsk); // błąd: double free
 ```
 
-Dlatego zaleca się korzystanie z funkcji std::make_unique do tworzenia unique_ptr, ponieważ gwarantuje ona, że pamięć zostanie przydzielona jednokrotnie.
+Dlatego zaleca się korzystanie z funkcji `std::make_unique` do tworzenia `unique_ptr`, ponieważ gwarantuje ona, że pamięć zostanie przydzielona jednokrotnie.
 
 ```cpp
 std::unique_ptr<Foo> unikalnyWsk = std::make_unique<Foo>(1.0, 2.0);
 ```
 
-Warto podkreślić, że unique_ptr nie jest kopiowalny. Nie możemy więc przypisać jednego unique_ptr do drugiego ani przekazać go do funkcji przez wartość. Możemy jednak przenosić własność pamięci za pomocą semantyki przenoszenia (move semantics).
+Warto podkreślić, że `unique_ptr` nie jest kopiowalny. Nie możemy więc przypisać jednego `unique_ptr` do drugiego ani przekazać go do funkcji przez wartość. Możemy jednak przenosić własność pamięci za pomocą semantyki przenoszenia (move semantics).
 
 ```cpp
 std::unique_ptr<Foo> unikalnyWsk1 = std::make_unique<Foo>();
@@ -118,18 +118,18 @@ void func(std::shared_ptr<Foo> wsk) {}
 func(wspolnyWsk2); // poprawne
 ```
 
-Chociaż `shared_ptr` oferuje wiele zalet, warto być ostrożnym. Nieumiejętne używanie wielu shared_ptr-ów może prowadzić do cyklicznych referencji, gdzie dwa obiekty nawzajem na siebie wskazują, uniemożliwiając ich zwolnienie.
+Chociaż `shared_ptr` oferuje wiele zalet, warto być ostrożnym. Nieumiejętne używanie wielu `shared_ptr`-ów może prowadzić do cyklicznych referencji, gdzie dwa obiekty nawzajem na siebie wskazują, uniemożliwiając ich zwolnienie.
 
 #### weak_ptr
 
-`weak_ptr` działa w tandemie z `shared_ptr`. Jego główną cechą jest to, że pozwala obserwować obiekt wskazywany przez `shared_ptr`, ale nie wpływa na licznik odniesień (ang. reference count) tego obiektu. Dzięki temu, `weak_ptr` nie zapobiega destrukcji obiektu, gdy wszystkie `shared_ptr`-y wskazujące na ten obiekt zostaną zniszczone.
+Gdy potrzebujemy wskaźnika na blok pamięci, ale nie chcemy przejmować jego własności, `weak_ptr` jest idealnym rozwiązaniem. `weak_ptr` działa w tandemie z `shared_ptr`. Jego główną cechą jest to, że pozwala obserwować obiekt wskazywany przez `shared_ptr`, ale nie wpływa na licznik odniesień (ang. reference count) tego obiektu. Dzięki temu, `weak_ptr` nie zapobiega destrukcji obiektu, gdy wszystkie `shared_ptr`-y wskazujące na ten obiekt zostaną zniszczone.
 
 ```cpp
 std::shared_ptr<Foo> wspolnyWsk = std::make_shared<Foo>();
 std::weak_ptr<Foo> slabyWsk = wspolnyWsk;
 ```
 
-Aby uzyskać dostęp do obiektu wskazywanego przez weak_ptr, należy przekształcić go w shared_ptr za pomocą metody `lock()`. Jeżeli obiekt wciąż istnieje (tj. jest na niego jakiś `shared_ptr`), `lock()` zwróci ważny `shared_ptr`. W przeciwnym razie zwróci pusty wskaźnik.
+Aby uzyskać dostęp do obiektu wskazywanego przez `weak_ptr`, należy przekształcić go w `shared_ptr` za pomocą metody `lock()`. Jeżeli obiekt wciąż istnieje (tj. jest na niego jakiś `shared_ptr`), `lock()` zwróci ważny `shared_ptr`. W przeciwnym razie zwróci pusty wskaźnik.
 
 ```cpp
 std::shared_ptr<Foo> tempWsk = slabyWsk.lock();
@@ -145,4 +145,38 @@ else
 
 Dzięki `weak_ptr`, można unikać problemów z cyklicznymi referencjami w `shared_ptr`, ponieważ `weak_ptr` nie zwiększa licznika odniesień obiektu. Gdy obiekt przestaje być potrzebny (wszystkie `shared_ptr`-y zostaną zniszczone), pamięć zostaje zwolniona, nawet jeśli istnieją `weak_ptr`-y wskazujące na ten obiekt.
 
-Mimo swojej użyteczności, `weak_ptr` sam w sobie nie jest właścicielem obiektu i nie jest odpowiedzialny za zarządzanie pamięcią – służy jedynie jako obserwator.
+#### Inne aspekty sprytnych wskaźników
+
+##### Kontrola cyklu życia obiektów
+
+Sprytne wskaźniki pozwalają na precyzyjną kontrolę cyklu życia obiektów, eliminując problemy z zarządzaniem pamięcią, takie jak wycieki pamięci czy błędy typu double-free. Dzięki automatycznemu zwalnianiu zasobów, kod jest bardziej niezawodny i łatwiejszy do utrzymania.
+
+##### Wydajność
+
+Chociaż sprytne wskaźniki wprowadzają pewien narzut związany z zarządzaniem pamięcią (np. zarządzanie licznikiem odniesień w `shared_ptr`), to narzut ten jest zazwyczaj niewielki w porównaniu do korzyści, jakie przynoszą. Dodatkowo, stosowanie sprytnych wskaźników pozwala na lepsze wykrywanie i zapobieganie wyciekom pamięci podczas fazy testowania.
+
+##### Integracja z innymi mechanizmami C++
+
+Sprytne wskaźniki dobrze integrują się z innymi mechanizmami języka C++, takimi jak RAII (Resource Acquisition Is Initialization), co pozwala na efektywne zarządzanie zasobami. Dzięki temu, sprytne wskaźniki stają się podstawowym narzędziem w nowoczesnym programowaniu w C++.
+
+#### Podsumowanie
+
+Oto tabela podsumowująca metody dostępne dla każdego ze sprytnych wskaźników (`unique_ptr`, `shared_ptr`, `weak_ptr`) w C++:
+
+| **Metoda/Funkcja**           | **unique_ptr**               | **shared_ptr**                | **weak_ptr**                   |
+|------------------------------|------------------------------|------------------------------|-------------------------------|
+| **Tworzenie**                | `std::make_unique<T>(...)`   | `std::make_shared<T>(...)`   | `std::weak_ptr<T>()`          |
+|                              | `unique_ptr<T> p(new T(...))`| `shared_ptr<T> p(new T(...))`|                               |
+| **Destrukcja**               | Automatyczna przy wyjściu z zakresu | Automatyczna przy wyjściu z zakresu | Automatyczna przy wyjściu z zakresu |
+| **reset()**                  | `p.reset()`                  | `p.reset()`                  | `p.reset()`                   |
+|                              | `p.reset(new T(...))`        | `p.reset(new T(...))`        |                               |
+| **release()**                | `p.release()`                | N/A                          | N/A                           |
+| **swap()**                   | `p.swap(other)`              | `p.swap(other)`              | `p.swap(other)`               |
+| **get()**                    | `p.get()`                    | `p.get()`                    | `p.lock().get()`              |
+| **operator*()**              | `*p`                         | `*p`                         | `*(p.lock())`                 |
+| **operator->()**             | `p->`                        | `p->`                        | `p.lock()->`                  |
+| **operator bool()**          | `if (p)`                     | `if (p)`                     | `if (p.lock())`               |
+| **use_count()**              | N/A                          | `p.use_count()`              | `p.use_count()`               |
+| **unique()**                 | N/A                          | `p.unique()`                 | N/A                           |
+| **owner_before()**           | N/A                          | `p.owner_before(other)`      | `p.owner_before(other)`       |
+| **lock()**                   | N/A                          | N/A                          | `p.lock()`                    |
