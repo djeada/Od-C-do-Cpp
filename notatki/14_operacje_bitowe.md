@@ -121,11 +121,7 @@ int main() {
 }
 ```
 
-### Praktyczne zastosowanie operacji bitowych
-
-Operacje bitowe działają wyłącznie na liczbach całkowitych. Choć operacje bitowe nie są powszechnie używane w codziennym programowaniu, ich znajomość jest ważna, szczególnie w aplikacjach niskopoziomowych i systemowych.
-
-#### Maski bitowe
+### Maski bitowe
 Maski bitowe to technika wykorzystywana do izolowania, ustawiania lub zerowania określonych bitów w liczbie. Na przykład:
 
 ```c
@@ -140,28 +136,243 @@ int main() {
 }
 ```
 
-#### Optymalizacje wydajności
-Operacje bitowe mogą być wykorzystywane do optymalizacji wydajności programów poprzez zastąpienie kosztownych operacji arytmetycznych (mnożenie, dzielenie) prostymi operacjami przesunięcia bitowego.
+#### Sprawdzanie, czy n-ty bit jest ustawiony
 
-#### Przesyłanie danych
-W komunikacji sprzętowej i sieciach komputerowych operacje bitowe są używane do zarządzania protokołami, formatowaniem danych i kompresją.
-
-#### Przykład z maskowaniem bitowym
-Załóżmy, że chcemy sprawdzić, czy trzeci bit (licząc od 0) liczby jest ustawiony na 1:
+Aby sprawdzić, czy n-ty bit jest ustawiony (czyli równy 1) w liczbie, można użyć operatora AND (&) z odpowiednią maską. Maska dla n-tego bitu ma wartość 1 przesuniętą w lewo o n pozycji.
 
 ```c
 #include <stdio.h>
 
 int main() {
-    int value = 0b10101010; // liczba 170 w systemie dziesiętnym
-    int mask = 1 << 3; // maska ustawiająca trzeci bit
-    if (value & mask) {
-        printf("Trzeci bit jest ustawiony.\n");
+    int value = 0xA5; // wartość 10100101
+    int n = 4; // sprawdzamy 4-ty bit (licząc od zera)
+    int mask = 1 << n; // maska 00010000
+    int result = value & mask; // wynik maskowania
+    if (result != 0) {
+        printf("Bit %d jest ustawiony.\n", n);
     } else {
-        printf("Trzeci bit nie jest ustawiony.\n");
+        printf("Bit %d nie jest ustawiony.\n", n);
     }
     return 0;
 }
+```
+
+#### Ustawianie n-tego bitu
+
+Aby ustawić (włączyć) n-ty bit w liczbie, używamy operatora OR (|) z odpowiednią maską.
+
+```c
+#include <stdio.h>
+
+int main() {
+    int value = 0xA5; // wartość 10100101
+    int n = 3; // ustawiamy 3-ci bit (licząc od zera)
+    int mask = 1 << n; // maska 00001000
+    int result = value | mask; // wynik 10101101
+    printf("Wynik po ustawieniu bitu %d: 0x%X\n", n, result);
+    return 0;
+}
+```
+
+#### Zerowanie n-tego bitu
+
+Aby wyzerować (wyłączyć) n-ty bit w liczbie, używamy operatora AND (&) z zanegowaną maską.
+
+```c
+#include <stdio.h>
+
+int main() {
+    int value = 0xA5; // wartość 10100101
+    int n = 5; // zerujemy 5-ty bit (licząc od zera)
+    int mask = ~(1 << n); // maska 11011111
+    int result = value & mask; // wynik 10000101
+    printf("Wynik po wyzerowaniu bitu %d: 0x%X\n", n, result);
+    return 0;
+}
+```
+
+#### Odwrócenie n-tego bitu
+
+Aby sflipować (zmienić na przeciwny) n-ty bit w liczbie, używamy operatora XOR (^) z odpowiednią maską.
+
+```c
+#include <stdio.h>
+
+int main() {
+    int value = 0xA5; // wartość 10100101
+    int n = 2; // flipujemy 2-gi bit (licząc od zera)
+    int mask = 1 << n; // maska 00000100
+    int result = value ^ mask; // wynik 10100001
+    printf("Wynik po sflipowaniu bitu %d: 0x%X\n", n, result);
+    return 0;
+}
+```
+
+### Praktyczne zastosowanie operacji bitowych
+
+Operacje bitowe działają wyłącznie na liczbach całkowitych. Choć operacje bitowe nie są powszechnie używane w codziennym programowaniu, ich znajomość jest ważna, szczególnie w aplikacjach niskopoziomowych i systemowych.
+
+### Praktyczne zastosowanie operacji bitowych
+
+Operacje bitowe działają wyłącznie na liczbach całkowitych. Choć operacje bitowe nie są powszechnie używane w codziennym programowaniu, ich znajomość jest ważna, szczególnie w aplikacjach niskopoziomowych i systemowych.
+
+#### Optymalizacje wydajności
+Operacje bitowe mogą być wykorzystywane do optymalizacji wydajności programów poprzez zastąpienie kosztownych operacji arytmetycznych (mnożenie, dzielenie) prostymi operacjami przesunięcia bitowego.
+
+Przykład:
+
+```c
+#include <stdio.h>
+
+int main() {
+    int value = 16;
+    int result_multiplication = value * 2; // Mnożenie
+    int result_shift = value << 1; // Przesunięcie bitowe w lewo (równoważne mnożeniu przez 2)
+
+    printf("Wynik mnożenia: %d\n", result_multiplication);
+    printf("Wynik przesunięcia: %d\n", result_shift);
+
+    return 0;
+}
+```
+
+Wynik:
+
+```
+Wynik mnożenia: 32
+Wynik przesunięcia: 32
+```
+
+#### Przesyłanie danych
+W komunikacji sprzętowej i sieciach komputerowych operacje bitowe są używane do zarządzania protokołami, formatowaniem danych i kompresją.
+
+Przykład:
+
+```c
+#include <stdio.h>
+
+int main() {
+    unsigned char data = 0x5A; // Oryginalne dane 01011010
+    unsigned char checksum = 0;
+
+    // Obliczanie sumy kontrolnej XOR
+    checksum ^= data;
+
+    printf("Dane: 0x%X\n", data);
+    printf("Suma kontrolna: 0x%X\n", checksum);
+
+    return 0;
+}
+```
+
+Wynik:
+
+```
+Dane: 0x5A
+Suma kontrolna: 0x5A
+```
+
+#### Obsługa flag i rejestrów
+W systemach wbudowanych operacje bitowe są powszechnie używane do zarządzania flagami i rejestrami.
+
+Przykład:
+
+```c
+#include <stdio.h>
+
+int main() {
+    unsigned char status_register = 0x00; // Rejestr statusu
+
+    // Ustawienie flagi bitu 2
+    status_register |= (1 << 2);
+
+    // Sprawdzenie flagi bitu 2
+    if (status_register & (1 << 2)) {
+        printf("Flaga bitu 2 jest ustawiona.\n");
+    }
+
+    // Wyzerowanie flagi bitu 2
+    status_register &= ~(1 << 2);
+
+    // Sprawdzenie flagi bitu 2
+    if (!(status_register & (1 << 2))) {
+        printf("Flaga bitu 2 jest wyzerowana.\n");
+    }
+
+    return 0;
+}
+```
+
+Wynik:
+
+```
+Flaga bitu 2 jest ustawiona.
+Flaga bitu 2 jest wyzerowana.
+```
+
+#### Algorytmy i struktury danych
+Operacje bitowe są również wykorzystywane w różnych algorytmach i strukturach danych, takich jak drzewa bitowe czy tablice haszujące.
+
+Przykład:
+
+```c
+#include <stdio.h>
+
+// Funkcja do sprawdzania, czy liczba jest potęgą dwóch
+int isPowerOfTwo(unsigned int x) {
+    return (x != 0) && ((x & (x - 1)) == 0);
+}
+
+int main() {
+    unsigned int num = 16;
+    if (isPowerOfTwo(num)) {
+        printf("%u jest potęgą dwóch.\n", num);
+    } else {
+        printf("%u nie jest potęgą dwóch.\n", num);
+    }
+
+    return 0;
+}
+```
+
+Wynik:
+
+```
+16 jest potęgą dwóch.
+```
+
+#### Bezpieczeństwo i kryptografia
+Operacje bitowe są podstawą wielu algorytmów kryptograficznych i funkcji haszujących, które są wykorzystywane do zapewnienia bezpieczeństwa danych.
+
+Przykład:
+
+```c
+#include <stdio.h>
+
+// Prosta funkcja haszująca XOR
+unsigned int simpleHash(const char *str) {
+    unsigned int hash = 0;
+    while (*str) {
+        hash ^= (unsigned int)(*str);
+        str++;
+    }
+    return hash;
+}
+
+int main() {
+    const char *data = "Hello, World!";
+    unsigned int hash = simpleHash(data);
+
+    printf("Hasz dla \"%s\": 0x%X\n", data, hash);
+
+    return 0;
+}
+```
+
+Wynik:
+
+```
+Hasz dla "Hello, World!": 0x4
 ```
 
 Operacje bitowe są fundamentem wielu zaawansowanych technik programistycznych, od prostych manipulacji bitami po skomplikowane algorytmy kryptograficzne. Ich opanowanie daje programiście potężne narzędzie do efektywnego i precyzyjnego zarządzania danymi na najniższym poziomie.
