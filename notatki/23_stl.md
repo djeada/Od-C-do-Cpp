@@ -328,7 +328,9 @@ Iteratory w języku C++ to obiekty umożliwiające sekwencyjny dostęp do elemen
 - Wstawienie elementu w miejscu wskazywanym przez iterator: `it = kontener.insert(it, wartość)`
 - Usunięcie elementu w miejscu wskazywanym przez iterator: `it = kontener.erase(it)`
 
-#### Przykład użycia iteratora do przeglądania i modyfikowania zawartości wektora
+#### Przykład użycia iteratora
+
+Poniższy przykład ilustruje operacje na wektorze `std::vector` typu `std::string`. Najpierw tworzy i inicjalizuje wektor trzema elementami: "ala", "ma", "kota", a następnie wyświetla jego zawartość za pomocą iteratora. Następnie dodaje nowy element "nie" przed drugim elementem wektora, czyli przed "ma". Po tym usuwa pierwszy element wektora, którym jest "ala". Na koniec, program ponownie wyświetla zmodyfikowaną zawartość wektora.
 
 ```c++
 #include <iostream>
