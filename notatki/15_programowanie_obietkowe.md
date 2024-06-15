@@ -4,8 +4,8 @@ Programowanie obiektowe to paradygmat programowania, w którym skomplikowane pro
 
 ## Klasy i Obiekty
 
-- **Klasa** to definicja obiektu, jest to jakby "szablon" określający, jakie dane (pola) i operacje (metody) będą dostępne dla obiektu.
-- **Obiekt** to instancja klasy. Możemy myśleć o nim jako o konkretnej realizacji klasy.
+- **Klasa**: to definicja obiektu, jest to jakby "szablon" określający, jakie dane (pola) i operacje (metody) będą dostępne dla obiektu.
+- **Obiekt**: to instancja klasy. Możemy myśleć o nim jako o konkretnej realizacji klasy.
 
 Dla zobrazowania, załóżmy, że chcemy modelować prostokąt:
 
