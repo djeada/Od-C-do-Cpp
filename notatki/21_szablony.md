@@ -212,6 +212,7 @@ W powyższym przykładzie, szablon `Fibonacci` jest instancjonowany dla kolejnyc
 ##### Praktyczne zastosowania
 
 Metaprogramowanie szablonowe znajduje szerokie zastosowanie w wielu dziedzinach programowania:
+
 - **Biblioteki standardowe**: Wiele funkcji i klas w standardowej bibliotece C++ (STL) korzysta z metaprogramowania szablonowego.
 - **Optymalizacja kodu**: Dzięki obliczeniom na etapie kompilacji można tworzyć wysoko zoptymalizowany kod.
 - **Generowanie kodu**: Automatyczne generowanie kodu specyficznego dla danego problemu, co może uprościć implementację skomplikowanych algorytmów.
