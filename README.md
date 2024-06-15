@@ -36,19 +36,32 @@ Kod źródłowy do programów z yt.
 
 ## Literatura
 
-- https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md
-- http://www.doc.ic.ac.uk/~wjk/C++Intro/index.html
-- https://www.cs.fsu.edu/~myers/cop3014/
-- https://rules.sonarsource.com/cpp/RSPEC-5184
-- https://pythontutor.com/cpp.html#mode=edit
-- https://beej.us/guide/bgc/html/split/
-- https://beej.us/guide/bgnet/html/
-- https://beej.us/guide/bgipc/html/multi/index.html
-- https://graphics.stanford.edu/~seander/bithacks.html
-- https://hackingcpp.com/index.html
-- https://web.stanford.edu/class/archive/cs/cs106b/cs106b.1226/
-- https://eel.is/c++draft/
-- https://www.cs.cmu.edu/~ab/15-123S09/annotatedNotes/
-- https://hackingcpp.com/cpp/cheat_sheets.html
-- https://www.andreinc.net/2023/02/01/demystifying-bitwise-ops
+### Przewodniki i kursy
 
+1. [C++ Core Guidelines](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md): Zbiór wytycznych i najlepszych praktyk dla programowania w C++.
+2. [Wprowadzenie do C++](http://www.doc.ic.ac.uk/~wjk/C++Intro/index.html): Kurs wprowadzający do języka C++ oferowany przez Imperial College London.
+3. [C++ Programming: Introductory Course](https://www.cs.fsu.edu/~myers/cop3014/): Podstawowy kurs programowania w C++ z Florida State University.
+4. [SonarSource C++ Rules](https://rules.sonarsource.com/cpp/RSPEC-5184): Zasady analizy statycznej kodu dla C++ od SonarSource.
+5. [Python Tutor: C++](https://pythontutor.com/cpp.html#mode=edit): Narzędzie do wizualizacji kodu C++.
+
+### Przewodniki Beej'a
+
+6. [Beej's Guide to C Programming](https://beej.us/guide/bgc/html/split/): Przewodnik po podstawach programowania w C.
+7. [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/html/): Przewodnik po programowaniu sieciowym.
+8. [Beej's Guide to IPC](https://beej.us/guide/bgipc/html/multi/index.html): Przewodnik po międzyprocesowej komunikacji.
+
+### Specjalistyczne zasoby
+
+9. [Stanford Bit Hacks](https://graphics.stanford.edu/~seander/bithacks.html): Zbiór sztuczek i optymalizacji bitowych.
+10. [Hacking C++](https://hackingcpp.com/index.html): Przewodnik i zasoby dla zaawansowanych technik C++.
+11. [CS106B: Programming Abstractions](https://web.stanford.edu/class/archive/cs/cs106b/cs106b.1226/): Kurs zaawansowanego programowania w C++ ze Stanford University.
+
+### Dokumentacje i notatki
+
+12. [C++ Draft Standard](https://eel.is/c++draft/): Aktualny projekt standardu C++.
+13. [Annotated Notes for 15-123](https://www.cs.cmu.edu/~ab/15-123S09/annotatedNotes/): Notatki z kursu programowania w C++ na Carnegie Mellon University.
+
+### Cheat Sheet'y i dodatkowe materiały
+
+14. [Hacking C++ Cheat Sheets](https://hackingcpp.com/cpp/cheat_sheets.html): Zestaw cheat sheet'ów dla C++.
+15. [Demystifying Bitwise Operations](https://www.andreinc.net/2023/02/01/demystifying-bitwise-ops): Artykuł wyjaśniający operacje bitowe.
