@@ -114,13 +114,15 @@ int main() {
 
 W powyższym przykładzie mamy trzy klasy: `A`, `B` i `C`. Klasa `A` posiada wirtualną funkcję `identify`, która jest nadpisywana w klasach `B` i `C`. Dzięki temu możemy demonstrować polimorfizm.
 
-1. **Polimorfizm i wywołanie funkcji po dynamic_cast:**
-    - Kiedy wywołujemy `obj->identify()`, kompilator używa mechanizmu RTTI (Run-Time Type Information) do wywołania odpowiedniej wersji funkcji `identify` zależnie od rzeczywistego typu obiektu, nawet jeśli posługujemy się wskaźnikiem typu `A*`.
-    - `dynamic_cast` jest używany do sprawdzenia, czy obiekt wskazywany przez `obj` jest typu `B`, `C` lub `A`. Jeśli rzutowanie się powiedzie (np. z `A*` na `B*`), to odpowiedni komunikat jest wypisywany.
+I. Polimorfizm i wywołanie funkcji po dynamic_cast:
 
-2. **Sprawdzanie typu obiektu za pomocą dynamic_cast:**
-    - `dynamic_cast` zwróci wskaźnik typu `nullptr`, jeśli rzutowanie się nie powiedzie.
-    - Dzięki temu możemy sprawdzić, czy dany obiekt jest instancją określonej klasy pochodnej.
+- Kiedy wywołujemy `obj->identify()`, kompilator używa mechanizmu RTTI (Run-Time Type Information) do wywołania odpowiedniej wersji funkcji `identify` zależnie od rzeczywistego typu obiektu, nawet jeśli posługujemy się wskaźnikiem typu `A*`.
+- `dynamic_cast` jest używany do sprawdzenia, czy obiekt wskazywany przez `obj` jest typu `B`, `C` lub `A`. Jeśli rzutowanie się powiedzie (np. z `A*` na `B*`), to odpowiedni komunikat jest wypisywany.
+
+II. Sprawdzanie typu obiektu za pomocą dynamic_cast:
+
+- `dynamic_cast` zwróci wskaźnik typu `nullptr`, jeśli rzutowanie się nie powiedzie.
+- Dzięki temu możemy sprawdzić, czy dany obiekt jest instancją określonej klasy pochodnej.
 
 ##### Uwagi
 
