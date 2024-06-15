@@ -169,7 +169,9 @@ constexpr int squareOfFive = square(5); // 25
 
 #### Metaprogramowanie szablonowe
 
-Metaprogramowanie szablonowe pozwala na wykonywanie obliczeń na etapie kompilacji. Przykładem może być obliczanie wartości ciągu Fibonacciego:
+Metaprogramowanie szablonowe to technika programistyczna w językach takich jak C++, która pozwala na wykonywanie obliczeń na etapie kompilacji. Dzięki temu możliwe jest tworzenie bardziej efektywnego kodu, optymalizowanego już podczas kompilacji, a także zwiększenie elastyczności i reużywalności kodu.
+
+Jednym z klasycznych przykładów metaprogramowania szablonowego jest obliczanie wartości ciągu Fibonacciego. Poniżej znajduje się przykład, który ilustruje, jak to działa:
 
 ```c++
 template<int N>
@@ -189,3 +191,27 @@ struct Fibonacci<1> {
 
 constexpr int fib10 = Fibonacci<10>::value; // 55
 ```
+
+##### Co to jest metaprogramowanie szablonowe?
+
+Metaprogramowanie szablonowe to technika, w której używa się szablonów (ang. templates) do generowania kodu podczas kompilacji. Szablony są mechanizmem pozwalającym na pisanie kodu ogólnego, który może działać z różnymi typami danych. C++ umożliwia tworzenie szablonów klas, funkcji, a także szablonów zmiennych.
+
+##### Jak działa metaprogramowanie szablonowe?
+
+Metaprogramowanie szablonowe działa poprzez rekurencyjne instancjonowanie szablonów podczas kompilacji. Oznacza to, że kompilator rozwija szablony, generując kod specyficzny dla podanych parametrów szablonu.
+
+W powyższym przykładzie, szablon `Fibonacci` jest instancjonowany dla kolejnych wartości `N`, aż do osiągnięcia przypadków bazowych `Fibonacci<0>` i `Fibonacci<1>`. Kompilator rozwija ten kod w sposób rekurencyjny, obliczając wartość `Fibonacci<10>` jako sumę wartości `Fibonacci<9>` i `Fibonacci<8>`, i tak dalej, aż do wartości bazowych.
+
+##### Dlaczego używać metaprogramowania szablonowego?
+
+1. **Wydajność**: Obliczenia wykonywane podczas kompilacji mogą zwiększyć wydajność programu, eliminując potrzebę wykonywania tych obliczeń podczas uruchomienia.
+2. **Bezpieczeństwo typów**: Metaprogramowanie szablonowe pozwala na tworzenie kodu, który jest bardziej bezpieczny typowo, ponieważ wiele błędów może być wykrywanych na etapie kompilacji.
+3. **Elastyczność**: Szablony pozwalają na pisanie bardziej elastycznego i reużywalnego kodu, który może działać z różnymi typami danych.
+4. **Redukcja powtarzalności kodu**: Szablony pozwalają na zredukowanie powtarzalności kodu, co ułatwia jego utrzymanie i rozwój.
+
+##### Praktyczne zastosowania
+
+Metaprogramowanie szablonowe znajduje szerokie zastosowanie w wielu dziedzinach programowania:
+- **Biblioteki standardowe**: Wiele funkcji i klas w standardowej bibliotece C++ (STL) korzysta z metaprogramowania szablonowego.
+- **Optymalizacja kodu**: Dzięki obliczeniom na etapie kompilacji można tworzyć wysoko zoptymalizowany kod.
+- **Generowanie kodu**: Automatyczne generowanie kodu specyficznego dla danego problemu, co może uprościć implementację skomplikowanych algorytmów.
