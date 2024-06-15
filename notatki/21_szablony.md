@@ -43,13 +43,13 @@ Tworzenie instancji klasy szablonowej:
 ```c++
 Box<int> intBox(42);
 Box<std::string> stringBox("Hello");
+```
 
-Wielokrotne parametry szablonu
+### Wielokrotne parametry szablonu
 
 Możemy również definiować szablony z wieloma parametrami:
 
-c++
-
+```c++
 template <typename T, int size> 
 class Array {
     T elements[size];
@@ -92,4 +92,100 @@ class Array {
 };
 ```
 
-Szablony w C++ zapewniają potężne narzędzia do tworzenia elastycznego, generycznego kodu bez poświęcania wydajności. Umożliwiają tworzenie bardziej uniwersalnych i ponownie używalnych struktur kodu, jednocześnie zapewniając możliwość optymalizacji pod kątem konkretnych typów.
+Użycie:
+
+```c++
+Array<> defaultArray;
+Array<double, 5> customArray;
+```
+
+W powyższym przykładzie `defaultArray` będzie instancją `Array` z domyślnymi parametrami (`int` i `10`), natomiast `customArray` będzie instancją z typem `double` i rozmiarem `5`.
+
+### Szablony zmiennych
+
+C++14 wprowadził możliwość definiowania szablonów zmiennych. Umożliwia to definiowanie zmiennych w sposób generyczny:
+
+```c++
+template<typename T>
+constexpr T pi = T(3.1415926535897932385);
+
+auto floatPi = pi<float>;
+auto doublePi = pi<double>;
+```
+
+### Szablony aliasów
+
+C++11 wprowadził aliasy szablonów, które upraszczają użycie złożonych typów. Pozwala to na tworzenie aliasów dla szablonów typów:
+
+```c++
+template <typename T>
+using Vec = std::vector<T>;
+
+Vec<int> intVector;
+Vec<double> doubleVector;
+```
+
+### Szablony funkcji lambda
+
+Od C++20 możemy tworzyć szablony funkcji lambda, co dodatkowo zwiększa elastyczność:
+
+```c++
+auto lambda = []<typename T>(T a, T b) {
+    return a + b;
+};
+
+auto sum = lambda(5, 3);       // 8
+auto sumDouble = lambda(2.5, 1.5); // 4.0
+```
+
+### Zaawansowane techniki z szablonami
+
+#### Szablony zmiennych o zmiennej liczbie argumentów
+
+C++11 wprowadził szablony zmiennych o zmiennej liczbie argumentów, co pozwala na definiowanie funkcji i klas, które mogą przyjmować dowolną liczbę argumentów:
+
+```c++
+template<typename... Args>
+void print(Args... args) {
+    (std::cout << ... << args) << std::endl;
+}
+
+print(1, 2, 3);             // 123
+print("Hello, ", "world!"); // Hello, world!
+```
+
+#### Wyrażenia constexpr w szablonach
+
+Możemy używać wyrażeń `constexpr` w szablonach, aby definiować wartości stałe podczas kompilacji:
+
+```c++
+template<typename T>
+constexpr T square(T x) {
+    return x * x;
+}
+
+constexpr int squareOfFive = square(5); // 25
+```
+
+#### Metaprogramowanie szablonowe
+
+Metaprogramowanie szablonowe pozwala na wykonywanie obliczeń na etapie kompilacji. Przykładem może być obliczanie wartości ciągu Fibonacciego:
+
+```c++
+template<int N>
+struct Fibonacci {
+    static constexpr int value = Fibonacci<N-1>::value + Fibonacci<N-2>::value;
+};
+
+template<>
+struct Fibonacci<0> {
+    static constexpr int value = 0;
+};
+
+template<>
+struct Fibonacci<1> {
+    static constexpr int value = 1;
+};
+
+constexpr int fib10 = Fibonacci<10>::value; // 55
+```
