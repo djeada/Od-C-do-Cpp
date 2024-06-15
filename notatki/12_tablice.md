@@ -186,8 +186,6 @@ int main() {
 }
 ```
 
-
-
 ### Dynamiczna alokacja pamięci
 
 Dynamiczna alokacja pamięci w C++ pozwala na rezerwację przestrzeni w pamięci w czasie działania programu, zamiast podczas jego kompilacji. Aby zaalokować pamięć na stercie, korzystamy z operatora `new`. Do alokacji pojedynczej zmiennej używamy `new`, natomiast dla tablicy `new [liczba]`, gdzie "liczba" reprezentuje ilość elementów w tablicy.
@@ -253,9 +251,11 @@ int main() {
 ```
 
 **Zalety:**
+
 - Proste i bezpośrednie podejście.
 
 **Wady:**
+
 - Odpowiedzialność za zarządzanie pamięcią spoczywa na użytkowniku funkcji.
 - Potencjalne wycieki pamięci, jeśli zapomni się zwolnić zaalokowaną pamięć.
 
@@ -291,9 +291,11 @@ int main() {
 ```
 
 **Zalety:**
+
 - Unikamy dynamicznej alokacji pamięci i związanych z nią problemów.
 
 **Wady:**
+
 - Rozmiar tablicy musi być znany w czasie kompilacji.
 - Nieelastyczne, jeśli rozmiar tablicy ma być zmienny.
 
@@ -326,9 +328,11 @@ int main() {
 ```
 
 **Zalety:**
+
 - Zarządzanie pamięcią jest prostsze, brak potrzeby ręcznego zwalniania pamięci.
 
 **Wady:**
+
 - Tablica musi być zadeklarowana i zaalokowana przed wywołaniem funkcji.
 
 ### Tablica 2D
@@ -480,6 +484,7 @@ int main() {
 #### Zastosowania Tablic 2D
 
 Tablice 2D są powszechnie stosowane w różnych dziedzinach informatyki, takich jak:
+
 - **Przetwarzanie obrazów:** Macierz pikseli obrazu.
 - **Symulacje fizyczne:** Siatki i modele symulacji.
 - **Przechowywanie danych:** Tabele danych, macierze matematyczne.
