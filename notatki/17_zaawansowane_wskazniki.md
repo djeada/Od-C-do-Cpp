@@ -76,6 +76,7 @@ W standardzie C++11 wprowadzono koncept sprytnych wskaźników (`smart pointers`
 `unique_ptr` to rodzaj sprytnego wskaźnika, który gwarantuje wyłączność posiadania przydzielonej pamięci. Oznacza to, że w każdym momencie tylko jeden `unique_ptr` może wskazywać na dany obszar pamięci. Gdy `unique_ptr` przestaje istnieć (np. wyjdzie poza zakres życia), automatycznie zwalnia on przydzieloną pamięć. Programista nie musi więc używać operatora `delete`, co zwiększa bezpieczeństwo kodu.
 
 ```
+#
                                              +-------------------+
 +-----------------------+                    |       Dane        |
 |   unique_ptr          |                    |  +-------------+  |
@@ -121,6 +122,7 @@ func(std::move(unikalnyWsk2));  // poprawne przekazanie przez przeniesienie
 `shared_ptr` to kolejny rodzaj sprytnego wskaźnika dostępnego w C++. Charakteryzuje się tym, że pozwala wielu wskaźnikom `shared_ptr` współdzielić własność jednego obiektu. Gdy ostatni `shared_ptr` wskazujący na dany obiekt jest niszczony, pamięć zajmowana przez ten obiekt jest zwalniana.
 
 ```
+#
                                              +-------------------+
 +-----------------------+                    |       Dane        |
 |   shared_ptr A        |                    |  +-------------+  |
@@ -160,6 +162,7 @@ Chociaż `shared_ptr` ma wiele zalet, warto być ostrożnym. Nieumiejętne używ
 Gdy potrzebujemy wskaźnika na blok pamięci, ale nie chcemy przejmować jego własności, `weak_ptr` jest idealnym rozwiązaniem. `weak_ptr` działa w tandemie z `shared_ptr`. Jego główną cechą jest to, że pozwala obserwować obiekt wskazywany przez `shared_ptr`, ale nie wpływa na licznik odniesień (ang. reference count) tego obiektu. Dzięki temu, `weak_ptr` nie zapobiega destrukcji obiektu, gdy wszystkie `shared_ptr`-y wskazujące na ten obiekt zostaną zniszczone.
 
 ```
+#
                                              +-------------------+
 +-----------------------+                    |       Dane        |
 |   shared_ptr A        |                    |  +-------------+  |
