@@ -10,29 +10,29 @@ W języku C napisy są reprezentowane jako tablice znaków typu `char`, zakończ
 
 Istnieje kilka sposobów deklarowania i inicjalizacji napisów w C:
 
-1. **Wskaźnik do stałego łańcucha znaków:**
+I. **Wskaźnik do stałego łańcucha znaków:**
 
-   ```c
-   const char *napisA = "Ala ma kota";
-   ```
+```c
+const char *napisA = "Ala ma kota";
+```
 
-   W tym przypadku `napisA` jest wskaźnikiem do stałego łańcucha znaków przechowywanego w pamięci tylko do odczytu (zazwyczaj w segmencie tekstowym programu). Próba modyfikacji tego napisu prowadzi do niezdefiniowanego zachowania.
+W tym przypadku `napisA` jest wskaźnikiem do stałego łańcucha znaków przechowywanego w pamięci tylko do odczytu (zazwyczaj w segmencie tekstowym programu). Próba modyfikacji tego napisu prowadzi do niezdefiniowanego zachowania.
 
-2. **Tablica znaków z inicjalizacją literałem:**
+II. **Tablica znaków z inicjalizacją literałem:**
 
-   ```c
-   char napisB[] = "Ala ma kota";
-   ```
+```c
+char napisB[] = "Ala ma kota";
+```
 
-   Tutaj `napisB` jest tablicą znaków, która jest kopią literału napisu. Ta tablica może być modyfikowana, ponieważ jest przechowywana w pamięci dostępnej do zapisu (zazwyczaj na stosie lub w pamięci dynamicznej).
+Tutaj `napisB` jest tablicą znaków, która jest kopią literału napisu. Ta tablica może być modyfikowana, ponieważ jest przechowywana w pamięci dostępnej do zapisu (zazwyczaj na stosie lub w pamięci dynamicznej).
 
-3. **Tablica znaków z inicjalizacją listą znaków:**
+III. **Tablica znaków z inicjalizacją listą znaków:**
 
-   ```c
-   char napisC[] = {'A', 'l', 'a', ' ', 'm', 'a', ' ', 'k', 'o', 't', 'a', '\0'};
-   ```
+```c
+char napisC[] = {'A', 'l', 'a', ' ', 'm', 'a', ' ', 'k', 'o', 't', 'a', '\0'};
+```
 
-   Ten sposób jest równoważny poprzedniemu, ale wymaga jawnego dodania znaku null na końcu tablicy.
+Ten sposób jest równoważny poprzedniemu, ale wymaga jawnego dodania znaku null na końcu tablicy.
 
 #### Znaczenie znaku null
 
@@ -153,20 +153,20 @@ Podczas pracy z napisami w C należy zwrócić szczególną uwagę na alokację 
 
 Aby uniknąć takich problemów:
 
-- **Zawsze sprawdzaj długości napisów** przed kopiowaniem lub łączeniem.
-- **Używaj bezpiecznych funkcji** lub bibliotek, które automatycznie zarządzają pamięcią.
-- **Rozważ użycie dynamicznej alokacji pamięci**, jeśli rozmiar napisu nie jest znany z góry.
-
+- **Zawsze sprawdzaj długości napisów** przed kopiowaniem lub łączeniem, aby zapobiec błędom przepełnienia bufora i zapewnić bezpieczeństwo pamięci.
+- **Używaj bezpiecznych funkcji** lub bibliotek, które automatycznie zarządzają pamięcią, aby uniknąć ręcznego zarządzania wskaźnikami i potencjalnych błędów.
+- **Rozważ użycie dynamicznej alokacji pamięci**, jeśli rozmiar napisu nie jest znany z góry, co pozwala na bardziej elastyczne zarządzanie pamięcią w programie.
+  
 ### Napisy w języku C++ (`std::string`)
 
 Chociaż język C++ jest zgodny z C i pozwala na użycie tradycyjnych C-stringów, oferuje również bardziej zaawansowaną i bezpieczniejszą klasę `std::string` do reprezentacji napisów. Klasa ta jest częścią standardowej biblioteki C++ i znajduje się w nagłówku `<string>`.
 
 #### Zalety użycia `std::string`
 
-- **Automatyczne zarządzanie pamięcią:** `std::string` automatycznie zarządza alokacją i dealokacją pamięci, co redukuje ryzyko błędów takich jak wycieki pamięci.
-- **Bezpieczeństwo:** Metody klasy `std::string` zazwyczaj sprawdzają granice buforów, co zapobiega przepełnieniu bufora.
-- **Bogata funkcjonalność:** Klasa oferuje wiele metod do manipulacji napisami, takich jak konkatenacja, wyszukiwanie, zamiana podłańcuchów, itp.
-- **Integracja z innymi komponentami STL:** `std::string` współpracuje z innymi kontenerami i algorytmami z biblioteki standardowej C++.
+- **`std::string` automatycznie zarządza alokacją i dealokacją pamięci**, co zmniejsza ryzyko wystąpienia błędów, takich jak wycieki pamięci, dzięki czemu program jest bardziej bezpieczny i stabilny.
+- **Metody klasy `std::string` zazwyczaj sprawdzają granice buforów**, co chroni przed błędami przepełnienia bufora, zwiększając bezpieczeństwo operacji na napisach.
+- **Klasa `std::string` oferuje bogatą funkcjonalność**, w tym metody do takich operacji jak konkatenacja, wyszukiwanie, czy zamiana podłańcuchów, co upraszcza manipulację tekstem.
+- **`std::string` jest dobrze zintegrowany z innymi komponentami STL**, co pozwala na jego efektywne użycie z kontenerami i algorytmami biblioteki standardowej C++.
 
 #### Tworzenie i inicjalizacja `std::string`
 
@@ -180,57 +180,57 @@ std::string napis3(napis2); // Kopia istniejącego napisu
 
 #### Podstawowe operacje na `std::string`
 
-- **Dodawanie napisów:**
+I. **Dodawanie napisów:**
 
-  ```cpp
-  std::string napis1 = "Ala";
-  std::string napis2 = " ma kota";
-  std::string wynik = napis1 + napis2; // "Ala ma kota"
-  ```
+```cpp
+std::string napis1 = "Ala";
+std::string napis2 = " ma kota";
+std::string wynik = napis1 + napis2; // "Ala ma kota"
+```
 
-- **Dostęp do znaków:**
+II. **Dostęp do znaków:**
 
-  ```cpp
-  char znak = napis1[0]; // 'A'
-  napis1[0] = 'E'; // napis1 teraz to "Ela"
-  ```
+```cpp
+char znak = napis1[0]; // 'A'
+napis1[0] = 'E'; // napis1 teraz to "Ela"
+```
 
-  **Uwaga:** Dostęp poza granicami napisu (`napis1.at(index)`) generuje wyjątek `std::out_of_range`.
+**Uwaga:** Dostęp poza granicami napisu (`napis1.at(index)`) generuje wyjątek `std::out_of_range`.
 
-- **Pobieranie długości napisu:**
+III. **Pobieranie długości napisu:**
 
-  ```cpp
-  size_t dlugosc = napis1.length();
-  ```
+```cpp
+size_t dlugosc = napis1.length();
+```
 
-- **Porównywanie napisów:**
+IV. **Porównywanie napisów:**
 
-  ```cpp
-  if (napis1 == napis2) {
-      // Napisy są identyczne
-  }
-  ```
+```cpp
+if (napis1 == napis2) {
+// Napisy są identyczne
+}
+```
 
-- **Wyszukiwanie w napisie:**
+V. **Wyszukiwanie w napisie:**
 
-  ```cpp
-  size_t pozycja = napis1.find("ma");
-  if (pozycja != std::string::npos) {
-      // Znaleziono podnapis
-  }
-  ```
+```cpp
+size_t pozycja = napis1.find("ma");
+if (pozycja != std::string::npos) {
+// Znaleziono podnapis
+}
+```
 
-- **Zamiana podnapisu:**
+VI. **Zamiana podnapisu:**
 
-  ```cpp
-  napis1.replace(0, 3, "Ola"); // Zamienia pierwsze 3 znaki na "Ola"
-  ```
+```cpp
+napis1.replace(0, 3, "Ola"); // Zamienia pierwsze 3 znaki na "Ola"
+```
 
-- **Wydzielanie podnapisu:**
+VII. **Wydzielanie podnapisu:**
 
-  ```cpp
-  std::string podnapis = napis1.substr(4, 2); // Wydziela 2 znaki od pozycji 4
-  ```
+```cpp
+std::string podnapis = napis1.substr(4, 2); // Wydziela 2 znaki od pozycji 4
+```
 
 #### Interoperacyjność z C-stringami
 
@@ -244,9 +244,9 @@ const char *c_napis = napis1.c_str();
 
 #### Bezpieczeństwo i wydajność
 
-- **Zarządzanie pamięcią:** `std::string` automatycznie zarządza pamięcią, ale w przypadku operacji na bardzo dużych napisach lub w pętlach o wysokiej częstotliwości może to wpływać na wydajność. W takich sytuacjach warto rozważyć rezerwację pamięci z wyprzedzeniem za pomocą metody `reserve(size_t n);`.
-- **Wyjątki:** Metody klasy `std::string` mogą rzucać wyjątki, np. `std::bad_alloc` w przypadku braku pamięci lub `std::out_of_range` przy dostępie poza granicami. Należy to uwzględnić w kodzie, zwłaszcza w środowiskach krytycznych.
-- **Kopiowanie vs. przenoszenie:** W C++11 i nowszych wersjach wprowadzono semantykę przenoszenia, która pozwala na efektywne przenoszenie zasobów zamiast ich kopiowania. Warto korzystać z konstruktorów i operatorów przenoszących tam, gdzie to możliwe.
+- **`std::string` automatycznie zarządza pamięcią**, jednak w przypadku operacji na bardzo dużych napisach lub częstych operacjach w pętlach, może to negatywnie wpływać na wydajność. W takich przypadkach warto z wyprzedzeniem zarezerwować pamięć za pomocą metody `reserve(size_t n);`, aby zminimalizować koszt dynamicznej alokacji.
+- Metody klasy `std::string` mogą rzucać **wyjątki**, takie jak `std::bad_alloc` w przypadku braku pamięci czy `std::out_of_range` przy dostępie poza granicami. Ważne jest uwzględnienie tych wyjątków w kodzie, zwłaszcza w środowiskach, gdzie stabilność jest kluczowa.
+- W C++11 i nowszych wersjach wprowadzono **semantykę przenoszenia**, co umożliwia efektywne przenoszenie zasobów zamiast ich kopiowania. Warto korzystać z konstruktorów i operatorów przenoszących, aby poprawić wydajność w miejscach, gdzie kopiowanie jest zbędne.
 
 #### Przykłady użycia `std::string`
 
@@ -312,85 +312,89 @@ int main() {
 
 Operacje na napisach w C++ to kluczowy element przetwarzania tekstu, szczególnie w aplikacjach związanych z analizą danych, przetwarzaniem języka naturalnego oraz systemami wielojęzycznymi. Poniżej opisano kilka zaawansowanych technik operacji na napisach, które znacznie rozszerzają możliwości programisty.
 
-- **Wyrażenia regularne:**  
-  W C++11 wprowadzono bibliotekę `<regex>`, która umożliwia manipulację napisami za pomocą wyrażeń regularnych. Jest to niezwykle potężne narzędzie, które pozwala na dopasowywanie wzorców, wyszukiwanie i manipulację fragmentami tekstu. Wyrażenia regularne mogą być stosowane do walidacji danych, ekstrakcji informacji oraz skomplikowanej manipulacji tekstu.
+I. **Wyrażenia regularne:**  
 
-  Przykład poniżej demonstruje podstawową operację wyszukiwania dopasowań w tekście za pomocą wyrażenia regularnego. Program dopasowuje wzorzec, który identyfikuje kto posiada jakie zwierzę, a następnie wyświetla wyniki.
+W C++11 wprowadzono bibliotekę `<regex>`, która umożliwia manipulację napisami za pomocą wyrażeń regularnych. Jest to niezwykle potężne narzędzie, które pozwala na dopasowywanie wzorców, wyszukiwanie i manipulację fragmentami tekstu. Wyrażenia regularne mogą być stosowane do walidacji danych, ekstrakcji informacji oraz skomplikowanej manipulacji tekstu.
 
-  ```cpp
-  #include <iostream>
-  #include <string>
-  #include <regex>
+Przykład poniżej demonstruje podstawową operację wyszukiwania dopasowań w tekście za pomocą wyrażenia regularnego. Program dopasowuje wzorzec, który identyfikuje kto posiada jakie zwierzę, a następnie wyświetla wyniki.
 
-  int main() {
-      std::string tekst = "Ala ma kota i psa";
-      std::regex wzorzec("(\\w+) ma (\\w+)");
-      std::smatch dopasowanie;
+```cpp
+#include <iostream>
+#include <string>
+#include <regex>
 
-      if (std::regex_search(tekst, dopasowanie, wzorzec)) {
-          std::cout << "Dopasowanie: " << dopasowanie[0] << std::endl;
-          std::cout << "Osoba: " << dopasowanie[1] << std::endl;
-          std::cout << "Zwierzę: " << dopasowanie[2] << std::endl;
-      }
+int main() {
+   std::string tekst = "Ala ma kota i psa";
+   std::regex wzorzec("(\\w+) ma (\\w+)");
+   std::smatch dopasowanie;
+   
+   if (std::regex_search(tekst, dopasowanie, wzorzec)) {
+      std::cout << "Dopasowanie: " << dopasowanie[0] << std::endl;
+      std::cout << "Osoba: " << dopasowanie[1] << std::endl;
+      std::cout << "Zwierzę: " << dopasowanie[2] << std::endl;
+   }
+   
+   return 0;
+}
+```
 
-      return 0;
-  }
-  ```
+Wyrażenia regularne umożliwiają również bardziej zaawansowane operacje, takie jak:
 
-  Wyrażenia regularne umożliwiają również bardziej zaawansowane operacje, takie jak:
+- **Wyrażenia regularne umożliwiają znajdowanie i zamienianie fragmentów tekstu** na podstawie określonych wzorców, co jest przydatne w operacjach edycji i transformacji danych.
+- Można wyszukiwać **wielokrotne dopasowania w tekście**, co pozwala na iteracyjne przeszukiwanie np. logów lub dokumentów, aby znaleźć wszystkie wystąpienia określonych wzorców.
+- **Walidacja formatu** jest możliwa dzięki wyrażeniom regularnym, które mogą być używane do sprawdzania poprawności danych takich jak adresy e-mail, numery telefonów czy inne dane o określonym formacie.
 
-  - **Zamiana tekstu:** Możliwość znajdowania i zamieniania fragmentów tekstu według wzorców.
-  - **Wielokrotne dopasowania:** Można wyszukiwać wszystkie dopasowania w tekście za pomocą pętli, np. przy analizie logów lub dokumentów.
-  - **Walidacja formatu:** Można używać wyrażeń regularnych do walidacji adresów e-mail, numerów telefonów czy innych sformatowanych danych.
+II. **Unicode i międzynarodowe napisy:**  
 
-- **Unicode i międzynarodowe napisy:**  
-  W świecie globalizacji obsługa napisów w różnych kodowaniach jest kluczowa. Standard C++11 wprowadził wsparcie dla literałów Unicode, co umożliwia pracę z tekstem w takich kodowaniach jak UTF-8, UTF-16 i UTF-32. Jest to istotne przy tworzeniu aplikacji wielojęzycznych, gdzie wymagane jest poprawne wyświetlanie znaków z różnych alfabetów, takich jak cyrylica, chińskie znaki czy znaki diakrytyczne.
+W świecie globalizacji obsługa napisów w różnych kodowaniach jest kluczowa. Standard C++11 wprowadził wsparcie dla literałów Unicode, co umożliwia pracę z tekstem w takich kodowaniach jak UTF-8, UTF-16 i UTF-32. Jest to istotne przy tworzeniu aplikacji wielojęzycznych, gdzie wymagane jest poprawne wyświetlanie znaków z różnych alfabetów, takich jak cyrylica, chińskie znaki czy znaki diakrytyczne.
 
-  Przykład wykorzystania literałów Unicode w C++:
+Przykład wykorzystania literałów Unicode w C++:
 
-  ```cpp
-  #include <iostream>
-  #include <string>
+```cpp
+#include <iostream>
+#include <string>
 
-  int main() {
-      std::u16string tekst = u"Привет мир!";  // UTF-16
-      std::u32string innyTekst = U"你好，世界！";  // UTF-32
+int main() {
+   std::u16string tekst = u"Привет мир!";  // UTF-16
+   std::u32string innyTekst = U"你好，世界！";  // UTF-32
+   
+   std::cout << "Długość tekstu w UTF-16: " << tekst.length() << std::endl;
+   std::cout << "Długość tekstu w UTF-32: " << innyTekst.length() << std::endl;
+   
+   return 0;
+}
+```
 
-      std::cout << "Długość tekstu w UTF-16: " << tekst.length() << std::endl;
-      std::cout << "Długość tekstu w UTF-32: " << innyTekst.length() << std::endl;
+Chociaż wsparcie dla Unicode w C++ jest wbudowane, manipulowanie takimi napisami może być wyzwaniem. Długość napisów w UTF-16 czy UTF-32 nie zawsze odpowiada liczbie znaków, ponieważ niektóre znaki mogą być kodowane jako wieloznakowe sekwencje. Dlatego w wielu przypadkach programiści sięgają po zewnętrzne biblioteki, takie jak ICU (International Components for Unicode), które oferują kompleksowe narzędzia do manipulacji napisami Unicode.
 
-      return 0;
-  }
-  ```
+**ICU (International Components for Unicode):** ICU to popularna biblioteka open-source zapewniająca zaawansowane wsparcie dla międzynarodowych formatów tekstowych, sortowania według lokalnych porządków, konwersji kodowań, obsługi dat i liczb oraz innych aspektów pracy z wielojęzycznymi aplikacjami.
 
-  Chociaż wsparcie dla Unicode w C++ jest wbudowane, manipulowanie takimi napisami może być wyzwaniem. Długość napisów w UTF-16 czy UTF-32 nie zawsze odpowiada liczbie znaków, ponieważ niektóre znaki mogą być kodowane jako wieloznakowe sekwencje. Dlatego w wielu przypadkach programiści sięgają po zewnętrzne biblioteki, takie jak ICU (International Components for Unicode), które oferują kompleksowe narzędzia do manipulacji napisami Unicode.
+III. **Operacje na napisach za pomocą `std::string_view`:**  
 
-  - **ICU (International Components for Unicode):** ICU to popularna biblioteka open-source zapewniająca zaawansowane wsparcie dla międzynarodowych formatów tekstowych, sortowania według lokalnych porządków, konwersji kodowań, obsługi dat i liczb oraz innych aspektów pracy z wielojęzycznymi aplikacjami.
+`std::string_view` to typ dodany w C++17, który umożliwia efektywniejsze operacje na napisach bez kopiowania danych. `std::string_view` reprezentuje widok na fragment napisu (ciąg znaków), co pozwala na szybszą i bardziej pamięciooszczędną manipulację tekstem.
 
-- **Operacje na napisach za pomocą `std::string_view`:**  
-  `std::string_view` to typ dodany w C++17, który umożliwia efektywniejsze operacje na napisach bez kopiowania danych. `std::string_view` reprezentuje widok na fragment napisu (ciąg znaków), co pozwala na szybszą i bardziej pamięciooszczędną manipulację tekstem.
+```cpp
+#include <iostream>
+#include <string_view>
 
-  ```cpp
-  #include <iostream>
-  #include <string_view>
+void wypisz_fragment(std::string_view tekst) {
+   std::cout << "Fragment tekstu: " << tekst << std::endl;
+}
 
-  void wypisz_fragment(std::string_view tekst) {
-      std::cout << "Fragment tekstu: " << tekst << std::endl;
-  }
+int main() {
+   std::string calyTekst = "To jest długi tekst.";
+   wypisz_fragment(std::string_view(calyTekst).substr(3, 7));  // "jest d"
 
-  int main() {
-      std::string calyTekst = "To jest długi tekst.";
-      wypisz_fragment(std::string_view(calyTekst).substr(3, 7));  // "jest d"
+   return 0;
+}
+```
 
-      return 0;
-  }
-  ```
+`std::string_view` jest idealny w sytuacjach, gdy chcemy jedynie analizować fragmenty tekstu bez potrzeby tworzenia nowych obiektów typu `std::string`. Jest to często wykorzystywane w sytuacjach, gdzie wydajność jest kluczowa, jak w analizie danych lub podczas operacji na dużych plikach tekstowych.
 
-  `std::string_view` jest idealny w sytuacjach, gdy chcemy jedynie analizować fragmenty tekstu bez potrzeby tworzenia nowych obiektów typu `std::string`. Jest to często wykorzystywane w sytuacjach, gdzie wydajność jest kluczowa, jak w analizie danych lub podczas operacji na dużych plikach tekstowych.
+IV. **Biblioteki zewnętrzne do operacji na napisach:**  
 
-- **Biblioteki zewnętrzne do operacji na napisach:**  
-  Chociaż standardowa biblioteka C++ oferuje bogate wsparcie dla operacji na napisach, czasem może okazać się niewystarczająca. W takich przypadkach, do bardziej zaawansowanych zastosowań, istnieje wiele zewnętrznych bibliotek, takich jak:
+Chociaż standardowa biblioteka C++ oferuje bogate wsparcie dla operacji na napisach, czasem może okazać się niewystarczająca. W takich przypadkach, do bardziej zaawansowanych zastosowań, istnieje wiele zewnętrznych bibliotek, takich jak:
 
-  - **Boost.StringAlgo:** Część biblioteki Boost, dostarcza bogaty zestaw narzędzi do operacji na napisach, w tym funkcje przeszukiwania, zastępowania, transformacji, a także funkcje do cięcia i dołączania napisów.
-  - **fmt:** Biblioteka do formatowania napisów, która oferuje zaawansowane możliwości formatowania, podobne do `printf`, ale w sposób bardziej bezpieczny i elastyczny.
-  - **ICU (International Components for Unicode):** Jak wspomniano wcześniej, ICU to jedna z najpotężniejszych bibliotek do pracy z napisami Unicode i międzynarodowymi formatami tekstowymi.
+- **Boost.StringAlgo** jest częścią biblioteki Boost i oferuje bogaty zestaw narzędzi do pracy z napisami, w tym funkcje do przeszukiwania, zamiany, transformacji oraz cięcia i dołączania tekstów, co zwiększa elastyczność operacji na ciągach znaków.
+- **fmt** to biblioteka do formatowania napisów, która zapewnia zaawansowane możliwości formatowania podobne do `printf`, ale oferuje bardziej bezpieczne i elastyczne podejście, zwiększając wygodę i bezpieczeństwo przy formatowaniu tekstów.
+- **ICU (International Components for Unicode)** to jedna z najbardziej zaawansowanych bibliotek do pracy z napisami Unicode oraz międzynarodowymi formatami tekstowymi, co czyni ją niezbędnym narzędziem w aplikacjach wielojęzycznych.
