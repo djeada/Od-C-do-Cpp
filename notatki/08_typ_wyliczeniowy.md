@@ -36,9 +36,9 @@ int main() {
 
 `enum class`, wprowadzony w C++11, różni się od tradycyjnego `enum` w kilku kluczowych aspektach:
 
-- **Silniejsze typowanie**: wartości `enum class` nie mogą być automatycznie konwertowane na liczby całkowite i odwrotnie, co zapobiega błędom typowania.
-- **Brak konfliktów nazw**: wartości `enum class` są przestrzenią nazw dla siebie, co eliminuje potencjalne konflikty nazw.
-- **Typ bazowy**: Możliwość określenia typu bazowego dla wartości wyliczeniowych, co może być przydatne w kontekście optymalizacji pamięci lub interoperacyjności z innymi systemami.
+- Wartości **`enum class` nie mogą być automatycznie konwertowane** na liczby całkowite ani odwrotnie, co zapewnia silniejsze typowanie i zapobiega błędom związanym z typowaniem.
+- **Brak konfliktów nazw** jest możliwy dzięki temu, że wartości `enum class` są przestrzenią nazw dla siebie, co eliminuje potencjalne kolizje w nazewnictwie.
+- `Enum class` oferuje możliwość **określenia typu bazowego** dla wartości wyliczeniowych, co jest przydatne w optymalizacji pamięci oraz przy zapewnieniu zgodności z innymi systemami.
 
 Przykład wykorzystania `enum class` do reprezentacji kolorów:
 
@@ -70,46 +70,50 @@ int main() {
 
 ### Zalety użycia `enum class` w porównaniu do tradycyjnych `enum`:
 
-- **Brak konfliktów nazewnictwa**: wartości w `enum class` nie są wprowadzane do przestrzeni nazw, co eliminuje potencjalne konflikty nazw.
-- **Silniejsze typowanie**: nie można przypadkowo przekształcić wartości `enum class` na liczbę ani porównać wartości z różnych typów wyliczeniowych bez jawnej konwersji.
-- **Możliwość określenia typu bazowego**: `enum class` pozwala określić typ bazowy (np. `enum class Kolor : uint8_t`).
+- Wartości w **`enum class` nie są wprowadzane do przestrzeni nazw**, co zapobiega potencjalnym konfliktom nazewnictwa między różnymi wyliczeniami.
+- **Silniejsze typowanie** w `enum class` sprawia, że nie można przypadkowo przekształcić jego wartości na liczbę ani porównywać wartości z różnych typów wyliczeniowych bez jawnej konwersji, co zwiększa bezpieczeństwo typów.
+- `Enum class` daje możliwość **określenia typu bazowego**, co oznacza, że można zdefiniować na przykład `enum class Kolor : uint8_t`, co pozwala na optymalizację pamięci.
 
 ### Praktyczne zastosowania `enum` i `enum class`
 
-1. **Definiowanie stanów**:
-    ```c++
-    enum class Stan { Uruchomiony, Zatrzymany, Wstrzymany };
+I. **Definiowanie stanów**:
 
-    void zmienStan(Stan nowyStan) {
-        // logika zmiany stanu
-    }
-    ```
+```c++
+enum class Stan { Uruchomiony, Zatrzymany, Wstrzymany };
 
-2. **Przypisywanie wartości**:
-    ```c++
-    enum class Bledy : int {
-        Brak = 0,
-        Ostrzezenie = 1,
-        Krytyczny = 2
-    };
+void zmienStan(Stan nowyStan) {
+    // logika zmiany stanu
+}
+```
 
-    Bledy blad = Bledy::Krytyczny;
-    ```
+II. **Przypisywanie wartości**:
 
-3. **Przykład z określeniem typu bazowego**:
-    ```c++
-    enum class Wielkosc : uint8_t { Mala, Srednia, Duza };
+```c++
+enum class Bledy : int {
+    Brak = 0,
+    Ostrzezenie = 1,
+    Krytyczny = 2
+};
 
-    Wielkosc koszulka = Wielkosc::Srednia;
-    ```
+Bledy blad = Bledy::Krytyczny;
+```
 
-4. **Używanie w strukturach i klasach**:
-    ```c++
-    struct Samochod {
-        enum class Typ { Sedan, Kombi, Hatchback };
-        Typ typ;
-    };
+III. **Przykład z określeniem typu bazowego**:
 
-    Samochod samochod;
-    samochod.typ = Samochod::Typ::Sedan;
-    ```
+```c++
+enum class Wielkosc : uint8_t { Mala, Srednia, Duza };
+
+Wielkosc koszulka = Wielkosc::Srednia;
+```
+
+IV. **Używanie w strukturach i klasach**:
+
+```c++
+struct Samochod {
+    enum class Typ { Sedan, Kombi, Hatchback };
+    Typ typ;
+};
+
+Samochod samochod;
+samochod.typ = Samochod::Typ::Sedan;
+```
