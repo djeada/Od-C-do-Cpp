@@ -1,35 +1,59 @@
-## Szablony
+# Szablony
 
-Szablony są jednym z kluczowych aspektów metaprogramowania w C++. Umożliwiają pisanie generycznych funkcji i klas, które adaptują się do różnych typów danych, bez konieczności duplikowania kodu. Zapewniają one wydajność kodu zapisanego ręcznie dla konkretnego typu, zachowując jednocześnie elastyczność.
+Szablony (ang. *templates*) stanowią fundament nowoczesnego programowania w języku C++. Umożliwiają one tworzenie kodu generycznego, który może działać z różnymi typami danych bez konieczności jego duplikacji. Szablony są kluczowym elementem metaprogramowania w C++, pozwalając na wykonywanie obliczeń na etapie kompilacji i optymalizację kodu wynikowego.
 
-### Szablon funkcji
+## Wprowadzenie do Szablonów
 
-Aby zdefiniować szablon funkcji, używamy słowa kluczowego `template`, po którym następuje lista parametrów szablonu w nawiasach trójkątnych `<>`.
+Szablony w C++ są mechanizmem pozwalającym na tworzenie funkcji, klas, a nawet zmiennych, które są parametryzowane typami lub wartościami stałymi. Dzięki temu możemy pisać kod, który jest niezależny od konkretnego typu danych, co zwiększa jego reużywalność i elastyczność.
 
-Przykład generycznej funkcji `max2`:
+### Szablony Funkcji
 
-```c++
-template <typename T> 
+Szablony funkcji pozwalają na definiowanie funkcji, które działają na różnych typach danych. Ogólna składnia definicji szablonu funkcji jest następująca:
+
+```cpp
+template <parametry_szablonu>
+typ_zwracany nazwa_funkcji(argumenty) {
+    // ciało funkcji
+}
+```
+
+**Przykład:** Definicja generycznej funkcji `max2`, która zwraca większą z dwóch wartości:
+
+```cpp
+template <typename T>
 T max2(T arg1, T arg2) {
     return arg1 > arg2 ? arg1 : arg2;
 }
 ```
 
-Podczas korzystania z funkcji szablonowej, kompilator tworzy odpowiednią specjalizację funkcji dla użytego typu:
+**Wyjaśnienie:**
 
-```c++
-max2<int>(10, 20);       // 20
-max2<double>(16.2, 3.14); // 16.2
-max2<char>('a', 'b');     // 'b'
+- `template <typename T>` deklaruje szablon z parametrem typu `T`.
+- Funkcja `max2` przyjmuje dwa argumenty typu `T` i zwraca wartość typu `T`.
+- Operator `?:` zwraca `arg1` lub `arg2` w zależności od wyniku porównania `arg1 > arg2`.
+
+**Użycie funkcji szablonowej:**
+
+```cpp
+int a = max2<int>(10, 20);            // Wynik: 20
+double b = max2<double>(16.2, 3.14);  // Wynik: 16.2
+char c = max2<char>('a', 'b');        // Wynik: 'b'
 ```
 
-### Szablon klasy
+### Mechanizm Instancjacji
 
-Szablon klasy pozwala na zdefiniowanie generycznej klasy, która może operować na różnych typach danych:
+Podczas kompilacji, gdy funkcja szablonowa jest wywoływana z konkretnym typem, kompilator tworzy jej **instancję** dla tego typu. Proces ten nazywany jest **instancjacją szablonu**. Dzięki temu generowany kod jest zoptymalizowany pod kątem użytych typów, eliminując narzut wydajnościowy związany z polimorfizmem dynamicznym.
 
-```c++
-template <typename T> 
+## Szablony Klas
+
+Szablony klas umożliwiają definiowanie klas generycznych, które mogą operować na różnych typach danych. Składnia szablonu klasy jest podobna do szablonu funkcji.
+
+**Przykład:** Definicja szablonu klasy `Box`:
+
+```cpp
+template <typename T>
 class Box {
+private:
     T content;
 
 public:
@@ -38,74 +62,97 @@ public:
 };
 ```
 
-Tworzenie instancji klasy szablonowej:
+**Wyjaśnienie:**
 
-```c++
+- `template <typename T>`: Deklaruje szablon klasy z parametrem typu `T`.
+- `T content;`: Zmienna członkowska przechowująca zawartość typu `T`.
+- Konstruktor i metoda `getContent()` operują na typie `T`.
+
+**Tworzenie instancji szablonu klasy:**
+
+```cpp
 Box<int> intBox(42);
-Box<std::string> stringBox("Hello");
+Box<std::string> stringBox("Witaj");
 ```
 
-### Wielokrotne parametry szablonu
+## Wielokrotne Parametry Szablonu
 
-Możemy również definiować szablony z wieloma parametrami:
+Szablony mogą przyjmować wiele parametrów, zarówno typów, jak i wartości stałych. Pozwala to na bardziej precyzyjne parametryzowanie kodu.
 
-```c++
-template <typename T, int size> 
+**Przykład:** Szablon klasy `Array` z dwoma parametrami:
+
+```cpp
+template <typename T, std::size_t Size>
 class Array {
-    T elements[size];
-    // ...
+private:
+    T elements[Size];
+
+public:
+    // Metody dostępu i modyfikacji elementów
 };
 ```
 
-Użycie:
+**Użycie:**
 
-```c++
+```cpp
 Array<int, 5> myArray;
 ```
 
-### Specjalizacja szablonu
+## Specjalizacja Szablonu
 
-Czasami chcemy, aby dla konkretnego typu szablon działał w inny sposób. Możemy to osiągnąć, definiując specjalizację szablonu:
+Czasami istnieje potrzeba dostosowania zachowania szablonu dla konkretnego typu. W takich przypadkach używamy **specjalizacji szablonu**.
 
-```c++
+**Przykład:** Specjalizacja szablonu klasy `Box` dla typu `std::string`:
+
+```cpp
 template <>
 class Box<std::string> {
+private:
     std::string content;
-    
+
 public:
     Box(std::string content) : content(content) {}
-    std::string getContent() const { return "Content: " + content; }
+    std::string getContent() const { return "Zawartość: " + content; }
 };
 ```
 
-Teraz, gdy użyjemy `Box<std::string>`, metoda `getContent()` zwróci nieco inną wartość niż w ogólnym przypadku.
+**Wyjaśnienie:**
 
-### Typy domyślne w szablonach
+- `template <>`: Wskazuje pełną specjalizację szablonu.
+- `class Box<std::string>`: Specjalizacja szablonu `Box` dla typu `std::string`.
+- Metoda `getContent()` została zmodyfikowana, aby zwracać prefiksowany ciąg znaków.
 
-Możemy określić typy domyślne dla parametrów szablonu:
+## Typy Domyślne w Szablonach
 
-```c++
-template <typename T = int, int size = 10> 
+Możemy definiować wartości domyślne dla parametrów szablonu, co zwiększa elastyczność ich użycia.
+
+**Przykład:**
+
+```cpp
+template <typename T = int, std::size_t Size = 10>
 class Array {
-    T elements[size];
-    // ...
+private:
+    T elements[Size];
+
+public:
+    // Implementacja metod
 };
 ```
 
-Użycie:
+**Użycie:**
 
-```c++
-Array<> defaultArray;
-Array<double, 5> customArray;
+```cpp
+Array<> defaultArray;             // Typ T=int, Size=10
+Array<double, 5> customArray;     // Typ T=double, Size=5
 ```
 
-W powyższym przykładzie `defaultArray` będzie instancją `Array` z domyślnymi parametrami (`int` i `10`), natomiast `customArray` będzie instancją z typem `double` i rozmiarem `5`.
+## Szablony Zmiennych
 
-### Szablony zmiennych
+Od C++14 możliwe jest definiowanie szablonów zmiennych, co pozwala na tworzenie zmiennych parametryzowanych typem.
 
-C++14 wprowadził możliwość definiowania szablonów zmiennych. Umożliwia to definiowanie zmiennych w sposób generyczny:
+**Przykład:**
 
-```c++
+```cpp
 template<typename T>
 constexpr T pi = T(3.1415926535897932385);
 
@@ -113,11 +160,18 @@ auto floatPi = pi<float>;
 auto doublePi = pi<double>;
 ```
 
-### Szablony aliasów
+**Wyjaśnienie:**
 
-C++11 wprowadził aliasy szablonów, które upraszczają użycie złożonych typów. Pozwala to na tworzenie aliasów dla szablonów typów:
+- `constexpr` oznacza, że wartość jest stała w czasie kompilacji.
+- `pi<T>` jest zmienną szablonową parametryzowaną typem `T`.
 
-```c++
+## Aliasowanie Szablonów
+
+C++11 wprowadził możliwość tworzenia aliasów szablonów za pomocą słowa kluczowego `using`. Ułatwia to pracę z złożonymi typami szablonowymi.
+
+**Przykład:**
+
+```cpp
 template <typename T>
 using Vec = std::vector<T>;
 
@@ -125,58 +179,73 @@ Vec<int> intVector;
 Vec<double> doubleVector;
 ```
 
-### Szablony funkcji lambda
+## Szablony Lambda
 
-Od C++20 możemy tworzyć szablony funkcji lambda, co dodatkowo zwiększa elastyczność:
+Od C++20 można tworzyć szablony funkcji lambda, co dodatkowo zwiększa możliwości programistyczne.
 
-```c++
+**Przykład:**
+
+```cpp
 auto lambda = []<typename T>(T a, T b) {
     return a + b;
 };
 
-auto sum = lambda(5, 3);       // 8
-auto sumDouble = lambda(2.5, 1.5); // 4.0
+auto sumInt = lambda(5, 3);           // Wynik: 8
+auto sumDouble = lambda(2.5, 1.5);    // Wynik: 4.0
 ```
 
-### Zaawansowane techniki z szablonami
+## Zaawansowane Techniki z Szablonami
 
-#### Szablony zmiennych o zmiennej liczbie argumentów
+### Szablony o Zmiennej Liczbie Argumentów
 
-C++11 wprowadził szablony zmiennych o zmiennej liczbie argumentów, co pozwala na definiowanie funkcji i klas, które mogą przyjmować dowolną liczbę argumentów:
+C++11 wprowadził **szablony o zmiennej liczbie argumentów** (ang. *variadic templates*), które pozwalają na definiowanie funkcji i klas przyjmujących dowolną liczbę parametrów.
 
-```c++
+**Przykład:** Funkcja `print` wyświetlająca dowolną liczbę argumentów:
+
+```cpp
 template<typename... Args>
 void print(Args... args) {
     (std::cout << ... << args) << std::endl;
 }
 
-print(1, 2, 3);             // 123
-print("Hello, ", "world!"); // Hello, world!
+print(1, 2, 3);                 // Wyświetla: 123
+print("Witaj, ", "świecie!");   // Wyświetla: Witaj, świecie!
 ```
 
-#### Wyrażenia constexpr w szablonach
+**Wyjaśnienie:**
 
-Możemy używać wyrażeń `constexpr` w szablonach, aby definiować wartości stałe podczas kompilacji:
+- `template<typename... Args>`: Deklaruje szablon z pakietem typów `Args`.
+- `Args... args`: Pakiet argumentów funkcji.
+- `(std::cout << ... << args)`: Fold expression, dostępne od C++17, które składa wyrażenia binarne.
 
-```c++
+### Wyrażenia `constexpr` w Szablonach
+
+`constexpr` pozwala na wykonywanie obliczeń w czasie kompilacji. Gdy używamy go w szablonach, możemy tworzyć funkcje, które zwracają stałe wartości zależne od parametrów szablonu.
+
+**Przykład:** Funkcja `square` obliczająca kwadrat liczby:
+
+```cpp
 template<typename T>
 constexpr T square(T x) {
     return x * x;
 }
 
-constexpr int squareOfFive = square(5); // 25
+constexpr int squareOfFive = square(5); // Wynik: 25
 ```
 
-#### Metaprogramowanie szablonowe
+## Metaprogramowanie Szablonowe
 
-Metaprogramowanie szablonowe to technika programistyczna w językach takich jak C++, która pozwala na wykonywanie obliczeń na etapie kompilacji. Dzięki temu możliwe jest tworzenie bardziej efektywnego kodu, optymalizowanego już podczas kompilacji, a także zwiększenie elastyczności i reużywalności kodu.
+Metaprogramowanie szablonowe to technika, która wykorzystuje szablony do wykonywania obliczeń na etapie kompilacji. Pozwala to na optymalizację kodu i wykonywanie skomplikowanych obliczeń bez narzutu w czasie wykonywania programu.
 
-Jednym z klasycznych przykładów metaprogramowania szablonowego jest obliczanie wartości ciągu Fibonacciego. Poniżej znajduje się przykład, który ilustruje, jak to działa:
+### Przykład: Obliczanie Liczby Fibonacciego
 
-```c++
+Obliczanie wartości ciągu Fibonacciego za pomocą szablonów:
+
+```cpp
 template<int N>
 struct Fibonacci {
-    static constexpr int value = Fibonacci<N-1>::value + Fibonacci<N-2>::value;
+    static_assert(N >= 0, "N musi być nieujemne");
+    static constexpr int value = Fibonacci<N - 1>::value + Fibonacci<N - 2>::value;
 };
 
 template<>
@@ -189,30 +258,42 @@ struct Fibonacci<1> {
     static constexpr int value = 1;
 };
 
-constexpr int fib10 = Fibonacci<10>::value; // 55
+constexpr int fib10 = Fibonacci<10>::value; // Wynik: 55
 ```
 
-##### Co to jest metaprogramowanie szablonowe?
+**Wyjaśnienie:**
 
-Metaprogramowanie szablonowe to technika, w której używa się szablonów (ang. templates) do generowania kodu podczas kompilacji. Szablony są mechanizmem pozwalającym na pisanie kodu ogólnego, który może działać z różnymi typami danych. C++ umożliwia tworzenie szablonów klas, funkcji, a także szablonów zmiennych.
+- **Rekurencja w czasie kompilacji:** Struktura `Fibonacci` jest rekurencyjnie instancjonowana dla wartości `N`, aż do osiągnięcia przypadków bazowych dla `N=0` i `N=1`.
+- **`static_assert`:** Używany do sprawdzenia warunków w czasie kompilacji.
+- **`constexpr`:** Zapewnia, że wartość jest obliczana w czasie kompilacji.
 
-##### Jak działa metaprogramowanie szablonowe?
+### Analiza Matematyczna
 
-Metaprogramowanie szablonowe działa poprzez rekurencyjne instancjonowanie szablonów podczas kompilacji. Oznacza to, że kompilator rozwija szablony, generując kod specyficzny dla podanych parametrów szablonu.
+Ciąg Fibonacciego jest zdefiniowany rekurencyjnie:
 
-W powyższym przykładzie, szablon `Fibonacci` jest instancjonowany dla kolejnych wartości `N`, aż do osiągnięcia przypadków bazowych `Fibonacci<0>` i `Fibonacci<1>`. Kompilator rozwija ten kod w sposób rekurencyjny, obliczając wartość `Fibonacci<10>` jako sumę wartości `Fibonacci<9>` i `Fibonacci<8>`, i tak dalej, aż do wartości bazowych.
+$$
+F(0) = 0, \quad F(1) = 1, \quad F(N) = F(N-1) + F(N-2) \text{ dla } N \geq 2
+$$
 
-##### Dlaczego używać metaprogramowania szablonowego?
+Implementacja za pomocą szablonów odwzorowuje tę definicję, pozwalając kompilatorowi na obliczenie wartości `F(N)` podczas kompilacji.
 
-1. **Wydajność**: Obliczenia wykonywane podczas kompilacji mogą zwiększyć wydajność programu, eliminując potrzebę wykonywania tych obliczeń podczas uruchomienia.
-2. **Bezpieczeństwo typów**: Metaprogramowanie szablonowe pozwala na tworzenie kodu, który jest bardziej bezpieczny typowo, ponieważ wiele błędów może być wykrywanych na etapie kompilacji.
-3. **Elastyczność**: Szablony pozwalają na pisanie bardziej elastycznego i reużywalnego kodu, który może działać z różnymi typami danych.
-4. **Redukcja powtarzalności kodu**: Szablony pozwalają na zredukowanie powtarzalności kodu, co ułatwia jego utrzymanie i rozwój.
+### Zastosowania Metaprogramowania Szablonowego
 
-##### Praktyczne zastosowania
+- **Optymalizacja:** Usuwanie narzutu czasowego przez przeniesienie obliczeń na etap kompilacji.
+- **Generowanie Kodów Specjalizowanych:** Tworzenie kodu dostosowanego do konkretnych typów lub wartości.
+- **Sprawdzanie Warunków w Czasie Kompilacji:** Użycie `static_assert` do weryfikacji założeń.
 
-Metaprogramowanie szablonowe znajduje szerokie zastosowanie w wielu dziedzinach programowania:
+## Zastosowanie Szablonów w Praktyce
 
-- **Biblioteki standardowe**: Wiele funkcji i klas w standardowej bibliotece C++ (STL) korzysta z metaprogramowania szablonowego.
-- **Optymalizacja kodu**: Dzięki obliczeniom na etapie kompilacji można tworzyć wysoko zoptymalizowany kod.
-- **Generowanie kodu**: Automatyczne generowanie kodu specyficznego dla danego problemu, co może uprościć implementację skomplikowanych algorytmów.
+Szablony są szeroko wykorzystywane w standardowej bibliotece C++ (STL) oraz w nowoczesnych bibliotekach, takich jak Boost czy Eigen. Pozwalają one na tworzenie kontenerów, algorytmów i innych narzędzi, które są elastyczne i wydajne.
+
+### Przykład: Kontener `std::vector`
+
+`std::vector` jest szablonem klasy, który reprezentuje dynamicznie rozmiarową tablicę:
+
+```cpp
+std::vector<int> vecInt;
+std::vector<double> vecDouble;
+```
+
+**Implementacja generyczna** pozwala na użycie `std::vector` z dowolnym typem, co zwiększa jego wszechstronność.
