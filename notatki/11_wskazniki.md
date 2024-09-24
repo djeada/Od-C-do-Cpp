@@ -120,28 +120,30 @@ if (a_ptr == nullptr) {
 
 #### Zalety użycia nullptr
 
-1. **Jednoznaczność:** `nullptr` nie może być mylony z żadną liczbą całkowitą, co czyni kod bardziej czytelnym i bezpiecznym.
-2. **Bezpieczeństwo typów:** `nullptr` ma typ `std::nullptr_t`, co pozwala na łatwiejsze przeciążanie funkcji i redukcję błędów kompilacji.
-3. **Lepsze wsparcie kompilatora:** Kompilatory mogą lepiej optymalizować kod i wykrywać błędy, gdy używany jest `nullptr` zamiast `NULL`.
+- **`nullptr` nie może być mylony z liczbą całkowitą**, co zwiększa jednoznaczność, poprawiając czytelność i bezpieczeństwo kodu.
+- Dzięki temu, że **`nullptr` ma typ `std::nullptr_t`**, możliwe jest łatwiejsze przeciążanie funkcji oraz redukcja błędów kompilacji związanych z nieprawidłowym typowaniem.
+- **Kompilatory mogą lepiej optymalizować kod** i łatwiej wykrywać potencjalne błędy, gdy stosowany jest `nullptr` zamiast starszego `NULL`.
 
 ### Stałe wskaźniki i wskażniki na stałe
 
 W C++ możemy zdefiniować różnego rodzaju stałe wskaźniki. Istnieją dwie główne kategorie stałych wskaźników: wskaźniki na stałą wartość oraz stałe wskaźniki.
 
-1. **Wskaźniki na stałą wartość**:
-    Te wskaźniki wskazują na wartość, której nie możemy zmienić poprzez wskaźnik, ale możemy przestawiać wskaźnik na inny adres.
+I. **Wskaźniki na stałą wartość**:
 
-    ```c++
-    const int *a;
-    int const *a; // Jest równoważne poprzedniemu przykładowi
-    ```
+Te wskaźniki wskazują na wartość, której nie możemy zmienić poprzez wskaźnik, ale możemy przestawiać wskaźnik na inny adres.
 
-2. **Stałe wskaźniki**:
-    Jest to wskaźnik, którego adres nie może być zmieniony po inicjalizacji, ale wartość, na którą wskazuje, może być zmieniana.
+```c++
+const int *a;
+int const *a; // Jest równoważne poprzedniemu przykładowi
+```
 
-    ```c++
-    int *const b;
-    ```
+II. **Stałe wskaźniki**:
+
+Jest to wskaźnik, którego adres nie może być zmieniony po inicjalizacji, ale wartość, na którą wskazuje, może być zmieniana.
+
+```c++
+int *const b;
+```
 
 Przykład użycia:
 
@@ -261,9 +263,9 @@ int main() {
 
 #### Zalety użycia wskaźników na funkcje
 
-1. **Elastyczność:** Pozwalają na dynamiczne wybieranie i wywoływanie funkcji w czasie wykonania programu.
-2. **Reużywalność:** Umożliwiają tworzenie ogólnych funkcji, które mogą pracować z różnymi operacjami.
-3. **Efektywność:** Redukują potrzebę używania wielu instrukcji warunkowych.
+- Funkcje wskaźnikowe zapewniają **elastyczność**, umożliwiając dynamiczne wybieranie i wywoływanie funkcji w trakcie działania programu, co zwiększa ich adaptacyjność.
+- **Reużywalność** jest możliwa dzięki funkcjom wskaźnikowym, ponieważ pozwalają na tworzenie ogólnych funkcji, które mogą obsługiwać różne operacje bez konieczności modyfikacji kodu.
+- **Efektywność** funkcji wskaźnikowych polega na tym, że redukują one potrzebę stosowania wielu instrukcji warunkowych, co upraszcza kod i poprawia jego wydajność.
 
 ### Podusmowanie
 
