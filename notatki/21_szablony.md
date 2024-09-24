@@ -263,9 +263,9 @@ constexpr int fib10 = Fibonacci<10>::value; // Wynik: 55
 
 **Wyjaśnienie:**
 
-- **Rekurencja w czasie kompilacji:** Struktura `Fibonacci` jest rekurencyjnie instancjonowana dla wartości `N`, aż do osiągnięcia przypadków bazowych dla `N=0` i `N=1`.
-- **`static_assert`:** Używany do sprawdzenia warunków w czasie kompilacji.
-- **`constexpr`:** Zapewnia, że wartość jest obliczana w czasie kompilacji.
+- **Rekurencja w czasie kompilacji** polega na tym, że struktura `Fibonacci` jest rekurencyjnie instancjonowana dla wartości `N`, aż do osiągnięcia przypadków bazowych, takich jak `N=0` i `N=1`, co pozwala na obliczenia w trakcie kompilacji.
+- **`static_assert`** jest używany do sprawdzania warunków w czasie kompilacji, co pozwala na weryfikację poprawności kodu przed jego wykonaniem.
+- **`constexpr`** zapewnia, że dana wartość zostanie obliczona w czasie kompilacji, co zwiększa efektywność i pozwala na lepszą optymalizację kodu.
 
 ### Analiza Matematyczna
 
@@ -279,9 +279,9 @@ Implementacja za pomocą szablonów odwzorowuje tę definicję, pozwalając komp
 
 ### Zastosowania Metaprogramowania Szablonowego
 
-- **Optymalizacja:** Usuwanie narzutu czasowego przez przeniesienie obliczeń na etap kompilacji.
-- **Generowanie Kodów Specjalizowanych:** Tworzenie kodu dostosowanego do konkretnych typów lub wartości.
-- **Sprawdzanie Warunków w Czasie Kompilacji:** Użycie `static_assert` do weryfikacji założeń.
+- **Optymalizacja** polega na usunięciu narzutu czasowego poprzez przeniesienie obliczeń z etapu wykonania programu na etap kompilacji, co przyspiesza działanie aplikacji.
+- **Generowanie kodów specjalizowanych** umożliwia tworzenie kodu dostosowanego do konkretnych typów lub wartości, co poprawia wydajność i elastyczność aplikacji.
+- **Sprawdzanie warunków w czasie kompilacji** odbywa się za pomocą `static_assert`, który pozwala na weryfikację założeń programu przed jego uruchomieniem, eliminując potencjalne błędy już na etapie kompilacji.
 
 ## Zastosowanie Szablonów w Praktyce
 
@@ -295,21 +295,26 @@ STL (Standard Template Library) jest zestawem klas i funkcji szablonowych dostar
 
 Kontenery są klasami szablonowymi, które przechowują kolekcje obiektów. Dzięki szablonom mogą one przechowywać elementy dowolnego typu. Oto niektóre z najważniejszych kontenerów w STL:
 
-- **`std::vector`**: Dynamiczna tablica o zmiennym rozmiarze.
-- **`std::list`**: Lista dwukierunkowa.
-- **`std::deque`**: Dwustronna kolejka.
-- **`std::set`**: Zbiór unikalnych elementów, uporządkowanych.
-- **`std::map`**: Asocjacyjny kontener przechowujący pary klucz-wartość.
-- **`std::unordered_set`** i **`std::unordered_map`**: Kontenery nieuporządkowane, wykorzystujące tablice haszujące.
+| Kontener                   | Opis                                                                  |
+|----------------------------|-----------------------------------------------------------------------|
+| **`std::vector`**           | Dynamiczna tablica o zmiennym rozmiarze.                              |
+| **`std::list`**             | Lista dwukierunkowa.                                                  |
+| **`std::deque`**            | Dwustronna kolejka.                                                   |
+| **`std::set`**              | Zbiór unikalnych elementów, uporządkowanych.                          |
+| **`std::map`**              | Asocjacyjny kontener przechowujący pary klucz-wartość.                |
+| **`std::unordered_set`**    | Nieuporządkowany zbiór wykorzystujący tablice haszujące.              |
+| **`std::unordered_map`**    | Nieuporządkowana mapa wykorzystująca tablice haszujące do par klucz-wartość. |
 
 #### Algorytmy
 
 Algorytmy w STL są funkcjami szablonowymi, które wykonują operacje na danych przechowywanych w kontenerach. Są one niezależne od konkretnych typów danych i kontenerów, o ile dostarczone są odpowiednie iteratory.
 
-- **`std::sort`**: Sortowanie elementów w zakresie.
-- **`std::find`**: Wyszukiwanie elementu w zakresie.
-- **`std::accumulate`**: Sumowanie wartości w zakresie.
-- **`std::copy`**: Kopiowanie elementów z jednego zakresu do drugiego.
+| Funkcja                   | Opis                                                           |
+|---------------------------|----------------------------------------------------------------|
+| **`std::sort`**            | Sortowanie elementów w zakresie.                               |
+| **`std::find`**            | Wyszukiwanie elementu w zakresie.                              |
+| **`std::accumulate`**      | Sumowanie wartości w zakresie.                                 |
+| **`std::copy`**            | Kopiowanie elementów z jednego zakresu do drugiego.            |
 
 #### Iteratory
 
@@ -332,8 +337,8 @@ class vector {
 
 **Parametry szablonu:**
 
-- `typename T`: Typ przechowywanych elementów.
-- `typename Allocator`: Typ alokatora używanego do zarządzania pamięcią (domyślnie `std::allocator<T>`).
+- **`typename T`** określa typ przechowywanych elementów, co pozwala na tworzenie szablonów, które mogą działać z różnymi typami danych.
+- **`typename Allocator`** definiuje typ alokatora używanego do zarządzania pamięcią, z domyślną wartością `std::allocator<T>`, co umożliwia elastyczne zarządzanie pamięcią dla elementów.
 
 **Przykłady użycia:**
 
@@ -404,9 +409,11 @@ points.emplace_back(3, 4);
 
 Operacje na `std::vector` mają określone złożoności czasowe:
 
-- **Dostęp do elementów:** O(1) - dzięki ciągłemu układowi pamięci.
-- **Dodawanie elementu na końcu:** Amortyzowane O(1) - gdy wektor nie musi być realokowany.
-- **Wstawianie/usuwanie elementów w środku:** O(n) - konieczność przesunięcia elementów.
+| Operacja                                | Złożoność           | Wyjaśnienie                                                                 |
+|-----------------------------------------|---------------------|------------------------------------------------------------------------------|
+| **Dostęp do elementów**                 | $O(1)$                | Dzięki ciągłemu układowi pamięci, dostęp do dowolnego elementu jest bezpośredni. |
+| **Dodawanie elementu na końcu**         | Amortyzowane $O(1)$   | Dodanie elementu jest szybkie, chyba że konieczna jest realokacja pamięci.   |
+| **Wstawianie/usuwanie elementów w środku** | $O(n)$                | Wymaga przesunięcia pozostałych elementów, co zwiększa czas operacji.         |
 
 **Zarządzanie pamięcią:**
 
@@ -447,8 +454,8 @@ std::sort(data.begin(), data.end(), [](int a, int b) {
 
 **Złożoność czasowa:**
 
-- Średnia: O(n log n)
-- Najgorszy przypadek: O(n log n) - w implementacji wykorzystującej zabezpieczenia przed złym rozkładem danych.
+- Średnia: $O(nlogn)$
+- Najgorszy przypadek: $O(nlogn)$ - w implementacji wykorzystującej zabezpieczenia przed złym rozkładem danych.
 
 ### Przykład: Kontener `std::map`
 
@@ -470,10 +477,12 @@ class map {
 
 **Parametry szablonu:**
 
-- `class Key`: Typ klucza.
-- `class T`: Typ wartości.
-- `class Compare`: Funkcja lub funktor do porównywania kluczy.
-- `class Allocator`: Alokator pamięci.
+| Parametr           | Opis               | Wyjaśnienie                                                                 |
+|--------------------|--------------------|------------------------------------------------------------------------------|
+| `class Key`        | Typ klucza         | Określa typ danych, który będzie używany jako klucz w kontenerze.            |
+| `class T`          | Typ wartości       | Reprezentuje typ danych przechowywanych jako wartości w kontenerze.          |
+| `class Compare`    | Funkcja porównująca| Funktor lub funkcja, która decyduje o sposobie porównywania kluczy.          |
+| `class Allocator`  | Alokator pamięci   | Definiuje sposób alokacji i zarządzania pamięcią dla elementów kontenera.    |
 
 **Przykład użycia:**
 
@@ -486,25 +495,25 @@ wordCounts["orange"] = 2;
 
 **Operacje:**
 
-- **Wstawianie elementów:**
+I. **Wstawianie elementów:**
 
-  ```cpp
-  wordCounts.insert({"grape", 4});
-  ```
+```cpp
+wordCounts.insert({"grape", 4});
+```
 
-- **Dostęp do wartości:**
+II. **Dostęp do wartości:**
 
-  ```cpp
-  int count = wordCounts["banana"]; // count == 5
-  ```
+```cpp
+int count = wordCounts["banana"]; // count == 5
+```
 
-- **Iterowanie:**
+III. **Iterowanie:**
 
-  ```cpp
-  for (const auto& pair : wordCounts) {
-      std::cout << pair.first << ": " << pair.second << "\n";
-  }
-  ```
+```cpp
+for (const auto& pair : wordCounts) {
+  std::cout << pair.first << ": " << pair.second << "\n";
+}
+```
 
 **Właściwości:**
 
@@ -571,21 +580,21 @@ Eigen::Matrix<float, 3, 1> result = matA * vecB;
 
 **Właściwości:**
 
-- **Statyczne rozmiary:** Gdy rozmiary macierzy są znane w czasie kompilacji, Eigen może generować bardzo wydajny kod.
-- **Szablony wyrażeniowe:** Wykorzystanie techniki *Expression Templates* pozwala na optymalizację obliczeń i unikanie niepotrzebnych kopii danych.
+- **Statyczne rozmiary** macierzy, gdy są znane w czasie kompilacji, pozwalają bibliotece Eigen na generowanie wysoce wydajnego kodu, co zwiększa efektywność obliczeń.
+- **Szablony wyrażeniowe** (*Expression Templates*) umożliwiają optymalizację obliczeń, minimalizując tworzenie niepotrzebnych kopii danych, co poprawia wydajność działania programu.
 
 **Analiza wydajności:**
 
-- **Unikanie alokacji pamięci:** Dzięki szablonom i inliningowi, Eigen może wykonywać operacje bez dodatkowych alokacji pamięci.
-- **Wektorowe instrukcje procesora:** Eigen automatycznie wykorzystuje instrukcje SIMD (Single Instruction, Multiple Data), jeśli są dostępne na danej platformie.
+- **Unikanie alokacji pamięci** jest możliwe dzięki zastosowaniu szablonów i mechanizmu inlining, co pozwala bibliotece Eigen na wykonywanie operacji bez potrzeby dodatkowych alokacji pamięci, co zwiększa wydajność.
+- **Wektorowe instrukcje procesora** są automatycznie wykorzystywane przez Eigen, dzięki wsparciu dla instrukcji SIMD (Single Instruction, Multiple Data), jeśli są one dostępne na danej platformie, co przyspiesza operacje matematyczne.
 
 ### Wpływ Szablonów na Projektowanie Bibliotek
 
 Szablony umożliwiają tworzenie bibliotek, które są zarówno elastyczne, jak i wydajne. Oto kilka kluczowych aspektów:
 
-- **Polimorfizm statyczny:** W przeciwieństwie do polimorfizmu dynamicznego (przez klasy bazowe i wskaźniki), polimorfizm szablonowy odbywa się w czasie kompilacji, co eliminuje narzut czasu wykonywania.
-- **Silne typowanie:** Błędy typów są wykrywane w czasie kompilacji, co zwiększa bezpieczeństwo kodu.
-- **Optymalizacje kompilatora:** Kompilator może generować specjalizowany kod dla konkretnych typów, co pozwala na agresywne optymalizacje.
+- **Polimorfizm statyczny** w szablonach odbywa się w czasie kompilacji, w przeciwieństwie do polimorfizmu dynamicznego (realizowanego przez klasy bazowe i wskaźniki), co eliminuje narzut związany z wykonywaniem w czasie działania programu.
+- **Silne typowanie** sprawia, że błędy typów są wykrywane w czasie kompilacji, co zwiększa bezpieczeństwo kodu i minimalizuje ryzyko błędów w czasie działania.
+- **Optymalizacje kompilatora** są możliwe dzięki generowaniu specjalizowanego kodu dla konkretnych typów, co umożliwia kompilatorowi stosowanie agresywnych optymalizacji w celu poprawy wydajności.
 
 ### Koncepty (C++20)
 
@@ -605,8 +614,8 @@ T multiply(T a, T b) {
 
 **Zalety:**
 
-- **Poprawa czytelności błędów kompilacji:** Kompilator może dostarczyć bardziej precyzyjne komunikaty o błędach.
-- **Dokumentacja wymagań:** Koncepty jasno określają, jakie wymagania musi spełniać typ parametrów szablonu.
+- **Poprawa czytelności błędów kompilacji** wynika z zastosowania konceptów, które umożliwiają kompilatorowi dostarczenie bardziej precyzyjnych i zrozumiałych komunikatów o błędach, co ułatwia debugowanie.
+- **Dokumentacja wymagań** jest naturalnym efektem użycia konceptów, ponieważ jasno określają one, jakie wymagania musi spełniać typ parametrów szablonu, co poprawia zrozumiałość i użyteczność kodu.
 
 ### Zaawansowane Techniki z Użyciem Szablonów
 
@@ -648,8 +657,8 @@ public:
 
 **Zastosowania:**
 
-- **Statyczne polimorfizmy** pozwala na osiągnięcie polimorfizmu bez narzutu dynamicznego wiązania.
-- **Mixin Classes** umożliwiają wstrzykiwanie funkcjonalności do klasy pochodnej.
+- **Statyczny polimorfizm** pozwala na osiągnięcie polimorfizmu w czasie kompilacji, eliminując narzut związany z dynamicznym wiązaniem, co zwiększa wydajność.
+- **Klasy mixin** umożliwiają wstrzykiwanie dodatkowej funkcjonalności do klasy pochodnej, co ułatwia tworzenie modularnych i wielokrotnego użytku komponentów.
 
 ### Ograniczenia i Wyzwania
 
