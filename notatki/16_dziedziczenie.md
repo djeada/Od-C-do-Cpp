@@ -187,9 +187,9 @@ wsk->foo(); // wyświetli "B"
 
 Czy warto stosować klasy abstrakcyjne?
 
-- **Kapsułkowanie**: Umożliwiają zdefiniowanie interfejsu bez narzucania konkretnej implementacji.
-- **Rozszerzalność**: Klasy pochodne mogą dostarczać własne implementacje metod, jednocześnie zachowując interfejs klasy bazowej.
-- **Zachowanie spójności**: Wymagają od klas pochodnych zaimplementowania określonych metod.
+- **Kapsułkowanie** pozwala na zdefiniowanie interfejsu, który oddziela użytkownika od szczegółów implementacji, zapewniając elastyczność w ukrywaniu wewnętrznych mechanizmów.
+- **Rozszerzalność** umożliwia klasom pochodnym dostarczanie własnych implementacji metod, przy jednoczesnym zachowaniu spójności interfejsu klasy bazowej, co ułatwia rozwój systemu.
+- **Zachowanie spójności** jest osiągane dzięki temu, że klasy pochodne są zobowiązane do zaimplementowania określonych metod, co gwarantuje jednolitą funkcjonalność niezależnie od konkretnej realizacji.
 
 Klasa czysto wirtualna to specyficzny rodzaj klasy abstrakcyjnej, która nie zawiera żadnych składowych ani implementacji, tylko deklaracje czysto wirtualnych metod:
 
