@@ -88,9 +88,12 @@ Stała to zmienna, której wartość jest niezmienna przez cały czas trwania pr
 
 #### Korzyści z używania stałych
 
-- **Bezpieczeństwo**: Używanie stałych zapobiega przypadkowemu modyfikowaniu wartości, co zwiększa bezpieczeństwo kodu.
-- **Czytelność**: Stałe o dobrze opisanych nazwach mogą uczynić kod bardziej czytelnym i łatwiejszym do zrozumienia.
-- **Optymalizacja**: Kompilator może lepiej optymalizować kod, gdy wie, że pewne wartości nie zmienią się w trakcie działania programu.
+- Używanie stałych w kodzie **zapobiega przypadkowemu modyfikowaniu wartości**, co znacząco zwiększa jego bezpieczeństwo, ponieważ unika się niezamierzonych zmian w kluczowych zmiennych.
+- **Stałe z dobrze opisanymi nazwami** pomagają w poprawie czytelności kodu, co sprawia, że program jest łatwiejszy do zrozumienia zarówno dla twórcy, jak i innych programistów.
+- Kompilator, mając wiedzę, że pewne wartości są niezmienne, może skuteczniej **optymalizować działanie programu**, co prowadzi do bardziej wydajnego kodu.
+- **Dzięki stałym** łatwiej jest zarządzać dużymi projektami, ponieważ kluczowe wartości są centralnie zdefiniowane i ich zmiana nie wymaga przeszukiwania całego kodu.
+- Stałe mogą również poprawiać **dokumentację kodu**, ponieważ ich nazwy często jasno sugerują, co reprezentują, co zmniejsza potrzebę dodatkowych komentarzy.
+- **Stałe pozwalają na lepsze testowanie** i weryfikację poprawności kodu, ponieważ wartości niezmienne są przewidywalne i łatwiej jest stworzyć przypadki testowe. 
 
 ### Zakres życia zmiennych
 
