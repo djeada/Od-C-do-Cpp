@@ -159,13 +159,10 @@ Każde z tych słów kluczowych ma określoną rolę w języku, np. `class` i `s
 
 C++ jest językiem wieloparadygmatowym, który wspiera programowanie obiektowe (OOP). OOP wprowadza koncepcje takie jak:
 
-- **Klasy i Obiekty:** Klasy są szablonami dla obiektów, definiując ich atrybuty i metody.
-  
-- **Dziedziczenie:** Pozwala na tworzenie nowych klas na podstawie istniejących, dziedzicząc ich właściwości i metody.
-  
-- **Polimorfizm:** Umożliwia używanie wskaźników lub referencji do klasy bazowej, które mogą wskazywać na obiekty klas pochodnych.
-  
-- **Enkapsulacja:** Ukrywanie szczegółów implementacji poprzez kontrolę dostępu do składowych klasy (modyfikatory dostępu: `private`, `protected`, `public`).
+- **Klasy i obiekty** stanowią podstawę programowania obiektowego, gdzie klasy działają jako szablony definiujące atrybuty i metody, z których tworzone są konkretne obiekty.
+- **Dziedziczenie** pozwala na tworzenie nowych klas, które dziedziczą właściwości i metody z już istniejących klas, co umożliwia ponowne wykorzystanie kodu.
+- **Polimorfizm** umożliwia korzystanie z wskaźników lub referencji do klasy bazowej, które mogą odnosić się do obiektów klas pochodnych, pozwalając na elastyczne zarządzanie różnymi typami obiektów.
+- **Enkapsulacja** zapewnia kontrolę dostępu do składowych klasy poprzez ukrywanie szczegółów implementacyjnych i zastosowanie modyfikatorów dostępu, takich jak `private`, `protected` i `public`.
 
 Przykład definicji klasy w C++:
 
@@ -300,42 +297,46 @@ int main() {
 
 #### Zastosowania Języka C
 
-- **Programowanie Systemowe:** Tworzenie systemów operacyjnych, sterowników urządzeń, kompilatorów.
-- **Systemy Wbudowane:** Programowanie mikrokontrolerów, urządzeń IoT.
-- **Aplikacje o Wysokiej Wydajności:** Dzięki minimalnemu narzutowi i kontroli nad pamięcią.
-- **Nauka Podstaw Programowania:** Prostota języka ułatwia zrozumienie podstawowych konceptów informatyki.
+- **Programowanie systemowe** obejmuje tworzenie systemów operacyjnych, sterowników urządzeń oraz kompilatorów, gdzie wymagana jest niska kontrola nad sprzętem i wydajność.
+- **Systemy wbudowane** dotyczą programowania mikrokontrolerów oraz urządzeń IoT, gdzie zasoby są ograniczone, a wydajność kluczowa.
+- **Aplikacje o wysokiej wydajności** korzystają z minimalnego narzutu oraz pełnej kontroli nad zarządzaniem pamięcią, co pozwala na maksymalizację wydajności.
+- **Nauka podstaw programowania** jest uproszczona dzięki prostocie języka, co ułatwia zrozumienie fundamentalnych konceptów informatyki.
 
 #### Zastosowania Języka C++
 
-- **Aplikacje Wielkoskalowe:** Systemy bankowe, aplikacje biznesowe, gdzie OOP ułatwia zarządzanie złożonością.
-- **Gry i Grafika Komputerowa:** Wydajność C++ i bogate biblioteki (np. Unreal Engine) czynią go idealnym wyborem.
-- **Aplikacje z Wymaganiami Real-Time:** Dzięki możliwości optymalizacji i kontroli nad zasobami.
-- **Biblioteki i Frameworki:** Tworzenie uniwersalnych bibliotek z wykorzystaniem szablonów i programowania ogólnego.
+- **Aplikacje wielkoskalowe**, takie jak systemy bankowe i aplikacje biznesowe, korzystają z programowania obiektowego, które ułatwia zarządzanie złożonością dużych systemów.
+- **Gry i grafika komputerowa** czerpią korzyści z wydajności C++ oraz dostępnych bibliotek, takich jak Unreal Engine, co sprawia, że C++ jest idealnym wyborem w tej dziedzinie.
+- **Aplikacje z wymaganiami real-time** mogą korzystać z C++ dzięki możliwości optymalizacji i pełnej kontroli nad zasobami, co jest kluczowe dla tych systemów.
+- **Biblioteki i frameworki** tworzone w C++ pozwalają na wykorzystanie szablonów i programowania ogólnego, co umożliwia budowanie uniwersalnych i wydajnych narzędzi.
 
 #### Wydajność
 
 Ogólnie rzecz biorąc, zarówno C, jak i C++ są językami kompilowanymi do kodu maszynowego, co zapewnia wysoką wydajność. Jednakże:
 
-- **Narzut Abstrakcji:** Niektóre funkcjonalności C++ (np. wirtualne funkcje, wyjątki, RTTI) mogą wprowadzać dodatkowy narzut czasowy i pamięciowy.
-- **Optymalizacje Kompilatora:** Nowoczesne kompilatory potrafią skutecznie optymalizować kod C++.
-- **Kontrola nad Zasobami:** W C++ można zrezygnować z niektórych funkcji języka (np. unikając polimorfizmu) w celu zwiększenia wydajności.
+- **Narzut abstrakcji** może wystąpić w C++ w przypadku korzystania z funkcji takich jak wirtualne funkcje, wyjątki czy RTTI, co może prowadzić do dodatkowego narzutu czasowego i pamięciowego.
+- **Optymalizacje kompilatora** w nowoczesnych kompilatorach pozwalają na skuteczne optymalizowanie kodu C++, co może znacznie poprawić wydajność aplikacji.
+- **Kontrola nad zasobami** w C++ daje możliwość rezygnacji z pewnych funkcji języka, takich jak polimorfizm, w celu osiągnięcia lepszej wydajności, co pozwala na bardziej precyzyjne zarządzanie zasobami.
 
 ### Standardy i Rozwój Języków
 
 #### Standardy C
 
-- **C89/C90:** Pierwszy standard języka, ustanawiający podstawy.
-- **C99:** Wprowadza nowe typy całkowite (`stdint.h`), pętle `for` o zmiennym zakresie, funkcje zmiennowymiarowe, komentarze stylu `//`.
-- **C11:** Dodaje obsługę wielowątkowości, anonimowe struktury i unie.
-- **C18:** Głównie poprawki do C11.
+| Standard     | Rok  | Nowości                                                                                           |
+|--------------|------|---------------------------------------------------------------------------------------------------|
+| **C89/C90**  | 1989 | Pierwszy standard języka, ustanawiający podstawy.                                                  |
+| **C99**      | 1999 | Nowe typy całkowite (`stdint.h`), pętle `for` o zmiennym zakresie, funkcje zmiennowymiarowe, komentarze stylu `//`. |
+| **C11**      | 2011 | Dodaje obsługę wielowątkowości, anonimowe struktury i unie.                                        |
+| **C18**      | 2018 | Głównie poprawki do C11.                                                                           |
 
 #### Standardy C++
 
-- **C++98/C++03:** Pierwsze standardy, wprowadzające szablony, przestrzenie nazw, wyjątki.
-- **C++11:** Znaczące rozszerzenia: wyrażenia lambda, `auto`, `nullptr`, inteligentne wskaźniki.
-- **C++14:** Drobne usprawnienia C++11.
-- **C++17:** Nowe biblioteki, `std::optional`, `std::variant`, składnia `if constexpr`.
-- **C++20:** Koncepty, moduły, zakresy (ranges), korutyny.
+| Standard     | Rok  | Nowości                                                                                           |
+|--------------|------|---------------------------------------------------------------------------------------------------|
+| **C++98/C++03** | 1998/2003 | Pierwsze standardy, wprowadzające szablony, przestrzenie nazw, wyjątki.                     |
+| **C++11**       | 2011      | Znaczące rozszerzenia: wyrażenia lambda, `auto`, `nullptr`, inteligentne wskaźniki.         |
+| **C++14**       | 2014      | Drobne usprawnienia C++11.                                                                  |
+| **C++17**       | 2017      | Nowe biblioteki, `std::optional`, `std::variant`, składnia `if constexpr`.                  |
+| **C++20**       | 2020      | Koncepty, moduły, zakresy (ranges), korutyny.                                               |
 
 ### Matematyczne Aspekty Języków
 
