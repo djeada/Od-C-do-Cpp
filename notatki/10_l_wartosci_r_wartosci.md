@@ -8,11 +8,11 @@ L-wartości to wyrażenia, które reprezentują obiekty mające **trwałe miejsc
 
 #### Właściwości L-wartości
 
-- **Mają adres pamięci**: Możemy pobrać adres L-wartości za pomocą operatora `&`.
-- Mogą być **modyfikowalne** lub **niemodyfikowalne**:
-- **Modyfikowalne L-wartości** (ang. *modifiable l-values*) to takie, które można zmienić (nie są `const`).
-- **Niemodyfikowalne L-wartości** to takie, które są oznaczone jako `const` i nie można ich zmienić po inicjalizacji.
-- Mogą być używane po **lewej** i **prawej** stronie operatora przypisania (o ile są modyfikowalne).
+- L-wartości **mają adres pamięci**, co oznacza, że można pobrać ich adres za pomocą operatora `&`, co pozwala na manipulację wskaźnikami.
+- L-wartości mogą być zarówno **modyfikowalne**, jak i **niemodyfikowalne**, w zależności od tego, czy zostały oznaczone jako `const`.
+- **Modyfikowalne L-wartości** to takie, które można zmieniać, pod warunkiem że nie są zadeklarowane jako `const`, co pozwala na ich aktualizację w trakcie działania programu.
+- **Niemodyfikowalne L-wartości** to te, które są oznaczone jako `const`, co oznacza, że po ich inicjalizacji nie można zmienić ich wartości.
+- **Modyfikowalne L-wartości** mogą być używane zarówno po lewej, jak i prawej stronie operatora przypisania, co umożliwia ich przypisywanie i aktualizację.
 
 #### Przykłady L-wartości
 
@@ -245,7 +245,7 @@ int main() {
 }
 ```
 
-#### Wyjaśnienie działania
+**Wyjaśnienie działania:***
 
 - **Konstruktor przenoszący** przejmuje zasoby od obiektu źródłowego, minimalizując kopiowanie.
 - **Operator przypisania przenoszącego** przenosi zasoby z obiektu źródłowego do docelowego.
