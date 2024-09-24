@@ -442,11 +442,9 @@ int main() {
 
 **Analiza Matematyczna:**
 
-- **Złożoność czasowa:**
-  - Średnia: O(n log n)
-  - Najgorszy przypadek: O(n log n) - dzięki zastosowaniu introsortu, który przełącza się na sortowanie kopcowe w przypadku złego podziału danych.
-- **Złożoność pamięciowa:**
-  - O(log n) dodatkowej pamięci na stos rekurencji.
+- **Złożoność czasowa** dla tego algorytmu wynosi średnio $O(nlogn)$, co jest charakterystyczne dla wydajnych algorytmów sortowania.
+- W najgorszym przypadku złożoność czasowa również wynosi $O(nlog)$, ponieważ algorytm wykorzystuje introsort, który automatycznie przełącza się na sortowanie kopcowe, gdy wykryje niekorzystny podział danych.
+- **Złożoność pamięciowa** tego algorytmu wymaga $O(logn)$ dodatkowej pamięci, głównie na stos rekurencji, co czyni go efektywnym pod względem użycia zasobów pamięci.
 
 **Dostosowywanie Kryterium Sortowania:**
 
@@ -460,8 +458,8 @@ std::sort(wektor.begin(), wektor.end(), [](int a, int b) {
 
 **Uwagi:**
 
-- **Stabilność:** `std::sort()` nie jest stabilny, co oznacza, że kolejność równych elementów może ulec zmianie. Jeśli wymagana jest stabilność, należy użyć `std::stable_sort()`.
-- **Wymagania na typy:** Typ elementów musi być zgodny z wymaganiami funkcji porównującej.
+- **Stabilność** algorytmu `std::sort()` nie jest zagwarantowana, co oznacza, że kolejność równych elementów może się zmienić. W przypadku, gdy stabilność jest wymagana, należy skorzystać z funkcji `std::stable_sort()`.
+- Typ elementów musi być **zgodny** z wymaganiami funkcji porównującej, co zapewnia poprawność działania algorytmu.
 
 #### `std::find()`
 
@@ -501,8 +499,8 @@ int main() {
 
 **Analiza Matematyczna:**
 
-- **Złożoność czasowa:** O(n), gdzie n to liczba elementów w zakresie.
-- **Złożoność pamięciowa:** O(1) - algorytm nie używa dodatkowej pamięci.
+- **Złożoność czasowa** wynosi $O(n)$, gdzie n oznacza liczbę elementów w przetwarzanym zakresie, co sprawia, że algorytm działa liniowo względem liczby danych.
+- **Złożoność pamięciowa** wynosi $O(1)$, co oznacza, że algorytm nie wymaga dodatkowej pamięci poza tą używaną przez same dane.
 
 **Uwagi:**
 
@@ -548,8 +546,8 @@ int main() {
 
 **Analiza Matematyczna:**
 
-- **Złożoność czasowa:** O(n) - funkcja jest wywoływana dokładnie n razy.
-- **Złożoność pamięciowa:** O(1) - brak dodatkowej pamięci poza ewentualnymi zmiennymi w funkcji.
+- **Złożoność czasowa** wynosi **O(n)**, ponieważ funkcja jest wywoływana dokładnie n razy, co oznacza liniowy wzrost liczby operacji w zależności od liczby elementów.
+- **Złożoność pamięciowa** wynosi **O(1)**, gdyż algorytm nie wymaga dodatkowej pamięci poza ewentualnymi zmiennymi lokalnymi w funkcji.
 
 **Uwagi:**
 
@@ -592,8 +590,8 @@ int main() {
 
 **Analiza Matematyczna:**
 
-- **Złożoność czasowa:** O(n) - predykat jest wywoływany dokładnie n razy.
-- **Złożoność pamięciowa:** O(1)
+- **Złożoność czasowa** wynosi **O(n)**, ponieważ predykat jest wywoływany dokładnie n razy, co sprawia, że liczba operacji rośnie liniowo w zależności od liczby elementów.
+- **Złożoność pamięciowa** wynosi **O(1)**, co oznacza, że algorytm nie wymaga dodatkowej pamięci poza zmiennymi lokalnymi.
 
 **Uwagi:**
 
