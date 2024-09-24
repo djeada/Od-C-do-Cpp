@@ -135,12 +135,14 @@ Wskaźniki w C++ umożliwiają wykonanie operacji arytmetycznych, co pozwala na 
 
 #### Podstawowe operacje arytmetyczne na wskaźnikach:
 
-- `++`: Przesuwa wskaźnik do następnego elementu.
-- `--`: Przesuwa wskaźnik do poprzedniego elementu.
-- `+=`: Przesuwa wskaźnik o określoną liczbę elementów do przodu.
-- `-=`: Przesuwa wskaźnik o określoną liczbę elementów do tyłu.
-- `+`: Zwraca nowy wskaźnik przesunięty o określoną liczbę elementów od obecnego miejsca.
-- `-`: Jeśli użyte między dwoma wskaźnikami, zwraca różnicę (liczbę elementów) pomiędzy nimi.
+| Operator | Opis                                                                 |
+|----------|-----------------------------------------------------------------------------|
+| `++`     | Przesuwa wskaźnik do następnego elementu.                                   |
+| `--`     | Przesuwa wskaźnik do poprzedniego elementu.                                 |
+| `+=`     | Przesuwa wskaźnik o określoną liczbę elementów do przodu.                   |
+| `-=`     | Przesuwa wskaźnik o określoną liczbę elementów do tyłu.                     |
+| `+`      | Zwraca nowy wskaźnik przesunięty o określoną liczbę elementów od obecnego miejsca. |
+| `-`      | Jeśli użyte między dwoma wskaźnikami, zwraca różnicę (liczbę elementów) pomiędzy nimi. |
 
 #### Przykłady zastosowania arytmetyki wskaźników
 
@@ -485,13 +487,13 @@ int main() {
 
 Tablice 2D są powszechnie stosowane w różnych dziedzinach informatyki, takich jak:
 
-- **Przetwarzanie obrazów:** Macierz pikseli obrazu.
-- **Symulacje fizyczne:** Siatki i modele symulacji.
-- **Przechowywanie danych:** Tabele danych, macierze matematyczne.
-- **Gry komputerowe:** Plansze gier, mapy poziomów.
+- W **przetwarzaniu obrazów** macierze są używane do reprezentowania pikseli obrazu, co umożliwia manipulowanie i analizowanie danych obrazowych.
+- **Symulacje fizyczne** często wykorzystują macierze do reprezentowania siatek i modeli symulacji, co pozwala na dokładne odwzorowanie zjawisk fizycznych.
+- W kontekście **przechowywania danych**, macierze są używane do tworzenia tabel danych i macierzy matematycznych, co ułatwia organizację i obliczenia.
+- W **grach komputerowych** macierze mogą reprezentować plansze gier oraz mapy poziomów, co umożliwia efektywne zarządzanie strukturą i logiką gry.
 
 ### Zalecenia dotyczące użycia tablic
 
-1. **Inicjalizacja:** Zawsze inicjalizuj tablice, aby uniknąć losowych wartości.
-2. **Bezpieczeństwo:** Sprawdzaj granice tablicy, aby zapobiec dostępowi poza zakresem.
-3. **Kontenery standardowe:** W wielu przypadkach warto rozważyć użycie kontenerów standardowych, takich jak `std::vector`, które oferują większe bezpieczeństwo i elastyczność niż tradycyjne tablice.
+- **Zawsze inicjalizuj tablice**, aby uniknąć problemów z losowymi wartościami, które mogą prowadzić do nieprzewidywalnych błędów w programie.
+- **Sprawdzaj granice tablicy**, aby zapewnić bezpieczeństwo i zapobiec dostępowi do elementów poza zakresem, co może prowadzić do awarii programu.
+- W wielu przypadkach warto rozważyć **użycie kontenerów standardowych**, takich jak `std::vector`, które oferują większe bezpieczeństwo i elastyczność niż tradycyjne tablice, eliminując ryzyko błędów związanych z zarządzaniem pamięcią.
