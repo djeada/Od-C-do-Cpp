@@ -1,11 +1,11 @@
-## Programowanie Obiektowe
+# Programowanie Obiektowe
 
 Programowanie obiektowe to paradygmat programowania, w którym skomplikowane problemy są dzielone na mniejsze części poprzez definiowanie obiektów. Każdy obiekt reprezentuje jakąś część problemu i zawiera dane oraz funkcje, które na nich operują. Oto kilka kluczowych pojęć związanych z programowaniem obiektowym:
 
 ## Klasy i Obiekty
 
-- **Klasa**: to definicja obiektu, jest to jakby "szablon" określający, jakie dane (pola) i operacje (metody) będą dostępne dla obiektu.
-- **Obiekt**: to instancja klasy. Możemy myśleć o nim jako o konkretnej realizacji klasy.
+- **Klasa** jest definicją obiektu, pełniąc rolę "szablonu", który określa, jakie dane (pola) oraz operacje (metody) będą dostępne dla obiektu, co pozwala na tworzenie struktur danych i logiki działania.
+- **Obiekt** to instancja klasy, czyli konkretna realizacja klasy, która posiada własne egzemplarze pól oraz dostęp do metod zdefiniowanych w klasie.
 
 Dla zobrazowania, załóżmy, że chcemy modelować prostokąt:
 
@@ -31,17 +31,17 @@ std::cout << p.pole() << std::endl;
 
 ### Dlaczego warto korzystać z programowania obiektowego?
 
-- **Modularność**: Skomplikowane programy stają się bardziej zarządzalne, gdy są podzielone na mniejsze, dobrze zdefiniowane moduły.
-- **Wielokrotnego użytku**: Kiedy klasa jest dobrze zaprojektowana, może być używana w wielu miejscach w kodzie, czy nawet w innych projektach.
-- **Abstrakcja**: Programowanie obiektowe umożliwia ukrycie skomplikowanych szczegółów implementacji, prezentując jednocześnie jasny interfejs do korzystania z danego obiektu.
+- **Modularność** pozwala na lepsze zarządzanie skomplikowanymi programami, poprzez podział ich na mniejsze, dobrze zdefiniowane moduły, co ułatwia ich rozwój i utrzymanie.
+- **Wielokrotnego użytku** oznacza, że dobrze zaprojektowana klasa może być wykorzystywana wielokrotnie w różnych częściach kodu lub nawet w innych projektach, co zwiększa efektywność pracy programisty.
+- **Abstrakcja** w programowaniu obiektowym umożliwia ukrycie skomplikowanych szczegółów implementacyjnych, jednocześnie oferując prosty i jasny interfejs do korzystania z obiektu, co ułatwia jego obsługę.
    
 ###  Konstruktory
 Konstruktor to specjalna funkcja klasy, która jest automatycznie wywoływana podczas tworzenia obiektu. Istnieje kilka rodzajów konstruktorów:
 
-- **Domyślny**: nie przyjmuje argumentów.
-- **Z parametrami**: przyjmuje argumenty do inicjalizacji pól obiektu.
-- **Kopiujący**: tworzy kopię innego obiektu tej samej klasy.
-- **Przenoszący**: przyjmuje obiekt jako argument, "przenosząc" jego dane do nowego obiektu.
+- Konstruktor **domyślny** nie przyjmuje żadnych argumentów i zazwyczaj inicjalizuje obiekt z wartościami domyślnymi dla jego pól.
+- Konstruktor **z parametrami** przyjmuje argumenty, które są wykorzystywane do inicjalizacji pól obiektu, co pozwala na dostosowanie wartości już w momencie tworzenia instancji.
+- Konstruktor **kopiujący** tworzy nowy obiekt jako dokładną kopię innego obiektu tej samej klasy, co pozwala na duplikowanie obiektów.
+- Konstruktor **przenoszący** przyjmuje obiekt jako argument i "przenosi" jego dane do nowego obiektu, co jest bardziej efektywne niż kopiowanie, szczególnie w przypadku zasobów dynamicznych.
 
 Przykład różnych konstruktorów:
 
@@ -88,9 +88,11 @@ public:
 
 Klasy w C++ mają trzy podstawowe poziomy dostępu do swoich składników (pól i metod):
 
-- `public`: Składniki deklarowane jako publiczne są dostępne zarówno z wewnątrz klasy, jak i z zewnątrz. To jest najbardziej otwarty poziom dostępu.
-- `private`: Składniki deklarowane jako prywatne są dostępne tylko wewnątrz klasy. Jest to sposób na ukrycie wewnętrznych danych i operacji klasy przed światem zewnętrznym.
-- `protected`: Składniki deklarowane jako chronione są dostępne wewnątrz klasy oraz dla klas pochodnych (dziedziczenie).
+| Modyfikator | Opis                                                                                          |
+|-------------|------------------------------------------------------------------------------------------------------|
+| `public`    | Składniki deklarowane jako publiczne są dostępne zarówno z wewnątrz klasy, jak i z zewnątrz. To jest najbardziej otwarty poziom dostępu. |
+| `private`   | Składniki deklarowane jako prywatne są dostępne tylko wewnątrz klasy. Jest to sposób na ukrycie wewnętrznych danych i operacji klasy przed światem zewnętrznym. |
+| `protected` | Składniki deklarowane jako chronione są dostępne wewnątrz klasy oraz dla klas pochodnych (dziedziczenie). |
 
 Warto zaznaczyć, że jeśli nie określimy poziomu dostępu, domyślnie składniki klasy są prywatne.
 
