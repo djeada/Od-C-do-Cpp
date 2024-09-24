@@ -1,3 +1,7 @@
+# Liczby losowe i generatory liczb losowych
+
+W języku C++ liczby losowe generuje się za pomocą standardowej biblioteki `<random>`. Proces losowania zaczyna się od utworzenia generatora liczb pseudolosowych, np. `std::mt19937`, który bazuje na algorytmie Mersenne Twister. Aby uzyskać bardziej losowe wyniki, generator inicjalizuje się za pomocą unikalnej wartości, zwanej "ziarnem" (ang. *seed*), co można zrobić np. poprzez `std::random_device`. Następnie używa się odpowiednich dystrybucji, takich jak `std::uniform_int_distribution` (dla liczb całkowitych z równomiernym rozkładem) lub `std::uniform_real_distribution` (dla liczb zmiennoprzecinkowych), aby wygenerować liczby z określonego zakresu. Dzięki tej bibliotece losowanie w C++ jest bardziej elastyczne i daje kontrolę nad różnymi aspektami generowania liczb losowych, w tym nad zakresem i typem wartości.
+
 ## Liczby losowe
 
 Liczby losowe to wartości numeryczne generowane w taki sposób, że nie da się przewidzieć ich kolejności czy wartości bez znajomości wewnętrznych mechanizmów generowania. W kontekście informatyki i matematyki, liczby te są niezbędne w wielu zastosowaniach, takich jak symulacje komputerowe, kryptografia, statystyka czy gry losowe.
