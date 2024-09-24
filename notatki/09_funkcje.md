@@ -6,9 +6,9 @@ Funkcje są jednym z kluczowych narzędzi w programowaniu, które pozwalają na 
 
 Podstawowe składniki funkcji to:
 
-1. **Typ zwracanej wartości**: Określa, jaki typ danych zostanie zwrócony przez funkcję.
-2. **Nazwa funkcji**: Umożliwia jej identyfikację w kodzie.
-3. **Lista argumentów**: Są to wartości przekazywane do funkcji podczas jej wywołania.
+- **Typ zwracanej wartości** definiuje, jaki typ danych funkcja zwróci po zakończeniu swojego działania, co ma wpływ na sposób wykorzystania wyniku.
+- **Nazwa funkcji** służy do jej identyfikacji w kodzie, umożliwiając odwoływanie się do niej w różnych częściach programu.
+- **Lista argumentów** to wartości przekazywane do funkcji w momencie jej wywołania, które funkcja wykorzystuje do wykonania określonych operacji.
 
 Struktura funkcji:
 
