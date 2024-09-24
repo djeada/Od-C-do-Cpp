@@ -179,9 +179,9 @@ Prawidłowe zarządzanie zasobami, takimi jak pliki, jest kluczowe dla stabilno�
 
 Jeśli plik nie zostanie zamknięty prawidłowo, może prowadzić to do różnych problemów:
 
-1. **Strata danych**: Niezamknięty plik może nie zapisać wszystkich danych.
-2. **Blokada zasobów**: Inne programy mogą nie mieć dostępu do pliku, jeśli jest nadal otwarty przez inny program.
-3. **Wycieki pamięci**: System operacyjny może rezerwować zasoby dla otwartych plików.
+1. Niezamknięty plik może prowadzić do **straty danych**, ponieważ nie wszystkie dane mogą zostać zapisane.
+2. Plik otwarty przez jeden program może powodować **blokadę zasobów**, uniemożliwiając dostęp do niego innym programom.
+3. System operacyjny może rezerwować zasoby dla otwartych plików, co może skutkować **wyciekami pamięci** w przypadku niezamknięcia pliku.
 
 #### RAII w C++
 
@@ -237,8 +237,7 @@ int main() {
 
 Kod ten definiuje klasę `File`, która zarządza otwieraniem i zamykaniem plików w C++. W przypadku tej klasy RAII jest realizowane w następujący sposób:
 
-1. **Przejęcie zasobu w konstruktorze**: Plik jest otwierany w konstruktorze. Jeśli otwarcie się nie powiedzie, rzucany jest wyjątek, a konstruktor nie kończy się sukcesem, co oznacza, że destruktor nie zostanie wywołany.
-
-2. **Zwolnienie zasobu w destruktorze**: Destruktor zamyka plik, jeśli jest otwarty. Dzięki temu, niezależnie od tego, czy operacje na pliku zakończyły się sukcesem, czy też doszło do wyjątków, plik zostanie zamknięty, gdy obiekt `File` przestanie istnieć.
+1. **Przejęcie zasobu w konstruktorze** oznacza, że plik jest otwierany podczas tworzenia obiektu. Jeśli otwarcie się nie powiedzie, zostaje rzucony wyjątek, a konstruktor nie kończy się sukcesem, co zapobiega wywołaniu destruktora.
+2. **Zwolnienie zasobu w destruktorze** gwarantuje, że plik zostanie zamknięty, jeśli jest otwarty, niezależnie od tego, czy operacje na pliku zakończyły się sukcesem, czy wystąpił wyjątek, dzięki czemu plik jest automatycznie zwalniany, gdy obiekt `File` przestaje istnieć.
 
 Przykład ten pokazuje, jak za pomocą RAII można zarządzać zasobami (w tym przypadku plikami) w bezpieczny i efektywny sposób, minimalizując ryzyko wycieków zasobów.
