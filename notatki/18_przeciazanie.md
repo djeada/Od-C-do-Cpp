@@ -198,10 +198,12 @@ int main() {
 
 Nie wszystkie operatory mogą być przeciążane. Do operatorów niepodlegających przeciążeniu należą:
 
-- **Operator zakresu** `::`
-- **Operator członkowski** `.`
-- **Operator rzutowania typu** `sizeof`
-- **Operator warunkowy** `?:`
+| Nazwa                    | Operator | Opis                                                                 |
+|--------------------------|----------|----------------------------------------------------------------------|
+| **Operator zakresu**      | `::`     | Używany do uzyskania dostępu do członków klasy lub przestrzeni nazw.  |
+| **Operator członkowski**  | `.`      | Używany do uzyskania dostępu do elementów obiektu.                    |
+| **Operator rzutowania typu** | `sizeof` | Zwraca rozmiar typu lub obiektu w bajtach.                           |
+| **Operator warunkowy**    | `?:`     | Używany do wyrażenia warunkowego (skrócona forma instrukcji `if`).    |
 
 Ponadto, nie można zmieniać liczby operandów ani priorytetów operatorów.
 
