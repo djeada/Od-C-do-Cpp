@@ -311,11 +311,13 @@ Iteratory w języku C++ to obiekty umożliwiające sekwencyjny dostęp do elemen
 
 #### Rodzaje iteratorów
 
-1. **Input Iterator**: Służy do odczytu danych z kontenera.
-2. **Output Iterator**: Służy do zapisu danych do kontenera.
-3. **Forward Iterator**: Łączy możliwości iteratorów input i output, może przemieszczać się tylko do przodu.
-4. **Bidirectional Iterator**: Umożliwia przemieszczanie się zarówno do przodu, jak i do tyłu.
-5. **Random Access Iterator**: Oferuje wszystkie możliwości Bidirectional Iterator oraz umożliwia dostęp do dowolnego elementu kontenera w stałym czasie.
+| Typ iteratora                | Opis                                                                                 |
+|------------------------------|---------------------------------------------------------------------------------------|
+| **Input Iterator**            | Służy do odczytu danych z kontenera.                                                  |
+| **Output Iterator**           | Służy do zapisu danych do kontenera.                                                  |
+| **Forward Iterator**          | Łączy możliwości iteratorów input i output, może przemieszczać się tylko do przodu.   |
+| **Bidirectional Iterator**    | Umożliwia przemieszczanie się zarówno do przodu, jak i do tyłu.                       |
+| **Random Access Iterator**    | Oferuje wszystkie możliwości Bidirectional Iterator oraz umożliwia dostęp do dowolnego elementu kontenera w stałym czasie. |
 
 #### Podstawowe operacje na iteratorach
 
@@ -363,15 +365,51 @@ int main() {
 
 Warto pamiętać, że po niektórych operacjach, takich jak insert czy erase, używane wcześniej iteratory mogą stać się nieaktualne i ich dalsze użycie może prowadzić do niezdefiniowanego zachowania programu.
 
-### Algorytmy
+### Algorytmy w Standardowej Bibliotece C++ (STL)
 
-Biblioteka `algorithm` dostarcza bogaty zestaw funkcji, które służą do manipulacji i analizy kolekcji. Oto kilka przykładów najbardziej popularnych algorytmów z tej biblioteki:
+Biblioteka `algorithm` w standardowej bibliotece C++ (STL) dostarcza bogaty zestaw funkcji szablonowych, które służą do manipulacji i analizy danych przechowywanych w kontenerach. Algorytmy te są zaprojektowane w sposób generyczny, co oznacza, że mogą działać z różnymi typami danych i kontenerami, pod warunkiem spełnienia określonych wymagań. W tej sekcji przyjrzymy się kilku kluczowym algorytmom, ich implementacji, zastosowaniu oraz analizie matematycznej wydajności.
 
-#### sort()
+#### Wprowadzenie do Algorytmów STL
 
-Funkcja `sort()` służy do sortowania elementów kolekcji. Jej podstawowe użycie polega na przekazaniu dwóch iteratorów: początkowego i końcowego, określających zakres sortowania.
+Algorytmy w STL są zaimplementowane jako funkcje szablonowe, co pozwala na ich użycie z różnymi typami danych i kontenerami. Działają one na zakresach określonych przez iteratory, co zapewnia elastyczność i niezależność od konkretnego typu kontenera. Dzięki temu możliwe jest pisanie kodu, który jest jednocześnie uniwersalny i wydajny.
 
-```c++
+#### Klasyfikacja Algorytmów
+
+Algorytmy STL można podzielić na kilka kategorii:
+
+| Kategoria algorytmów                    | Przykłady                                                                 |
+|-----------------------------------------|---------------------------------------------------------------------------|
+| **Algorytmy modyfikujące**              | `std::copy`, `std::fill`, `std::transform`                                |
+| **Algorytmy przeszukujące**             | `std::find`, `std::count`, `std::search`                                  |
+| **Algorytmy sortujące i porządkujące**  | `std::sort`, `std::stable_sort`, `std::partial_sort`                      |
+| **Algorytmy numeryczne**                | `std::accumulate`, `std::inner_product`, `std::partial_sum`               |
+| **Algorytmy usuwające**                 | `std::remove`, `std::unique`, `std::remove_if`                            |
+
+#### `std::sort()`
+
+Funkcja `std::sort()` służy do sortowania elementów w określonym zakresie. Jest to jeden z najczęściej używanych algorytmów w STL. Wykorzystuje algorytm sortowania introspektywnego (introsort), który łączy zalety sortowania szybkiego (quick sort), sortowania kopcowego (heap sort) i sortowania przez wstawianie (insertion sort).
+
+**Prototyp:**
+
+```cpp
+template< class RandomIt >
+void sort( RandomIt first, RandomIt last );
+
+template< class RandomIt, class Compare >
+void sort( RandomIt first, RandomIt last, Compare comp );
+```
+
+- `RandomIt`: Typ iteratora losowego dostępu.
+- `Compare`: Funkcja lub funktor służący do porównywania elementów.
+
+**Wymagania:**
+
+- Elementy muszą być porównywalne za pomocą operatora `<` lub funkcji `Compare`.
+- Iteratory muszą być iteratorami losowego dostępu (np. z `std::vector`, `std::array`).
+
+**Przykład Użycia:**
+
+```cpp
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -380,14 +418,20 @@ int main() {
     std::vector<int> wektor{8, 3, 5, 1, 2, 4, 6, 7};
     auto kopia = wektor;
 
-    std::sort(wektor.begin(), wektor.begin() + 3); // posortowane zostaną pierwsze 3 elementy
-    std::sort(kopia.begin(), kopia.end());         // posortowane zostaną wszystkie elementy
+    // Sortowanie pierwszych trzech elementów
+    std::sort(wektor.begin(), wektor.begin() + 3);
 
+    // Sortowanie całego wektora
+    std::sort(kopia.begin(), kopia.end());
+
+    // Wyświetlanie wyników
+    std::cout << "Wektor po częściowym sortowaniu: ";
     for (const auto& val : wektor) {
         std::cout << val << " ";
     }
-    std::cout << std::endl;
+    std::cout << "\n";
 
+    std::cout << "Wektor po pełnym sortowaniu: ";
     for (const auto& val : kopia) {
         std::cout << val << " ";
     }
@@ -396,11 +440,46 @@ int main() {
 }
 ```
 
-#### find()
+**Analiza Matematyczna:**
 
-Algorytm `find()` przeszukuje kolekcję w poszukiwaniu określonego elementu i zwraca iterator wskazujący na pierwsze wystąpienie tego elementu.
+- **Złożoność czasowa:**
+  - Średnia: O(n log n)
+  - Najgorszy przypadek: O(n log n) - dzięki zastosowaniu introsortu, który przełącza się na sortowanie kopcowe w przypadku złego podziału danych.
+- **Złożoność pamięciowa:**
+  - O(log n) dodatkowej pamięci na stos rekurencji.
 
-```c++
+**Dostosowywanie Kryterium Sortowania:**
+
+Możemy dostarczyć własną funkcję porównującą:
+
+```cpp
+std::sort(wektor.begin(), wektor.end(), [](int a, int b) {
+    return a > b; // Sortowanie malejące
+});
+```
+
+**Uwagi:**
+
+- **Stabilność:** `std::sort()` nie jest stabilny, co oznacza, że kolejność równych elementów może ulec zmianie. Jeśli wymagana jest stabilność, należy użyć `std::stable_sort()`.
+- **Wymagania na typy:** Typ elementów musi być zgodny z wymaganiami funkcji porównującej.
+
+#### `std::find()`
+
+Algorytm `std::find()` przeszukuje zakres w poszukiwaniu pierwszego wystąpienia określonej wartości. Zwraca iterator wskazujący na znaleziony element lub na koniec zakresu, jeśli element nie został znaleziony.
+
+**Prototyp:**
+
+```cpp
+template< class InputIt, class T >
+InputIt find( InputIt first, InputIt last, const T& value );
+```
+
+- `InputIt`: Typ iteratora wejściowego.
+- `T`: Typ poszukiwanej wartości.
+
+**Przykład Użycia:**
+
+```cpp
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -411,27 +490,54 @@ int main() {
     auto it = std::find(wektor.begin(), wektor.end(), 3);
 
     if (it != wektor.end())
-        std::cout << "Znaleziono element o wartości 3 na pozycji " << std::distance(wektor.begin(), it) << std::endl;
+        std::cout << "Znaleziono element o wartości 3 na pozycji "
+                  << std::distance(wektor.begin(), it) << "\n";
     else
-        std::cout << "Nie znaleziono elementu o wartości 3" << std::endl;
+        std::cout << "Nie znaleziono elementu o wartości 3\n";
 
     return 0;
 }
 ```
 
-#### for_each()
+**Analiza Matematyczna:**
 
-Funkcja `for_each()` pozwala na wykonanie określonej operacji na każdym elemencie kolekcji. Operacja ta jest określana za pomocą funkcji lub wyrażenia lambda.
+- **Złożoność czasowa:** O(n), gdzie n to liczba elementów w zakresie.
+- **Złożoność pamięciowa:** O(1) - algorytm nie używa dodatkowej pamięci.
 
-```c++
+**Uwagi:**
+
+- Algorytm przeszukuje liniowo zakres od `first` do `last`.
+- Możemy użyć `std::find_if()` lub `std::find_if_not()` do przeszukiwania z warunkiem predykatu.
+
+#### `std::for_each()`
+
+Funkcja `std::for_each()` stosuje podaną funkcję lub funktor do każdego elementu w zakresie. Jest to alternatywa dla pętli `for` i pozwala na bardziej funkcyjne podejście do iteracji.
+
+**Prototyp:**
+
+```cpp
+template< class InputIt, class UnaryFunction >
+UnaryFunction for_each( InputIt first, InputIt last, UnaryFunction f );
+```
+
+- `InputIt`: Typ iteratora wejściowego.
+- `UnaryFunction`: Typ funkcji lub funktora akceptującego element typu dereferowanego iteratora.
+
+**Przykład Użycia:**
+
+```cpp
 #include <iostream>
 #include <vector>
 #include <algorithm>
 
 int main() {
     std::vector<int> wektor{8, 3, 5, 1, 2, 4, 6, 7};
+
+    // Modyfikacja każdego elementu przez jego podwojenie
     std::for_each(wektor.begin(), wektor.end(), [](int &x) { x *= 2; });
 
+    // Wyświetlanie wyników
+    std::cout << "Wektor po modyfikacji: ";
     for (const auto& val : wektor) {
         std::cout << val << " ";
     }
@@ -440,23 +546,160 @@ int main() {
 }
 ```
 
-#### count_if()
+**Analiza Matematyczna:**
 
-Algorytm `count_if()` pozwala zliczyć, ile razy spełniony jest określony warunek w kolekcji.
+- **Złożoność czasowa:** O(n) - funkcja jest wywoływana dokładnie n razy.
+- **Złożoność pamięciowa:** O(1) - brak dodatkowej pamięci poza ewentualnymi zmiennymi w funkcji.
 
-```c++
+**Uwagi:**
+
+- Funkcja `UnaryFunction` jest przekazywana przez wartość, więc jeśli potrzebujemy zachować stan między wywołaniami, należy użyć referencji lub obiektu zewnętrznego.
+- Zwracana jest kopia funkcji `UnaryFunction` po ostatnim wywołaniu, co może być użyte do akumulacji wyników.
+
+#### `std::count_if()`
+
+Algorytm `std::count_if()` zlicza liczbę elementów w zakresie, dla których predykat jest spełniony.
+
+**Prototyp:**
+
+```cpp
+template< class InputIt, class UnaryPredicate >
+typename iterator_traits<InputIt>::difference_type
+count_if( InputIt first, InputIt last, UnaryPredicate p );
+```
+
+- `InputIt`: Typ iteratora wejściowego.
+- `UnaryPredicate`: Funkcja lub funktor zwracający wartość logiczną.
+
+**Przykład Użycia:**
+
+```cpp
 #include <iostream>
 #include <vector>
 #include <algorithm>
 
 int main() {
     std::vector<int> wektor{8, 3, 5, 1, 2, 4, 6, 7};
+
+    // Zliczanie parzystych elementów
     int parzyste = std::count_if(wektor.begin(), wektor.end(), [](int x) { return x % 2 == 0; });
 
-    std::cout << "Liczba parzystych elementów: " << parzyste << std::endl;
+    std::cout << "Liczba parzystych elementów: " << parzyste << "\n";
 
     return 0;
 }
 ```
 
-Powyższy kod wykorzystuje `count_if()` do zliczenia parzystych elementów w wektorze. Algorytmy w STL są potężnym narzędziem umożliwiającym efektywne i wygodne operacje na kontenerach, minimalizując ilość kodu potrzebnego do wykonania złożonych zadań.
+**Analiza Matematyczna:**
+
+- **Złożoność czasowa:** O(n) - predykat jest wywoływany dokładnie n razy.
+- **Złożoność pamięciowa:** O(1)
+
+**Uwagi:**
+
+- Jeśli chcemy zliczyć wystąpienia konkretnej wartości, możemy użyć `std::count()`.
+
+#### Inne Ważne Algorytmy
+
+##### `std::accumulate()`
+
+Służy do obliczenia sumy wartości w zakresie, z opcjonalnym początkowym akumulatorem i funkcją operacji.
+
+**Prototyp:**
+
+```cpp
+template< class InputIt, class T >
+T accumulate( InputIt first, InputIt last, T init );
+
+template< class InputIt, class T, class BinaryOperation >
+T accumulate( InputIt first, InputIt last, T init, BinaryOperation op );
+```
+
+**Przykład:**
+
+```cpp
+int suma = std::accumulate(wektor.begin(), wektor.end(), 0);
+```
+
+##### `std::transform()`
+
+Stosuje funkcję do każdego elementu w zakresie i zapisuje wynik w innym zakresie.
+
+**Prototyp:**
+
+```cpp
+template< class InputIt, class OutputIt, class UnaryOperation >
+OutputIt transform( InputIt first1, InputIt last1, OutputIt d_first, UnaryOperation unary_op );
+```
+
+**Przykład:**
+
+```cpp
+std::vector<int> wyniki(wektor.size());
+std::transform(wektor.begin(), wektor.end(), wyniki.begin(), [](int x) { return x * x; });
+```
+
+#### Kompatybilność z Iteratorami
+
+Algorytmy STL są zaprojektowane tak, aby działać z różnymi kategoriami iteratorów:
+
+| Kategoria          | Przykłady Algorytmów               |
+|--------------------|------------------------------------|
+| Iteratory wejściowe  | `std::find`, `std::count_if`       |
+| Iteratory wyjściowe  | `std::copy`, `std::fill`           |
+| Iteratory jedno kierunkowe | `std::for_each`, `std::remove`      |
+| Iteratory dwukierunkowe | `std::reverse`, `std::rotate`     |
+| Iteratory losowego dostępu | `std::sort`, `std::nth_element` |
+
+#### Zastosowanie Algorytmów w Praktyce
+
+Algorytmy STL pozwalają na pisanie kodu o wysokim poziomie abstrakcji, co zwiększa czytelność i redukuje ryzyko błędów. Dzięki generyczności i wykorzystaniu szablonów, algorytmy te są niezwykle elastyczne i mogą być stosowane w szerokim zakresie zastosowań.
+
+**Przykład: Analiza Danych Finansowych**
+
+Załóżmy, że mamy wektor reprezentujący dzienne zmiany cen akcji i chcemy przeprowadzić analizę:
+
+```cpp
+std::vector<double> zmianyCen = { -0.5, 1.2, 0.3, -0.7, 0.8, -1.0, 0.6 };
+
+// Obliczenie sumarycznej zmiany cen
+double sumaZmian = std::accumulate(zmianyCen.begin(), zmianyCen.end(), 0.0);
+
+// Zliczenie dni ze wzrostem cen
+int dniWzrostu = std::count_if(zmianyCen.begin(), zmianyCen.end(), [](double x) { return x > 0; });
+
+// Znalezienie największego spadku
+auto it = std::min_element(zmianyCen.begin(), zmianyCen.end());
+
+// Wyświetlenie wyników
+std::cout << "Sumaryczna zmiana cen: " << sumaZmian << "\n";
+std::cout << "Liczba dni ze wzrostem cen: " << dniWzrostu << "\n";
+std::cout << "Największy spadek: " << *it << "\n";
+```
+
+#### Optymalizacja za Pomocą Algorytmów
+
+Korzystanie z algorytmów STL może prowadzić do bardziej wydajnego kodu, ponieważ są one zazwyczaj dobrze zoptymalizowane i wykorzystują najlepsze praktyki implementacyjne. Ponadto, kompilatory mogą dokonywać dodatkowych optymalizacji, gdy używane są standardowe algorytmy.
+
+**Przykład: Porównanie z Pętlą `for`**
+
+Rozważmy zliczanie elementów spełniających określony warunek:
+
+**Tradycyjna pętla `for`:**
+
+```cpp
+int licznik = 0;
+for (size_t i = 0; i < wektor.size(); ++i) {
+  if (wektor[i] % 2 == 0) {
+      ++licznik;
+  }
+}
+```
+
+**Użycie `std::count_if()`:**
+
+```cpp
+int licznik = std::count_if(wektor.begin(), wektor.end(), [](int x) { return x % 2 == 0; });
+```
+
+Korzystanie z `std::count_if()` nie tylko skraca kod, ale również zwiększa jego czytelność i potencjalnie wydajność.
