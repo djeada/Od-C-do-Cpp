@@ -205,10 +205,10 @@ int main() {
 
 #### Na co uważać przy zagnieżdżonych pętlach
 
-1. **Złożoność obliczeniowa**: Zagnieżdżone pętle mogą prowadzić do dużej liczby iteracji, co może wpłynąć na wydajność programu, zwłaszcza przy dużych wartościach zmiennych kontrolnych.
-2. **Czytelność kodu**: Zagnieżdżone pętle mogą szybko stać się trudne do zrozumienia. Warto zadbać o odpowiednie komentarze i nazewnictwo zmiennych.
-3. **Unikanie niekończących się pętli**: Należy upewnić się, że warunki zakończenia każdej pętli są poprawnie zdefiniowane, aby uniknąć nieskończonych pętli.
-4. **Indeksowanie tablic**: Przy pracy z tablicami wielowymiarowymi, należy upewnić się, że indeksy są poprawnie zdefiniowane, aby uniknąć błędów wykraczania poza zakres tablicy.
+- Zagnieżdżone pętle mogą prowadzić do **dużej liczby iteracji**, co wpływa na złożoność obliczeniową programu, zwłaszcza w przypadku dużych wartości zmiennych kontrolnych.
+- **Czytelność kodu** może ulec pogorszeniu, gdy używane są zagnieżdżone pętle, dlatego istotne jest, aby zadbać o odpowiednie komentarze oraz logiczne nazewnictwo zmiennych.
+- Aby uniknąć **niekończących się pętli**, należy zwrócić szczególną uwagę na poprawne zdefiniowanie warunków zakończenia dla każdej z pętli.
+- W przypadku pracy z tablicami wielowymiarowymi, istotne jest **poprawne indeksowanie tablic**, aby uniknąć błędów związanych z wykraczaniem poza zakres tablicy.
 
 ### Continue
 
