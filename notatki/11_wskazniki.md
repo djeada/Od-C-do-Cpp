@@ -179,7 +179,7 @@ int main() {
 
 Wskaźniki na funkcje w języku C++ pozwalają na przechowywanie adresów funkcji i ich późniejsze wywoływanie. Są one szczególnie przydatne w implementacji callbacków, dynamicznego wyboru funkcji, oraz w programowaniu zorientowanym na zdarzenia.
 
-### Deklaracja wskaźnika na funkcję
+#### Deklaracja wskaźnika na funkcję
 
 Deklaracja wskaźnika na funkcję wymaga określenia typu zwracanego przez funkcję oraz typów jej parametrów. Wskaźnik na funkcję różni się od wskaźnika na zmienną tym, że po nazwie wskaźnika umieszczamy nawiasy oraz wskazanie na typ funkcji.
 
@@ -189,7 +189,7 @@ int (*ptrFunc)(int, int);
 
 Powyższa deklaracja oznacza wskaźnik na funkcję zwracającą `int` i przyjmującą dwa argumenty typu `int`.
 
-### Inicjalizacja wskaźnika na funkcję
+#### Inicjalizacja wskaźnika na funkcję
 
 Wskaźnik na funkcję inicjalizuje się przypisując mu adres funkcji za pomocą jej nazwy.
 
@@ -207,7 +207,7 @@ Można również pominąć operator `&` podczas przypisywania, ponieważ nazwa f
 int (*ptrFunc)(int, int) = add;
 ```
 
-### Wywoływanie funkcji za pomocą wskaźnika
+#### Wywoływanie funkcji za pomocą wskaźnika
 
 Aby wywołać funkcję za pomocą wskaźnika, używamy operatora dereferencji `*` lub bezpośrednio nazwy wskaźnika.
 
@@ -216,7 +216,7 @@ int result = (*ptrFunc)(5, 3); // Wywołanie przez dereferencję
 int result2 = ptrFunc(5, 3);   // Wywołanie bezpośrednie
 ```
 
-### Przykład
+#### Przykład
 
 Poniżej znajduje się kompletny przykład użycia wskaźników na funkcje w C++.
 
