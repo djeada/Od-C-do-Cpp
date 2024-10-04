@@ -309,178 +309,6 @@ std::vector<double> vecDouble;      // Wektor liczb zmiennoprzecinkowych
 std::vector<std::string> vecString; // Wektor łańcuchów znaków
 ```
 
-**Operacje na `std::vector`:**
-
-I. **Dodawanie elementów:**
-
-```cpp
-vecInt.push_back(10);
-vecInt.push_back(20);
-vecInt.push_back(30);
-```
-
-II. **Dostęp do elementów:**
-
-```cpp
-int firstElement = vecInt[0];          // Dostęp za pomocą operatora []
-int secondElement = vecInt.at(1);      // Dostęp z kontrolą zakresu
-```
-
-III. **Iterowanie po elementach:**
-
-```cpp
-for (size_t i = 0; i < vecInt.size(); ++i) {
-  std::cout << vecInt[i] << " ";
-}
-
-for (auto it = vecInt.begin(); it != vecInt.end(); ++it) {
-  std::cout << *it << " ";
-}
-
-for (const auto& value : vecInt) {
-  std::cout << value << " ";
-}
-```
-
-IV. **Modyfikacja elementów:**
-
-```cpp
-vecInt[0] = 100;
-```
-
-**Implementacja generyczna:**
-
-Dzięki temu, że `std::vector` jest szablonem, możemy używać go z dowolnym typem, który jest kopiowalny lub przenośny. Oznacza to, że możemy przechowywać zarówno typy podstawowe, jak i złożone obiekty użytkownika.
-
-**Przykład z typem użytkownika:**
-
-```cpp
-class Point {
-public:
-    int x, y;
-    Point(int x, int y) : x(x), y(y) {}
-};
-
-std::vector<Point> points;
-points.emplace_back(1, 2);
-points.emplace_back(3, 4);
-```
-
-**Analiza matematyczna wydajności:**
-
-Operacje na `std::vector` mają określone złożoności czasowe:
-
-| Operacja                                | Złożoność           | Wyjaśnienie                                                                 |
-|-----------------------------------------|---------------------|------------------------------------------------------------------------------|
-| **Dostęp do elementów**                 | $O(1)$                | Dzięki ciągłemu układowi pamięci, dostęp do dowolnego elementu jest bezpośredni. |
-| **Dodawanie elementu na końcu**         | Amortyzowane $O(1)$   | Dodanie elementu jest szybkie, chyba że konieczna jest realokacja pamięci.   |
-| **Wstawianie/usuwanie elementów w środku** | $O(n)$                | Wymaga przesunięcia pozostałych elementów, co zwiększa czas operacji.         |
-
-**Zarządzanie pamięcią:**
-
-`std::vector` zarządza pamięcią dynamicznie. Gdy wektor osiąga swoją maksymalną pojemność, automatycznie alokuje większy blok pamięci i kopiuje istniejące elementy. Domyślnie pojemność jest podwajana, co zapewnia amortyzowaną złożoność O(1) dla operacji dodawania na końcu.
-
-### Przykład: Algorytm `std::sort`
-
-Algorytm `std::sort` jest funkcją szablonową, która sortuje elementy w zakresie określonym przez dwa iteratory.
-
-**Definicja:**
-
-```cpp
-template <class RandomIt>
-void sort(RandomIt first, RandomIt last);
-```
-
-**Wymagania:**
-
-- Typ elementów musi być porównywalny za pomocą operatora `<`.
-- Iteratory muszą być iteratorami losowego dostępu (np. z `std::vector` lub tablicy).
-
-**Przykład użycia:**
-
-```cpp
-std::vector<int> data = {5, 2, 9, 1, 5, 6};
-std::sort(data.begin(), data.end());
-```
-
-**Dostosowywanie kryterium sortowania:**
-
-Możemy dostarczyć własną funkcję porównującą:
-
-```cpp
-std::sort(data.begin(), data.end(), [](int a, int b) {
-    return a > b; // Sortowanie malejące
-});
-```
-
-**Złożoność czasowa:**
-
-- Średnia: $O(nlogn)$
-- Najgorszy przypadek: $O(nlogn)$ - w implementacji wykorzystującej zabezpieczenia przed złym rozkładem danych.
-
-### Przykład: Kontener `std::map`
-
-`std::map` jest kontenerem asocjacyjnym, który przechowuje pary klucz-wartość w uporządkowany sposób.
-
-**Definicja:**
-
-```cpp
-template <
-    class Key,
-    class T,
-    class Compare = std::less<Key>,
-    class Allocator = std::allocator<std::pair<const Key, T>>
->
-class map {
-    // Implementacja wewnętrzna
-};
-```
-
-**Parametry szablonu:**
-
-| Parametr           | Opis               | Wyjaśnienie                                                                 |
-|--------------------|--------------------|------------------------------------------------------------------------------|
-| `class Key`        | Typ klucza         | Określa typ danych, który będzie używany jako klucz w kontenerze.            |
-| `class T`          | Typ wartości       | Reprezentuje typ danych przechowywanych jako wartości w kontenerze.          |
-| `class Compare`    | Funkcja porównująca| Funktor lub funkcja, która decyduje o sposobie porównywania kluczy.          |
-| `class Allocator`  | Alokator pamięci   | Definiuje sposób alokacji i zarządzania pamięcią dla elementów kontenera.    |
-
-**Przykład użycia:**
-
-```cpp
-std::map<std::string, int> wordCounts;
-wordCounts["apple"] = 3;
-wordCounts["banana"] = 5;
-wordCounts["orange"] = 2;
-```
-
-**Operacje:**
-
-I. **Wstawianie elementów:**
-
-```cpp
-wordCounts.insert({"grape", 4});
-```
-
-II. **Dostęp do wartości:**
-
-```cpp
-int count = wordCounts["banana"]; // count == 5
-```
-
-III. **Iterowanie:**
-
-```cpp
-for (const auto& pair : wordCounts) {
-  std::cout << pair.first << ": " << pair.second << "\n";
-}
-```
-
-**Właściwości:**
-
-- Elementy są przechowywane w uporządkowany sposób według klucza.
-- Wyszukiwanie, wstawianie i usuwanie mają złożoność O(log n) dzięki wewnętrznej implementacji drzewa czerwono-czarnego.
-
 ### Biblioteka Boost
 
 Boost to zestaw bibliotek C++ rozszerzających funkcjonalność standardowej biblioteki. Wiele z nich jest proponowanych do włączenia do standardu C++. Szablony są intensywnie wykorzystywane w celu zapewnienia elastyczności i wydajności.
@@ -539,25 +367,17 @@ vecB << 1,
 Eigen::Matrix<float, 3, 1> result = matA * vecB;
 ```
 
-**Właściwości:**
+Właściwości:
 
 - **Statyczne rozmiary** macierzy, gdy są znane w czasie kompilacji, pozwalają bibliotece Eigen na generowanie wysoce wydajnego kodu, co zwiększa efektywność obliczeń.
 - **Szablony wyrażeniowe** (*Expression Templates*) umożliwiają optymalizację obliczeń, minimalizując tworzenie niepotrzebnych kopii danych, co poprawia wydajność działania programu.
 
-**Analiza wydajności:**
+Analiza wydajności:
 
 - **Unikanie alokacji pamięci** jest możliwe dzięki zastosowaniu szablonów i mechanizmu inlining, co pozwala bibliotece Eigen na wykonywanie operacji bez potrzeby dodatkowych alokacji pamięci, co zwiększa wydajność.
 - **Wektorowe instrukcje procesora** są automatycznie wykorzystywane przez Eigen, dzięki wsparciu dla instrukcji SIMD (Single Instruction, Multiple Data), jeśli są one dostępne na danej platformie, co przyspiesza operacje matematyczne.
 
-### Wpływ Szablonów na Projektowanie Bibliotek
-
-Szablony umożliwiają tworzenie bibliotek, które są zarówno elastyczne, jak i wydajne. Oto kilka kluczowych aspektów:
-
-- **Polimorfizm statyczny** w szablonach odbywa się w czasie kompilacji, w przeciwieństwie do polimorfizmu dynamicznego (realizowanego przez klasy bazowe i wskaźniki), co eliminuje narzut związany z wykonywaniem w czasie działania programu.
-- **Silne typowanie** sprawia, że błędy typów są wykrywane w czasie kompilacji, co zwiększa bezpieczeństwo kodu i minimalizuje ryzyko błędów w czasie działania.
-- **Optymalizacje kompilatora** są możliwe dzięki generowaniu specjalizowanego kodu dla konkretnych typów, co umożliwia kompilatorowi stosowanie agresywnych optymalizacji w celu poprawy wydajności.
-
-### Koncepty (C++20)
+## Koncepty (C++20)
 
 Koncepty wprowadzają możliwość definiowania wymagań dla parametrów szablonu, co ułatwia tworzenie bardziej czytelnego i bezpiecznego kodu.
 
@@ -577,7 +397,6 @@ T multiply(T a, T b) {
 
 - **Poprawa czytelności błędów kompilacji** wynika z zastosowania konceptów, które umożliwiają kompilatorowi dostarczenie bardziej precyzyjnych i zrozumiałych komunikatów o błędach, co ułatwia debugowanie.
 - **Dokumentacja wymagań** jest naturalnym efektem użycia konceptów, ponieważ jasno określają one, jakie wymagania musi spełniać typ parametrów szablonu, co poprawia zrozumiałość i użyteczność kodu.
-
 
 ## Zaawansowane Techniki z Szablonami
 
@@ -641,7 +460,7 @@ public:
 };
 ```
 
-**Zastosowania:**
+Zastosowania:
 
 - **Statyczny polimorfizm** pozwala na osiągnięcie polimorfizmu w czasie kompilacji, eliminując narzut związany z dynamicznym wiązaniem, co zwiększa wydajność.
 - **Klasy mixin** umożliwiają wstrzykiwanie dodatkowej funkcjonalności do klasy pochodnej, co ułatwia tworzenie modularnych i wielokrotnego użytku komponentów.
