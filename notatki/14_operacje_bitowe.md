@@ -258,11 +258,11 @@ Wynik przesunięcia: 128
 
 Operacje bitowe są niezbędne w sytuacjach, gdzie trzeba zarządzać pojedynczymi bitami w liczbach całkowitych, na przykład podczas obsługi flag, rejestrów sprzętowych czy protokołów komunikacyjnych.
 
-**Ustawianie, czyszczenie i przełączanie pojedynczych bitów:**
-
-- `value |= (1 << n);` – ustawia bit na pozycji `n`.
-- `value &= ~(1 << n);` – zeruje bit na pozycji `n`.
-- `value ^= (1 << n);` – zmienia stan bitu na pozycji `n` na przeciwny.
+| Operacja                        | Opis                                                   |
+|----------------------------------|--------------------------------------------------------|
+| `value \|= (1 << n);`            | Ustawia bit na pozycji `n`.                            |
+| `value &= ~(1 << n);`            | Zeruje bit na pozycji `n`.                             |
+| `value ^= (1 << n);`             | Zmienia stan bitu na pozycji `n` na przeciwny.         |
 
 **Przykład:**
 
@@ -295,8 +295,6 @@ int main() {
     return 0;
 }
 ```
-
-**Analiza:**
 
 - `status_register` reprezentuje 8-bitowy rejestr statusu.
 - Operacje bitowe pozwalają na manipulację poszczególnymi flagami bez wpływu na pozostałe bity.
@@ -338,8 +336,6 @@ int main() {
 }
 ```
 
-**Analiza:**
-
 - Suma kontrolna jest obliczana poprzez zastosowanie operacji XOR na każdym bajcie danych.
 - Operacja XOR ma właściwość, że jeśli ten sam bajt zostanie użyty dwa razy, wynik XOR powróci do poprzedniej wartości, co jest użyteczne w detekcji błędów.
 
@@ -379,8 +375,6 @@ int main() {
     return 0;
 }
 ```
-
-**Analiza:**
 
 - Liczby będące potęgami dwóch mają tylko jeden bit ustawiony na `1` w reprezentacji binarnej.
 - Wyrażenie `x & (x - 1)` wyzeruje najmniej znaczący ustawiony bit. Jeśli wynik jest `0`, to znaczy, że liczba miała tylko jeden bit ustawiony, czyli jest potęgą dwóch.
@@ -442,8 +436,6 @@ int main() {
 }
 ```
 
-**Analiza:**
-
 - Funkcja haszująca używa operacji XOR oraz rotacji bitowych do efektywnego miksowania danych wejściowych.
 - Rotacja bitowa (`(hash << 5) | (hash >> (27))`) przesuwa bity w taki sposób, że bity wypadające z jednej strony są wprowadzane z drugiej, co zapobiega utracie informacji.
 
@@ -490,8 +482,6 @@ int main() {
     return 0;
 }
 ```
-
-**Analiza:**
 
 - Tablica `bitmap` pozwala na przechowywanie 1024 bitów w 128 bajtach.
 - Operacje bitowe pozwalają na efektywne zarządzanie poszczególnymi bitami w tablicy.
