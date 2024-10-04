@@ -245,7 +245,7 @@ int main() {
 }
 ```
 
-**Wyjaśnienie działania:***
+**Wyjaśnienie działania:**
 
 - **Konstruktor przenoszący** przejmuje zasoby od obiektu źródłowego, minimalizując kopiowanie.
 - **Operator przypisania przenoszącego** przenosi zasoby z obiektu źródłowego do docelowego.
