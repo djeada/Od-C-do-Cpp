@@ -194,45 +194,6 @@ auto sumInt = lambda(5, 3);           // Wynik: 8
 auto sumDouble = lambda(2.5, 1.5);    // Wynik: 4.0
 ```
 
-## Zaawansowane Techniki z Szablonami
-
-### Szablony o Zmiennej Liczbie Argumentów
-
-C++11 wprowadził **szablony o zmiennej liczbie argumentów** (ang. *variadic templates*), które pozwalają na definiowanie funkcji i klas przyjmujących dowolną liczbę parametrów.
-
-**Przykład:** Funkcja `print` wyświetlająca dowolną liczbę argumentów:
-
-```cpp
-template<typename... Args>
-void print(Args... args) {
-    (std::cout << ... << args) << std::endl;
-}
-
-print(1, 2, 3);                 // Wyświetla: 123
-print("Witaj, ", "świecie!");   // Wyświetla: Witaj, świecie!
-```
-
-**Wyjaśnienie:**
-
-- `template<typename... Args>`: Deklaruje szablon z pakietem typów `Args`.
-- `Args... args`: Pakiet argumentów funkcji.
-- `(std::cout << ... << args)`: Fold expression, dostępne od C++17, które składa wyrażenia binarne.
-
-### Wyrażenia `constexpr` w Szablonach
-
-`constexpr` pozwala na wykonywanie obliczeń w czasie kompilacji. Gdy używamy go w szablonach, możemy tworzyć funkcje, które zwracają stałe wartości zależne od parametrów szablonu.
-
-**Przykład:** Funkcja `square` obliczająca kwadrat liczby:
-
-```cpp
-template<typename T>
-constexpr T square(T x) {
-    return x * x;
-}
-
-constexpr int squareOfFive = square(5); // Wynik: 25
-```
-
 ## Metaprogramowanie Szablonowe
 
 Metaprogramowanie szablonowe to technika, która wykorzystuje szablony do wykonywania obliczeń na etapie kompilacji. Pozwala to na optymalizację kodu i wykonywanie skomplikowanych obliczeń bez narzutu w czasie wykonywania programu.
@@ -617,19 +578,44 @@ T multiply(T a, T b) {
 - **Poprawa czytelności błędów kompilacji** wynika z zastosowania konceptów, które umożliwiają kompilatorowi dostarczenie bardziej precyzyjnych i zrozumiałych komunikatów o błędach, co ułatwia debugowanie.
 - **Dokumentacja wymagań** jest naturalnym efektem użycia konceptów, ponieważ jasno określają one, jakie wymagania musi spełniać typ parametrów szablonu, co poprawia zrozumiałość i użyteczność kodu.
 
-### Zaawansowane Techniki z Użyciem Szablonów
 
-#### Metaprogramowanie Szablonowe
+## Zaawansowane Techniki z Szablonami
 
-Metaprogramowanie szablonowe pozwala na wykonywanie obliczeń w czasie kompilacji.
+### Szablony o Zmiennej Liczbie Argumentów
 
-**Przykład: Generowanie listy typów**
+C++11 wprowadził **szablony o zmiennej liczbie argumentów** (ang. *variadic templates*), które pozwalają na definiowanie funkcji i klas przyjmujących dowolną liczbę parametrów.
+
+**Przykład:** Funkcja `print` wyświetlająca dowolną liczbę argumentów:
 
 ```cpp
-template<typename... Types>
-struct TypeList {};
+template<typename... Args>
+void print(Args... args) {
+    (std::cout << ... << args) << std::endl;
+}
 
-using MyTypes = TypeList<int, double, std::string>;
+print(1, 2, 3);                 // Wyświetla: 123
+print("Witaj, ", "świecie!");   // Wyświetla: Witaj, świecie!
+```
+
+**Wyjaśnienie:**
+
+- `template<typename... Args>`: Deklaruje szablon z pakietem typów `Args`.
+- `Args... args`: Pakiet argumentów funkcji.
+- `(std::cout << ... << args)`: Fold expression, dostępne od C++17, które składa wyrażenia binarne.
+
+### Wyrażenia `constexpr` w Szablonach
+
+`constexpr` pozwala na wykonywanie obliczeń w czasie kompilacji. Gdy używamy go w szablonach, możemy tworzyć funkcje, które zwracają stałe wartości zależne od parametrów szablonu.
+
+**Przykład:** Funkcja `square` obliczająca kwadrat liczby:
+
+```cpp
+template<typename T>
+constexpr T square(T x) {
+    return x * x;
+}
+
+constexpr int squareOfFive = square(5); // Wynik: 25
 ```
 
 #### Szablony Wewnętrzne (Curiously Recurring Template Pattern - CRTP)
