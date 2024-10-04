@@ -120,7 +120,7 @@ int main() {
 
 ### Wskaźnik na obiekt
 
-Wskaźniki na obiekty działają podobnie jak wskaźniki na zwykłe typy danych. Dzięki nim można dynamicznie alokować pamięć na obiekty, odwoływać się do obiektów czy przekazywać obiekty do funkcji. Aby odwołać się do składników obiektu poprzez wskaźnik, używamy operatora ->.
+Wskaźniki na obiekty działają podobnie jak wskaźniki na zwykłe typy danych. Dzięki nim można dynamicznie alokować pamięć na obiekty, odwoływać się do obiektów czy przekazywać obiekty do funkcji. Aby odwołać się do składników obiektu poprzez wskaźnik, używamy operatora `->`.
 
 ```C++
 #include <iostream>
