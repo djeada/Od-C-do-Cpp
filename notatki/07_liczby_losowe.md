@@ -12,7 +12,7 @@ Warto zauważyć, że komputery, będąc maszynami deterministycznymi, nie są w
 
 ### Zastosowania liczb losowych
 
-Liczby losowe są kluczowe w:
+Liczby losowe są używane w:
 
 - **Symulacjach komputerowych** do modelowania zjawisk losowych w fizyce, chemii czy ekonomii.
 - **Kryptografii** do generowania kluczy szyfrujących, wektorów inicjujących i innych elementów bezpieczeństwa.
