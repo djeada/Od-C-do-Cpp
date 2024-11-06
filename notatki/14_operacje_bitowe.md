@@ -218,7 +218,7 @@ Operacje bitowe są niezwykle efektywne pod względem wydajności, ponieważ są
 
 **Przesunięcia bitowe jako szybkie mnożenie i dzielenie:**
 
-Operacje przesunięcia bitowego w lewo (`<<`) i w prawo (`>>`) są równoważne odpowiednio mnożeniu i dzieleniu przez potęgi dwóch. Przesunięcie o `n` pozycji odpowiada mnożeniu lub dzieleniu przez `2^n`.
+Operacje przesunięcia bitowego w lewo (`<<`) i w prawo (`>>`) są równoważne odpowiednio mnożeniu i dzieleniu przez potęgi dwójki. Przesunięcie o `n` pozycji odpowiada mnożeniu lub dzieleniu przez `2^n`.
 
 **Przykład:**
 
@@ -349,16 +349,16 @@ Suma kontrolna: 0xFF
 
 Operacje bitowe są wykorzystywane w optymalizacji algorytmów i struktur danych, zwłaszcza tam, gdzie liczy się wydajność i efektywność pamięciowa.
 
-**Sprawdzanie potęgi dwóch:**
+**Sprawdzanie potęgi dwójki:**
 
-Częstym zadaniem jest sprawdzenie, czy dana liczba jest potęgą dwóch, co można efektywnie zrobić za pomocą operacji bitowych.
+Częstym zadaniem jest sprawdzenie, czy dana liczba jest potęgą dwójki, co można efektywnie zrobić za pomocą operacji bitowych.
 
 **Przykład:**
 
 ```c
 #include <stdio.h>
 
-// Funkcja do sprawdzania, czy liczba jest potęgą dwóch
+// Funkcja do sprawdzania, czy liczba jest potęgą dwójki
 int isPowerOfTwo(unsigned int x) {
     return (x != 0) && ((x & (x - 1)) == 0);
 }
@@ -366,9 +366,9 @@ int isPowerOfTwo(unsigned int x) {
 int main() {
     for (unsigned int num = 0; num <= 17; num++) {
         if (isPowerOfTwo(num)) {
-            printf("%u jest potęgą dwóch.\n", num);
+            printf("%u jest potęgą dwójki.\n", num);
         } else {
-            printf("%u nie jest potęgą dwóch.\n", num);
+            printf("%u nie jest potęgą dwójki.\n", num);
         }
     }
 
@@ -376,30 +376,30 @@ int main() {
 }
 ```
 
-- Liczby będące potęgami dwóch mają tylko jeden bit ustawiony na `1` w reprezentacji binarnej.
-- Wyrażenie `x & (x - 1)` wyzeruje najmniej znaczący ustawiony bit. Jeśli wynik jest `0`, to znaczy, że liczba miała tylko jeden bit ustawiony, czyli jest potęgą dwóch.
+- Liczby będące potęgami dwójki mają tylko jeden bit ustawiony na `1` w reprezentacji binarnej.
+- Wyrażenie `x & (x - 1)` wyzeruje najmniej znaczący ustawiony bit. Jeśli wynik jest `0`, to znaczy, że liczba miała tylko jeden bit ustawiony, czyli jest potęgą dwójki.
 
 **Wynik:**
 
 ```
-0 nie jest potęgą dwóch.
-1 jest potęgą dwóch.
-2 jest potęgą dwóch.
-3 nie jest potęgą dwóch.
-4 jest potęgą dwóch.
-5 nie jest potęgą dwóch.
-6 nie jest potęgą dwóch.
-7 nie jest potęgą dwóch.
-8 jest potęgą dwóch.
-9 nie jest potęgą dwóch.
-10 nie jest potęgą dwóch.
-11 nie jest potęgą dwóch.
-12 nie jest potęgą dwóch.
-13 nie jest potęgą dwóch.
-14 nie jest potęgą dwóch.
-15 nie jest potęgą dwóch.
-16 jest potęgą dwóch.
-17 nie jest potęgą dwóch.
+0 nie jest potęgą dwójki.
+1 jest potęgą dwójki.
+2 jest potęgą dwójki.
+3 nie jest potęgą dwójki.
+4 jest potęgą dwójki.
+5 nie jest potęgą dwójki.
+6 nie jest potęgą dwójki.
+7 nie jest potęgą dwójki.
+8 jest potęgą dwójki.
+9 nie jest potęgą dwójki.
+10 nie jest potęgą dwójki.
+11 nie jest potęgą dwójki.
+12 nie jest potęgą dwójki.
+13 nie jest potęgą dwójki.
+14 nie jest potęgą dwójki.
+15 nie jest potęgą dwójki.
+16 jest potęgą dwójki.
+17 nie jest potęgą dwójki.
 ```
 
 #### Bezpieczeństwo i kryptografia
