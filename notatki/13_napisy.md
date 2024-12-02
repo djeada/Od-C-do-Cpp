@@ -46,16 +46,18 @@ Język C dostarcza bogaty zestaw funkcji w standardowych bibliotekach do manipul
 
 Funkcje w tej bibliotece służą do manipulacji i porównywania napisów:
 
-- `size_t strlen(const char *s);` - Zwraca długość napisu `s`, czyli liczbę znaków przed znakiem null.
-- `char *strcpy(char *dest, const char *src);` - Kopiuje napis `src` do bufora `dest`. Uwaga: `dest` musi mieć wystarczający rozmiar, aby pomieścić `src`.
-- `char *strncpy(char *dest, const char *src, size_t n);` - Kopiuje maksymalnie `n` znaków z `src` do `dest`.
-- `char *strcat(char *dest, const char *src);` - Dołącza napis `src` do końca `dest`. `dest` musi mieć wystarczający rozmiar.
-- `char *strncat(char *dest, const char *src, size_t n);` - Dołącza maksymalnie `n` znaków z `src` do `dest`.
-- `int strcmp(const char *s1, const char *s2);` - Porównuje napisy `s1` i `s2`. Zwraca wartość ujemną, zero lub dodatnią w zależności od wyniku porównania.
-- `int strncmp(const char *s1, const char *s2, size_t n);` - Porównuje maksymalnie `n` znaków z `s1` i `s2`.
-- `char *strchr(const char *s, int c);` - Wyszukuje pierwsze wystąpienie znaku `c` w napisie `s`.
-- `char *strrchr(const char *s, int c);` - Wyszukuje ostatnie wystąpienie znaku `c` w napisie `s`.
-- `char *strstr(const char *haystack, const char *needle);` - Wyszukuje podciąg `needle` w napisie `haystack`.
+| Funkcja                            | Opis                                                                 |
+|------------------------------------|----------------------------------------------------------------------|
+| `size_t strlen(const char *s);`    | Zwraca długość napisu `s`, czyli liczbę znaków przed znakiem null.   |
+| `char *strcpy(char *dest, const char *src);` | Kopiuje napis `src` do bufora `dest`. Uwaga: `dest` musi mieć wystarczający rozmiar, aby pomieścić `src`. |
+| `char *strncpy(char *dest, const char *src, size_t n);` | Kopiuje maksymalnie `n` znaków z `src` do `dest`.                       |
+| `char *strcat(char *dest, const char *src);` | Dołącza napis `src` do końca `dest`. `dest` musi mieć wystarczający rozmiar. |
+| `char *strncat(char *dest, const char *src, size_t n);` | Dołącza maksymalnie `n` znaków z `src` do `dest`.                       |
+| `int strcmp(const char *s1, const char *s2);` | Porównuje napisy `s1` i `s2`. Zwraca wartość ujemną, zero lub dodatnią w zależności od wyniku porównania. |
+| `int strncmp(const char *s1, const char *s2, size_t n);` | Porównuje maksymalnie `n` znaków z `s1` i `s2`.                        |
+| `char *strchr(const char *s, int c);` | Wyszukuje pierwsze wystąpienie znaku `c` w napisie `s`.               |
+| `char *strrchr(const char *s, int c);` | Wyszukuje ostatnie wystąpienie znaku `c` w napisie `s`.               |
+| `char *strstr(const char *haystack, const char *needle);` | Wyszukuje podciąg `needle` w napisie `haystack`.                       |
 
 **Uwaga dotycząca bezpieczeństwa:** Funkcje takie jak `strcpy` i `strcat` są podatne na błędy przepełnienia bufora (buffer overflow) i nie powinny być używane w nowym kodzie. Bezpieczniejsze alternatywy to `strncpy` i `strncat`, jednak one również mają swoje ograniczenia. W praktyce zaleca się korzystanie z funkcji takich jak `strlcpy` i `strlcat` (jeśli są dostępne) lub funkcji specyficznych dla danego systemu operacyjnego.
 
@@ -63,22 +65,26 @@ Funkcje w tej bibliotece służą do manipulacji i porównywania napisów:
 
 Ta biblioteka zawiera funkcje do klasyfikacji i manipulacji znakami:
 
-- `int isalpha(int c);` - Sprawdza, czy znak `c` jest literą alfabetu.
-- `int isdigit(int c);` - Sprawdza, czy znak `c` jest cyfrą.
-- `int isalnum(int c);` - Sprawdza, czy znak `c` jest alfanumeryczny.
-- `int isspace(int c);` - Sprawdza, czy znak `c` jest znakiem białym (spacja, tabulacja, nowa linia itp.).
-- `int toupper(int c);` - Konwertuje znak `c` do wielkiej litery, jeśli to możliwe.
-- `int tolower(int c);` - Konwertuje znak `c` do małej litery, jeśli to możliwe.
+| Funkcja               | Opis                                                                                     |
+|-----------------------|------------------------------------------------------------------------------------------|
+| `int isalpha(int c);` | Sprawdza, czy znak `c` jest literą alfabetu.                                              |
+| `int isdigit(int c);` | Sprawdza, czy znak `c` jest cyfrą.                                                        |
+| `int isalnum(int c);` | Sprawdza, czy znak `c` jest alfanumeryczny.                                               |
+| `int isspace(int c);` | Sprawdza, czy znak `c` jest znakiem białym (spacja, tabulacja, nowa linia itp.).           |
+| `int toupper(int c);` | Konwertuje znak `c` do wielkiej litery, jeśli to możliwe.                                 |
+| `int tolower(int c);` | Konwertuje znak `c` do małej litery, jeśli to możliwe.                                   |
 
 ##### Biblioteka `<stdlib.h>`
 
 Zawiera funkcje do konwersji napisów na wartości liczbowe i odwrotnie:
 
-- `int atoi(const char *nptr);` - Konwertuje napis `nptr` na wartość `int`.
-- `long int strtol(const char *nptr, char **endptr, int base);` - Konwertuje napis `nptr` na wartość `long int`, z możliwością określenia podstawy systemu liczbowego.
-- `double atof(const char *nptr);` - Konwertuje napis `nptr` na wartość `double`.
-- `double strtod(const char *nptr, char **endptr);` - Konwertuje napis `nptr` na wartość `double`, zwracając wskaźnik do pierwszego znaku po liczbie w `*endptr`.
-- `char *strtok(char *str, const char *delim);` - Dzieli napis `str` na tokeny, używając separatorów zdefiniowanych w `delim`.
+| Funkcja                                            | Opis                                                                                                     |
+|----------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| `int atoi(const char *nptr);`                     | Konwertuje napis `nptr` na wartość `int`.                                                               |
+| `long int strtol(const char *nptr, char **endptr, int base);` | Konwertuje napis `nptr` na wartość `long int`, z możliwością określenia podstawy systemu liczbowego. |
+| `double atof(const char *nptr);`                  | Konwertuje napis `nptr` na wartość `double`.                                                            |
+| `double strtod(const char *nptr, char **endptr);` | Konwertuje napis `nptr` na wartość `double`, zwracając wskaźnik do pierwszego znaku po liczbie w `*endptr`. |
+| `char *strtok(char *str, const char *delim);`     | Dzieli napis `str` na tokeny, używając separatorów zdefiniowanych w `delim`.                            |
 
 **Uwaga dotycząca bezpieczeństwa:** Funkcja `atoi` nie obsługuje błędów i nie jest bezpieczna. Zaleca się użycie `strtol` lub `strtod`, które pozwalają na wykrycie błędów konwersji.
 
