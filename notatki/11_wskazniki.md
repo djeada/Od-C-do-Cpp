@@ -1,10 +1,10 @@
 ## Wskaźniki
 
-Wskaźnik w języku C++ to specjalny typ zmiennej, który przechowuje adres innego miejsca w pamięci. Dzięki wskaźnikom można nie tylko odczytywać, ale także modyfikować wartości przechowywane pod tym adresem. Operowanie na wskaźnikach jest kluczowe dla efektywnego zarządzania pamięcią i dynamicznego alokowania zasobów.
+Wskaźnik w języku C++ to specjalny typ zmiennej, który przechowuje adres innego miejsca w pamięci. Dzięki wskaźnikom można nie tylko odczytywać, ale także modyfikować wartości przechowywane pod tym adresem. Operowanie na wskaźnikach jest kluczowe dla efektywnego zarządzania pamięcią i dynamicznego alokowania zasobów. Pozwala to na tworzenie bardziej elastycznych i wydajnych rozwiązań, szczególnie w kontekście dużych projektów, gdzie efektywne korzystanie z pamięci ma istotne znaczenie. Wskaźniki są również podstawą wielu zaawansowanych mechanizmów, takich jak alokacja dynamiczna (operator `new` i `delete`), a także struktury danych typu listy, drzewa czy grafy.
 
 ### Deklaracja wskaźników
 
-Wskaźnik deklaruje się poprzez umieszczenie operatora `*` przed nazwą zmiennej podczas deklaracji. Typ wskaźnika musi odpowiadać typowi zmiennej, której adres będzie przechowywał. Deklaracja wskaźnika nie rezerwuje pamięci dla zmiennej, na którą wskaźnik będzie wskazywał, tylko dla samego wskaźnika.
+Wskaźnik deklaruje się poprzez umieszczenie operatora `*` przed nazwą zmiennej podczas deklaracji. Typ wskaźnika musi odpowiadać typowi zmiennej, której adres będzie przechowywał. Deklaracja wskaźnika nie rezerwuje pamięci dla zmiennej, na którą wskaźnik będzie wskazywał, tylko dla samego wskaźnika. Oznacza to, że wskaźnik jest swego rodzaju „narzędziem” do uzyskiwania dostępu do konkretnego miejsca w pamięci.
 
 ```c++
 int *ptrInt;             // wskaźnik do zmiennej typu int
@@ -12,18 +12,22 @@ double *ptrDouble;       // wskaźnik do zmiennej typu double
 std::string *ptrString;  // wskaźnik do zmiennej typu std::string
 ```
 
+W praktyce, gdy deklarujemy kilka wskaźników jednego typu, warto pamiętać, że znak `*` odnosi się do konkretnej zmiennej, a nie do całego typu. Na przykład deklaracja `int* p1, p2;` sprawi, że jedynie `p1` jest wskaźnikiem, natomiast `p2` to zwykła zmienna typu `int`. W związku z tym, w celu zwiększenia czytelności, wielu programistów preferuje deklarowanie każdego wskaźnika w osobnej linii.
+
 ### Inicjalizacja wskaźników
 
-Wskaźniki inicjalizuje się poprzez przypisanie im adresu zmiennej za pomocą operatora `&`. Wskaźnik przechowuje wtedy adres pamięci zmiennej, co umożliwia dostęp do niej i manipulowanie jej wartością za pośrednictwem wskaźnika.
+Wskaźniki inicjalizuje się poprzez przypisanie im adresu zmiennej za pomocą operatora `&`. Wskaźnik przechowuje wtedy adres pamięci zmiennej, co umożliwia dostęp do niej i manipulowanie jej wartością za pośrednictwem wskaźnika. Warto przy tym pamiętać, że jeśli wskaźnik nie jest w danym momencie powiązany z żadną zmienną, lepiej go zainicjalizować wartością `nullptr`, aby uniknąć nieprzewidzianych zachowań.
 
 ```c++
 int number = 42;
 int *ptr = &number;
 ```
 
+Taka konstrukcja oznacza, że `ptr` przechowuje adres zmiennej `number`. Jeśli w kolejnych krokach zmienimy wartość zmiennej `number`, to odczytując `*ptr`, również zauważymy tę zmianę. Dzięki temu wskaźniki umożliwiają łatwą współdzieloną dostępność do tych samych danych w różnych częściach programu, co z kolei może prowadzić do wydajniejszych rozwiązań.
+
 ### Dereferencja wskaźników
 
-Dereferencja wskaźnika polega na uzyskaniu dostępu do wartości zmiennej, na którą wskazuje wskaźnik. Wykorzystuje się do tego operator `*`. Dereferencja pozwala na odczyt i modyfikację wartości zmiennej przechowywanej pod adresem, na który wskazuje wskaźnik.
+Dereferencja wskaźnika polega na uzyskaniu dostępu do wartości zmiennej, na którą wskazuje wskaźnik. Wykorzystuje się do tego operator `*`. Dereferencja pozwala na odczyt i modyfikację wartości zmiennej przechowywanej pod adresem, na który wskazuje wskaźnik. Innymi słowy, jeśli mamy wskaźnik do jakiejś zmiennej, to dzięki dereferencji możemy traktować wskaźnik niemal tak, jakby był tą zmienną.
 
 ```c++
 int number = 5;
@@ -52,11 +56,11 @@ int main() {
 }
 ```
 
-Uwaga: Operując na wskaźnikach, zawsze należy pamiętać o ich inicjalizacji. Używanie niezainicjalizowanych wskaźników może prowadzić do nieprzewidywalnych zachowań programu, ponieważ mogą one zawierać przypadkowe wartości.
+Uwaga: Operując na wskaźnikach, zawsze należy pamiętać o ich inicjalizacji. Używanie niezainicjalizowanych wskaźników może prowadzić do nieprzewidywalnych zachowań programu, ponieważ mogą one zawierać przypadkowe wartości. Ponadto, modyfikowanie zawartości pamięci, do której wskaźnik nie powinien mieć dostępu, może prowadzić do błędów takich jak naruszenie ochrony pamięci (segmentation fault) i nieodwracalnych uszkodzeń danych.
 
 ### Wskaźnik na wskaźnik
 
-Wskaźniki w języku C++ mogą wskazywać na inne wskaźniki, tworząc tym samym wskaźniki wielopoziomowe. Aby zadeklarować wskaźnik na wskaźnik, dodajemy dodatkowy operator `*` przed nazwą zmiennej. Wskaźniki wielopoziomowe są używane w złożonych strukturach danych oraz przy dynamicznej alokacji pamięci.
+Wskaźniki w języku C++ mogą wskazywać na inne wskaźniki, tworząc tym samym wskaźniki wielopoziomowe. Aby zadeklarować wskaźnik na wskaźnik, dodajemy dodatkowy operator `*` przed nazwą zmiennej. Wskaźniki wielopoziomowe są używane w złożonych strukturach danych oraz przy dynamicznej alokacji pamięci, kiedy chcemy zarządzać wskaźnikami, które same mogą ulegać zmianie.
 
 ```c++
 int main() {
@@ -71,9 +75,12 @@ int main() {
     return 0;
 }
 ```
+
+Operowanie wskaźnikami wielopoziomowymi może być trudniejsze w zrozumieniu, ponieważ trzeba pamiętać o tym, ile razy należy „dereferencje” użyć, aby dostać się do właściwej warstwy. W codziennej praktyce programistycznej takie konstrukcje pojawiają się rzadziej, ale są kluczowe np. w implementacjach zaawansowanych struktur danych lub przy przekazywaniu wskaźników do funkcji, które z kolei muszą zmieniać ten wskaźnik.
+
 ### NULL i nullptr
 
-`NULL` to specjalna wartość wskaźnika, która wskazuje na brak obiektu. Jest używana w wielu sytuacjach, takich jak oznaczanie końca listy połączonej lub sygnalizowanie problemów z alokacją pamięci. `NULL` jest zdefiniowany jako `0` w standardowych nagłówkach C i C++, co może prowadzić do pewnych niejednoznaczności, szczególnie w kontekście przeciążania funkcji.
+`NULL` to specjalna wartość wskaźnika, która wskazuje na brak obiektu. Jest używana w wielu sytuacjach, takich jak oznaczanie końca listy połączonej lub sygnalizowanie problemów z alokacją pamięci. `NULL` jest zdefiniowany jako `0` w standardowych nagłówkach C i C++, co może prowadzić do pewnych niejednoznaczności, szczególnie w kontekście przeciążania funkcji. Z punktu widzenia C++ nie zawsze jest jasne, czy `0` ma być interpretowane jako wartość całkowita czy jako wskaźnik pusty.
 
 #### Problemy z NULL
 
@@ -87,9 +94,11 @@ void foo(int liczba);
 foo(NULL); // Wywołuje foo(int liczba)
 ```
 
+W powyższym przykładzie kompilator nie ma pewności, czy `NULL` powinien być traktowany jako wskaźnik, czy też jako zwykła liczba typu `int`, co może prowadzić do wywołania innej wersji funkcji niż się spodziewamy. W efekcie może to powodować trudne do znalezienia błędy w kodzie.
+
 #### Rozwiązanie: nullptr
 
-Wprowadzony w C++11, `nullptr` jest nowym literałem wskaźnikowym, który rozwiązuje problemy związane z `NULL`. `nullptr` ma jednoznaczny typ `std::nullptr_t`, co eliminuje niejednoznaczności w kontekście przeciążania funkcji.
+Wprowadzony w C++11, `nullptr` jest nowym literałem wskaźnikowym, który rozwiązuje problemy związane z `NULL`. `nullptr` ma jednoznaczny typ `std::nullptr_t`, co eliminuje niejednoznaczności w kontekście przeciążania funkcji. Z praktycznego punktu widzenia, korzystanie z `nullptr` jest bezpieczniejsze i bardziej czytelne w nowoczesnym C++.
 
 ```c++
 foo(nullptr); // Wywołuje foo(void *wsk)
@@ -124,9 +133,11 @@ if (a_ptr == nullptr) {
 - Dzięki temu, że **`nullptr` ma typ `std::nullptr_t`**, możliwe jest łatwiejsze przeciążanie funkcji oraz redukcja błędów kompilacji związanych z nieprawidłowym typowaniem.
 - **Kompilatory mogą lepiej optymalizować kod** i łatwiej wykrywać potencjalne błędy, gdy stosowany jest `nullptr` zamiast starszego `NULL`.
 
-### Stałe wskaźniki i wskażniki na stałe
+W związku z powyższym zalecane jest, aby w nowoczesnym C++ wszędzie tam, gdzie wcześniej używano `NULL`, stosować `nullptr`, co znacząco poprawia czytelność i niezawodność kodu.
 
-W C++ możemy zdefiniować różnego rodzaju stałe wskaźniki. Istnieją dwie główne kategorie stałych wskaźników: wskaźniki na stałą wartość oraz stałe wskaźniki.
+### Stałe wskaźniki i wskaźniki na stałe
+
+W C++ możemy zdefiniować różnego rodzaju stałe wskaźniki. Istnieją dwie główne kategorie stałych wskaźników: wskaźniki na stałą wartość oraz stałe wskaźniki. Dzięki nim możemy lepiej kontrolować, czy dopuszczamy zmienianie adresu, na który wskaźnik pokazuje, lub czy pozwalamy na modyfikację samej wartości, do której się odwołujemy. Jest to szczególnie przydatne w projektach, gdzie chcemy jasno zasygnalizować, które elementy kodu mają prawo do modyfikacji danych.
 
 I. **Wskaźniki na stałą wartość**:
 
@@ -175,19 +186,21 @@ int main() {
 }
 ```
 
+W dużych projektach, w których obowiązują ścisłe zasady odnośnie tego, co może być modyfikowane, a co nie, stosowanie stałych wskaźników lub wskaźników na stałe wartości pozwala uniknąć wielu błędów i zwiększa czytelność kodu. Dzięki temu inne osoby pracujące z naszym kodem będą wiedziały, których fragmentów programu należy użyć tylko do odczytu, a które umożliwiają wprowadzanie zmian.
+
 ### Wskaźniki na funkcje
 
-Wskaźniki na funkcje w języku C++ pozwalają na przechowywanie adresów funkcji i ich późniejsze wywoływanie. Są one szczególnie przydatne w implementacji callbacków, dynamicznego wyboru funkcji, oraz w programowaniu zorientowanym na zdarzenia.
+Wskaźniki na funkcje w języku C++ pozwalają na przechowywanie adresów funkcji i ich późniejsze wywoływanie. Są one szczególnie przydatne w implementacji callbacków, dynamicznego wyboru funkcji, oraz w programowaniu zorientowanym na zdarzenia. Ideą wskaźników na funkcje jest ułatwienie przechowywania i przekazywania logiki (kodu funkcji) jako parametru do innej funkcji, co czyni nasz program bardziej elastycznym i modułowym.
 
 #### Deklaracja wskaźnika na funkcję
 
-Deklaracja wskaźnika na funkcję wymaga określenia typu zwracanego przez funkcję oraz typów jej parametrów. Wskaźnik na funkcję różni się od wskaźnika na zmienną tym, że po nazwie wskaźnika umieszczamy nawiasy oraz wskazanie na typ funkcji.
+Deklaracja wskaźnika na funkcję wymaga określenia typu zwracanego przez funkcję oraz typów jej parametrów. Wskaźnik na funkcję różni się od wskaźnika na zmienną tym, że po nazwie wskaźnika umieszczamy nawiasy oraz wskazanie na typ funkcji. Dla początkujących bywa to mylące, jednak wystarczy zapamiętać ogólny schemat: `(typ_zwracany)(*nazwaWskaźnika)(typ_parametru1, typ_parametru2, ...)`.
 
 ```c++
 int (*ptrFunc)(int, int);
 ```
 
-Powyższa deklaracja oznacza wskaźnik na funkcję zwracającą `int` i przyjmującą dwa argumenty typu `int`.
+Powyższa deklaracja oznacza wskaźnik na funkcję zwracającą `int` i przyjmującą dwa argumenty typu `int`. W praktyce można się spotkać z bardziej skomplikowanymi deklaracjami wskaźników na funkcje, np. zwracającymi wskaźniki lub przyjmującymi jako parametr wskaźnik na funkcję.
 
 #### Inicjalizacja wskaźnika na funkcję
 
@@ -207,6 +220,8 @@ Można również pominąć operator `&` podczas przypisywania, ponieważ nazwa f
 int (*ptrFunc)(int, int) = add;
 ```
 
+Tak zainicjalizowany wskaźnik może być następnie użyty w wielu miejscach w kodzie, co pozwala na „wstrzykiwanie” różnych implementacji funkcji do innych modułów programu bez modyfikowania ich logiki. Jest to często spotykane w bibliotekach i frameworkach umożliwiających definiowanie funkcji zwrotnych (callbacków).
+
 #### Wywoływanie funkcji za pomocą wskaźnika
 
 Aby wywołać funkcję za pomocą wskaźnika, używamy operatora dereferencji `*` lub bezpośrednio nazwy wskaźnika.
@@ -215,6 +230,8 @@ Aby wywołać funkcję za pomocą wskaźnika, używamy operatora dereferencji `*
 int result = (*ptrFunc)(5, 3); // Wywołanie przez dereferencję
 int result2 = ptrFunc(5, 3);   // Wywołanie bezpośrednie
 ```
+
+W większości kodu C++ krótsza forma bez operatora `*` jest w zupełności wystarczająca i czytelna. Oba podejścia są jednak poprawne i często różnią się jedynie stylem, a nie funkcjonalnością.
 
 #### Przykład
 
@@ -261,11 +278,13 @@ int main() {
 }
 ```
 
+W tym przykładzie pokazano, jak można przechowywać funkcje o tych samych sygnaturach (tj. mających ten sam typ zwracany i typy parametrów) w osobnych wskaźnikach i wybierać, która z nich ma zostać wywołana w danym momencie. Takie podejście umożliwia np. implementację menu, w którym wybór użytkownika decyduje o tym, jaką operację wykonać.
+
 #### Zalety użycia wskaźników na funkcje
 
-- Funkcje wskaźnikowe zapewniają **elastyczność**, umożliwiając dynamiczne wybieranie i wywoływanie funkcji w trakcie działania programu, co zwiększa ich adaptacyjność.
-- **Reużywalność** jest możliwa dzięki funkcjom wskaźnikowym, ponieważ pozwalają na tworzenie ogólnych funkcji, które mogą obsługiwać różne operacje bez konieczności modyfikacji kodu.
-- **Efektywność** funkcji wskaźnikowych polega na tym, że redukują one potrzebę stosowania wielu instrukcji warunkowych, co upraszcza kod i poprawia jego wydajność.
+- Funkcje wskaźnikowe zapewniają **elastyczność**, umożliwiając dynamiczne wybieranie i wywoływanie funkcji w trakcie działania programu, co zwiększa ich adaptacyjność.  
+- **Reużywalność** jest możliwa dzięki funkcjom wskaźnikowym, ponieważ pozwalają na tworzenie ogólnych funkcji, które mogą obsługiwać różne operacje bez konieczności modyfikacji kodu.  
+- **Efektywność** funkcji wskaźnikowych polega na tym, że redukują one potrzebę stosowania wielu instrukcji warunkowych, co upraszcza kod i poprawia jego wydajność. Ponadto, w dużych projektach pozwala to na ograniczenie powtarzających się bloków logiki i szybkie przełączanie się między różnymi implementacjami funkcji.
 
 ### Podusmowanie
 
@@ -282,4 +301,3 @@ Poniżej przedstawiamy podsumowanie różnych typów wskaźników oraz ich znacz
 | **Wskaźnik na wskaźnik na stałą**      | `const int **ptr`                                     | Wskaźnik na wskaźnik, który wskazuje na stałą wartość.                           | `const int **ptr = &p;`                  |
 | **Stały wskaźnik na wskaźnik na stałą**| `const int *const *ptr`                               | Stały wskaźnik na wskaźnik, który wskazuje na stałą wartość.                     | `const int *const *ptr = &p;`            |
 | **Wskaźnik na funkcję**                | `int (*ptr)(int, int)`                                | Wskaźnik na funkcję, która przyjmuje dwa argumenty typu `int` i zwraca `int`.    | `int (*ptr)(int, int) = &funkcja;`       |
-
