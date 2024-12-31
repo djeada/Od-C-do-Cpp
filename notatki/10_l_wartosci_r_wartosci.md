@@ -38,15 +38,16 @@ int main() {
 
 }
 ```
+
 W powyższym przykładzie `i` to L-wartość modyfikowalna, co oznacza, że możemy przypisać jej nowe wartości. Z kolei `ci` to L-wartość niemodyfikowalna, więc nie wolno zmieniać jej po inicjalizacji. Operator `&` (adres) zwraca wskaźnik (będący też L-wartością, tyle że innego typu), a referencja `ri` wiąże się z istniejącą L-wartością `i`.
 
 #### Uwaga na temat L-wartości i operatorów
 
 Istnieją operatory, które zwracają L-wartości, pozwalając na ich bezpośrednie modyfikowanie w kodzie. Do często spotykanych należą:
 
-- **Operator indeksowania `[]`**:  Pozwala uzyskać L-wartość z tablicy lub obiektu, który przeciąża operator `[]`. Dzięki temu można zrobić `arr[0] = 10;`.
-- **Operator dereferencji `*`**:   Zwraca L-wartość, jeżeli wskaźnik był typu `T*`. Umożliwia to modyfikowanie zawartości pamięci, na którą wskazuje wskaźnik: `*ptr = 20;`.
-- **Operator inkrementacji/dekrementacji w formie prefiksowej `++i`, `--i`**:  Zwraca L-wartość, dzięki czemu można łączyć inkrementację z innymi operacjami na tym samym obiekcie.
+- **Operator indeksowania `[]`** umożliwia dostęp do elementu w tablicy lub obiekcie, który przeciąża ten operator, zwracając L-wartość. Dzięki temu możliwe jest przypisywanie wartości, np. `arr[0] = 10;`.
+- **Operator dereferencji `*`** zwraca L-wartość, jeśli wskaźnik ma typ `T*`. Umożliwia to modyfikację zawartości pamięci, na którą wskazuje, np. `*ptr = 20;`.
+- **Operator inkrementacji i dekrementacji w formie prefiksowej (`++i`, `--i`)** zwraca L-wartość, co pozwala na łączenie tych operacji z innymi działaniami na tym samym obiekcie, np. `++i += 5;`.
 
 ```c++
 int arr[5];
@@ -90,6 +91,7 @@ int main() {
 
 }
 ```
+
 W powyższym przykładzie liczba `3` oraz wyrażenie `i + 4` to R-wartości. W szczególności nie możemy zrobić `&(i + 4)`, ponieważ nie ma bezpiecznego i trwałego adresu związanego z wynikiem tego wyrażenia.
 
 #### Funkcje zwracające R-wartości
@@ -122,6 +124,7 @@ int y = x + 2; // 'x + 2' jest R-wartością
 
 x = y;         // Przypisanie do L-wartości 'x' wartości R-wartości 'y'
 ```
+
 ### R-wartości i L-wartości w kontekście funkcji
 
 #### Przekazywanie argumentów przez wartość
@@ -160,6 +163,7 @@ int main() {
 
 }
 ```
+
 #### R-wartościowe referencje (C++11 i nowsze)
 
 Wprowadzone w C++11 referencje do R-wartości (`&&`) pozwalają na przechwytywanie R-wartości, co jest kluczowe dla implementacji **semantyki przenoszenia** (ang. *move semantics*). Dzięki temu możemy pisać funkcje, które przyjmują obiekty tymczasowe albo wyraźnie przekazane do przeniesienia (za pomocą `std::move`), a następnie efektywnie przejmować ich zasoby.
@@ -283,9 +287,9 @@ int main() {
 
 **Wyjaśnienie działania:**
 
-- **Konstruktor przenoszący**:   Zamiast kopiować wektor `data` z obiektu `other`, przenosi jego zawartość do `this->data`, co oszczędza alokacje i kopiowanie elementów.
-- **Operator przypisania przenoszącego**:    Przenosi zasoby z obiektu `other` do `this`. Po takim przeniesieniu `other.data` jest zwykle puste lub w stanie „moved-from”.
-- **`noexcept`**:    Deklaracja ta mówi kompilatorowi, że operacja nie rzuca wyjątków. Umożliwia to pewne optymalizacje i jest ważne w przypadku różnych kontenerów z biblioteki standardowej, które oczekują, że funkcje przenoszące nie będą zgłaszać wyjątków.
+- **Konstruktor przenoszący** pozwala na efektywne przejęcie zasobów z innego obiektu, zamiast ich kopiowania. Przykładowo, wektor `data` z obiektu `other` jest przenoszony do `this->data`, co eliminuje konieczność alokacji i kopiowania elementów.
+- **Operator przypisania przenoszącego** umożliwia przeniesienie zasobów z obiektu `other` do `this`. Po wykonaniu tej operacji `other.data` zazwyczaj zostaje ustawione w stan „moved-from”, czyli pusty lub neutralny.
+- Deklaracja **`noexcept`** informuje kompilator, że funkcja przenosząca nie zgłasza wyjątków. Dzięki temu kontenery standardowe, takie jak `std::vector`, mogą wykonywać optymalizacje, np. podczas realokacji, oczekując, że przenoszenie nie spowoduje wyjątku.
 
 #### Zalety semantyki przenoszenia
 
