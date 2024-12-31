@@ -158,8 +158,6 @@ int main() {
 
 Przykład ten obrazuje niekończące się wypisywanie komunikatu na ekran. W praktyce zamiast samych komunikatów w pętli nieskończonej mogłyby się znaleźć np. operacje obsługi zadań w tle, komunikacja z innymi procesami czy reagowanie na zdarzenia z systemu operacyjnego.
 
----
-
 ### Zagnieżdżone pętle
 
 Zagnieżdżone pętle to konstrukcja, w której jedna pętla jest umieszczona wewnątrz innej pętli. Są one często używane do operacji na danych wielowymiarowych, takich jak tablice dwuwymiarowe (macierze). Każda iteracja pętli zewnętrznej uruchamia pełny cykl iteracji pętli wewnętrznej. Zagnieżdżenie pętli może być dowolnie głębokie, choć w praktyce więcej niż trzy poziomy zagnieżdżenia znacząco utrudniają czytelność i mogą świadczyć o konieczności refaktoryzacji kodu.
