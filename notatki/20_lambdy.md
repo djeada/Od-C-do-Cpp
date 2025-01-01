@@ -200,35 +200,97 @@ Aby zapewnić maksymalną wydajność:
 
 ### Nowości w nowszych standardach C++
 
+Standard C++ jest dynamicznie rozwijany, a każda nowa wersja wprowadza istotne ulepszenia, które zwiększają możliwości języka, poprawiają wydajność oraz ułatwiają programowanie. W tej sekcji omówimy kluczowe nowości związane z lambdami oraz innymi funkcjami wprowadzonymi w standardach C++14, C++17 i C++20.
+
 #### C++14: Generowane typy zwracane
 
-W C++14 można pominąć specyfikator typu zwracanego nawet w przypadku złożonych wyrażeń:
+W C++14 wprowadzono możliwość pominięcia specyfikatora typu zwracanego w lambdach, co pozwala na bardziej zwięzły i czytelny kod, szczególnie w przypadku złożonych wyrażeń.
+
+**Przykład:**
 
 ```cpp
-auto suma = [](auto a, auto b) {
-    return a + b;
-};
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+int main() {
+    std::vector<int> liczby = {1, 2, 3, 4, 5};
+
+    // Lambda bez określonego typu zwracanego
+    auto suma = [](auto a, auto b) {
+        return a + b;
+    };
+
+    int wynik = suma(10, 20);
+    std::cout << "Suma: " << wynik << std::endl; // Wyświetli 30
+
+    return 0;
+}
 ```
 
-#### C++17: Domyślne szablony zmiennych
+**Zalety:**
 
-Od C++17 lambdy mogą mieć parametry szablonowe:
+- **Czytelność**: Skrócony zapis lambd sprawia, że kod jest bardziej przejrzysty.
+- **Elastyczność**: Automatyczne dedukowanie typu zwracanego pozwala na użycie lambd z różnymi typami danych bez konieczności ręcznego określania typu.
+
+#### C++17: Domyślne szablony zmiennych w lambdach
+
+C++17 wprowadził możliwość definiowania lambd z parametrami szablonowymi, co pozwala na większą elastyczność i ponowne używanie lambd w różnych kontekstach typów.
+
+**Przykład:**
 
 ```cpp
-auto suma = []<typename T>(T a, T b) {
-    return a + b;
-};
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+int main() {
+    // Lambda z parametrami szablonowymi
+    auto suma = []<typename T>(T a, T b) {
+        return a + b;
+    };
+
+    std::cout << "Suma int: " << suma(10, 20) << std::endl;       // Wyświetli 30
+    std::cout << "Suma double: " << suma(10.5, 20.3) << std::endl; // Wyświetli 30.8
+
+    return 0;
+}
 ```
 
-#### C++20: Lambdy odświeżone
+**Zalety:**
 
-C++20 wprowadza lambdy w constexpr:
+- **Typowa Niezależność**: Lambdy mogą działać z różnymi typami danych bez potrzeby definiowania osobnych lambd dla każdego typu.
+- **Reużywalność**: Możliwość stosowania lambd w różnych kontekstach typów zwiększa reużywalność kodu.
+
+#### C++20: Lambdy odświeżone (constexpr lambdas)
+
+C++20 wprowadza lambdy oznaczone jako `constexpr`, co umożliwia ich użycie w kontekstach wymagających stałych wyrażeń, takich jak `static_assert` czy inicjalizatory stałych zmiennych.
+
+**Przykład:**
 
 ```cpp
-constexpr auto kwadrat = [](int x) {
-    return x * x;
-};
+#include <iostream>
+#include <array>
 
-static_assert(kwadrat(5) == 25);
+int main() {
+    // Lambda constexpr
+    constexpr auto kwadrat = [](int x) constexpr {
+        return x * x;
+    };
+
+    static_assert(kwadrat(5) == 25, "Kwadrat 5 powinien być 25");
+
+    constexpr std::array<int, 3> tablica = { kwadrat(2), kwadrat(3), kwadrat(4) };
+    
+    for (const auto& val : tablica) {
+        std::cout << val << " "; // Wyświetli 4 9 16
+    }
+    
+    return 0;
+}
 ```
 
+**Zalety:**
+
+- **Optymalizacja Kompilatora**: Stałe wyrażenia mogą być przetwarzane podczas kompilacji, co prowadzi do optymalizacji czasu wykonania.
+- **Bezpieczeństwo Typów**: Możliwość sprawdzania poprawności wyrażeń w czasie kompilacji za pomocą `static_assert`.
