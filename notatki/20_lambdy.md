@@ -31,7 +31,7 @@ auto suma = [](int a, int b) -> int {
 
 Funkcje lambda w C++ posiadają zdolność do tworzenia **domknięć** (en. *closures*), co oznacza, że mogą przechwytywać i wykorzystywać zmienne z zakresu, w którym zostały zdefiniowane. Sposób przechwytywania zmiennych określa się w nawiasach kwadratowych `[]`.
 
-#### Sposoby przechwytywania:
+Sposoby przechwytywania:
 
 - `[]` — brak przechwytywania. Lambda nie ma dostępu do żadnych zmiennych spoza swojego zakresu.
 - `[=]` — przechwytywanie wszystkich dostępnych zmiennych przez wartość. Zmienne są kopiowane do wnętrza lambdy.
@@ -230,8 +230,8 @@ int main() {
 
 **Zalety:**
 
-- **Czytelność**: Skrócony zapis lambd sprawia, że kod jest bardziej przejrzysty.
-- **Elastyczność**: Automatyczne dedukowanie typu zwracanego pozwala na użycie lambd z różnymi typami danych bez konieczności ręcznego określania typu.
+- Skrócony zapis lambd sprawia, że kod jest bardziej przejrzysty.
+- Automatyczne dedukowanie typu zwracanego pozwala na użycie lambd z różnymi typami danych bez konieczności ręcznego określania typu.
 
 #### C++17: Domyślne szablony zmiennych w lambdach
 
@@ -259,8 +259,8 @@ int main() {
 
 **Zalety:**
 
-- **Typowa Niezależność**: Lambdy mogą działać z różnymi typami danych bez potrzeby definiowania osobnych lambd dla każdego typu.
-- **Reużywalność**: Możliwość stosowania lambd w różnych kontekstach typów zwiększa reużywalność kodu.
+- Lambdy mogą działać z różnymi typami danych bez potrzeby definiowania osobnych lambd dla każdego typu.
+- Możliwość stosowania lambd w różnych kontekstach typów zwiększa reużywalność kodu.
 
 #### C++20: Lambdy odświeżone (constexpr lambdas)
 
@@ -292,5 +292,5 @@ int main() {
 
 **Zalety:**
 
-- **Optymalizacja Kompilatora**: Stałe wyrażenia mogą być przetwarzane podczas kompilacji, co prowadzi do optymalizacji czasu wykonania.
-- **Bezpieczeństwo Typów**: Możliwość sprawdzania poprawności wyrażeń w czasie kompilacji za pomocą `static_assert`.
+- Stałe wyrażenia mogą być przetwarzane podczas kompilacji, co prowadzi do optymalizacji czasu wykonania.
+- Możliwość sprawdzania poprawności wyrażeń w czasie kompilacji za pomocą `static_assert`.
