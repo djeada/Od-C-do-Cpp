@@ -72,6 +72,7 @@ W C++ funkcjonuje również tzw. operator trójargumentowy `?:`, nazywany częst
 ```cpp
 int max = (x > y) ? x : y;
 ```
+
 Wyrażenie `(x > y) ? x : y` odczytujemy w sposób: „Jeżeli `x` jest większe od `y`, zwróć `x`, w przeciwnym razie zwróć `y`”. Dzięki temu w zmiennej `max` znajdzie się większa z dwóch liczb bez konieczności stosowania rozbudowanego `if-else`.
 
 ### Instrukcja warunkowa z wartością logiczną
