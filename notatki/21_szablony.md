@@ -401,7 +401,7 @@ Analiza wydajności:
 - **Unikanie alokacji pamięci** jest możliwe dzięki zastosowaniu szablonów i mechanizmu inlining, co pozwala bibliotece Eigen na wykonywanie operacji bez potrzeby dodatkowych alokacji pamięci, co zwiększa wydajność.
 - **Wektorowe instrukcje procesora** są automatycznie wykorzystywane przez Eigen, dzięki wsparciu dla instrukcji SIMD (Single Instruction, Multiple Data), jeśli są one dostępne na danej platformie, co przyspiesza operacje matematyczne.
 
-## Koncepty (C++20)
+#### Koncepty (C++20)
 
 Koncepty wprowadzają możliwość definiowania wymagań dla parametrów szablonu, co ułatwia tworzenie bardziej czytelnego i bezpiecznego kodu.
 
