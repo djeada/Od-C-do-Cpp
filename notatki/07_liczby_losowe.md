@@ -4,7 +4,7 @@ W języku C++ liczby losowe generuje się za pomocą standardowej biblioteki `<r
 
 ### Liczby losowe
 
-W tej podsekcji zapoznamy się z matematycznymi podstawami pojęcia liczby losowej, definiując zmienne losowe oraz ich rozkłady.
+Teraz zapoznamy się z matematycznymi podstawami pojęcia liczby losowej, definiując zmienne losowe oraz ich rozkłady.
 
 W klasycznej teorii prawdopodobieństwa liczbę losową modeluje **zmienna losowa**
 
@@ -34,7 +34,7 @@ Prawo wielkich liczb (LLN) gwarantuje zbieżność średniej $\bar X\_n$ do $E\[
 
 #### Prawdziwa losowość vs. pseudolosowość
 
-W tej sekcji omówimy różnice pomiędzy rzeczywistymi źródłami losowości a deterministycznymi generatorami pseudolosowymi.
+Teraz omówimy różnice pomiędzy rzeczywistymi źródłami losowości a deterministycznymi generatorami pseudolosowymi.
 
 Źródła entropii
 
@@ -45,7 +45,7 @@ $$
 s_{k+1}=F(s_k)\pmod m,\qquad X_k=g(s_k)
 $$
 
-który przy zadanym ziarnie $s\_0$ tworzy powtarzalną sekwencję. Kluczowe parametry:
+który przy zadanym ziarnie $s\_0$ tworzy powtarzalną sekwencję. Parametry:
 
 * **Okres** $p$ – najmniejsze $k>0$ z $s\_{n+k}=s\_n$.
 * **Wymiar równomierności** – równomierne pokrycie hipersześcianu $\[0,1)^d$.
@@ -66,7 +66,7 @@ Sekwencja testów nie dowodzi losowości, lecz obala ją, gdy statystyki wyjdą 
 
 ### Generowanie liczb losowych
 
-W tej podsekcji przedstawimy dostępne w C++ generatory liczb losowych oraz ich główne właściwości i zastosowania.
+Teraz przedstawimy dostępne w C++ generatory liczb losowych oraz ich główne właściwości i zastosowania.
 
 Przegląd generatorów
 
@@ -202,8 +202,6 @@ $$
 
 #### RNG kryptograficzne (CSPRNG)
 
-W tej sekcji opisano wymagania i przykłady generatorów kryptograficznych.
-
 Wymagania formalne (Goldwasser–Micali):
 
 1. **Jednokierunkowość** – brak efektywnego algorytmu do odtworzenia seeda.
@@ -226,7 +224,7 @@ RAND_bytes(buf, sizeof(buf)); // 256-bit
 
 ### Zastosowanie różnych dystrybucji
 
-W tej sekcji omówimy zastosowania kilku kluczowych dystrybucji losowych dostępnych w bibliotece `<random>`, prezentując ich definicje, własności, implementację w C++ oraz przykłady użycia.
+Teraz omówimy zastosowania kilku dystrybucji losowych dostępnych w bibliotece `<random>`, prezentując ich definicje, własności, implementację w C++ oraz przykłady użycia.
 
 #### Dystrybucja równomierna
 
@@ -283,7 +281,7 @@ for(int i=0;i<10;++i) std::cout << U(gen) << ' ';
 
 #### Dystrybucja normalna (Gaussa)
 
-Rozkład normalny, zwany też Gaussa, opisuje zmienną losową o gęstości dzwonowej i jest kluczowy w statystyce ze względu na centralne twierdzenie graniczne.
+Rozkład normalny, zwany też Gaussa, opisuje zmienną losową o gęstości dzwonowej i jest uzywany w statystyce ze względu na centralne twierdzenie graniczne.
 
 $$
 f(x)=\frac1{\sqrt{2\pi}\sigma}\exp\!\Bigl[-\frac{(x-\mu)^2}{2\sigma^2}\Bigr],
@@ -306,7 +304,7 @@ $$
 M_X(t)=\exp\!\left(\mu t+\tfrac12\sigma^{2}t^{2}\right)
 $$
 
-**Własność kluczowa.**  Suma niezależnych $X\_i\sim\mathcal N(\mu\_i,\sigma\_i^2)$ jest również normalna:
+Suma niezależnych $X\_i\sim\mathcal N(\mu\_i,\sigma\_i^2)$ jest również normalna:
 
 $$
 \sum_i X_i \sim \mathcal N\!\Bigl(\sum \mu_i,\;\sum\sigma_i^2\Bigr)
@@ -380,8 +378,7 @@ for(int i=0;i<10;++i) std::cout << B(gen) << ' ';
 >
 > $\hat p \pm 1.96\sqrt{p(1-p)/n}$
 
-
-Tabela poniżej zestawia kluczowe informacje o omawianych dystrybucjach, umożliwiając szybkie porównanie:
+Tabela poniżej zestawia informacje o omawianych dystrybucjach, umożliwiając szybkie porównanie:
 
 | Rozkład              | Kod dystr. `<random>`           | Parametry      | $E\[X]$          | $Var\[X]$                 | Typ danych    |
 | -------------------- | ------------------------------- | -------------- | ------------------ | --------------------------- | ------------- |
@@ -391,9 +388,13 @@ Tabela poniżej zestawia kluczowe informacje o omawianych dystrybucjach, umożli
 
 ### Zalety i wady różnych metod
 
+Teraz porównamy najpopularniejsze metody generowania liczb losowych w C++, omawiając ich zalety oraz ograniczenia w różnych zastosowaniach.
+
 #### `std::random` (C++11)
 
-Model matematyczny
+Biblioteka `<random>` w C++11 dostarcza elastyczny interfejs „generator + dystrybucja” bazujący domyślnie na `std::mt19937`. Poniżej przyjrzymy się matematycznemu modelowi Mersenne Twistera wraz z jego mocnymi i słabymi stronami.
+
+**Model matematyczny**
 
 Domyślny wybór – `std::mt19937` – jest implementacją algorytmu Mersenne Twistera:
 
@@ -408,29 +409,30 @@ $$
 
 *Spektralny test równoległości* daje wynik rzędu $2^{-2018}$ – przy wielu zastosowaniach symulacyjnych uznaje się to za „praktycznie idealne”.
 
-Zalety
+**Zalety**
 
-| Aspekt                    | Wartość dodana                       | Komentarz matematyczny                                                  |
-| ------------------------- | ------------------------------------ | ----------------------------------------------------------------------- |
-| **Okres**                 | $2^{19937}-1$                        | eliminuje cykliczność w trwałych symulacjach                            |
-| **Równomierność**         | 623-wymiarowa                        | równy rozkład punktów w hipersześcianie $[0,1)^{623}$                   |
+| Aspekt                    | Wartość dodana                       | Komentarz matematyczny                                                    |
+| ------------------------- | ------------------------------------ | ------------------------------------------------------------------------- |
+| **Okres**                 | $2^{19937}-1$                      | eliminuje cykliczność w trwałych symulacjach                              |
+| **Równomierność**         | 623-wymiarowa                        | równy rozkład punktów w hipersześcianie $\[0,1)^{623}$                   |
 | **Bogactwo dystrybucji**  | normalna, Poissona, gamma…           | każda dystrybucja to transformacja $X=F^{-1}(U)$ lub specjalny algorytm |
-| **Konfigurowalne ziarno** | deterministyczne lub `random_device` | replikowalność lub entropia systemowa                                   |
-| **Przenośność**           | zdefiniowane przez ISO/IEC 14882     | identyczna sekwencja dla tego samego seeda na wszystkich kompilatorach  |
+| **Konfigurowalne ziarno** | deterministyczne lub `random_device` | replikowalność lub entropia systemowa                                     |
+| **Przenośność**           | zdefiniowane przez ISO/IEC 14882     | identyczna sekwencja dla tego samego seeda na wszystkich kompilatorach    |
 
-Wady 
+**Wady**
 
-1. **Krzywa uczenia** – trzeba rozumieć dwustopniowy model *generator + dystrybucja*.
-2. **Brak kryptograficznej odporności** – MT jest liniowy nad $\mathbb F_2$; stan (19937 bitów) można odtworzyć z 19937 wyjść i przewidywać kolejne.
-3. **Koszt inicjalizacji** – `std::random_device` bywa wolny (blokujący odczyt z `/dev/urandom`), dlatego seeduj *raz*.
-4. **Rozmiar stanu** – 2,5 KB dla `mt19937`; przy setkach wątków to zauważalna pamięć.
-
+1. Trzeba rozumieć dwustopniowy model: *generator + dystrybucja*.
+2. **Brak odporności kryptograficznej** – Mersenne Twister jest liniowy nad \$\mathbb F\_2\$; stan generatora (19937 bitów) można odtworzyć na podstawie 19937 kolejnych wyjść.
+3. **Koszt inicjalizacji** – `std::random_device` może być wolny (blokuje podczas odczytu z `/dev/urandom`).
+4. **Rozmiar stanu** – 2,5 KB dla `mt19937`; przy wielu wątkach oznacza to znaczną ilość pamięci.
 
 #### `rand()` – klasyczny LCG
 
- Model matematyczny
+Funkcja `rand()` to prosty liniowy kongruentny generator (LCG) o minimalnym API, często używany dla szybkiego startu, ale z istotnymi ograniczeniami.
 
-Większość implementacji to **liniowy kongruentny generator**
+**Model matematyczny**
+
+Większość implementacji to **liniowy generator**:
 
 $$
 x_{n+1} = (ax_n + c)\;\bmod m,
@@ -442,35 +444,36 @@ $$
 a=1103515245,\;c=12345,\;m=2^{31}.
 $$
 
-*Okres* ≤ $m=2^{31}\;(\approx\!2{,}1\cdot10^9)$.
-**Własność:** dla każdego $k≥0$ najmłodszy bit $x_n$ tworzy okres 2, co czyni go bezużytecznym w symulacjach binarnych.
+Okres ≤ $m=2^{31};(\approx2.1\cdot10^9)$. Najmłodszy bit ma okres 2, co czyni go bezużytecznym w symulacjach binarnych.
 
-Zalety
+**Zalety**
 
-| Aspekt            | Argument                            | Uwaga                                                       |
-| ----------------- | ----------------------------------- | ----------------------------------------------------------- |
-| **Minimalne API** | `int r = rand();`                   | brak szablonów ↔ szybki start                               |
-| **Dostępność**    | C 89 / C++98                        | działanie na wbudowanych systemach, bibliotece `libc`       |
-| **Przepustowość** | jedna operacja mnożenia + dodawania | przeciętnie 2-3× szybciej od `mt19937` (ale zależy od CPU!) |
+| Aspekt            | Argument                            | Uwaga                                                    |
+| ----------------- | ----------------------------------- | -------------------------------------------------------- |
+| **Minimalne API** | `int r = rand();`                   | brak szablonów ↔ szybki start                            |
+| **Dostępność**    | C89 / C++98                         | działanie na wbudowanych systemach, bibliotece `libc`    |
+| **Przepustowość** | jedna operacja mnożenia + dodawania | przeciętnie 2–3× szybciej od `mt19937` (zależnie od CPU) |
 
-Wady
+**Wady**
 
-1. **Krótki okres** – przy $10^8$ liczb/s (GPU) pełen cykl wyczerpie się w 21 s.
-2. **Słabe własności spektralne** – płaszczyzna punktów $(x_n,x_{n+1},x_{n+2})$ układa się w maks. 15 równoległych hiperpłaszczyzn → korelacje w 3D Monte Carlo.
-3. **Niejednorodność implementacji** – różne stałe $a,c,m$ ⇒ wyniki zależne od kompilatora.
-4. **Brak gotowych rozkładów** – trzeba stosować ręczne transformacje (np. metoda Box-Mullera), co zwiększa kod i błąd numeryczny.
-5. **Łamliwość kryptograficzna** – LCG jest odwrotny w $\mathbb Z_m$: trzy kolejne wartości wystarczą do odzyskania $a,c$.
-
+1. **Krótki okres generacji** – przy prędkości 10⁸ liczb/s pełny cykl wyczerpuje się w ok. 21 s.
+2. **Słabe własności spektralne** – pojawiają się korelacje w przestrzeni 3D w symulacjach Monte Carlo.
+3. **Niejednorodność implementacji** – różne kompilatory używają odmiennych stałych.
+4. **Brak wbudowanych rozkładów** – konieczne ręczne przekształcenia (np. metoda Box–Mullera).
+5. **Łamliwość kryptograficzna** – na podstawie zaledwie trzech wyjść można odzyskać parametry generatora.
 
 #### Zestawienie porównawcze
 
-| Kryterium                    | `std::mt19937`       | `rand()` (LCG)          |
-| ---------------------------- | -------------------- | ----------------------- |
-| Okres                        | $2^{19937}-1$        | ≤ $2^{31}$              |
-| Równomierność $d_\text{max}$ | 623                  | ≤ 5                     |
-| Koszt generacji              | \~10 ns              | \~5 ns                  |
-| Rozmiar stanu                | 2,5 KB               | 4 B                     |
-| Kryptografia                 | ❌ (liniowosc)       | ❌                      |
-| Wbudowane dystrybucje        | ✔ (\~20)             | ❌                       |
-| Standaryzacja seeda          | ✔ (deterministyczna) | ❌ (różne implementacje) |
-| Łatwość użycia               | umiarkowana          | wysoka                  |
+Poniżej tabela podsumowująca różnice między `std::mt19937` a `rand()`:
+
+| Kryterium                   | `std::mt19937`       | `rand()` (LCG) |
+| --------------------------- | -------------------- | -------------- |
+| Okres                       | $2^{19937}-1$      | ≤ $2^{31}$   |
+| Równomierność $d\_{\max}$ | 623                  | ≤ 5            |
+| Koszt generacji             | \~10 ns              | \~5 ns         |
+| Rozmiar stanu               | 2,5 KB               | 4 B            |
+| Kryptografia                | ❌ (liniowość)        | ❌              |
+| Wbudowane dystrybucje       | ✔ (\~20)             | ❌              |
+| Standaryzacja seeda         | ✔ (deterministyczna) | ❌              |
+| Łatwość użycia              | umiarkowana          | wysoka         |
+
