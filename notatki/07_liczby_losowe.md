@@ -1,8 +1,10 @@
 ## Liczby losowe i generatory liczb losowych
 
-W języku C++ liczby losowe generuje się za pomocą standardowej biblioteki `<random>`. Proces losowania zaczyna się od utworzenia generatora liczb pseudolosowych, np. `std::mt19937`, który bazuje na algorytmie Mersenne Twister. Aby uzyskać bardziej losowe wyniki, generator inicjalizuje się za pomocą unikalnej wartości, zwanej "ziarnem" (ang. *seed*), co można zrobić np. poprzez `std::random_device`. Następnie używa się odpowiednich dystrybucji, takich jak `std::uniform_int_distribution` (dla liczb całkowitych z równomiernym rozkładem) lub `std::uniform_real_distribution` (dla liczb zmiennoprzecinkowych), aby wygenerować liczby z określonego zakresu. Dzięki tej bibliotece losowanie w C++ jest bardziej elastyczne i daje kontrolę nad różnymi aspektami generowania liczb losowych, w tym nad zakresem i typem wartości.
+W języku C++ liczby losowe generuje się za pomocą standardowej biblioteki `<random>`. Proces losowania zaczyna się od utworzenia generatora liczb pseudolosowych, np. `std::mt19937`, który bazuje na algorytmie Mersenne Twister. Aby uzyskać bardziej losowe wyniki, generator inicjalizuje się za pomocą unikalnej wartości, zwaną "ziarnem" (ang. *seed*), co można zrobić np. poprzez `std::random_device`. Następnie używa się odpowiednich dystrybucji, takich jak `std::uniform_int_distribution` (dla liczb całkowitych z równomiernym rozkładem) lub `std::uniform_real_distribution` (dla liczb zmiennoprzecinkowych), aby wygenerować liczby z określonego zakresu. Dzięki tej bibliotece losowanie w C++ jest bardziej elastyczne i daje kontrolę nad różnymi aspektami generowania liczb losowych, w tym nad zakresem i typem wartości.
 
 ### Liczby losowe
+
+W tej podsekcji zapoznamy się z matematycznymi podstawami pojęcia liczby losowej, definiując zmienne losowe oraz ich rozkłady.
 
 W klasycznej teorii prawdopodobieństwa liczbę losową modeluje **zmienna losowa**
 
@@ -10,13 +12,15 @@ $$
 X:(\Omega,\mathcal F,\mathbb P)\longrightarrow (\mathbb R,\mathcal B)
 $$
 
-gdzie $(\Omega,\mathcal F,\mathbb P)$ to przestrzeń probabilistyczna, a $\mathcal B$ – σ–c-algebra borelowska.
+gdzie $(\Omega,\mathcal F,\mathbb P)$ to przestrzeń probabilistyczna, a $\mathcal B$ – σ–algebra borelowska.
 
-Dla każdego przedziału $A\subseteq\mathbb R$ prawdopodobieństwo $\mathbb P\!\bigl(X\in A\bigr)$ jest ustalone przez rozkład $F_X(x)=\mathbb P(X\le x)$.
+Dla każdego przedziału $A\subseteq\mathbb R$ prawdopodobieństwo $\mathbb P!\bigl(X\in A\bigr)$ jest ustalone przez rozkład $F\_X(x)=\mathbb P(X\le x)$.
 
 #### Własności oczekiwane
 
-Jeśli $X$ ma gęstość $f_X$, to
+W tej części opisujemy podstawowe miary statystyczne zmiennej losowej, takie jak wartość oczekiwana i wariancja.
+
+Jeśli $X$ ma gęstość $f\_X$, to
 
 $$
 E[X]=\int_{-\infty}^{\infty}xf_X(x)dx
@@ -26,9 +30,11 @@ $$
 Var[X]=\int_{-\infty}^{\infty}(x- E[X])^{2}f_X(x)dx
 $$
 
-Prawo wielkich liczb (LLN) gwarantuje zbieżność średniej $\bar X_n$ do $E[X]$ przy $n\to\infty$, a centralne tw. graniczne (CLТ) – normalne odchylenie $O(n^{-1/2})$.
+Prawo wielkich liczb (LLN) gwarantuje zbieżność średniej $\bar X\_n$ do $E\[X]$ przy $n\to\infty$, a centralne tw. graniczne (CLT) – normalne odchylenie $O(n^{-1/2})$.
 
 #### Prawdziwa losowość vs. pseudolosowość
+
+W tej sekcji omówimy różnice pomiędzy rzeczywistymi źródłami losowości a deterministycznymi generatorami pseudolosowymi.
 
 Źródła entropii
 
@@ -39,33 +45,37 @@ $$
 s_{k+1}=F(s_k)\pmod m,\qquad X_k=g(s_k)
 $$
 
-który przy zadanym ziarnie $s_0$ tworzy powtarzalną sekwencję. Kluczowe parametry:
+który przy zadanym ziarnie $s\_0$ tworzy powtarzalną sekwencję. Kluczowe parametry:
 
-* **Okres** $p$ – najmniejsze $k>0$ z $s_{n+k}=s_n$.
-* **Wymiar równomierności** – równomierne pokrycie hipersześcianu $[0,1)^d$.
+* **Okres** $p$ – najmniejsze $k>0$ z $s\_{n+k}=s\_n$.
+* **Wymiar równomierności** – równomierne pokrycie hipersześcianu $\[0,1)^d$.
 * **Test next-bit** (dla RNG kryptograficznych) – nieprzewidywalność kolejnego bitu z prawdopodobieństwem istotnie $>\tfrac12$.
 
- Statystyczne testy jakości
+Statystyczne testy jakości
 
-| Klasa testu                  | Weryfikowana własność           | Metryka                                                           |
-| ---------------------------- | ------------------------------- | ----------------------------------------------------------------- |
-| **Chi-kwadrat**              | jednorodność histogramu         | $\chi^2=\sum \frac{(O_i-E_i)^2}{E_i}$                             |
-| **Serial/correlation**       | niezależność kolejnych wartości | współczynnik $r=\frac{Cov(X_i,X_{i+k})}{\sigma^2}$ |
-| **K–S (Kolmogorov–Smirnov)** | zgodność z dystrybuantą $F$     | statystyka sup-normy $D_n$                                        |
-| **DieHard / TestU01**        | złożone właściwości             | zbiór  20–100 testów                                              |
+Poniższa tabela przedstawia główne klasy testów statystycznych używanych do oceny generatorów pseudolosowych:
+
+| Klasa testu                  | Weryfikowana własność           | Metryka                                                |
+| ---------------------------- | ------------------------------- | ------------------------------------------------------ |
+| **Chi-kwadrat**              | jednorodność histogramu         | $\chi^2=\sum \frac{(O\_i-E\_i)^2}{E\_i}$             |
+| **Serial/correlation**       | niezależność kolejnych wartości | współczynnik $r=\frac{Cov(X\_i,X\_{i+k})}{\sigma^2}$ |
+| **K–S (Kolmogorov–Smirnov)** | zgodność z dystrybuantą $F$   | statystyka sup-normy $D\_n$                          |
+| **DieHard / TestU01**        | złożone właściwości             | zbiór  20–100 testów                                   |
 
 Sekwencja testów nie dowodzi losowości, lecz obala ją, gdy statystyki wyjdą poza akceptowalny przedział ufności.
 
 ### Generowanie liczb losowych
 
+W tej podsekcji przedstawimy dostępne w C++ generatory liczb losowych oraz ich główne właściwości i zastosowania.
+
 Przegląd generatorów
 
-| Generator            | Algorytm                     | Okres               | Zastosowania                |
-| -------------------- | ---------------------------- | ------------------- | --------------------------- |
+| Generator            | Algorytm                     | Okres                 | Zastosowania                |
+| -------------------- | ---------------------------- | --------------------- | --------------------------- |
 | `std::mt19937`       | Mersenne Twister (19937-bit) | $2^{19937}-1$       | ogólne symulacje            |
 | `std::ranlux24_base` | Tausworthe + przekładanie    | $ \approx 10^{171}$ | obliczeniowa fizyka jądrowa |
 | `std::knuth_b`       | LCG + shuffling              | $2^{64}$            | proste gry, testy           |
-| `std::random_device` | TRNG – entropia OS           | n/d                 | seeding, kryptografia       |
+| `std::random_device` | TRNG – entropia OS           | n/d                   | seeding, kryptografia       |
 
 **Mersenne Twister.**  Rekurencja:
 
@@ -75,20 +85,29 @@ $$
 
 gdzie $n=624,m=397$. Duży okres i 623-wymiarowa równomierność zapewniają dobry rozkład w praktyce nie-krypto.
 
-Dystrybucje
+#### Dystrybucje
 
-| Dystrybucja                      | Parametry         | Gęstość/PMF $f(x)$                                                 |
-| -------------------------------- | ----------------- | ------------------------------------------------------------------ |
+W tej części omówione zostaną najważniejsze dystrybucje dostępne w bibliotece `<random>` oraz ich własności.
+
+| Dystrybucja                      | Parametry           | Gęstość/PMF $f(x)$                                                 |
+| -------------------------------- | ------------------- | -------------------------------------------------------------------- |
 | `std::uniform_int_distribution`  | $a,b\in\mathbb Z$ | $f(k)=\tfrac1{b-a+1}$                                              |
 | `std::uniform_real_distribution` | $a,b\in\mathbb R$ | $f(x)=\tfrac1{b-a}$                                                |
 | `std::normal_distribution`       | $\mu,\sigma$      | $f(x)=\frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{(x-\mu)^2}{2\sigma^2}}$ |
-| `std::bernoulli_distribution`    | $p$               | $f(1)=p,\;f(0)=1-p$                                                |
+| `std::bernoulli_distribution`    | $p$               | $f(1)=p,;f(0)=1-p$                                                 |
 | `std::poisson_distribution`      | $\lambda$         | $f(k)=e^{-\lambda}\frac{\lambda^k}{k!}$                            |
 
-Dystrybucje ciągłe realizują **metodę inwersji**
-$X=F^{-1}(U)$ z $U\sim\mathcal U(0,1)$ lub transformacje specjalne (np. Box-Muller).
+Dystrybucje ciągłe implementują **metodę inwersji**
 
-####  Inicjalizacja – właściwości ziarna
+$$
+X=F^{-1}(U)\text{ z }U\sim\mathcal U(0,1)
+$$
+
+lub transformacje specjalne (np. Box-Muller).
+
+#### Inicjalizacja – właściwości ziarna
+
+Omówimy, jak dobór ziarna wpływa na powtarzalność oraz jakość generowanych sekwencji.
 
 Jeśli dwa generatory otrzymają to samo **seed**, ich sekwencje będą identyczne:
 
@@ -100,9 +119,11 @@ W symulacjach replikowalnych podajemy jawnie wartość seeda; w sytuacjach wymag
 
 ### Przykłady użycia (C++ 17)
 
-> **Konwencja kodu:**  wszystkie przykłady zakładają jednorazową inicjalizację generatora na początku programu, aby uniknąć kosztownego wywoływania `std::random_device` w pętli.
+Poniżej znajdują się przykłady wykorzystania biblioteki `<random>` w praktycznych scenariuszach, ilustrujące różne zastosowania dystrybucji.
 
-####  Liczba z przedziału $[a,b]\subset\mathbb Z$
+#### Liczba z przedziału $\[a,b]\subset\mathbb Z$
+
+Wygenerujemy liczbę całkowitą z zadanego przedziału.
 
 ```cpp
 std::mt19937 gen(std::random_device{}());
@@ -110,30 +131,35 @@ std::uniform_int_distribution<int> dist(a,b);
 int x = dist(gen);
 ```
 
-*Własności.*  $\Pr\{X=k\}=1/(b-a+1)$. Oczekiwana wartość $E[X]=\tfrac{a+b}{2}$, wariancja $\sigma^2=\tfrac{(b-a+1)^2-1}{12}$.
+*Własności.*  $\Pr{X=k}=1/(b-a+1)$. Oczekiwana wartość $E\[X]=\tfrac{a+b}{2}$, wariancja $\sigma^2=\tfrac{(b-a+1)^2-1}{12}$.
 
 #### Rzut monetą – dystrybucja Bernoulliego
+
+Przykład rzutu uczciwą monetą.
 
 ```cpp
 std::bernoulli_distribution coin(0.5);
 bool isHeads = coin(gen);
 ```
 
-*Analiza.*  $X\sim\mathrm{Bern}(p)$: $E[X]=p$, Var[X]=p(1-p)$.
+*Analiza.*  $X\sim\mathrm{Bern}(p)$: $E\[X]=p$, Var\[X]=p(1-p).
+Dla $n$ rzutów błąd względny częstości maleje jak $O!\bigl(n^{-1/2}\bigr)$.
 
-Dla  $n$ rzutów błąd względny częstości maleje jak $O\!\bigl(n^{-1/2}\bigr)$.
+#### Rzut sześciościenną kostką
 
-####  Rzut sześciościenną kostką
+Generowanie wyrzutu kostki o sześciu ściankach.
 
 ```cpp
 std::uniform_int_distribution<int> d6(1,6);
 int result = d6(gen);
 ```
 
-Rozkład dyskretny równomierny na $\{1,\dots,6\}$.
-$E[X]=3.5,\; \sigma^2=\tfrac{35}{12}$.
+Rozkład dyskretny równomierny na ${1,\dots,6}$.
+$E\[X]=3.5,; \sigma^2=\tfrac{35}{12}$.
 
-####  Generator silnych haseł
+#### Generator silnych haseł
+
+Przykład tworzenia losowego hasła o zadanej długości.
 
 ```cpp
 std::string alphabet =
@@ -149,20 +175,12 @@ auto password = [&] (size_t n) {
 };
 ```
 
-Entropia hasła $H = n\log_2 |\text{alphabet}|$.
-Dla $n=12$ i |$alphabet$| = $74$: $H\approx$ 71 bitów.
+Entropia hasła $H = n\log\_2 |\text{alphabet}|$.
+Dla $n=12$ i $|alphabet| = 74$: $H\approx 71$ bitów.
 
-####  Metody Monte Carlo
+#### Metody Monte Carlo
 
-Symulacyjna estymata całki:
-
-$$
-I=\int_{a}^{b}g(x)dx,\qquad  
-\hat I_N = (b-a)\frac1N\sum_{k=1}^N g(U_k),\quad U_k\sim\mathcal U(a,b).
-$$
-
-*Błąd przeciętny* $RMSE=\sigma/\sqrt N$ z $\sigma^2=Var[g(U)]$.
-W C++:
+Demonstracja estymacji całki przy pomocy losowania.
 
 ```cpp
 std::uniform_real_distribution<double> U(a,b);
@@ -171,9 +189,20 @@ for(size_t k=0;k<N;++k) sum += g(U(gen));
 double I = (b-a)*sum/N;
 ```
 
+Symulacyjna estymata całki:
+
+$$
+I=\int_{a}^{b}g(x)dx,
+\qquad  
+\hat I_N = (b-a)\frac1N\sum_{k=1}^N g(U_k),\quad U_k\sim\mathcal U(a,b).
+$$
+
+*Błąd przeciętny* $RMSE=\sigma/\sqrt N$ z $\sigma^2=Var\[g(U)]$.
 **Uwaga.**  Dla funkcji silnie oscylujących warto stosować *ważoną próbę* (importance sampling) lub *stratyfikację*.
 
-####  RNG kryptograficzne (CSPRNG)
+#### RNG kryptograficzne (CSPRNG)
+
+W tej sekcji opisano wymagania i przykłady generatorów kryptograficznych.
 
 Wymagania formalne (Goldwasser–Micali):
 
@@ -187,7 +216,7 @@ $$
 
 gdzie $\varepsilon$ jest zaniedbywalne względem parametru bezpieczeństwa $\lambda$.
 
-W C++ 20 brak oficjalnego CSPRNG, ale popularne biblioteki (libsodium, Botan) udostępniają `randombytes_buf`, `crypto_rng`. Dla systemowego źródła entropii można użyć:
+W C++20 brak oficjalnego CSPRNG, ale popularne biblioteki (libsodium, Botan) udostępniają `randombytes_buf`, `crypto_rng`. Dla systemowego źródła entropii można użyć:
 
 ```cpp
 #include <openssl/rand.h>
@@ -197,15 +226,19 @@ RAND_bytes(buf, sizeof(buf)); // 256-bit
 
 ### Zastosowanie różnych dystrybucji
 
+W tej sekcji omówimy zastosowania kilku kluczowych dystrybucji losowych dostępnych w bibliotece `<random>`, prezentując ich definicje, własności, implementację w C++ oraz przykłady użycia.
+
 #### Dystrybucja równomierna
 
-Dyskretna wersja na zbiorze kolejnych liczb całkowitych $\{a,\dots,b\}$:
+Dystrybucja równomierna generuje wartości o jednakowym prawdopodobieństwie w całym zakresie, co jest przydatne, gdy potrzebujemy równomiernie rozłożyć próbki.
+
+Dyskretna wersja na zbiorze kolejnych liczb całkowitych ${a,\dots,b}$:
 
 $$
 \mathbb P(X=k)=\frac1{b-a+1},\qquad k=a,\dots,b
 $$
 
-Wersja ciągła na przedziale $[a,b]$:
+Wersja ciągła na przedziale $\[a,b]$:
 
 $$
 f(x)=\frac1{b-a}\mathbf 1_{[a,b]}(x)
@@ -215,7 +248,7 @@ $$
 F(x)=\frac{x-a}{b-a}
 $$
 
-Parametry i MGF
+W poniższych wzorach przedstawiono momenty i funkcję generującą momenty (MGF), które charakteryzują tę dystrybucję:
 
 $$
 E[X]=\frac{a+b}{2}
@@ -229,7 +262,7 @@ $$
 M_X(t)=\frac{e^{tb}-e^{ta}}{t(b-a)}\;(t\ne 0)
 $$
 
- Implementacja
+**Implementacja**
 
 ```cpp
 std::mt19937 gen(std::random_device{}());
@@ -239,7 +272,9 @@ int k = U(gen);
 
 > **Rada.**  Generator wywołuj **raz** i przekazuj referencję; kosztowna inicjalizacja `std::random_device{}` nie powinna znajdować się w pętli.
 
-##### Przykład: 10 liczb w zakresie $[1,100]$
+##### Przykład: 10 liczb w zakresie $\[1,100]$
+
+Poniżej przykład wylosowania dziesięciu liczb z przedziału \[1,100]:
 
 ```cpp
 std::cout << "Uniform[1,100]: ";
@@ -248,12 +283,16 @@ for(int i=0;i<10;++i) std::cout << U(gen) << ' ';
 
 #### Dystrybucja normalna (Gaussa)
 
+Rozkład normalny, zwany też Gaussa, opisuje zmienną losową o gęstości dzwonowej i jest kluczowy w statystyce ze względu na centralne twierdzenie graniczne.
+
 $$
 f(x)=\frac1{\sqrt{2\pi}\sigma}\exp\!\Bigl[-\frac{(x-\mu)^2}{2\sigma^2}\Bigr],
 \quad x\in\mathbb R
 $$
 
- Parametry
+##### Parametry
+
+Podstawowe parametry wpływające na położenie i rozrzut rozkładu przedstawiono poniżej:
 
 $$
 E[X]=\mu
@@ -263,45 +302,45 @@ $$
 Var[X]=\sigma^{2}
 $$
 
-$$$
+$$
 M_X(t)=\exp\!\left(\mu t+\tfrac12\sigma^{2}t^{2}\right)
 $$
 
-**Własność kluczowa.**  Suma niezależnych $X_i\sim\mathcal N(\mu_i,\sigma_i^2)$ jest również normalna:
+**Własność kluczowa.**  Suma niezależnych $X\_i\sim\mathcal N(\mu\_i,\sigma\_i^2)$ jest również normalna:
 
 $$
-\sum_i X_i \;\sim\; \mathcal N\!\Bigl(\textstyle\sum \mu_i,\;\sum\sigma_i^2\Bigr)
+\sum_i X_i \sim \mathcal N\!\Bigl(\sum \mu_i,\;\sum\sigma_i^2\Bigr)
 $$
 
-Implementacja
+**Implementacja**
 
 ```cpp
 std::normal_distribution<double> N(mu, sigma);
 double x = N(gen);
 ```
 
-Przykład: $\mu=50,\;\sigma=10$
+Przykład generowania próbek z rozkładu normalnego o zadanych parametrach:
 
 ```cpp
 std::cout << "Normal(50,10): ";
 for(int i=0;i<10;++i) std::cout << N(gen) << ' ';
 ```
 
-> **Weryfikacja.**  Zweryfikuj zgodność z rozkładem normalnym:
+> **Weryfikacja.**  Aby sprawdzić poprawność generatora, warto przeprowadzić prostą weryfikację statystyczną:
 >
 > 1. zbuduj histogram,
-> 2. oblicz statystykę K–S $D_n=\sup_x|F_n(x)-\Phi_{\mu,\sigma}(x)|$,
-> 3. odrzucaj generator jeśli $D_n>D_{\alpha,n}$ dla wybranego poziomu $\alpha$.
+> 2. oblicz statystykę K–S $D\_n=\sup\_x|F\_n(x)-\Phi\_{\mu,\sigma}(x)|$,
+> 3. odrzucaj generator jeśli $D\_n>D\_{\alpha,n}$ dla wybranego poziomu $\alpha$.
 
 #### Dystrybucja Bernoulliego
 
-Definicja
+Dystrybucja Bernoulliego modeluje zdarzenie dychotomiczne, zwracając 1 z prawdopodobieństwem $p$ lub 0 z prawdopodobieństwem $1-p$.
 
 $$
 \mathbb P(X=1)=p,\qquad \mathbb P(X=0)=1-p,\quad 0<p<1.
 $$
 
-Parametry
+##### Parametry
 
 $$
 E[X]=p
@@ -315,9 +354,13 @@ $$
 M_X(t)=1-p+pe^{t}
 $$
 
-**Związek z binomialnym.**  Jeśli $X_i\stackrel{\text{i.i.d.}}{\sim}\mathrm{Bern}(p)$, to $\sum_{i=1}^{n}X_i \sim \mathrm{Bin}(n,p)$.
+**Związek z rozkladem dwumianowym.**  Suma prób Bernoulliego prowadzi do rozkładu dwumianowego, co ilustruje związek pomiędzy tymi rozkładami:
 
-Implementacja
+$$
+\sum_{i=1}^{n}X_i \sim \mathrm{Bin}(n,p).
+$$
+
+**Implementacja**
 
 ```cpp
 double p = 0.3;
@@ -325,26 +368,26 @@ std::bernoulli_distribution B(p);
 bool success = B(gen);
 ```
 
-Przykład: 10 losowań, $p=0{,}3$
+**Przykład: 10 losowań, $p=0,3$**
+
+Przykład wykonania dziesięciu niezależnych prób Bernoulliego:
 
 ```cpp
 for(int i=0;i<10;++i) std::cout << B(gen) << ' ';
 ```
 
-> **Analiza częstości.**  Dla $n$ prób odchylenie $|\hat p-p|$ ma asymptotycznie rozkład
+> **Analiza częstości.**  Analiza częstościowa pozwala na ocenę zbieżności częstości względnej do $p$ oraz wyznaczenie przedziału ufności 95 %:
 >
-> $\hat p \approx \mathcal N\!\bigl(p,\;p(1-p)/n\bigr)$
->
-> Uzyskaj przedział ufności 95 %:  $\hat p \pm 1.96\sqrt{p(1-p)/n}$
+> $\hat p \pm 1.96\sqrt{p(1-p)/n}$
 
-Podsumowanie porównawcze
 
-| Rozkład              | Kod dystr. `<random>`           | Parametry    | $E[X]$ | $Var[X]$   | Typ danych    |
-| -------------------- | ------------------------------- | ------------ | -------------------- | ------------------------- | ------------- |
-| Równomierny (dyskr.) | `std::uniform_int_distribution` | $a,b$        | $\tfrac{a+b}{2}$     | $\tfrac{(b-a+1)^2-1}{12}$ | całkowite     |
-| Normalny             | `std::normal_distribution`      | $\mu,\sigma$ | $\mu$                | $\sigma^2$                | zmiennoprzec. |
-| Bernoulli            | `std::bernoulli_distribution`   | $p$          | $p$                  | $p(1-p)$                  | bool/int      |
+Tabela poniżej zestawia kluczowe informacje o omawianych dystrybucjach, umożliwiając szybkie porównanie:
 
+| Rozkład              | Kod dystr. `<random>`           | Parametry      | $E\[X]$          | $Var\[X]$                 | Typ danych    |
+| -------------------- | ------------------------------- | -------------- | ------------------ | --------------------------- | ------------- |
+| Równomierny (dyskr.) | `std::uniform_int_distribution` | $a,b$        | $\tfrac{a+b}{2}$ | $\tfrac{(b-a+1)^2-1}{12}$ | całkowite     |
+| Normalny             | `std::normal_distribution`      | $\mu,\sigma$ | $\mu$            | $\sigma^2$                | zmiennoprzec. |
+| Bernoulli            | `std::bernoulli_distribution`   | $p$          | $p$              | $p(1-p)$                  | bool/int      |
 
 ### Zalety i wady różnych metod
 
@@ -352,7 +395,7 @@ Podsumowanie porównawcze
 
 Model matematyczny
 
-Domyślny wybór – `std::mt19937` – jest realizacją Mersenne Twistera:
+Domyślny wybór – `std::mt19937` – jest implementacją algorytmu Mersenne Twistera:
 
 $$
 \begin{aligned}
