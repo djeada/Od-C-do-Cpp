@@ -1,119 +1,165 @@
-## Typ wyliczeniowy `enum`
+### Typ wyliczeniowy `enum` w C++
 
-Typ wyliczeniowy `enum` w C++ umożliwia tworzenie zmiennych mogących przyjmować tylko pewien, wstępnie określony zestaw wartości. Każda z tych wartości reprezentowana jest przez czytelną nazwę, co przyczynia się do zwiększenia czytelności kodu. Od C++11 wprowadzono `enum class`, który oferuje silniejsze typowanie i lepszą hermetyzację niż tradycyjne `enum`.
+Typ wyliczeniowy (`enum`) pozwala opisać **zamknięty zbiór możliwych wartości** pod czytelnymi nazwami. Zamiast “magicznych liczb” (np. `0,1,2`) używasz sensownych identyfikatorów (`Poniedzialek`, `Wtorek`), co poprawia czytelność i zmniejsza liczbę błędów.
 
-### Tradycyjny `enum`
+W C++ występują dwie główne odmiany:
 
-Tradycyjny `enum` pozwala na zdefiniowanie zestawu nazwanych stałych, które są domyślnie przypisane do wartości całkowitych zaczynając od zera. Możliwe jest również ręczne przypisanie wartości.
+* **klasyczny `enum`** (starszy, mniej bezpieczny),
+* **`enum class`** (od C++11 – domyślnie polecany).
 
-Przykład użycia tradycyjnego `enum` do reprezentacji dni tygodnia:
+### Klasyczny `enum`
 
-```c++
-#include <iostream>
+Klasyczny `enum` tworzy zestaw nazwanych stałych, które **domyślnie mają wartości całkowite** zaczynające się od `0` i rosnące o `1`.
 
+#### Podstawowy przykład
+
+```cpp
 enum DzienTygodnia { Poniedzialek, Wtorek, Sroda, Czwartek, Piatek, Sobota, Niedziela };
 
 int main() {
-    DzienTygodnia dzien = Poniedzialek;  // Nie używamy tutaj specyfikatora DzienTygodnia::Poniedzialek
-
-    switch (dzien) {
-    case Poniedzialek:
-        std::cout << "Dzisiaj jest poniedziałek." << std::endl;
-        break;
-    case Wtorek:
-        std::cout << "Dzisiaj jest wtorek." << std::endl;
-        break;
-    // ... można kontynuować dla pozostałych dni
-    default:
-        std::cout << "Nieznany dzień tygodnia!" << std::endl;
-    }
-
-    return 0;
+    DzienTygodnia dzien = Poniedzialek; // nazwy trafiają do “globalnej” przestrzeni nazw
 }
 ```
 
-### `enum class`
+#### Wygoda, ale i ryzyko: automatyczne konwersje
 
-`enum class`, wprowadzony w C++11, różni się od tradycyjnego `enum` w kilku kluczowych aspektach:
+W klasycznym `enum` wartości często da się **łatwo mieszać z int-em** (zależnie od kontekstu i kompilatora), co bywa źródłem błędów.
 
-- Wartości **`enum class` nie mogą być automatycznie konwertowane** na liczby całkowite ani odwrotnie, co zapewnia silniejsze typowanie i zapobiega błędom związanym z typowaniem.
-- **Brak konfliktów nazw** jest możliwy dzięki temu, że wartości `enum class` są przestrzenią nazw dla siebie, co eliminuje potencjalne kolizje w nazewnictwie.
-- `Enum class` oferuje możliwość **określenia typu bazowego** dla wartości wyliczeniowych, co jest przydatne w optymalizacji pamięci oraz przy zapewnieniu zgodności z innymi systemami.
+```cpp
+enum Tryb { Off, On };
 
-Przykład wykorzystania `enum class` do reprezentacji kolorów:
+int main() {
+    Tryb t = On;
+    int x = t;   // często działa: implicit enum -> int
+}
+```
 
-```c++
+#### Kolizje nazw
+
+Nazwy elementów klasycznego `enum` “wychodzą” na zewnątrz, więc łatwo o konflikt:
+
+```cpp
+enum Kolor { Czerwony, Zielony };
+enum Swiatlo { Zielony, Czerwony }; // BŁĄD: powtórzone nazwy w tym samym zakresie
+```
+
+#### Ręczne wartości (np. pod protokoły / pliki / API)
+
+```cpp
+enum HttpStatus {
+    OK = 200,
+    NotFound = 404,
+    ServerError = 500
+};
+```
+
+### `enum class` (zalecany wariant)
+
+`enum class` wprowadza **silne typowanie** i **enkapsulację nazw**. To znaczy:
+
+* elementy zapisujesz jako `Typ::Wartosc`,
+* **nie ma automatycznych konwersji do int**,
+* łatwiej unikać konfliktów nazw.
+
+#### Podsta wowy przykład
+
+```cpp
 #include <iostream>
 
 enum class Kolor { Czerwony, Zielony, Niebieski };
 
 int main() {
-    Kolor kolor = Kolor::Czerwony;
+    Kolor k = Kolor::Czerwony;
 
-    switch (kolor) {
-    case Kolor::Czerwony:
-        std::cout << "Wybrano czerwony." << std::endl;
-        break;
-    case Kolor::Zielony:
-        std::cout << "Wybrano zielony." << std::endl;
-        break;
-    case Kolor::Niebieski:
-        std::cout << "Wybrano niebieski." << std::endl;
-        break;
-    default:
-        std::cout << "Blad!" << std::endl;
+    switch (k) {
+        case Kolor::Czerwony: std::cout << "Czerwony\n"; break;
+        case Kolor::Zielony:  std::cout << "Zielony\n";  break;
+        case Kolor::Niebieski:std::cout << "Niebieski\n";break;
     }
-
-    return 0;
 }
 ```
 
-### Zalety użycia `enum class` w porównaniu do tradycyjnych `enum`:
+#### Brak “przypadkowego int-a”
 
-- Wartości w **`enum class` nie są wprowadzane do przestrzeni nazw**, co zapobiega potencjalnym konfliktom nazewnictwa między różnymi wyliczeniami.
-- **Silniejsze typowanie** w `enum class` sprawia, że nie można przypadkowo przekształcić jego wartości na liczbę ani porównywać wartości z różnych typów wyliczeniowych bez jawnej konwersji, co zwiększa bezpieczeństwo typów.
-- `Enum class` daje możliwość **określenia typu bazowego**, co oznacza, że można zdefiniować na przykład `enum class Kolor : uint8_t`, co pozwala na optymalizację pamięci.
+```cpp
+enum class Tryb { Off, On };
 
-### Praktyczne zastosowania `enum` i `enum class`
+int main() {
+    Tryb t = Tryb::On;
+    // int x = t; // BŁĄD: brak niejawnej konwersji
+}
+```
 
-I. **Definiowanie stanów**:
+Jeśli naprawdę potrzebujesz liczby, rób to jawnie:
 
-```c++
+```cpp
+#include <type_traits>
+
+int x = static_cast<int>(Tryb::On);
+```
+
+### Typ bazowy (rozmiar i kompatybilność)
+
+Zarówno `enum`, jak i `enum class` mogą mieć określony typ bazowy. To przydaje się, gdy:
+
+* zależy Ci na konkretnym rozmiarze (np. oszczędność pamięci),
+* dane mają być zgodne z formatem zewnętrznym (protokół, plik, sieć).
+
+```cpp
+#include <cstdint>
+
+enum class Wielkosc : std::uint8_t { Mala, Srednia, Duza };
+
+int main() {
+    Wielkosc w = Wielkosc::Srednia;
+}
+```
+
+### Praktyczne zastosowania
+
+#### Stany programu / maszyny stanów
+
+```cpp
 enum class Stan { Uruchomiony, Zatrzymany, Wstrzymany };
 
-void zmienStan(Stan nowyStan) {
-    // logika zmiany stanu
+void zmienStan(Stan s) {
+    // ...
 }
 ```
 
-II. **Przypisywanie wartości**:
+#### Kody błędów z ręcznymi wartościami
 
-```c++
-enum class Bledy : int {
+```cpp
+enum class Blad : int {
     Brak = 0,
     Ostrzezenie = 1,
     Krytyczny = 2
 };
 
-Bledy blad = Bledy::Krytyczny;
+Blad b = Blad::Krytyczny;
 ```
 
-III. **Przykład z określeniem typu bazowego**:
+#### Enum w klasie/strukturze (porządek i brak konfliktów)
 
-```c++
-enum class Wielkosc : uint8_t { Mala, Srednia, Duza };
-
-Wielkosc koszulka = Wielkosc::Srednia;
-```
-
-IV. **Używanie w strukturach i klasach**:
-
-```c++
+```cpp
 struct Samochod {
     enum class Typ { Sedan, Kombi, Hatchback };
     Typ typ;
 };
 
-Samochod samochod;
-samochod.typ = Samochod::Typ::Sedan;
+int main() {
+    Samochod s;
+    s.typ = Samochod::Typ::Sedan;
+}
 ```
+
+### Kiedy używać czego?
+
+* **Domyślnie wybieraj `enum class`** (bezpieczniejszy i czytelniejszy).
+* **Klasyczny `enum`** bywa ok w starym kodzie, w prostych miejscach albo gdy świadomie chcesz łatwych konwersji (rzadko warto).
+
+Jeśli chcesz, mogę dopisać krótką sekcję o:
+
+* bitmaskach (flagi) i operatorach dla `enum class` (`|`, `&`),
+* bezpiecznym wypisywaniu enumów (mapowanie na string),
+* `switch` i ostrzeżenia kompilatora, gdy nie obsłużysz wszystkich wartości.
