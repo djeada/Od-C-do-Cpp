@@ -141,7 +141,7 @@ Omówimy, jak dobór ziarna wpływa na powtarzalność oraz jakość generowanyc
 Jeśli dwa generatory otrzymają to samo **seed**, ich sekwencje będą identyczne:
 
 $$
-\forall n\;\;x^{(1)}_n = x^{(2)}_n.
+\forall n\;x^{(1)}_n = x^{(2)}_n.
 $$
 
 W symulacjach replikowalnych podajemy jawnie wartość seeda; w sytuacjach wymagających nieprzewidywalności (kryptografia) używamy `std::random_device`.
@@ -227,6 +227,7 @@ I=\int_{a}^{b}g(x)dx,
 $$
 
 *Błąd przeciętny* $RMSE=\sigma/\sqrt N$ z $\sigma^2=Var\[g(U)]$.
+
 **Uwaga.**  Dla funkcji silnie oscylujących warto stosować *ważoną próbę* (importance sampling) lub *stratyfikację*.
 
 #### RNG kryptograficzne (CSPRNG)
