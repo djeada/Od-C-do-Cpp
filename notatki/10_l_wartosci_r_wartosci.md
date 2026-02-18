@@ -1,309 +1,236 @@
-## L-wartości i R-wartości
+## L-wartości i R-wartości w C++ (wreszcie “po ludzku”)
 
-W języku C++ pojęcia **L-wartości** (ang. *l-value*) i **R-wartości** (ang. *r-value*) są fundamentalne dla zrozumienia mechanizmów przypisywania, przekazywania argumentów do funkcji, zarządzania pamięcią oraz optymalizacji kodu. Precyzyjne rozróżnienie między tymi kategoriami wartości jest kluczowe dla pisania efektywnego i bezpiecznego kodu. W nowoczesnym C++ (od C++11 i wyżej) znaczenie tych pojęć jest dodatkowo rozszerzone o tzw. *prvalue*, *xvalue* i *glvalue*, co ma wpływ na semantykę przenoszenia i elastyczne przekazywanie obiektów do funkcji. Jednak w praktyce programistycznej, szczególnie na poziomie podstawowym i średniozaawansowanym, wystarczy dobrze rozumieć różnicę między L-wartościami a R-wartościami, aby prawidłowo korzystać z możliwości języka.
+W C++ bardzo dużo rzeczy kręci się wokół pytania: **czy dane wyrażenie wskazuje na „konkretny obiekt w pamięci”**, czy jest tylko **tymczasowym wynikiem obliczeń**. Z tego biorą się L-wartości (*lvalues*) i R-wartości (*rvalues*). Zrozumienie tego tematu odblokowuje m.in.:
 
-T&	lvalue reference
-T&&	rvalue reference
+* dlaczego raz możesz przekazać zmienną do `T&`, a raz nie,
+* kiedy kompilator kopiuje, a kiedy może **przenieść** obiekt,
+* czemu `std::move` istnieje i co naprawdę robi.
 
-### L-wartości
+Na start — dwa najważniejsze typy referencji:
 
-L-wartości to wyrażenia, które reprezentują obiekty mające **trwałe miejsce w pamięci** (czyli posiadają adres). Są to obiekty, do których możemy się odwołać po ich utworzeniu i które mogą być umieszczone po lewej stronie operatora przypisania. Termin "L-wartość" pochodzi od "left value", czyli wartości mogącej wystąpić po lewej stronie przypisania. Innymi słowy, L-wartość to taki byt w programie, który istnieje w dłuższym horyzoncie czasowym – dopóki program się nie zakończy lub dopóki nie zniknie zasięg, w którym ta wartość jest zdefiniowana.
+* `T&`  → **lvalue reference** (referencja do L-wartości)
+* `T&&` → **rvalue reference** (referencja do R-wartości)
 
-#### Właściwości L-wartości
+### Intuicja: “czy ma nazwę i adres?”
 
-I. **Trwały adres pamięci**  
+Najprostsza (praktyczna) heurystyka:
 
-L-wartości **mają adres pamięci**, co oznacza, że można pobrać ich adres za pomocą operatora `&`. Dzięki temu możliwa jest manipulacja za pomocą wskaźników, referencji do L-wartości i innych mechanizmów języka, które operują na adresach.
+* **L-wartość**: zwykle ma **nazwę**, **da się wskazać jej adres** (`&x`) i “żyje dłużej niż chwilę”.
+* **R-wartość**: zwykle jest **tymczasowa** (wynik wyrażenia, literal, wartość zwracana przez funkcję przez wartość) i nie możesz jej sensownie traktować jako trwałego obiektu.
 
-II. **Modyfikowalność lub niemodyfikowalność**  
+> Uwaga: w nowoczesnym C++ są jeszcze pojęcia `prvalue`, `xvalue`, `glvalue` — ale do większości codziennych przypadków wystarczy solidnie opanować “lvalue vs rvalue”.
 
-L-wartości mogą być zarówno **modyfikowalne** (np. zwykła zmienna typu `int`) jak i **niemodyfikowalne** (np. stała typu `const int`). Jeśli L-wartość jest `const`, nie można zmieniać jej wartości poprzez przypisania. Natomiast modyfikowalna L-wartość (czyli niezadeklarowana jako `const`) może być aktualizowana po jej zainicjalizowaniu.
+### L-wartości (lvalues)
 
-III. **Strona operatora przypisania**  
+**L-wartość** to wyrażenie, które identyfikuje **konkretny obiekt** (z miejscem w pamięci). Klasycznie: coś, co **może** stać po lewej stronie `=` (jeśli jest modyfikowalne).
 
-Modyfikowalne L-wartości mogą być używane zarówno po lewej, jak i prawej stronie operatora przypisania. Niemodyfikowalne L-wartości mogą znaleźć się tylko po prawej stronie przypisania (nie można im przypisywać nowych wartości).
+#### Najprostsze przykłady
 
-#### Przykłady L-wartości
+```cpp
+int x = 10;      // x jest L-wartością
+x = 20;          // OK: przypisanie do L-wartości
 
-```c++
-int main() {
-    int i = 3;        // 'i' jest modyfikowalną L-wartością
-    const int ci = 5; // 'ci' jest niemodyfikowalną L-wartością
-
-    int *pi = &i;     // '&i' zwraca adres, a 'pi' jest L-wartością (wskaźnikiem)
-    int &ri = i;      // 'ri' jest referencją do L-wartości 'i'
-
-    i = 10;           // Przypisanie do L-wartości 'i'
-
-    // ci = 6;        // Błąd! 'ci' jest niemodyfikowalną L-wartością
-
-    return 0;
-
-}
+int* px = &x;    // OK: można pobrać adres L-wartości
 ```
 
-W powyższym przykładzie `i` to L-wartość modyfikowalna, co oznacza, że możemy przypisać jej nowe wartości. Z kolei `ci` to L-wartość niemodyfikowalna, więc nie wolno zmieniać jej po inicjalizacji. Operator `&` (adres) zwraca wskaźnik (będący też L-wartością, tyle że innego typu), a referencja `ri` wiąże się z istniejącą L-wartością `i`.
+#### L-wartość może być modyfikowalna lub nie
 
-#### Uwaga na temat L-wartości i operatorów
+```cpp
+int x = 1;            // modyfikowalna L-wartość
+const int cx = 2;     // niemodyfikowalna L-wartość
 
-Istnieją operatory, które zwracają L-wartości, pozwalając na ich bezpośrednie modyfikowanie w kodzie. Do często spotykanych należą:
-
-- **Operator indeksowania `[]`** umożliwia dostęp do elementu w tablicy lub obiekcie, który przeciąża ten operator, zwracając L-wartość. Dzięki temu możliwe jest przypisywanie wartości, np. `arr[0] = 10;`.
-- **Operator dereferencji `*`** zwraca L-wartość, jeśli wskaźnik ma typ `T*`. Umożliwia to modyfikację zawartości pamięci, na którą wskazuje, np. `*ptr = 20;`.
-- **Operator inkrementacji i dekrementacji w formie prefiksowej (`++i`, `--i`)** zwraca L-wartość, co pozwala na łączenie tych operacji z innymi działaniami na tym samym obiekcie, np. `++i += 5;`.
-
-```c++
-int arr[5];
-arr[0] = 10;     // 'arr[0]' jest L-wartością
-*(arr + 1) = 20; // '*(arr + 1)' jest L-wartością
-
-int i = 2;
-int j = ++i;     // '++i' zwraca L-wartość
+x = 5;                // OK
+// cx = 6;            // BŁĄD: const, nie wolno zmieniać
 ```
 
-### R-wartości
+#### Operatory, które często “dają L-wartość”
 
-R-wartości to wyrażenia, które **nie mają trwałego miejsca w pamięci** i nie można pobrać ich adresu w sposób bezpośredni. Są to tymczasowe wartości, które zazwyczaj istnieją tylko w trakcie ewaluacji wyrażenia. Nazwa "R-wartość" pochodzi od "right value", co jest związane z tym, że najczęściej pojawiają się one po prawej stronie operatora przypisania. Typowe R-wartości to różne wyrażenia tymczasowe, jak np. wynik dodawania, dosłowna wartość liczbowa (tzw. *literal*), czy wywołanie funkcji zwracającej obiekt przez wartość.
+**Indeksowanie `[]`** – zwraca element, który zwykle jest L-wartością:
 
-#### Właściwości R-wartości
-
-I. **Brak trwałego adresu pamięci**  
-
-Nie można bezpośrednio pobrać adresu R-wartości, gdyż jest to coś, co najczęściej istnieje tylko chwilowo, np. w trakcie obliczania wyrażenia.
-
-II. **Niemodyfikowalność**  
-
-Nie można przypisać do R-wartości (np. nie można zapisać `(i + 4) = 10;`). Oznacza to, że jeśli coś jest R-wartością, jest na ogół tylko do odczytu w miejscu, w którym występuje.
-
-III. **Czas życia**  
-
-Ich czas życia jest krótkotrwały – zazwyczaj ogranicza się do pojedynczego wyrażenia. Przykład: `i + 4` „istnieje” jedynie podczas wyliczania wyniku dodawania.
-
-#### Przykłady R-wartości
-
-```c++
-int main() {
-    int i = 3;         // '3' jest R-wartością
-    int sum = i + 4;   // 'i + 4' jest R-wartością
-
-    // int *p = &(i + 4); // Błąd! Nie można pobrać adresu R-wartości
-
-    // (i + 4) = 10;      // Błąd! Nie można przypisać do R-wartości
-
-    return 0;
-
-}
+```cpp
+int a[3] = {0, 0, 0};
+a[1] = 7;     // a[1] jest L-wartością
 ```
 
-W powyższym przykładzie liczba `3` oraz wyrażenie `i + 4` to R-wartości. W szczególności nie możemy zrobić `&(i + 4)`, ponieważ nie ma bezpiecznego i trwałego adresu związanego z wynikiem tego wyrażenia.
+**Dereferencja `*`** – wynik jest L-wartością (jeśli wskaźnik wskazuje na obiekt):
 
-#### Funkcje zwracające R-wartości
+```cpp
+int x = 10;
+int* p = &x;
 
-Funkcje, które zwracają wartości przez kopię (czyli zwracają zwykły obiekt typu `T`, a nie np. `T&`), zwracają R-wartości. Otrzymany wynik jest tymczasowy i może być przypisany do jakiejś L-wartości lub wykorzystany w dalszych operacjach.
+*p = 99;      // *p jest L-wartością
+```
 
-```c++
+**Prefiksowe `++x`** zwraca L-wartość:
+
+```cpp
+int x = 1;
+++x = 10;     // działa (choć rzadko tak się pisze)
+```
+
+### R-wartości (rvalues)
+
+**R-wartość** to wyrażenie, które jest zwykle **tymczasową wartością** — “wynikiem obliczeń”. Najczęściej pojawia się po prawej stronie przypisania.
+
+#### Typowe przykłady
+
+```cpp
+int x = 3;        // 3 to R-wartość (literal)
+int y = x + 4;    // (x + 4) to R-wartość (wynik wyrażenia)
+```
+
+#### Czego nie wolno z R-wartością?
+
+Nie możesz przypisywać “do wyniku obliczenia”:
+
+```cpp
+int x = 5;
+// (x + 1) = 10;   // BŁĄD: (x + 1) jest R-wartością
+```
+
+Zwykle nie pobierzesz też adresu tymczasowej R-wartości:
+
+```cpp
+int x = 5;
+// int* p = &(x + 1); // BŁĄD: nie bierze się adresu R-wartości
+```
+
+#### Funkcja zwracająca przez wartość → rvalue
+
+```cpp
 int add(int a, int b) {
-    return a + b; // 'a + b' jest R-wartością
+    return a + b;      // zwraca tymczasowy wynik
 }
 
 int main() {
-    int result = add(5, 7); // 'add(5, 7)' jest R-wartością
-    return 0;
+    int r = add(2, 3); // add(2,3) jest R-wartością
 }
 ```
 
-### L-wartości vs R-wartości – Podsumowanie
+### Podsumowanie: L vs R w jednym miejscu
 
-| Typ wartości  | Trwały adres w pamięci       | Modyfikowalność                       | Strona operatora przypisania                  |
-|---------------|------------------------------|---------------------------------------|-----------------------------------------------|
-| **L-wartości** | Tak                          | Modyfikowalne lub niemodyfikowalne     | Mogą być po lewej (i prawej) stronie przypisania |
-| **R-wartości** | Nie                          | Niemodyfikowalne (z zasady)            | Mogą być tylko po prawej stronie przypisania  |
+| Cecha                                  | L-wartość         | R-wartość                                 |
+| -------------------------------------- | ----------------- | ----------------------------------------- |
+| “Ma własny obiekt / miejsce w pamięci” | zazwyczaj tak     | zazwyczaj nie (tymczasowa)                |
+| Adres `&`                              | zwykle można      | zwykle nie                                |
+| Może stać po lewej stronie `=`         | jeśli nie-const   | nie                                       |
+| Przykłady                              | `x`, `a[i]`, `*p` | `42`, `x+1`, `f()` (zwraca przez wartość) |
 
-#### Przykłady użycia
+### L/R w kontekście funkcji i referencji
 
-```c++
-int x = 5;     // 'x' jest L-wartością, '5' jest R-wartością
-int y = x + 2; // 'x + 2' jest R-wartością
+Tu robi się naprawdę praktycznie.
 
-x = y;         // Przypisanie do L-wartości 'x' wartości R-wartości 'y'
+#### Przekazanie przez wartość
+
+Funkcja dostaje kopię, więc może przyjąć i L-wartość, i R-wartość:
+
+```cpp
+void f(int v) { }
+
+int main() {
+    int x = 10;
+    f(x);    // L-wartość OK
+    f(20);   // R-wartość OK
+}
 ```
 
-### R-wartości i L-wartości w kontekście funkcji
+#### `T&` — referencja do L-wartości
 
-#### Przekazywanie argumentów przez wartość
+Taka funkcja wymaga **czegoś trwałego** (L-wartości), bo chce “podpiąć się” pod istniejący obiekt.
 
-Przy przekazywaniu argumentów przez wartość do funkcji przekazywana jest kopia argumentu. Możemy przekazywać zarówno L-wartości, jak i R-wartości, ponieważ dla funkcji pracującej na kopii nie ma znaczenia, czy oryginalne wyrażenie żyje dłużej (L-wartość), czy jest tymczasowe (R-wartość).
-
-```c++
-void func(int x) {
-    // 'x' jest lokalną kopią przekazanego argumentu
+```cpp
+void g(int& v) {
+    v *= 2;
 }
 
 int main() {
-    int a = 10;
-    func(a);    // 'a' jest L-wartością
-    func(20);   // '20' jest R-wartością
-    return 0;
+    int x = 10;
+    g(x);     // OK (L-wartość)
+
+    // g(20); // BŁĄD (R-wartość nie pasuje do int&)
 }
 ```
 
-#### Przekazywanie argumentów przez referencję do L-wartości
+#### `const T&` — ważny wyjątek
 
-Przekazywanie argumentów przez referencję do L-wartości (`&`) umożliwia funkcji operowanie na oryginalnym obiekcie. Funkcja taka może modyfikować zmienną wejściową wywołującego, ale może być wywołana tylko z obiektami, które mają dłuższy czas życia (czyli L-wartościami).
+To jest bardzo częsty wzorzec: **można podać i L-wartość, i R-wartość**, bo nie modyfikujesz argumentu, a kompilator może bezpiecznie “przedłużyć życie” tymczasowego obiektu na czas wywołania.
 
-```c++
-void func(int &x) {
-    x = x * 2;  // Modyfikujemy oryginalną wartość
+```cpp
+void h(const int& v) { }
 
+int main() {
+    int x = 10;
+    h(x);     // OK
+    h(20);    // OK
+}
+```
+
+#### `T&&` — referencja do R-wartości (C++11+)
+
+Pozwala przechwytywać tymczasowe obiekty **albo** obiekty, które jawnie “oddajesz do przeniesienia”.
+
+```cpp
+#include <utility>
+
+void k(int&& v) {
+    // v to nazwana zmienna, ale związana z R-wartością
 }
 
 int main() {
-    int a = 10;
-    func(a);    // 'a' jest L-wartością
+    k(20);          // OK: literal to R-wartość
 
-    // func(20); // Błąd! '20' jest R-wartością, nie można przekazać do 'int &'
-    return 0;
-
+    int x = 10;
+    // k(x);        // BŁĄD: x jest L-wartością
+    k(std::move(x)); // OK: “traktuj x jak R-wartość”
 }
 ```
 
-#### R-wartościowe referencje (C++11 i nowsze)
+**Co robi `std::move`?**
+Nie przenosi samo z siebie. To tylko **rzutowanie** (konwersja) mówiące: *“od teraz możesz traktować ten obiekt jak R-wartość (czyli wolno z niego ‘zabrać’ zasoby)”*.
 
-Wprowadzone w C++11 referencje do R-wartości (`&&`) pozwalają na przechwytywanie R-wartości, co jest kluczowe dla implementacji **semantyki przenoszenia** (ang. *move semantics*). Dzięki temu możemy pisać funkcje, które przyjmują obiekty tymczasowe albo wyraźnie przekazane do przeniesienia (za pomocą `std::move`), a następnie efektywnie przejmować ich zasoby.
+### Semantyka przenoszenia (move semantics) — krótko i konkretnie
 
-```c++
-void func(int &&x) {
-    x = x * 2;  // Modyfikujemy tymczasową wartość
-}
+Przenoszenie ma sens wtedy, gdy obiekt posiada zasób (np. bufor w pamięci). Zamiast kopiować cały zasób, można “przepiąć” wskaźniki/uchwyty.
 
-int main() {
-    // int a = 10;
-    // func(a);          // Błąd! 'a' jest L-wartością
-    func(20);           // '20' jest R-wartością
-    // Jednak można wymusić R-wartość:
-    int b = 10;
-    func(std::move(b)); // 'std::move(b)' zamienia 'b' w R-wartość
-    return 0;
-}
-```
+Najczytelniej widać to na `std::vector`, `std::string`, itp.
 
-Funkcja `std::move` z biblioteki `<utility>` konwertuje L-wartość na R-wartość, umożliwiając przeniesienie zasobów. W praktyce powszechnie wykorzystuje się to w konstruktorach i operatorach przenoszących, by uniknąć kosztownych kopii dużych obiektów.
+#### Minimalny przykład z logowaniem kopii i przeniesienia
 
-### Semantyka przenoszenia (Move Semantics)
-
-Semantyka przenoszenia w C++11 umożliwia efektywne przenoszenie zasobów (np. pamięci, uchwytów do plików) z obiektów tymczasowych lub tych, które nie są już potrzebne, do nowych obiektów, bez kosztownego kopiowania. Jest to szczególnie przydatne w sytuacjach, w których obiekt alokuje duże zasoby, a jego kopia byłaby kosztowna. Dzięki semantyce przenoszenia można uniknąć nadmiarowych operacji kopiowania, co znacznie przyspiesza działanie programów.
-
-#### Konstruktor przenoszący i operator przypisania przenoszącego
-
-Aby klasa mogła korzystać z semantyki przenoszenia, powinna zdefiniować:
-
-- **Konstruktor przenoszący** przyjmujący argument w postaci `Type&&`.
-- **Operator przypisania przenoszącego** także przyjmujący argument w postaci `Type&&`.
-
-Wewnątrz tych funkcji należy przenieść zasoby z obiektu źródłowego do docelowego, najczęściej wykorzystując `std::move`.
-
-#### Przykład klasy z semantyką przenoszenia
-
-```c++
-
+```cpp
 #include <iostream>
-
+#include <utility>
 #include <vector>
 
-class MoveExample {
-public:
+struct Box {
     std::vector<int> data;
 
-    // Konstruktor domyślny
+    Box() = default;
 
-    MoveExample() = default;
-
-    // Konstruktor kopiujący
-
-    MoveExample(const MoveExample &other) : data(other.data) {
-        std::cout << "Konstruktor kopiujący\n";
-
+    Box(const Box& other) : data(other.data) {
+        std::cout << "COPY\n";
     }
 
-    // Konstruktor przenoszący
-
-    MoveExample(MoveExample &&other) noexcept : data(std::move(other.data)) {
-        std::cout << "Konstruktor przenoszący\n";
-
+    Box(Box&& other) noexcept : data(std::move(other.data)) {
+        std::cout << "MOVE\n";
     }
-
-    // Operator przypisania kopiującego
-
-    MoveExample& operator=(const MoveExample &other) {
-        std::cout << "Operator przypisania kopiującego\n";
-        if (this != &other) {
-            data = other.data;
-
-        }
-        return *this;
-
-    }
-
-    // Operator przypisania przenoszącego
-
-    MoveExample& operator=(MoveExample &&other) noexcept {
-        std::cout << "Operator przypisania przenoszącego\n";
-        if (this != &other) {
-            data = std::move(other.data);
-
-        }
-        return *this;
-
-    }
-
-    // Funkcja do wyświetlania zawartości
-    void display() const {
-        for (int i : data) {
-            std::cout << i << " ";
-
-        }
-        std::cout << std::endl;
-
-    }
-
 };
 
 int main() {
+    Box a;
+    a.data = {1,2,3};
 
-    MoveExample me1;
-    me1.data = {1, 2, 3, 4, 5};
-
-    MoveExample me2 = me1;            // Wywołanie konstruktora kopiującego
-
-    MoveExample me3 = std::move(me1); // Wywołanie konstruktora przenoszącego
-
-    me2.display(); // Wyświetla: 1 2 3 4 5
-    me3.display(); // Wyświetla: 1 2 3 4 5
-
-    me2 = me3;             // Wywołanie operatora przypisania kopiującego
-    me2 = MoveExample();   // Wywołanie operatora przypisania przenoszącego
-
-    return 0;
-
+    Box b = a;             // COPY (a jest L-wartością)
+    Box c = std::move(a);  // MOVE (a “oddane” do przeniesienia)
 }
 ```
 
-**Wyjaśnienie działania:**
+#### Co z obiektem “po przeniesieniu”?
 
-- **Konstruktor przenoszący** pozwala na efektywne przejęcie zasobów z innego obiektu, zamiast ich kopiowania. Przykładowo, wektor `data` z obiektu `other` jest przenoszony do `this->data`, co eliminuje konieczność alokacji i kopiowania elementów.
-- **Operator przypisania przenoszącego** umożliwia przeniesienie zasobów z obiektu `other` do `this`. Po wykonaniu tej operacji `other.data` zazwyczaj zostaje ustawione w stan „moved-from”, czyli pusty lub neutralny.
-- Deklaracja **`noexcept`** informuje kompilator, że funkcja przenosząca nie zgłasza wyjątków. Dzięki temu kontenery standardowe, takie jak `std::vector`, mogą wykonywać optymalizacje, np. podczas realokacji, oczekując, że przenoszenie nie spowoduje wyjątku.
+Obiekt źródłowy (np. `a`) jest w stanie **moved-from**: ma być poprawny (da się go zniszczyć, przypisać mu nową wartość), ale jego zawartość jest zwykle “pusta/neutralna”. Dla `std::vector` najczęściej będzie pusty.
 
-#### Zalety semantyki przenoszenia
+### Najczęstsze błędy i proste reguły
 
-I. **Wydajność**  
-
-Przenoszenie zasobów jest szybsze niż kopiowanie, ponieważ zazwyczaj wymaga przepisania tylko kilku wskaźników lub uchwytów, bez konieczności głębokiej kopii. Dla dużych struktur danych (np. kontenerów z biblioteki standardowej przechowujących tysiące elementów) zyski wydajnościowe mogą być ogromne.
-
-II. **Lepsze wykorzystanie zasobów**  
-
-Dzięki semantyce przenoszenia można uniknąć zduplikowanych alokacji czy blokad zasobów, przenosząc je tam, gdzie będą w rzeczywistości potrzebne.
-
-III. **Optymalizacje kompilatora**  
-
-Kompilator ma więcej możliwości do zastosowania optymalizacji, zwłaszcza jeśli pewne funkcje (np. konstruktory przenoszące) są zadeklarowane jako `noexcept`. Kod staje się bardziej efektywny i w wielu sytuacjach nie wymaga pisania ręcznych trików optymalizacyjnych.
+* Jeśli funkcja ma **modyfikować** argument: użyj `T&`.
+* Jeśli funkcja ma tylko **czytać** i chcesz przyjąć także tymczasowe: `const T&`.
+* Jeśli funkcja ma **przejąć zasoby** (np. zapisać w środku) i chcesz wykorzystać przenoszenie: `T&&` (lub przeciążenia / forwarding).
+* `std::move(x)` nie przenosi “magicznie” — tylko pozwala wybrać ścieżkę przenoszącą (konstruktor/operatory move).
