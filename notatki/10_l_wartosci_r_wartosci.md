@@ -2,6 +2,9 @@
 
 W języku C++ pojęcia **L-wartości** (ang. *l-value*) i **R-wartości** (ang. *r-value*) są fundamentalne dla zrozumienia mechanizmów przypisywania, przekazywania argumentów do funkcji, zarządzania pamięcią oraz optymalizacji kodu. Precyzyjne rozróżnienie między tymi kategoriami wartości jest kluczowe dla pisania efektywnego i bezpiecznego kodu. W nowoczesnym C++ (od C++11 i wyżej) znaczenie tych pojęć jest dodatkowo rozszerzone o tzw. *prvalue*, *xvalue* i *glvalue*, co ma wpływ na semantykę przenoszenia i elastyczne przekazywanie obiektów do funkcji. Jednak w praktyce programistycznej, szczególnie na poziomie podstawowym i średniozaawansowanym, wystarczy dobrze rozumieć różnicę między L-wartościami a R-wartościami, aby prawidłowo korzystać z możliwości języka.
 
+T&	lvalue reference
+T&&	rvalue reference
+
 ### L-wartości
 
 L-wartości to wyrażenia, które reprezentują obiekty mające **trwałe miejsce w pamięci** (czyli posiadają adres). Są to obiekty, do których możemy się odwołać po ich utworzeniu i które mogą być umieszczone po lewej stronie operatora przypisania. Termin "L-wartość" pochodzi od "left value", czyli wartości mogącej wystąpić po lewej stronie przypisania. Innymi słowy, L-wartość to taki byt w programie, który istnieje w dłuższym horyzoncie czasowym – dopóki program się nie zakończy lub dopóki nie zniknie zasięg, w którym ta wartość jest zdefiniowana.
