@@ -1,33 +1,36 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
 #include <unistd.h>
 
-int main() {
-  // Stworz piersze dziecko
-  int wynik_funkcji_fork_1 = fork();
-
-  // Stworz drugie dziecko
-  int wynik_funkcji_fork_2 = fork();
-
-  printf("Wynik funkcji fork_1: %d\n", wynik_funkcji_fork_1);
-  printf("Wynik funkcji fork_2: %d\n", wynik_funkcji_fork_2);
-
-  if (n1 > 0 && n2 > 0) {
-    printf("Jestem rodzicem\n");
-    printf("PID: %d\n", getpid());
-    printf("PPID: %d\n", getppid());
-  } else if (n1 == 0 && n2 > 0) {
-    printf("Jestem dzieckiem nr 1\n");
-    printf("PID: %d\n", getpid());
-    printf("PPID: %d\n", getppid());
-  } else if (n1 > 0 && n2 == 0) {
-    printf("Jestem dzieckiem nr 2\n");
-    printf("PID: %d\n", getpid());
-    printf("PPID: %d\n", getppid());
-  } else {
-    printf("\nJestem dzieckiem nr 3\n");
-    printf("PID: %d\n", getpid());
-    printf("PPID: %d\n", getppid());
+int main(void) {
+  pid_t wynik_funkcji_fork_1 = fork();
+  if (wynik_funkcji_fork_1 < 0) {
+    perror("fork");
+    return EXIT_FAILURE;
   }
 
-  return 0;
+  pid_t wynik_funkcji_fork_2 = fork();
+  if (wynik_funkcji_fork_2 < 0) {
+    perror("fork");
+    return EXIT_FAILURE;
+  }
+
+  printf("Wynik funkcji fork_1: %ld\n", (long)wynik_funkcji_fork_1);
+  printf("Wynik funkcji fork_2: %ld\n", (long)wynik_funkcji_fork_2);
+
+  if (wynik_funkcji_fork_1 > 0 && wynik_funkcji_fork_2 > 0) {
+    printf("Jestem rodzicem\n");
+  } else if (wynik_funkcji_fork_1 == 0 && wynik_funkcji_fork_2 > 0) {
+    printf("Jestem pierwszym dzieckiem\n");
+  } else if (wynik_funkcji_fork_1 > 0 && wynik_funkcji_fork_2 == 0) {
+    printf("Jestem drugim dzieckiem\n");
+  } else {
+    printf("Jestem dzieckiem utworzonym przez pierwsze dziecko\n");
+  }
+
+  printf("PID: %ld\n", (long)getpid());
+  printf("PPID: %ld\n", (long)getppid());
+
+  return EXIT_SUCCESS;
 }
