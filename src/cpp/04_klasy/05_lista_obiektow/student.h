@@ -1,22 +1,20 @@
-#ifndef __Student_H__
-#define __Student_H__
+#ifndef STUDENT_H
+#define STUDENT_H
 
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
-using namespace std;
-
 class Student {
-  string imie;
-  string nazwisko;
+  std::string imie;
+  std::string nazwisko;
   int indeks;
 
 public:
   Student();
-  Student(string a, string b, int c);
+  Student(std::string a, std::string b, int c);
 
   friend bool operator<(const Student &s1, const Student &s2);
-  friend ostream &operator<<(ostream &strumien, const Student &s);
+  friend std::ostream &operator<<(std::ostream &strumien, const Student &s);
 };
 
 #endif

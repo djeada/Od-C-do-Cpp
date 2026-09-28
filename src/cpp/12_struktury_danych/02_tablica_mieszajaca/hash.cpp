@@ -3,10 +3,8 @@
 #include <cstddef>
 #include <iostream>
 
-using namespace std;
-
 hashin::hashin() {
-  for (int i = 0; i < tableSize; i++) {
+  for (int i = 0; i < tableSize; ++i) {
     HashTable[i] = new item{"empty", "empty", nullptr};
   }
 }
@@ -22,7 +20,7 @@ hashin::~hashin() {
   }
 }
 
-void hashin::AddItem(const string &name, const string &drink) {
+void hashin::AddItem(const std::string &name, const std::string &drink) {
   int index = Hash(name);
 
   if (HashTable[index]->name == "empty") {
@@ -51,71 +49,64 @@ int hashin::NumofItemsInIndex(int index) const {
 }
 
 void hashin::PrintTable() const {
-  for (int i = 0; i < tableSize; i++) {
-    cout << "----------------------------\n";
-    cout << "index = " << i << endl;
-    cout << HashTable[i]->name << endl;
-    cout << HashTable[i]->drink << endl;
-    cout << "# of items = " << NumofItemsInIndex(i) << endl;
-    cout << "----------------------------\n";
+  for (int i = 0; i < tableSize; ++i) {
+    std::cout << "----------------------------\n";
+    std::cout << "index = " << i << '\n';
+    std::cout << HashTable[i]->name << '\n';
+    std::cout << HashTable[i]->drink << '\n';
+    std::cout << "# of items = " << NumofItemsInIndex(i) << '\n';
   }
 }
 
 void hashin::PrintItemsInIndex(int index) const {
   if (index < 0 || index >= tableSize) {
-    cout << "invalid index" << endl;
+    std::cout << "invalid index\n";
     return;
   }
 
   item *ptr = HashTable[index];
   if (ptr->name == "empty") {
-    cout << "index = " << index << " is empty" << endl;
+    std::cout << "index = " << index << " is empty\n";
     return;
   }
 
-  cout << "index = " << index << " contains the following items" << endl;
   while (ptr != nullptr) {
-    cout << "-------------\n";
-    cout << ptr->name << endl;
-    cout << ptr->drink << endl;
-    cout << "-------------\n";
+    std::cout << ptr->name << ": " << ptr->drink << '\n';
     ptr = ptr->next;
   }
 }
 
-void hashin::FindDrink(const string &name) const {
+void hashin::FindDrink(const std::string &name) const {
   int index = Hash(name);
 
   for (item *ptr = HashTable[index]; ptr != nullptr; ptr = ptr->next) {
     if (ptr->name == name) {
-      cout << "Favorite drink = " << ptr->drink << endl;
+      std::cout << "Favorite drink = " << ptr->drink << '\n';
       return;
     }
   }
 
-  cout << name << "'s info was not found in the Hash Table" << endl;
+  std::cout << name << "'s info was not found in the Hash Table\n";
 }
 
-void hashin::RemoveItem(const string &name) {
+void hashin::RemoveItem(const std::string &name) {
   int index = Hash(name);
   item *head = HashTable[index];
 
   if (head->name == "empty") {
-    cout << name << " was not found in the Hash Table" << endl;
+    std::cout << name << " was not found in the Hash Table\n";
     return;
   }
 
   if (head->name == name && head->next == nullptr) {
     head->name = "empty";
     head->drink = "empty";
-    cout << name << " was removed from the Hash Table" << endl;
     return;
   }
 
   if (head->name == name) {
     HashTable[index] = head->next;
     delete head;
-    cout << name << " was removed from the Hash Table" << endl;
     return;
   }
 
@@ -127,16 +118,15 @@ void hashin::RemoveItem(const string &name) {
   }
 
   if (current == nullptr) {
-    cout << name << " was not found in the Hash Table" << endl;
+    std::cout << name << " was not found in the Hash Table\n";
     return;
   }
 
   previous->next = current->next;
   delete current;
-  cout << name << " was removed from the Hash Table" << endl;
 }
 
-int hashin::Hash(const string &key) const {
+int hashin::Hash(const std::string &key) const {
   std::size_t hash = 0;
   for (unsigned char znak : key) {
     hash = (hash + znak) * 17u;

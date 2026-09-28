@@ -1,7 +1,7 @@
 #include "stos.h"
 
 #include <algorithm>
-#include <cstdlib>
+#include <ostream>
 #include <stdexcept>
 
 Stos::Stos() : Stos(3) {}
@@ -43,7 +43,6 @@ bool Stos::czyPelny() const { return indeksGorny >= rozmiar - 1; }
 
 bool Stos::odlozNaStos(int dana) {
   if (czyPelny()) {
-    cout << "Stack overflow!" << endl;
     return false;
   }
   tablica[++indeksGorny] = dana;
@@ -52,8 +51,7 @@ bool Stos::odlozNaStos(int dana) {
 
 int Stos::sciagnijZeStosu() {
   if (czyPusty()) {
-    cerr << "Stack underflow!" << endl;
-    exit(EXIT_FAILURE);
+    throw std::underflow_error("Stos jest pusty.");
   }
   return tablica[indeksGorny--];
 }
@@ -64,7 +62,7 @@ void operator++(Stos &nasz_stos) {
             tmp);
   delete[] nasz_stos.tablica;
   nasz_stos.tablica = tmp;
-  nasz_stos.rozmiar++;
+  ++nasz_stos.rozmiar;
 }
 
 void operator--(Stos &nasz_stos) {
@@ -72,7 +70,7 @@ void operator--(Stos &nasz_stos) {
     return;
   }
 
-  int nowyRozmiar = nasz_stos.rozmiar - 1;
+  const int nowyRozmiar = nasz_stos.rozmiar - 1;
   if (nasz_stos.indeksGorny >= nowyRozmiar) {
     nasz_stos.indeksGorny = nowyRozmiar - 1;
   }
@@ -86,9 +84,9 @@ void operator--(Stos &nasz_stos) {
   nasz_stos.rozmiar = nowyRozmiar;
 }
 
-ostream &operator<<(ostream &out, const Stos &nasz_stos) {
-  out << "Twoj piekny stos: " << endl;
-  for (int i = 0; i <= nasz_stos.indeksGorny; i++) {
+std::ostream &operator<<(std::ostream &out, const Stos &nasz_stos) {
+  out << "Twoj piekny stos: ";
+  for (int i = 0; i <= nasz_stos.indeksGorny; ++i) {
     out << nasz_stos.tablica[i] << "  ";
   }
   return out;

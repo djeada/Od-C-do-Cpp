@@ -1,9 +1,7 @@
-#ifndef stos_h
-#define stos_h
+#ifndef STOS_H
+#define STOS_H
 
-#include <iostream>
-
-using namespace std;
+#include <iosfwd>
 
 class Stos {
 private:
@@ -25,8 +23,7 @@ public:
 
   friend void operator++(Stos &nasz_stos);
   friend void operator--(Stos &nasz_stos);
-
-  friend ostream &operator<<(ostream &out, const Stos &nasz_stos);
+  friend std::ostream &operator<<(std::ostream &out, const Stos &nasz_stos);
 };
 
 #endif
