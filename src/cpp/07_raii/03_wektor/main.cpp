@@ -1,17 +1,46 @@
+#include <algorithm>
 #include <iostream>
 #include <stdexcept>
+#include <utility>
 
 class Wektor {
 public:
-  // Konstruktor przyjmujący długość wektora i tworzący wektor wypełniony
-  // zerami.
-  Wektor(int dlugosc)
-      : dlugosc(dlugosc), pojemnosc(dlugosc), dane(new double[dlugosc]()) {}
+  explicit Wektor(int dlugosc) : dlugosc(0), pojemnosc(0), dane(nullptr) {
+    if (dlugosc < 0) {
+      throw std::invalid_argument("Długość wektora nie może być ujemna.");
+    }
 
-  // Destruktor, zwalniający pamięć.
+    this->dlugosc = dlugosc;
+    pojemnosc = dlugosc;
+    dane = new double[pojemnosc]();
+  }
+
+  Wektor(const Wektor &inny)
+      : dlugosc(inny.dlugosc), pojemnosc(inny.pojemnosc),
+        dane(new double[inny.pojemnosc]()) {
+    std::copy(inny.dane, inny.dane + dlugosc, dane);
+  }
+
+  Wektor(Wektor &&inny) noexcept
+      : dlugosc(inny.dlugosc), pojemnosc(inny.pojemnosc), dane(inny.dane) {
+    inny.dlugosc = 0;
+    inny.pojemnosc = 0;
+    inny.dane = nullptr;
+  }
+
+  Wektor &operator=(Wektor inny) noexcept {
+    swap(inny);
+    return *this;
+  }
+
   ~Wektor() { delete[] dane; }
 
-  // Metoda zmieniająca długość wektora.
+  void swap(Wektor &inny) noexcept {
+    std::swap(dlugosc, inny.dlugosc);
+    std::swap(pojemnosc, inny.pojemnosc);
+    std::swap(dane, inny.dane);
+  }
+
   void zmienDlugosc(int nowaDlugosc) {
     if (nowaDlugosc < 0) {
       throw std::invalid_argument("Długość wektora nie może być ujemna.");
@@ -19,19 +48,17 @@ public:
 
     if (nowaDlugosc <= pojemnosc) {
       dlugosc = nowaDlugosc;
-    } else {
-      double *noweDane = new double[nowaDlugosc]();
-      for (int i = 0; i < dlugosc; i++) {
-        noweDane[i] = dane[i];
-      }
-      delete[] dane;
-      dane = noweDane;
-      pojemnosc = nowaDlugosc;
-      dlugosc = nowaDlugosc;
+      return;
     }
+
+    double *noweDane = new double[nowaDlugosc]();
+    std::copy(dane, dane + dlugosc, noweDane);
+    delete[] dane;
+    dane = noweDane;
+    pojemnosc = nowaDlugosc;
+    dlugosc = nowaDlugosc;
   }
 
-  // Metoda wypisująca zawartość wektora.
   void wypisz() const {
     std::cout << "[";
     for (int i = 0; i < dlugosc; i++) {
@@ -43,25 +70,29 @@ public:
     std::cout << "]" << std::endl;
   }
 
-  // Metoda zwracająca długość wektora.
   int pobierzDlugosc() const { return dlugosc; }
-
-  // Metoda zwracająca pojemność wektora.
   int pobierzPojemnosc() const { return pojemnosc; }
 
-  // Dostęp do elementów wektora za pomocą operatora [].
   double &operator[](int indeks) {
-    if (indeks < 0 || indeks >= dlugosc) {
-      throw std::out_of_range("Nieprawidłowy indeks.");
-    }
+    sprawdzIndeks(indeks);
+    return dane[indeks];
+  }
+
+  const double &operator[](int indeks) const {
+    sprawdzIndeks(indeks);
     return dane[indeks];
   }
 
 private:
+  void sprawdzIndeks(int indeks) const {
+    if (indeks < 0 || indeks >= dlugosc) {
+      throw std::out_of_range("Nieprawidłowy indeks.");
+    }
+  }
+
   int dlugosc;
   int pojemnosc;
-  double *dane; // Wskaźnik na dynamicznie zaalokowaną tablicę przechowującą
-                // elementy wektora.
+  double *dane;
 };
 
 int main() {
@@ -69,11 +100,14 @@ int main() {
   v[0] = 1.0;
   v[1] = 2.0;
   v[2] = 3.0;
-  v.wypisz(); // [1, 2, 3]
-  v.zmienDlugosc(5);
-  v.wypisz(); // [1, 2, 3, 0, 0]
-  v[3] = 4.0;
-  v[4] = 5.0;
-  v.wypisz(); // [1, 2, 3, 4]
+  v.wypisz();
+
+  Wektor kopia = v;
+  kopia.zmienDlugosc(5);
+  kopia[3] = 4.0;
+  kopia[4] = 5.0;
+  kopia.wypisz();
+
+  v.wypisz();
   return 0;
 }
