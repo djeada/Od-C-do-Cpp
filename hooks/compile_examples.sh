@@ -11,7 +11,7 @@ while IFS= read -r -d '' file; do
     relative="${file#"$ROOT/"}"
     echo "::error file=$relative::Source file is empty"
     failures=$((failures + 1))
-done < <(find "$ROOT/src" -type f \\( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.cxx' -o -name '*.h' -o -name '*.hpp' \\) -empty -print0)
+done < <(find "$ROOT/src" -regextype posix-extended -type f -empty -regex '.*\\.(c|cpp|cc|cxx|h|hpp)' -print0)
 
 compile_one() {
     local compiler="$1"
