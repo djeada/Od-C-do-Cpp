@@ -1,4 +1,6 @@
 #include <arpa/inet.h>
+#include <errno.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,92 +8,93 @@
 #include <unistd.h>
 
 #define UZYWANY_PORT 12345
+#define ROZMIAR_BUFORA 100
 
-short utworzGniazdo() {
-  printf("Tworzenie gniazda\n");
-  return socket(AF_INET, SOCK_STREAM, 0);
-}
+int utworzGniazdo(void) { return socket(AF_INET, SOCK_STREAM, 0); }
 
-int polaczGniazdo(short uchwytGniazda) {
-  int portKlienta = UZYWANY_PORT;
+int przygotujGniazdo(int uchwytGniazda) {
+  int reuse = 1;
+  if (setsockopt(uchwytGniazda, SOL_SOCKET, SO_REUSEADDR, &reuse,
+                 sizeof(reuse)) < 0) {
+    return -1;
+  }
 
   struct sockaddr_in adresSerwera = {0};
-  adresSerwera.sin_family = AF_INET; // Rodzina adresow IP (IPv4)
-  adresSerwera.sin_addr.s_addr =
-      htonl(INADDR_ANY); // Adres IP serwera (zostawiamy domyslny)
-  adresSerwera.sin_port = htons(portKlienta); // Port serwera (przekazujemy
-                                              // wartosc zdefiniowana w #define)
+  adresSerwera.sin_family = AF_INET;
+  adresSerwera.sin_addr.s_addr = htonl(INADDR_ANY);
+  adresSerwera.sin_port = htons(UZYWANY_PORT);
 
   return bind(uchwytGniazda, (struct sockaddr *)&adresSerwera,
               sizeof(adresSerwera));
-  ;
 }
 
-int main(int argc, char *argv[]) {
-  struct sockaddr_in klient;
-  char wiadomoscDoWyslania[200] = {0};
-  char wiadomoscOdebrana[100] = {0};
-
+int main(void) {
   int uchwytGniazda = utworzGniazdo();
-
-  if (uchwytGniazda == -1) {
-    printf("Nie udalo sie utworzyc gniazda\n");
-    return 1;
+  if (uchwytGniazda < 0) {
+    perror("socket");
+    return EXIT_FAILURE;
   }
 
-  printf("Gniazdo utworzone!\n");
-
-  if (polaczGniazdo(uchwytGniazda) < 0) {
-    perror("Nie udalo sie polaczyc gniazda");
-    return 1;
+  if (przygotujGniazdo(uchwytGniazda) < 0) {
+    perror("bind");
+    close(uchwytGniazda);
+    return EXIT_FAILURE;
   }
 
-  printf("Gniazdo polaczone!\n");
-
-  // Nasluchujemy prob polaczen
-  listen(uchwytGniazda, 3);
-
-  printf("Oczekiwanie na klienta...\n");
-  int dlugoscKlienta = sizeof(struct sockaddr_in);
-  int wynikProbyPolaczenia = accept(uchwytGniazda, (struct sockaddr *)&klient,
-                                    (socklen_t *)&dlugoscKlienta);
-
-  if (wynikProbyPolaczenia < 0) {
-    perror("Nie udalo sie polaczyc z klientem");
-    return 1;
+  if (listen(uchwytGniazda, 3) < 0) {
+    perror("listen");
+    close(uchwytGniazda);
+    return EXIT_FAILURE;
   }
 
-  printf("Proba polaczenia z klientem udana!\n");
-  memset(wiadomoscDoWyslania, '\0', sizeof wiadomoscDoWyslania);
-  memset(wiadomoscOdebrana, '\0', sizeof wiadomoscOdebrana);
-
-  if (recv(wynikProbyPolaczenia, wiadomoscDoWyslania, 200, 0) < 0) {
-    printf("Nie udalo sie odebrac wiadomosci od klienta\n");
+  struct sockaddr_in klient = {0};
+  socklen_t dlugoscKlienta = sizeof(klient);
+  int klientFd = accept(uchwytGniazda, (struct sockaddr *)&klient,
+                        &dlugoscKlienta);
+  if (klientFd < 0) {
+    perror("accept");
+    close(uchwytGniazda);
+    return EXIT_FAILURE;
   }
 
-  printf("Otrzymano wiadomosc od klienta: %s\n", wiadomoscDoWyslania);
+  char wiadomosc[ROZMIAR_BUFORA];
+  ssize_t odebrano = recv(klientFd, wiadomosc, sizeof(wiadomosc) - 1, 0);
+  if (odebrano < 0) {
+    perror("recv");
+    close(klientFd);
+    close(uchwytGniazda);
+    return EXIT_FAILURE;
+  }
+  wiadomosc[odebrano] = '\0';
 
-  int i = atoi(wiadomoscDoWyslania);
-  i--;
-  sprintf(wiadomoscOdebrana, "%d", i);
-  close(wynikProbyPolaczenia);
-
-  printf("Oczekiwanie na klienta...\n");
-  wynikProbyPolaczenia = accept(uchwytGniazda, (struct sockaddr *)&klient,
-                                (socklen_t *)&dlugoscKlienta);
-
-  if (wynikProbyPolaczenia < 0) {
-    perror("Polaczenie nie zostalo przyjete");
-    return 1;
+  errno = 0;
+  char *koniec = NULL;
+  long liczba = strtol(wiadomosc, &koniec, 10);
+  if (errno != 0 || koniec == wiadomosc || *koniec != '\0' ||
+      liczba == LONG_MIN) {
+    fprintf(stderr, "Nieprawidlowa wiadomosc: %s\n", wiadomosc);
+    close(klientFd);
+    close(uchwytGniazda);
+    return EXIT_FAILURE;
   }
 
-  printf("Proba polaczenia z klientem udana!\n");
-
-  if (send(wynikProbyPolaczenia, wiadomoscOdebrana, strlen(wiadomoscOdebrana),
-           0) < 0) {
-    printf("Wysylanie wiadomosci nie powiodlo sie\n");
-    return 1;
+  liczba--;
+  char odpowiedz[ROZMIAR_BUFORA];
+  int zapisano = snprintf(odpowiedz, sizeof(odpowiedz), "%ld", liczba);
+  if (zapisano < 0 || (size_t)zapisano >= sizeof(odpowiedz)) {
+    close(klientFd);
+    close(uchwytGniazda);
+    return EXIT_FAILURE;
   }
 
-  return 0;
+  if (send(klientFd, odpowiedz, (size_t)zapisano, 0) < 0) {
+    perror("send");
+    close(klientFd);
+    close(uchwytGniazda);
+    return EXIT_FAILURE;
+  }
+
+  close(klientFd);
+  close(uchwytGniazda);
+  return EXIT_SUCCESS;
 }

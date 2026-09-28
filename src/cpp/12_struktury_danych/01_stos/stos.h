@@ -1,9 +1,7 @@
-#ifndef stos_h
-#define stos_h
+#ifndef STOS_H
+#define STOS_H
 
-#include <iostream>
-
-using namespace std;
+#include <iosfwd>
 
 class Stos {
 private:
@@ -13,19 +11,19 @@ private:
 
 public:
   Stos();
-  Stos(int r);
+  explicit Stos(int r);
   Stos(const Stos &innyStos);
+  Stos &operator=(const Stos &innyStos);
   ~Stos();
 
   bool odlozNaStos(int dana);
   int sciagnijZeStosu();
-  bool czyPusty();
-  bool czyPelny();
+  bool czyPusty() const;
+  bool czyPelny() const;
 
   friend void operator++(Stos &nasz_stos);
   friend void operator--(Stos &nasz_stos);
-
-  friend ostream &operator<<(ostream &out, const Stos &nasz_stos);
+  friend std::ostream &operator<<(std::ostream &out, const Stos &nasz_stos);
 };
 
 #endif

@@ -6,79 +6,69 @@ typedef struct wezel {
   struct wezel *strzalka_na_nastepny;
 } wezel;
 
-/*
-1. Dodawanie elementow do listy.
-2. Wyswietlanie aktualnej listy.
-*/
-
-// tworzymy nowy wezel i wypelniamy danymi od uzytkownika
 void dodaj_nowe_pudelko(wezel **lista);
-
-// stworzony wezel laczymy z reszta listy
 void polacz_z_reszta_listy(wezel **lista, wezel *nowe_pudelko);
-
-// wyswietl aktualny stan listy
-void wyswietl_liste(wezel *lista);
-
-// rezerwowalismy pamiec mallociem wiec musimy ja uwolnic
+void wyswietl_liste(const wezel *lista);
 void uwolnij_pamiec(wezel **lista);
 
-int main() {
-
+int main(void) {
   wezel *moja_lista = NULL;
 
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; i++) {
     dodaj_nowe_pudelko(&moja_lista);
+  }
 
-  wyswietl_liste(moja_lista);
   wyswietl_liste(moja_lista);
   uwolnij_pamiec(&moja_lista);
   wyswietl_liste(moja_lista);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 void dodaj_nowe_pudelko(wezel **lista) {
-  printf("Podaj liczbe: \n");
+  printf("Podaj liczbe:\n");
   int dana;
-  scanf("%d", &dana);
-  wezel *nowe_pudelko = (wezel *)malloc(sizeof(wezel));
+  if (scanf("%d", &dana) != 1) {
+    fprintf(stderr, "Nieprawidlowa liczba.\n");
+    return;
+  }
+
+  wezel *nowe_pudelko = malloc(sizeof(*nowe_pudelko));
+  if (nowe_pudelko == NULL) {
+    fprintf(stderr, "Blad alokacji pamieci.\n");
+    return;
+  }
+
   nowe_pudelko->dane = dana;
   nowe_pudelko->strzalka_na_nastepny = NULL;
   polacz_z_reszta_listy(lista, nowe_pudelko);
 }
 
 void polacz_z_reszta_listy(wezel **lista, wezel *nowe_pudelko) {
-
-  // lista jest pusta, wiec nowe pudelko jest cala lista
   if (*lista == NULL) {
     *lista = nowe_pudelko;
+    return;
   }
 
-  // cos w liscie juz jest, przechodzimy na sam koniec i dostawiamy nowe pudelko
-  else {
-
-    for (wezel *licznik = *lista; licznik != NULL;
-         licznik = licznik->strzalka_na_nastepny) {
-      if (licznik->strzalka_na_nastepny == NULL) {
-        licznik->strzalka_na_nastepny = nowe_pudelko;
-        break;
-      }
-    }
+  wezel *licznik = *lista;
+  while (licznik->strzalka_na_nastepny != NULL) {
+    licznik = licznik->strzalka_na_nastepny;
   }
+  licznik->strzalka_na_nastepny = nowe_pudelko;
 }
 
-void wyswietl_liste(wezel *lista) {
-  printf("Twoja lista \n");
-  for (wezel *licznik = lista; licznik != NULL;
+void wyswietl_liste(const wezel *lista) {
+  printf("Twoja lista\n");
+  for (const wezel *licznik = lista; licznik != NULL;
        licznik = licznik->strzalka_na_nastepny) {
-    printf("%d \n", licznik->dane);
+    printf("%d\n", licznik->dane);
   }
 }
 
 void uwolnij_pamiec(wezel **lista) {
-  for (wezel *licznik = *lista; licznik != NULL;
-       licznik = licznik->strzalka_na_nastepny) {
-    free(licznik);
+  while (*lista != NULL) {
+    wezel *nastepny = (*lista)->strzalka_na_nastepny;
+    free(*lista);
+    *lista = nastepny;
   }
 }

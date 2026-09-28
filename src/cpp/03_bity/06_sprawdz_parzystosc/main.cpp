@@ -1,13 +1,14 @@
 #include <iostream>
 
-using namespace std;
+bool czyParzysta(unsigned int liczba) { return (liczba & 1u) == 0u; }
 
 int main() {
-  int a = 8; // 00001000
-  int b = 7; // 00000111
+  const unsigned int a = 8;
+  const unsigned int b = 7;
 
-  cout << (a && !(a & (a - 1))) << endl; // 1
-  cout << (b && !(b & (b - 1))) << endl; // 0
+  std::cout << std::boolalpha;
+  std::cout << a << " parzysta: " << czyParzysta(a) << '\n';
+  std::cout << b << " parzysta: " << czyParzysta(b) << '\n';
 
   return 0;
 }

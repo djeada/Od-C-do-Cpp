@@ -1,53 +1,45 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 
 class Tunczyk {
   std::string imie;
 
 public:
-  Tunczyk(std::string imie) : imie(imie) {
-    std::cout << "Konstruktor: " << imie << std::endl;
+  explicit Tunczyk(std::string imie) : imie(std::move(imie)) {
+    std::cout << "Konstruktor: " << this->imie << std::endl;
   }
+
   ~Tunczyk() { std::cout << "Destruktor: " << imie << std::endl; }
 
-  void info() { std::cout << imie << std::endl; }
+  void info() const { std::cout << imie << std::endl; }
 };
 
-void foo() {
+void surowyWskaznik() {
   Tunczyk *p = new Tunczyk("Gunner");
   p->info();
-  // delete p; // alles super
-  // mamy wyciek pamieci
+  delete p; // przy surowym wskazniku odpowiedzialnosc jest po stronie autora
 }
 
-void foo2() {
-  std::shared_ptr<Tunczyk> p(new Tunczyk("Gunner")); // count : 1
+void sharedPointer() {
+  auto p = std::make_shared<Tunczyk>("Smokey");
   p->info();
 
-  std::cout << "Liczba instancji: " << p.use_count() << std::endl;
+  std::cout << "Liczba wlascicieli: " << p.use_count() << std::endl;
 
-  Tunczyk *t = p.get(); // zwroc surowy wskaznik
-  t->info();
-  // delete t; // bedzie seg fault
-  std::cout << "Liczba instancji: " << p.use_count() << std::endl;
+  Tunczyk *obserwator = p.get();
+  obserwator->info(); // nie wolno wywolywac delete na obserwatorze
 
   std::shared_ptr<Tunczyk> p2 = p;
+  std::cout << "Po kopii: " << p.use_count() << std::endl;
 
-  std::cout << "Liczba instancji: " << p.use_count() << std::endl;
-
-  // wyzeruj wskaznik p
-  p = nullptr;
-
-  std::cout << "Liczba instancji: " << p2.use_count() << std::endl;
-
-  // wymus usuniecie
-  // p2.reset();
-  //   std::cout << p2.use_count() << std::endl;
+  p.reset();
+  std::cout << "Po reset p, p2 ma licznik: " << p2.use_count() << std::endl;
 }
 
 int main() {
-  foo();
-  foo2();
+  surowyWskaznik();
+  sharedPointer();
   return 0;
 }

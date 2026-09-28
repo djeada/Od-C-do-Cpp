@@ -1,27 +1,37 @@
-// Wiele funkcji z algorithm dostepne jest jako metody w wielu strukturach
-// danych Nieraz uzywanie metod dla dostepnych struktur danych jest
-// niejednokrotnie szybsze niz alternatywy z algorithm
+#include <algorithm>
+#include <iostream>
+#include <list>
+#include <map>
+#include <string>
+#include <unordered_set>
 
-unordered_set<int> s = {2, 4, 1, 8, 5, 9};
+int main() {
+  std::unordered_set<int> zbior = {2, 4, 1, 8, 5, 9};
 
-// O(1)
-auto itr = s.find(4);
+  auto szybki = zbior.find(4);
+  auto ogolny = std::find(zbior.begin(), zbior.end(), 4);
+  std::cout << "unordered_set::find: " << (szybki != zbior.end()) << '\n';
+  std::cout << "std::find: " << (ogolny != zbior.end()) << '\n';
 
-// O(n)
-itr = find(s.begin(), s.end(), 4);
+  std::map<char, std::string> mapa = {
+      {'p', "poniedzialek"}, {'w', "wtorek"}, {'c', "czwartek"}};
 
-map<char, string> mapa = {{'p', "poniedzialek"}, {'w', "wtorek"}};
+  auto mapaMember = mapa.find('c');
+  auto mapaAlgorithm =
+      std::find_if(mapa.begin(), mapa.end(),
+                   [](const auto &element) { return element.first == 'c'; });
 
-// O(logn)
-auto itr_2 = mapa.find('c');
+  std::cout << "map::find: " << (mapaMember != mapa.end()) << '\n';
+  std::cout << "std::find_if: " << (mapaAlgorithm != mapa.end()) << '\n';
 
-// O(n)
-itr_2 = find(mapa.begin(), mapa.end(), make_pair('c', "czwartek"));
+  std::list<int> lista = {2, 1, 4, 6, 7, 8, 4};
+  lista.remove(4);
 
-list<int> lista = {2, 1, 4, 6, 7, 8}
+  std::cout << "Po list::remove:";
+  for (int value : lista) {
+    std::cout << ' ' << value;
+  }
+  std::cout << '\n';
 
-                  // O(n)
-                  lista.remove(4);
-
-// O(n)
-remove(lista.begin(), lista.end(), 4);
+  return 0;
+}

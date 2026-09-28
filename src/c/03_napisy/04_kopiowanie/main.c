@@ -1,23 +1,22 @@
 #include <stdio.h>
 
-void copyVersionA(char *source, char *dest) {
-  while (*dest++ = *source++)
-    ;
+void copyVersionA(const char *source, char *dest) {
+  while ((*dest++ = *source++) != '\0') {
+  }
 }
 
-void copyVersionB(char *source, char *dest) {
+void copyVersionB(const char *source, char *dest) {
   while (1) {
     *dest = *source;
     if (*dest == '\0') {
       break;
-    } else {
-      source++;
-      dest++;
     }
+    source++;
+    dest++;
   }
 }
 
-int main() {
+int main(void) {
   const char source[] = "Hello World";
   char bufferA[50];
   char bufferB[50];

@@ -1,27 +1,24 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-/**
+double obliczSrednia(int liczbaElementow, ...) {
+  if (liczbaElementow <= 0) {
+    return 0.0;
+  }
 
-    Oblicza średnią arytmetyczną z listy argumentów o zmiennej długości.
-    @param liczbaElementow Liczba elementów na liście.
-    @param ... Lista argumentów o zmiennej długości.
-    @return Średnia arytmetyczna.
-    */
-double obliczSrednia(const int liczbaElementow, ...) {
-  va_list listaArgumentow; // Zmienna przechowująca argumenty z listy.
+  va_list listaArgumentow;
   double suma = 0.0;
 
-  va_start(listaArgumentow,
-           liczbaElementow); // Rozpoczęcie przetwarzania argumentów.
+  va_start(listaArgumentow, liczbaElementow);
   for (int i = 0; i < liczbaElementow; ++i) {
-    suma += va_arg(listaArgumentow, double); // Pobranie kolejnego argumentu.
+    suma += va_arg(listaArgumentow, double);
   }
-  va_end(listaArgumentow);       // Zakończenie przetwarzania argumentów.
-  return suma / liczbaElementow; // Obliczenie średniej arytmetycznej.
+  va_end(listaArgumentow);
+
+  return suma / liczbaElementow;
 }
 
-int main() {
+int main(void) {
   printf("Średnia z liczb 3.0, 5.0, 2.0, 4.0, 0.0: %f\n",
          obliczSrednia(5, 3.0, 5.0, 2.0, 4.0, 0.0));
   printf("Średnia z liczb 1.0, 2.0, 3.0: %f\n",

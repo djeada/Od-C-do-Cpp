@@ -1,64 +1,56 @@
 #include <algorithm>
 #include <iostream>
-#include <iterator>
-#include <string>
 #include <vector>
 
-template <class T> void wypisz(T &kontener) {
+template <class T> void wypisz(const T &kontener) {
   std::cout << "{";
-  for (auto it = kontener.begin(); it != kontener.end(); it++) {
-    std::cout << *it << ", ";
+  bool pierwszy = true;
+  for (const auto &element : kontener) {
+    if (!pierwszy) {
+      std::cout << ", ";
+    }
+    std::cout << element;
+    pierwszy = false;
   }
   std::cout << "}" << std::endl;
 }
 
-// Complexity: O(n*m)
-// ALthough it seems to be quite efficient but its not.
-// Because erase function deletes the elements and shifts all the elements in
-// right by 1.
+// O(n^2) w najgorszym przypadku: każde erase przesuwa resztę wektora.
 template <typename T>
-std::vector<T> usunElement1(std::vector<T> wektor, T element) {
+std::vector<T> usunElement1(std::vector<T> wektor, const T &element) {
   for (auto itr = wektor.begin(); itr != wektor.end();) {
-    if (*itr == 1) {
+    if (*itr == element) {
       itr = wektor.erase(itr);
     } else {
-      itr++;
+      ++itr;
     }
   }
   return wektor;
 }
 
-// Complexity : O(n)
-// metoda ogolna (dziala dla wektorow, drzew binarnych, tablic mieszajacych
-// itd.) nie usunie wszystkich elementow, jesli sa powtorzenia
+// O(n): usuwa tylko pierwsze wystąpienie.
 template <typename T>
-std::vector<T> usunElement2(std::vector<T> wektor, T element) {
-  std::remove(wektor.begin(), wektor.end(), 1);
+std::vector<T> usunElement2(std::vector<T> wektor, const T &element) {
+  auto itr = std::find(wektor.begin(), wektor.end(), element);
+  if (itr != wektor.end()) {
+    wektor.erase(itr);
+  }
   return wektor;
 }
 
-// Complexity : O(n)
+// O(n): idiom erase-remove usuwa wszystkie wystąpienia.
 template <typename T>
-std::vector<T> usunElement3(std::vector<T> wektor, T element) {
-  auto itr = std::remove(wektor.begin(), wektor.end(), 1);
-  wektor.erase(itr, wektor.end());
-  // wektor.shrink_to_fit(); // uwolnij pamiec, samo usuwanie nie uwalnia
-  // pamieci! std::cout << wektor.capacity() << std::endl;
+std::vector<T> usunElement3(std::vector<T> wektor, const T &element) {
+  auto nowyKoniec = std::remove(wektor.begin(), wektor.end(), element);
+  wektor.erase(nowyKoniec, wektor.end());
   return wektor;
 }
 
 int main() {
-  std::vector<int> c = {1, 4, 6, 1, 1, 1, 1, 12, 18, 16};
+  const std::vector<int> c = {1, 4, 6, 1, 1, 1, 1, 12, 18, 16};
   wypisz(c);
-
-  auto wynik1 = usunElement1(c, 1);
-  wypisz(wynik1);
-
-  auto wynik2 = usunElement2(c, 1);
-  wypisz(wynik2);
-
-  auto wynik3 = usunElement3(c, 1);
-  wypisz(wynik3);
-
+  wypisz(usunElement1(c, 1));
+  wypisz(usunElement2(c, 1));
+  wypisz(usunElement3(c, 1));
   return 0;
 }

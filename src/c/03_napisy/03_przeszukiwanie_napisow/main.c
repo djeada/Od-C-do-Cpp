@@ -1,35 +1,26 @@
-
+#include <stddef.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
-int main() {
-
-  // utworz napis
+int main(void) {
   char napis[] = "Hello World!";
-
-  // wyswietl napis
   printf("%s\n", napis);
 
-  // znajdz indeks pierwszego wystapienia znaku 'o'
   char *indeksWsk = strchr(napis, 'o');
-  printf("%ld\n", indeksWsk - napis);
-
-  // co jesli nie ma danego znaku?
-  indeksWsk = strchr(napis, 'x');
-  printf("%ld\n", indeksWsk - napis);
-
-  // lepiej sprawdzic czy nie wskaznik nie jest NULL
   if (indeksWsk != NULL) {
-    printf("%ld\n", indeksWsk - napis);
-  } else {
-    printf("Nie znaleziono znaku\n");
+    printf("Pierwsze 'o': %td\n", indeksWsk - napis);
   }
 
-  // co jesli chcemy wszystkie wystapienia danego znaku?
+  indeksWsk = strchr(napis, 'x');
+  if (indeksWsk != NULL) {
+    printf("Pierwsze 'x': %td\n", indeksWsk - napis);
+  } else {
+    printf("Nie znaleziono znaku 'x'\n");
+  }
+
   indeksWsk = strchr(napis, 'o');
   while (indeksWsk != NULL) {
-    printf("%ld\n", indeksWsk - napis);
+    printf("Znaleziono 'o' na indeksie: %td\n", indeksWsk - napis);
     indeksWsk = strchr(indeksWsk + 1, 'o');
   }
 

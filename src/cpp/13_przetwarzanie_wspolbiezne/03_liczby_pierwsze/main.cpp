@@ -1,76 +1,90 @@
+#include <algorithm>
 #include <chrono>
 #include <cmath>
-#include <cstdlib>
-#include <ctime>
 #include <iostream>
 #include <mutex>
-#include <numeric>
-#include <sstream>
-#include <string>
+#include <stdexcept>
 #include <thread>
 #include <vector>
 
 std::mutex vectLock;
 std::vector<unsigned int> primeVect;
 
-void FindPrimes(unsigned int start, unsigned int end) {
+bool IsPrime(unsigned int value) {
+  if (value < 2) {
+    return false;
+  }
+  if (value == 2) {
+    return true;
+  }
+  if (value % 2 == 0) {
+    return false;
+  }
 
-  // Cycle through numbers while ignoring evens
-  for (unsigned int x = start; x <= end; x += 2) {
-
-    // If a modulus is 0 we know it isn't prime
-    for (unsigned int y = 2; y < x; y++) {
-      if ((x % y) == 0) {
-        break;
-      } else if ((y + 1) == x) {
-        vectLock.lock();
-        primeVect.push_back(x);
-        vectLock.unlock();
-      }
+  unsigned int limit = static_cast<unsigned int>(std::sqrt(value));
+  for (unsigned int divisor = 3; divisor <= limit; divisor += 2) {
+    if (value % divisor == 0) {
+      return false;
     }
   }
+  return true;
+}
+
+void FindPrimes(unsigned int start, unsigned int end) {
+  std::vector<unsigned int> localPrimes;
+  for (unsigned int value = start; value <= end; ++value) {
+    if (IsPrime(value)) {
+      localPrimes.push_back(value);
+    }
+  }
+
+  std::lock_guard<std::mutex> guard(vectLock);
+  primeVect.insert(primeVect.end(), localPrimes.begin(), localPrimes.end());
 }
 
 void FindPrimesWithThreads(unsigned int start, unsigned int end,
                            unsigned int numThreads) {
-
-  std::vector<std::thread> threadVect;
-
-  // Divide up the calculation so each thread
-  // operates on different primes
-  unsigned int threadSpread = end / numThreads;
-  unsigned int newEnd = start + threadSpread - 1;
-
-  // Create prime list for each thread
-  for (unsigned int x = 0; x < numThreads; x++) {
-    threadVect.emplace_back(FindPrimes, start, newEnd);
-
-    start += threadSpread;
-    newEnd += threadSpread;
+  if (numThreads == 0) {
+    throw std::invalid_argument("Liczba watkow musi byc dodatnia.");
+  }
+  if (start > end) {
+    return;
   }
 
-  for (auto &t : threadVect) {
-    t.join();
+  unsigned int count = end - start + 1;
+  numThreads = std::min(numThreads, count);
+
+  unsigned int baseSize = count / numThreads;
+  unsigned int remainder = count % numThreads;
+  std::vector<std::thread> threads;
+
+  unsigned int rangeStart = start;
+  for (unsigned int i = 0; i < numThreads; ++i) {
+    unsigned int rangeSize = baseSize + (i < remainder ? 1u : 0u);
+    unsigned int rangeEnd = rangeStart + rangeSize - 1;
+    threads.emplace_back(FindPrimes, rangeStart, rangeEnd);
+    rangeStart = rangeEnd + 1;
   }
+
+  for (auto &thread : threads) {
+    thread.join();
+  }
+
+  std::sort(primeVect.begin(), primeVect.end());
 }
 
 int main() {
-  // Get time before code starts executing
-  int startTime = clock();
+  const auto startTime = std::chrono::steady_clock::now();
 
   FindPrimesWithThreads(1, 100000, 3);
 
-  // Get time after execution
-  int endTime = clock();
+  const auto endTime = std::chrono::steady_clock::now();
+  const std::chrono::duration<double> elapsed = endTime - startTime;
 
-  for (auto i : primeVect)
-    std::cout << i << "\n";
+  for (auto prime : primeVect) {
+    std::cout << prime << '\n';
+  }
 
-  // Print out the number of seconds
-  std::cout << "Execution Time : "
-            << (endTime - startTime) / double(CLOCKS_PER_SEC) << std::endl;
-
-  system("pause");
-
+  std::cout << "Execution Time : " << elapsed.count() << " s\n";
   return 0;
 }

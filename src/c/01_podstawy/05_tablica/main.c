@@ -1,64 +1,57 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #define MAX_ROZMIAR 100
 
-/**
- * Funkcja modyfikująca wartość w tablicy.
- *
- * @param tablica Tablica, w której modyfikujemy wartość.
- * @param indeks Indeks elementu do zmodyfikowania.
- * @param nowa_wartosc Nowa wartość, którą ustawiamy w elemencie o podanym
- * indeksie.
- */
-void zmien_wartosc(int tablica[], int indeks, int nowa_wartosc) {
+int zmien_wartosc(int tablica[], int rozmiar, int indeks, int nowa_wartosc) {
+  if (indeks < 0 || indeks >= rozmiar) {
+    return -1;
+  }
   tablica[indeks] = nowa_wartosc;
+  return 0;
 }
 
-/**
- * Funkcja wczytująca wartości od użytkownika i zapisująca je w tablicy.
- *
- * @param tablica Tablica, do której zapisujemy wartości.
- * @param rozmiar Rozmiar tablicy.
- */
-void wczytaj_dane(int tablica[], int rozmiar) {
+int wczytaj_dane(int tablica[], int rozmiar) {
   for (int i = 0; i < rozmiar; i++) {
     printf("Podaj wartość dla indeksu %d: ", i);
-    scanf("%d", &tablica[i]);
+    if (scanf("%d", &tablica[i]) != 1) {
+      return -1;
+    }
   }
+  return 0;
 }
 
-int main() {
+int main(void) {
   int moja_tablica[MAX_ROZMIAR];
   int rozmiar_tablicy;
 
-  printf("Podaj rozmiar tablicy (maksymalny rozmiar: %d): ", MAX_ROZMIAR);
-  scanf("%d", &rozmiar_tablicy);
-
-  // Sprawdzenie, czy rozmiar nie jest zbyt duży.
-  if (rozmiar_tablicy > MAX_ROZMIAR) {
-    printf("Podany rozmiar jest zbyt duży!\n");
-    return 1;
+  printf("Podaj rozmiar tablicy (1-%d): ", MAX_ROZMIAR);
+  if (scanf("%d", &rozmiar_tablicy) != 1 || rozmiar_tablicy < 1 ||
+      rozmiar_tablicy > MAX_ROZMIAR) {
+    fprintf(stderr, "Nieprawidlowy rozmiar tablicy.\n");
+    return EXIT_FAILURE;
   }
 
-  // Wczytanie wartości od użytkownika.
-  wczytaj_dane(moja_tablica, rozmiar_tablicy);
+  if (wczytaj_dane(moja_tablica, rozmiar_tablicy) != 0) {
+    fprintf(stderr, "Nieprawidlowa wartosc elementu.\n");
+    return EXIT_FAILURE;
+  }
 
-  // Wyświetlenie zawartości tablicy przed modyfikacją.
   printf("\nZawartość tablicy przed modyfikacją:\n");
   for (int i = 0; i < rozmiar_tablicy; i++) {
     printf("%d ", moja_tablica[i]);
   }
   printf("\n");
 
-  // Modyfikacja wartości w tablicy.
-  zmien_wartosc(moja_tablica, 2, 10);
+  if (zmien_wartosc(moja_tablica, rozmiar_tablicy, 2, 10) != 0) {
+    printf("Tablica ma mniej niż 3 elementy - pomijam zmianę indeksu 2.\n");
+  }
 
-  // Wyświetlenie zawartości tablicy po modyfikacji.
   printf("\nZawartość tablicy po modyfikacji:\n");
   for (int i = 0; i < rozmiar_tablicy; i++) {
     printf("%d ", moja_tablica[i]);
   }
   printf("\n");
 
-  return 0;
+  return EXIT_SUCCESS;
 }

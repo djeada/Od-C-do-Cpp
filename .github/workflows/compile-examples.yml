@@ -1,0 +1,29 @@
+name: Validate examples
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile and link C and C++ examples
+        run: bash hooks/compile_examples.sh
+
+  sanitizers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run AddressSanitizer and UndefinedBehaviorSanitizer smoke tests
+        run: bash hooks/run_sanitizers.sh
+
+  network:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test TCP, UDP and HTTP examples
+        run: bash hooks/test_network_examples.sh

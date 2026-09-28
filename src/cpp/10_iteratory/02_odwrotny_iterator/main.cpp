@@ -4,37 +4,31 @@
 #include <vector>
 
 int main() {
-  /*
-  wektor = {1, 2, 3, 4, 5}
-
- 'wektor.rend()'  |  1'wektor.begin()'  |  2  |  3  |  4  |  5 'wektor.rbegin()'
- |   'wektor.end()'
-
- wektor.begin() : pierwszy element
- wektor.end()   : adres za ostatnim elementem
- wektor.rbegin(): ostatni element
- wektor.rend()  : adres przed pierwszym elementem
- */
-
   std::vector<int> vec = {4, 5, 6, 7};
 
-  // wypisz: 7 6 5 4
-  for (auto ritr = vec.rbegin(); ritr != vec.rend(); ritr++)
-    std::cout << *ritr << std::endl;
+  std::cout << "Od końca:";
+  for (auto ritr = vec.rbegin(); ritr != vec.rend(); ++ritr) {
+    std::cout << ' ' << *ritr;
+  }
+  std::cout << '\n';
 
   auto ritr = std::find(vec.rbegin(), vec.rend(), 6);
+  if (ritr != vec.rend()) {
+    // base() wskazuje na element następujący po elemencie reverse_iteratora.
+    vec.insert(ritr.base(), 9);
+  }
 
-  // Wstawianie
-  // vec.insert(ritr, 9);      //compile error
-  vec.insert(ritr.base(), 9); // vec : {1,2,3,9,4,5}
+  ritr = std::find(vec.rbegin(), vec.rend(), 6);
+  if (ritr != vec.rend()) {
+    // Aby usunąć dokładnie *ritr, cofamy base() o jeden element.
+    vec.erase(std::prev(ritr.base()));
+  }
 
-  // ritr jest uniewazniony
-  ritr = std::find(vec.rbegin(), vec.rend(),
-                   6); // bez tego wiersza mamy double free
-
-  // Usuwanie
-  // vec.erase(ritr);      //compile error
-  vec.erase(ritr.base()); // vec: {1,2,4,5}
+  std::cout << "Po operacjach:";
+  for (int value : vec) {
+    std::cout << ' ' << value;
+  }
+  std::cout << '\n';
 
   return 0;
 }

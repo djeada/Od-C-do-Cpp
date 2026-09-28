@@ -1,24 +1,33 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
-int main() {
-  printf("Rodzic przed forkiem \n");
-  int zwroconaWartosc = fork();
+int main(void) {
+  printf("Rodzic przed forkiem\n");
+  pid_t zwroconaWartosc = fork();
 
-  printf("wartosc zwrocona przez fork: %d \n", zwroconaWartosc);
-
-  if (zwroconaWartosc == 0) {
-    printf("Dziecko jest wykonywane. \n");
-    sleep(5);
-    printf("Dziecko umiera. \n");
-  } else {
-    printf("Rodzic %d oczekuje na dziecko \n", zwroconaWartosc);
-    int exitCode = 0; // what main of the kid is returnng
-
-    waitpid(zwroconaWartosc, &exitCode, 0);
-    printf("Rodzic umiera. \n");
+  if (zwroconaWartosc < 0) {
+    perror("fork");
+    return EXIT_FAILURE;
   }
 
-  return 0;
+  printf("wartosc zwrocona przez fork: %ld\n", (long)zwroconaWartosc);
+
+  if (zwroconaWartosc == 0) {
+    printf("Dziecko jest wykonywane.\n");
+    sleep(1);
+    printf("Dziecko umiera.\n");
+  } else {
+    printf("Rodzic %ld oczekuje na dziecko\n", (long)zwroconaWartosc);
+    int status = 0;
+    if (waitpid(zwroconaWartosc, &status, 0) < 0) {
+      perror("waitpid");
+      return EXIT_FAILURE;
+    }
+    printf("Rodzic umiera.\n");
+  }
+
+  return EXIT_SUCCESS;
 }

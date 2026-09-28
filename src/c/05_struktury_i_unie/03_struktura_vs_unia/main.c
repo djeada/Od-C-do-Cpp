@@ -10,28 +10,24 @@ union Bar {
   char znak;
 };
 
-int main() {
-  struct Foo foo;
+int main(void) {
+  struct Foo foo = {.liczba = 1, .znak = 'a'};
   union Bar bar;
-  foo.liczba = 1;
-  foo.znak = 'a';
+
+  printf("Struktura zawiera jednocześnie: %d oraz %c\n", foo.liczba, foo.znak);
+
   bar.liczba = 1;
+  printf("Unia - aktywne pole liczba: %d\n", bar.liczba);
   bar.znak = 'a';
+  printf("Unia - aktywne pole znak: %c\n", bar.znak);
 
-  printf("Obiekt foo zawiera liczbe %d oraz znak %c\n", foo.liczba, foo.znak);
-  printf("Obiekt bar zawiera liczbe %d oraz znak %c\n", bar.liczba, bar.znak);
-  printf("\n");
+  printf("Rozmiar struktury foo: %zu\n", sizeof(foo));
+  printf("Rozmiar unii bar: %zu\n", sizeof(bar));
 
-  // porownaj rozmiar struktury i unii
-  printf("Rozmiar struktury foo: %lu\n", sizeof(foo));
-  printf("Rozmiar unii bar: %lu\n", sizeof(bar));
-  printf("\n");
-
-  // pokaz adres pol w strukturze oraz w unii
-  printf("Adres pola liczba oraz pola znak w strukturze foo:\n%p\n%p\n\n",
-         &foo.liczba, &foo.znak);
-  printf("Adres pola liczba oraz pola znak w unii bar:\n%p\n%p\n", &bar.liczba,
-         &bar.znak);
+  printf("Adresy pól struktury foo: %p %p\n", (void *)&foo.liczba,
+         (void *)&foo.znak);
+  printf("Adresy pól unii bar: %p %p\n", (void *)&bar.liczba,
+         (void *)&bar.znak);
 
   return 0;
 }

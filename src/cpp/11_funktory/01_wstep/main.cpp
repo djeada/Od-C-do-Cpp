@@ -1,26 +1,24 @@
 #include <algorithm>
 #include <iostream>
+#include <string>
 #include <vector>
-
-/*
-Obiekty moga zachowywac sie jak funkcje.
-*/
 
 class PrzykladowaKlasa {
 public:
-  const void operator()(const std::string napis) {
+  void operator()(const std::string &napis) const {
     std::cout << "Otrzymalem napis: " << napis << std::endl;
   }
 };
-
-// Funktory moga miec normalne konstruktory
 
 class Powieksz {
   int wartosc;
 
 public:
-  Powieksz(int wartosc) : wartosc(wartosc) {}
-  void operator()(int element) { std::cout << element + wartosc << std::endl; }
+  explicit Powieksz(int wartosc) : wartosc(wartosc) {}
+
+  void operator()(int element) const {
+    std::cout << element + wartosc << std::endl;
+  }
 };
 
 int main() {

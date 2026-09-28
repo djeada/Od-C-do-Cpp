@@ -4,32 +4,31 @@
 #define LICZBA_WIERSZY 5
 #define LICZBA_KOLUMN 10
 
-int main() {
-
-  // tablica 2D
-  int **tablica = malloc(LICZBA_WIERSZY * sizeof(int *));
+int main(void) {
+  int **tablica = malloc(LICZBA_WIERSZY * sizeof(*tablica));
   if (tablica == NULL) {
-    printf("Blad alokacji pamieci.");
-    return 1;
+    fprintf(stderr, "Blad alokacji pamieci.\n");
+    return EXIT_FAILURE;
   }
 
   for (int i = 0; i < LICZBA_WIERSZY; i++) {
-    tablica[i] = malloc(LICZBA_KOLUMN * sizeof(int));
+    tablica[i] = malloc(LICZBA_KOLUMN * sizeof(*tablica[i]));
     if (tablica[i] == NULL) {
-      printf("Blad alokacji pamieci.");
-      return 1;
+      fprintf(stderr, "Blad alokacji pamieci.\n");
+      for (int j = 0; j < i; ++j) {
+        free(tablica[j]);
+      }
+      free(tablica);
+      return EXIT_FAILURE;
     }
   }
 
-  // wypelnienie tablicy
-  // tabliczka mnozenia
   for (int i = 0; i < LICZBA_WIERSZY; i++) {
     for (int j = 0; j < LICZBA_KOLUMN; j++) {
       tablica[i][j] = (i + 1) * (j + 1);
     }
   }
 
-  // wypisanie tablicy
   for (int i = 0; i < LICZBA_WIERSZY; i++) {
     for (int j = 0; j < LICZBA_KOLUMN; j++) {
       printf("%d ", tablica[i][j]);
@@ -37,11 +36,10 @@ int main() {
     printf("\n");
   }
 
-  // zwolnienie pamieci
   for (int i = 0; i < LICZBA_WIERSZY; i++) {
     free(tablica[i]);
   }
   free(tablica);
 
-  return 0;
+  return EXIT_SUCCESS;
 }

@@ -1,22 +1,29 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 void swap(int *a, int *b) {
-  // podmiana przy pomocy operatora xor
-  *a = *a ^ *b;
-  *b = *a ^ *b;
-  *a = *a ^ *b;
+  if (a == b) {
+    return;
+  }
+
+  *a ^= *b;
+  *b ^= *a;
+  *a ^= *b;
 }
 
-int main() {
+int main(void) {
   int liczbaA;
   int liczbaB;
 
   printf("Podaj dwie liczby: ");
-  scanf("%d %d", &liczbaA, &liczbaB);
+  if (scanf("%d %d", &liczbaA, &liczbaB) != 2) {
+    fprintf(stderr, "Nieprawidlowe dane.\n");
+    return EXIT_FAILURE;
+  }
 
   printf("Przed zamiana: %d %d\n", liczbaA, liczbaB);
   swap(&liczbaA, &liczbaB);
   printf("Po zamianie: %d %d\n", liczbaA, liczbaB);
 
-  return 0;
+  return EXIT_SUCCESS;
 }

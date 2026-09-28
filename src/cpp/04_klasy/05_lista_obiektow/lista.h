@@ -1,40 +1,38 @@
-#ifndef __Lista_H__
-#define __Lista_H__
+#ifndef LISTA_H
+#define LISTA_H
 
-#include "Student.h"
+#include "student.h"
 
-using namespace std;
+#include <iosfwd>
+#include <utility>
 
 class Wezel {
   Student nasz_student;
-  Wezel *nastepny;
+  Wezel *nastepny = nullptr;
 
 public:
-  Wezel(Student s) {
-    nasz_student = s;
-    nastepny = nullptr;
-  }
+  explicit Wezel(Student s) : nasz_student(std::move(s)) {}
 
-  void setStudent(Student s) { nasz_student = s; }
-
+  void setStudent(Student s) { nasz_student = std::move(s); }
   void setNastepny(Wezel *w) { nastepny = w; }
 
-  Student getStudent() { return nasz_student; }
-
-  Wezel *getNastepny() { return nastepny; }
+  const Student &getStudent() const { return nasz_student; }
+  Wezel *getNastepny() const { return nastepny; }
 };
 
 class Lista {
   Wezel *glowa;
 
 public:
-  Lista(Student s);
+  explicit Lista(Student s);
+  Lista(const Lista &) = delete;
+  Lista &operator=(const Lista &) = delete;
   ~Lista();
 
   void wstaw(Student s);
   void posortuj();
 
-  friend ostream &operator<<(ostream &strumien, const Lista &l);
+  friend std::ostream &operator<<(std::ostream &strumien, const Lista &l);
 };
 
 #endif

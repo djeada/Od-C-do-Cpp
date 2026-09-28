@@ -4,63 +4,39 @@
 #include <unistd.h>
 
 void uchwyc_dzielenie_przez_zero(int num_sygnalu) {
-
   if (num_sygnalu == SIGFPE) {
-    printf("Dzielenie przez zero!\n");
-  } else {
-    printf("Nieoczekiwany sygnal!\n");
-    exit(0);
+    const char komunikat[] = "Odebrano SIGFPE.\n";
+    write(STDOUT_FILENO, komunikat, sizeof(komunikat) - 1);
   }
 }
 
 void uchwyc_alarm(int num_sygnalu) {
-
   if (num_sygnalu == SIGALRM) {
-    printf("Alarm zostal ugaszony!\n");
-  } else {
-    printf("Nieoczekiwany sygnal!\n");
-    exit(0);
+    const char komunikat[] = "Alarm zostal obsluzony!\n";
+    write(STDOUT_FILENO, komunikat, sizeof(komunikat) - 1);
   }
 }
 
-int main() {
-
-  // printf("Wysylam sygnal SIGSTOP!\n");
-  // raise(SIGSTOP);
-  // znajdz pid sygnalu w terminalu: ps -f | grep sygnal
-  // zatrzymaj proces: kill -STOP pid
-  // printf("Sygnal zostal zabity!\n");
-
-  // sprobuj schwytac sygnal SIGALRM
-  void (*rezultat_proby_schwytania_sygnalu)(int);
-  rezultat_proby_schwytania_sygnalu = signal(SIGALRM, uchwyc_alarm);
-
-  if (rezultat_proby_schwytania_sygnalu == SIG_ERR) {
-    printf("Wystapil nieznany blad!\n");
-    exit(0);
+int main(void) {
+  if (signal(SIGALRM, uchwyc_alarm) == SIG_ERR) {
+    perror("signal");
+    return EXIT_FAILURE;
   }
 
-  // wyslij sygnal SIGALRM po 3 sekundach
-  // jesli sygnal nie zostanie schwytany, to program zostanie zakonczony
-  alarm(3);
-  for (int i = 0; i < 6; i++) {
-    printf("%d\n", i + 1);
-    sleep(1);
+  alarm(1);
+  pause();
+
+  if (signal(SIGFPE, uchwyc_dzielenie_przez_zero) == SIG_ERR) {
+    perror("signal");
+    return EXIT_FAILURE;
   }
 
-  rezultat_proby_schwytania_sygnalu =
-      signal(SIGFPE, uchwyc_dzielenie_przez_zero);
-
-  if (rezultat_proby_schwytania_sygnalu == SIG_ERR) {
-    printf("Wystapil nieznany blad!\n");
-    exit(0);
+  // Dzielenie zmiennoprzecinkowe przez zero nie musi generowac SIGFPE,
+  // dlatego sygnal wysylamy jawnie, aby przyklad byl przenosny.
+  if (raise(SIGFPE) != 0) {
+    perror("raise");
+    return EXIT_FAILURE;
   }
 
-  float a = 1.0;
-  float b = 0.0;
-  float ulamek = a / b;
-
-  printf("Wynik dzieielenia przez zero: %f\n", ulamek);
-
-  return 0;
+  return EXIT_SUCCESS;
 }

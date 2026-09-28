@@ -2,39 +2,34 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Zdefiniuj strukturę "Osoba" z dwoma polami: imieniem i wiekiem
 struct Osoba {
   char imie[20];
   int wiek;
 };
 
-int main() {
-  // Alokuj pamięć dla tablicy wskaźników do struktur
-  struct Osoba *wskTablica = (struct Osoba *)malloc(3 * sizeof(struct Osoba));
-
-  // Wypełnij tablicę wskaźników danymi
-  strcpy(wskTablica[0].imie, "Jan");
-  wskTablica[0].wiek = 25;
-  strcpy(wskTablica[1].imie, "Joanna");
-  wskTablica[1].wiek = 30;
-  strcpy(wskTablica[2].imie, "Jacek");
-  wskTablica[2].wiek = 35;
-
-  // Skopiuj dane z tablicy wskaźników do tablicy normalnej
-  struct Osoba normalnaTablica[3];
-  for (int i = 0; i < 3; i++) {
-    strcpy(normalnaTablica[i].imie, wskTablica[i].imie);
-    normalnaTablica[i].wiek = wskTablica[i].wiek;
+int main(void) {
+  const size_t liczbaOsob = 3;
+  struct Osoba *wskTablica = malloc(liczbaOsob * sizeof(*wskTablica));
+  if (wskTablica == NULL) {
+    fprintf(stderr, "Blad alokacji pamieci.\n");
+    return EXIT_FAILURE;
   }
 
-  // Zwolnij pamięć z tablicy wskaźników
+  snprintf(wskTablica[0].imie, sizeof(wskTablica[0].imie), "%s", "Jan");
+  wskTablica[0].wiek = 25;
+  snprintf(wskTablica[1].imie, sizeof(wskTablica[1].imie), "%s", "Joanna");
+  wskTablica[1].wiek = 30;
+  snprintf(wskTablica[2].imie, sizeof(wskTablica[2].imie), "%s", "Jacek");
+  wskTablica[2].wiek = 35;
+
+  struct Osoba normalnaTablica[3];
+  memcpy(normalnaTablica, wskTablica, sizeof(normalnaTablica));
   free(wskTablica);
 
-  // Wyświetl dane z tablicy normalnej
-  for (int i = 0; i < 3; i++) {
+  for (size_t i = 0; i < liczbaOsob; i++) {
     printf("Imię: %s\n", normalnaTablica[i].imie);
     printf("Wiek: %d\n\n", normalnaTablica[i].wiek);
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }

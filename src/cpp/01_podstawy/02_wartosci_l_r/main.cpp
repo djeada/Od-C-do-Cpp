@@ -1,12 +1,4 @@
-/*
-Lvalue - obiekt, który ma przypisany adres w pamięci i może być identyfikowany
-jako pojedyncza wartość. Można do niego przypisać inną wartość lub zmienić jego
-wartość bez zmiany miejsca w pamięci. Rvalue - obiekt, który nie ma przypisanego
-adresu w pamięci i zazwyczaj jest wartością tymczasową lub stałą. Nie można
-przypisać do niego innego obiektu ani zmienić jego wartości bezpośrednio.
-
-Przykłady funkcji przyjmujących różne rodzaje parametrów:
-*/
+#include <iostream>
 
 class PrzykladowaKlasa {};
 
@@ -22,38 +14,33 @@ int &foo() { return zmiennaGlobalna; }
 int bar() { return zmiennaGlobalna; }
 
 int main() {
-  int i;       // i jest lvalue
-  int *p = &i; // adres i jest identyfikowalny
-  i = 2;       // modyfikacja zawartości pamięci
+  int i = 2;   // i jest lvalue
+  int *p = &i; // &i pozwala pobrać adres lvalue
 
-  PrzykladowaKlasa d1; // lvalue użytkownika zdefiniowanego typu (klasy)
-
-  int x = 2;     // 2 jest rvalue
-  int c = i + 2; // (i+2) jest rvalue
-  // *p = (i + 2);    // błąd, próba przypisania do rvalue
-  // i + 2 = 4;       // błąd, próba przypisania do rvalue
-  // 2 = i;           // błąd, próba przypisania do rvalue
-
+  PrzykladowaKlasa d1;
   PrzykladowaKlasa d2;
-  d2 = PrzykladowaKlasa(); // PrzykladowaKlasa() jest rvalue użytkownika
-                           // zdefiniowanego typu (klasy)
-  i = suma(3, 4);          // suma jest rvalue
+  d2 = PrzykladowaKlasa(); // tymczasowy obiekt jest rvalue
 
-  // Rvalues: 2, i+2, PrzykladowaKlasa(), suma(3,4), x+y
-  // Lvalues: x, i, d1, d2, p
+  int x = 2;
+  int c = i + 2; // wynik wyrażenia i + 2 jest rvalue
+  i = suma(3, 4);
 
-  int &adress = i;
-  // int& adress = 5; // błąd, próba przypisania do rvalue
+  int &adres = i;
+  const int &r = 5; // const lvalue reference może wiązać się z rvalue
 
-  // Wyjątek: Stała referencja lvalue może zostać przypisana do rvalue;
-  const int &r = 5;
+  std::cout << "Adres i: " << static_cast<void *>(p) << '\n';
+  std::cout << "x=" << x << ", c=" << c << ", i=" << i << '\n';
+  std::cout << "referencja do i: " << adres << '\n';
+  std::cout << "const ref do rvalue: " << r << '\n';
+  std::cout << "kwadrat(i): " << kwadrat(i) << '\n';
+  std::cout << "stalyKwadrat(40): " << stalyKwadrat(40) << '\n';
 
-  kwadrat(i); // OK
-  // kwadrat(40);  // błąd, próba przypisania do rvalue
+  foo() = 50; // foo() zwraca lvalue reference
+  std::cout << "foo(): " << foo() << ", bar(): " << bar() << '\n';
 
-  stalyKwadrat(i);  // OK
-  stalyKwadrat(40); // OK
+  // Obiekty są używane, żeby przykład nie sprowadzał się do martwych deklaracji.
+  std::cout << "Adres d1: " << static_cast<const void *>(&d1)
+            << ", adres d2: " << static_cast<const void *>(&d2) << '\n';
 
-  foo() = 50; // to skompiluje się, foo() jest lvalue
-  // bar() = 50; // błąd, próba przypisania do rvalue
+  return 0;
 }

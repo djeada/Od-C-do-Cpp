@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-const int MAX_LENGTH = 10;
+#define MAX_LENGTH 32
 
 struct Student {
   int id;
@@ -11,52 +11,81 @@ struct Student {
   float gpa;
 };
 
-struct Student *createStudent(int id, char *name, int age, float gpa) {
-  struct Student *student = malloc(sizeof(struct Student));
+struct Student *createStudent(int id, const char *name, int age, float gpa) {
+  struct Student *student = malloc(sizeof(*student));
+  if (student == NULL) {
+    return NULL;
+  }
+
   student->id = id;
-  strcpy(student->name, name);
+  snprintf(student->name, sizeof(student->name), "%s", name);
   student->age = age;
   student->gpa = gpa;
   return student;
 }
 
-void printStudent(struct Student *student) {
-  printf("Student: %d %s %d %f\n", student->id, student->name, student->age,
+void printStudent(const struct Student *student) {
+  printf("Student: %d %s %d %.2f\n", student->id, student->name, student->age,
          student->gpa);
 }
 
 struct StudentDynamic {
   int id;
-  unsigned int nameLength;
+  size_t nameLength;
   char *name;
   int age;
   float gpa;
 };
 
-struct StudentDynamic *createStudentDynamic(int id, char *name, int age,
+struct StudentDynamic *createStudentDynamic(int id, const char *name, int age,
                                             float gpa) {
-  struct StudentDynamic *student = malloc(sizeof(struct StudentDynamic));
-  student->id = id;
-  student->name = name;
+  struct StudentDynamic *student = malloc(sizeof(*student));
+  if (student == NULL) {
+    return NULL;
+  }
+
   student->nameLength = strlen(name);
+  student->name = malloc(student->nameLength + 1);
+  if (student->name == NULL) {
+    free(student);
+    return NULL;
+  }
+
+  memcpy(student->name, name, student->nameLength + 1);
+  student->id = id;
   student->age = age;
   student->gpa = gpa;
   return student;
 }
 
-void printStudentDynamic(struct StudentDynamic *student) {
-  printf("Student: %d %s %d %f\n", student->id, student->name, student->age,
+void printStudentDynamic(const struct StudentDynamic *student) {
+  printf("Student: %d %s %d %.2f\n", student->id, student->name, student->age,
          student->gpa);
 }
 
-int main() {
-  struct Student *student = createStudent(1, "John loves me", 20, 3.5);
+void destroyStudentDynamic(struct StudentDynamic *student) {
+  if (student == NULL) {
+    return;
+  }
+  free(student->name);
+  free(student);
+}
+
+int main(void) {
+  struct Student *student = createStudent(1, "John loves me", 20, 3.5f);
+  if (student == NULL) {
+    return EXIT_FAILURE;
+  }
   printStudent(student);
   free(student);
 
   struct StudentDynamic *studentDynamic =
-      createStudentDynamic(1, "John loves me", 20, 3.5);
+      createStudentDynamic(1, "John loves me", 20, 3.5f);
+  if (studentDynamic == NULL) {
+    return EXIT_FAILURE;
+  }
   printStudentDynamic(studentDynamic);
-  free(studentDynamic);
-  return 0;
+  destroyStudentDynamic(studentDynamic);
+
+  return EXIT_SUCCESS;
 }

@@ -1,64 +1,42 @@
+#include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-/*
-Wstep:
-Operacje bitowe sa duzo szybsze niz zwykle operacje arytmetyczne.
-Uzywajac maski mozemy operowac na wielu bitach jednoczesnie.
-
-Zastosowania:
--niskopoziomowa kontrola urzadzen
--kompresja danych
--szyfrowanie
-
-Uwaga: liczby sa roznej dlugosci:
-
-- 1 bit: 1b
-- 4 bity: 1010b
-- 8 bitow: 00110101b
-*/
-
-long long decNaBin(int liczba) {
-  long long wynik = 0;
-  int reszta, pom = 1;
-
-  while (liczba != 0) {
-    reszta = liczba % 2;
-    liczba /= 2;
-    wynik += reszta * pom;
-    pom = pom * 10;
+static void wypiszBinarnie(unsigned int liczba) {
+  for (int bit = (int)(sizeof(liczba) * CHAR_BIT) - 1; bit >= 0; --bit) {
+    putchar((liczba & (1u << bit)) != 0u ? '1' : '0');
   }
-  return wynik;
 }
 
-int main() {
+static void wypiszOperacje(const char *opis, unsigned int wynik) {
+  printf("%s: ", opis);
+  wypiszBinarnie(wynik);
+  printf(" (%u)\n", wynik);
+}
 
-  int decA = 0;
-  int decB = 0;
+int main(void) {
+  unsigned int a;
+  unsigned int b;
 
-  printf("Podaj dwie liczby: \n");
-  scanf("%d", &decA);
-  scanf("%d", &decB);
+  printf("Podaj dwie nieujemne liczby: ");
+  if (scanf("%u %u", &a, &b) != 2) {
+    fprintf(stderr, "Nieprawidlowe dane.\n");
+    return EXIT_FAILURE;
+  }
 
-  long long binA = decNaBin(decA);
-  long long binB = decNaBin(decB);
+  printf("a: ");
+  wypiszBinarnie(a);
+  printf(" (%u)\n", a);
 
-  printf("%d w systemie binarnym to %lld \n", decA, binA);
-  printf("%d w systemie binarnym to %lld \n", decB, binB);
+  printf("b: ");
+  wypiszBinarnie(b);
+  printf(" (%u)\n", b);
 
-  // negacja bitowa
-  printf("~%lld = %lld \n", binA, decNaBin(~decA));
+  wypiszOperacje("~a", ~a);
+  wypiszOperacje("a << 2", a << 2u);
+  wypiszOperacje("a & b", a & b);
+  wypiszOperacje("a | b", a | b);
+  wypiszOperacje("a ^ b", a ^ b);
 
-  // przesuniecie bitowe w lewo o 2 miejsca
-  printf("%lld << 2 = %lld \n", binA, decNaBin(decA << 2));
-
-  // AND
-  printf("%lld & %lld = %lld \n", binA, binB, decNaBin(decA & decB));
-
-  // OR
-  printf("%lld | %lld = %lld \n", binA, binB, decNaBin(decA | decB));
-
-  // XOR
-  printf("%lld ^ %lld = %lld \n", binA, binB, decNaBin(decA ^ decB));
-
-  return 0;
+  return EXIT_SUCCESS;
 }
