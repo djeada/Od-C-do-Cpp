@@ -1,35 +1,30 @@
 #include "pracownik.h"
-#include <iostream>
 
-using namespace std;
+#include <array>
+#include <iostream>
 
 int main() {
   Pracownik p1;
   Pracownik p2("Jan", "Kowalski", PREZES, 4000);
 
-  cout << p1;
-  cout << p2;
+  std::cout << p1;
+  std::cout << p2;
 
-  // wielkosc tablicy
-  int n = 4;
+  std::array<Pracownik, 4> tab = {
+      p1, p2, Pracownik("Krzysztof", "Jerzyna", TRENER, 3000),
+      Pracownik("Programista", "Programista", PROGRAMISTA, 3000)};
 
-  Pracownik tab[n];
-  tab[0] = p1;
-  tab[1] = p2;
-  tab[2] = Pracownik("Krzysztof", "Jerzyna", TRENER, 3000);
-  tab[3] = Pracownik("Programista", "Programista", PROGRAMISTA, 3000);
+  std::cout << "\nTablica przed sortowaniem:\n";
+  for (const auto &pracownik : tab) {
+    std::cout << pracownik;
+  }
 
-  cout << endl << "Tablica przed sortowaniem: " << endl;
+  sortowanie(tab.data(), static_cast<int>(tab.size()));
 
-  for (int i = 0; i < n; i++)
-    cout << tab[i];
-
-  sortowanie(tab, n);
-
-  cout << endl << "Tablica po sortowaniu: " << endl;
-
-  for (int i = 0; i < n; i++)
-    cout << tab[i];
+  std::cout << "\nTablica po sortowaniu:\n";
+  for (const auto &pracownik : tab) {
+    std::cout << pracownik;
+  }
 
   return 0;
 }
