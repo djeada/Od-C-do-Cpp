@@ -1,15 +1,38 @@
 #include <iostream>
+#include <string>
 
-using namespace std;
+class Zwierze {
+public:
+  explicit Zwierze(std::string nazwa) : nazwa_(std::move(nazwa)) {}
 
-/*
-Inherits:
-Every data member defined in the parent class (although such members may not
-always be accessible in the derived class!) Every ordinary member function of
-the parent class (although such members may not always be accessible in the
-derived class!) The same initial data layout as the base class. Doesn't Inherit
-: The base class's constructors and destructor. The base class's assignment
-operator. The base class's friends
-*/
+  void przedstawSie() const {
+    std::cout << "Jestem " << nazwa_ << std::endl;
+  }
+
+protected:
+  const std::string &nazwa() const { return nazwa_; }
+
+private:
+  std::string nazwa_;
+};
+
+class Pies : public Zwierze {
+public:
+  Pies(std::string nazwa, std::string rasa)
+      : Zwierze(std::move(nazwa)), rasa_(std::move(rasa)) {}
+
+  void opis() const {
+    przedstawSie();
+    std::cout << "Rasa: " << rasa_ << ", nazwa z klasy bazowej: " << nazwa()
+              << std::endl;
+  }
+
+private:
+  std::string rasa_;
+};
 
 int main() {
+  Pies pies("Burek", "mieszaniec");
+  pies.opis();
+  return 0;
+}
