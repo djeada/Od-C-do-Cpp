@@ -1,8 +1,6 @@
 #ifndef hash_H
 #define hash_H
 
-#include <cstdlib>
-#include <iostream>
 #include <string>
 
 using namespace std;
@@ -21,13 +19,18 @@ private:
 
 public:
   hashin();
-  int Hash(string key);
-  void AddItem(string name, string drink);
-  int NumofItemsInIndex(int index);
-  void PrintTable();
-  void PrintItemsInIndex(int index);
-  void FindDrink(string name);
-  void RemoveItem(string name);
+  ~hashin();
+
+  hashin(const hashin &) = delete;
+  hashin &operator=(const hashin &) = delete;
+
+  int Hash(const string &key) const;
+  void AddItem(const string &name, const string &drink);
+  int NumofItemsInIndex(int index) const;
+  void PrintTable() const;
+  void PrintItemsInIndex(int index) const;
+  void FindDrink(const string &name) const;
+  void RemoveItem(const string &name);
 };
 
 #endif
