@@ -5,79 +5,77 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-// Utworz gniazdo dla komunikacji z serwerem
-// Polacz z serwerem
-// Odbierz wiadomosc od serwera
-// Wyslij wiadomosc do serwera
-// Zamykamy gniazdo
-
 #define UZYWANY_PORT 12345
+#define ROZMIAR_BUFORA 100
 
-short utworzGniazdo() {
-  printf("Tworzenie gniazda\n");
-  return socket(AF_INET, SOCK_STREAM, 0);
-}
+int utworzGniazdo(void) { return socket(AF_INET, SOCK_STREAM, 0); }
 
-int polaczGniazdo(short uchwytGniazda) {
-  int portSerwera = UZYWANY_PORT;
-
+int polaczGniazdo(int uchwytGniazda) {
   struct sockaddr_in adresSerwera = {0};
-  adresSerwera.sin_family = AF_INET; // Rodzina adresow IP (IPv4)
-  adresSerwera.sin_addr.s_addr =
-      htonl(INADDR_ANY); // Adres IP serwera (zostawiamy domyslny)
-  adresSerwera.sin_port = htons(portSerwera); // Port serwera (przekazujemy
-                                              // wartosc zdefiniowana w #define)
+  adresSerwera.sin_family = AF_INET;
+  adresSerwera.sin_port = htons(UZYWANY_PORT);
 
-  return bind(uchwytGniazda, (struct sockaddr *)&adresSerwera,
-              sizeof(adresSerwera));
-  ;
+  if (inet_pton(AF_INET, "127.0.0.1", &adresSerwera.sin_addr) != 1) {
+    return -1;
+  }
+
+  return connect(uchwytGniazda, (struct sockaddr *)&adresSerwera,
+                 sizeof(adresSerwera));
 }
 
-int wyslijWiadomosc(short uchwytGniazda, char *wiadomosc) {
+int wyslijWiadomosc(int uchwytGniazda, const char *wiadomosc) {
+  size_t pozostalo = strlen(wiadomosc);
+  const char *pozycja = wiadomosc;
 
-  struct timeval tv;
-  tv.tv_sec = 20;
-  tv.tv_usec = 0;
-  if (setsockopt(uchwytGniazda, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
-    perror("Zbyt dlugi czas oczekiwania na odpowiedz od serwera");
-    return 1;
+  while (pozostalo > 0) {
+    ssize_t wynik = send(uchwytGniazda, pozycja, pozostalo, 0);
+    if (wynik <= 0) {
+      return -1;
+    }
+    pozycja += wynik;
+    pozostalo -= (size_t)wynik;
   }
 
-  int wynik = send(uchwytGniazda, wiadomosc, strlen(wiadomosc), 0);
-  if (wynik < 0) {
-    perror("Nie udalo sie wyslac wiadomosci");
-    return 1;
-  }
   return 0;
 }
 
-odbierzWiadomosc(short uchwytGniazda, char *wiadomosc) {
-  int wynik = recv(uchwytGniazda, wiadomosc, 100, 0);
+int odbierzWiadomosc(int uchwytGniazda, char *wiadomosc, size_t rozmiar) {
+  ssize_t wynik = recv(uchwytGniazda, wiadomosc, rozmiar - 1, 0);
   if (wynik < 0) {
-    perror("Nie udalo sie odebrac wiadomosci");
-    return 1;
+    return -1;
   }
+
+  wiadomosc[wynik] = '\0';
   return 0;
 }
 
-int main(int argc, char *argv[]) {
-  short uchwytGniazda = utworzGniazdo();
+int main(void) {
+  int uchwytGniazda = utworzGniazdo();
   if (uchwytGniazda < 0) {
-    perror("Nie udalo sie utworzyc gniazda");
-    return 1;
+    perror("socket");
+    return EXIT_FAILURE;
   }
 
-  int wynik = polaczGniazdo(uchwytGniazda);
-  if (wynik < 0) {
-    perror("Nie udalo sie polaczyc z serwerem");
-    return 1;
+  if (polaczGniazdo(uchwytGniazda) < 0) {
+    perror("connect");
+    close(uchwytGniazda);
+    return EXIT_FAILURE;
   }
 
-  char wiadomosc[100];
-  wyslijWiadomosc(uchwytGniazda, "Witaj");
-  odbierzWiadomosc(uchwytGniazda, wiadomosc);
+  if (wyslijWiadomosc(uchwytGniazda, "41") < 0) {
+    perror("send");
+    close(uchwytGniazda);
+    return EXIT_FAILURE;
+  }
+
+  char wiadomosc[ROZMIAR_BUFORA];
+  if (odbierzWiadomosc(uchwytGniazda, wiadomosc, sizeof(wiadomosc)) < 0) {
+    perror("recv");
+    close(uchwytGniazda);
+    return EXIT_FAILURE;
+  }
+
   printf("Odebrana wiadomosc: %s\n", wiadomosc);
-
   close(uchwytGniazda);
-  return 0;
+  return EXIT_SUCCESS;
 }
