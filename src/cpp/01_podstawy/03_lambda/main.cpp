@@ -1,26 +1,28 @@
 #include <iostream>
 #include <vector>
 
-template <typename funkcja> void filtruj(funkcja f, std::vector<int> arr) {
-  for (auto i : arr) {
-    if (f(i))
+template <typename Funkcja>
+void filtruj(Funkcja f, const std::vector<int> &arr) {
+  for (int i : arr) {
+    if (f(i)) {
       std::cout << i << " ";
+    }
   }
-
   std::cout << std::endl;
 }
 
 int main() {
   std::cout << [](int x, int y) { return x + y; }(3, 4) << std::endl;
+
   auto f = [](int x, int y) { return x + y; };
   std::cout << f(3, 4) << std::endl;
 
-  std::vector<int> v = {1, 2, 3, 4, 5, 6};
-  filtruj([](int x) { return (x > 3); }, v);         // wynik: 4 5 6
-  filtruj([](int x) { return (x > 2 & x < 5); }, v); // wynik: 3 4
+  const std::vector<int> v = {1, 2, 3, 4, 5, 6};
+  filtruj([](int x) { return x > 3; }, v);
+  filtruj([](int x) { return x > 2 && x < 5; }, v);
 
   int y = 4;
-  filtruj([&](int x) { return (x > y); }, v); // wynik: 5 6
+  filtruj([y](int x) { return x > y; }, v);
 
   return 0;
 }
