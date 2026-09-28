@@ -1,57 +1,70 @@
-/*
-The difference between a copy and a move is that a copy leaves the source
-unchanged. A move on the other hand leaves the source in a state defined
-differently for each type.
-
-Suppose you have a function that returns a substantial object:
-
-Matrix multiply(const Matrix &a, const Matrix &b);
-
-When you write code like this:
-
-Matrix r = multiply(a, b);
-
-then an ordinary C++ compiler will create a temporary object for the result of
-multiply(), call the copy constructor to initialise r, and then destruct the
-temporary return value. Move semantics in C++0x allow the "move constructor" to
-be called to initialise r by copying its contents, and then discard the
-temporary value without having to destruct it.
-*/
-
 #include <iostream>
+#include <stdexcept>
+#include <utility>
 
 void printInt(int &i) { std::cout << "lvalue reference: " << i << std::endl; }
 
 void printInt2(int &&i) { std::cout << "rvalue reference: " << i << std::endl; }
-
-#include <iostream>
 
 class Move {
 private:
   int *data;
 
 public:
-  Move(int d) {
-    data = new int;
-    *data = d;
-  };
+  explicit Move(int d) : data(new int(d)) {}
 
-  // Konstruktor kopiujacy
-  Move(const Move &source) : Move{*source.data} {}
+  Move(const Move &source)
+      : data(source.data != nullptr ? new int(*source.data) : nullptr) {}
 
-  // Konstruktor przenoszacy
-  Move(Move &&source) : data{source.data} { source.data = nullptr; }
+  Move(Move &&source) noexcept : data(std::exchange(source.data, nullptr)) {}
+
+  Move &operator=(const Move &source) {
+    if (this == &source) {
+      return *this;
+    }
+
+    Move kopia(source);
+    swap(kopia);
+    return *this;
+  }
+
+  Move &operator=(Move &&source) noexcept {
+    if (this != &source) {
+      delete data;
+      data = std::exchange(source.data, nullptr);
+    }
+    return *this;
+  }
 
   ~Move() { delete data; }
+
+  void swap(Move &other) noexcept { std::swap(data, other.data); }
+
+  int value() const {
+    if (data == nullptr) {
+      throw std::logic_error("Obiekt zostal przeniesiony.");
+    }
+    return *data;
+  }
 };
 
 int main() {
-  int a = 5; // a is a lvalue
-
+  int a = 5;
   printInt(a);
   printInt2(a + 1);
 
   Move obiekt(1);
-  Move obiekt2(obiekt);
-  Move obiekt3(1 + 1);
+  Move kopia(obiekt);
+  Move przeniesiony(std::move(kopia));
+
+  Move przypisany(0);
+  przypisany = obiekt;
+
+  Move przeniesionyPrzezPrzypisanie(0);
+  przeniesionyPrzezPrzypisanie = std::move(przypisany);
+
+  std::cout << obiekt.value() << ' ' << przeniesiony.value() << ' '
+            << przeniesionyPrzezPrzypisanie.value() << '\n';
+
+  return 0;
 }

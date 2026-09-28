@@ -4,13 +4,12 @@
 
 class Blokada {
 public:
-  Blokada(std::mutex &mutex) : mutex_(mutex) {
-    mutex_.lock(); // blokuj zasób
-  }
+  explicit Blokada(std::mutex &mutex) : mutex_(mutex) { mutex_.lock(); }
 
-  ~Blokada() {
-    mutex_.unlock(); // odblokuj zasób
-  }
+  Blokada(const Blokada &) = delete;
+  Blokada &operator=(const Blokada &) = delete;
+
+  ~Blokada() { mutex_.unlock(); }
 
 private:
   std::mutex &mutex_;
@@ -18,7 +17,8 @@ private:
 
 class WspoldzielonaLiczba {
 public:
-  WspoldzielonaLiczba(int wartosc_poczatkowa) : wartosc_(wartosc_poczatkowa) {}
+  explicit WspoldzielonaLiczba(int wartosc_poczatkowa)
+      : wartosc_(wartosc_poczatkowa) {}
 
   int pobierz_wartosc() {
     Blokada blokada(mutex_);
@@ -36,7 +36,7 @@ private:
 };
 
 void inkrementuj_liczbe(WspoldzielonaLiczba &liczba) {
-  for (int i = 0; i < 1000000; ++i) {
+  for (int i = 0; i < 100000; ++i) {
     liczba.inkrementuj();
   }
 }
@@ -51,6 +51,5 @@ int main() {
   watek2.join();
 
   std::cout << "Wartość: " << liczba.pobierz_wartosc() << '\n';
-
   return 0;
 }
