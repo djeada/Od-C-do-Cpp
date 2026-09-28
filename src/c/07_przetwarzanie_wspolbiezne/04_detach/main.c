@@ -1,32 +1,30 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-// when thread is created, one of its attributes defines whter it is joinable or
-// detached by default if you passed NULL as the second argument the thread will
-// be joinable state only joinable threads can be joined
-
-// if threads will never join you can detach
-// save some system resources
+#include <unistd.h>
 
 void *threadFn(void *arg) {
-  pthread_detach(pthread_self());
+  (void)arg;
+
+  int wynik = pthread_detach(pthread_self());
+  if (wynik != 0) {
+    fprintf(stderr, "Nie udalo sie odlaczyc watku: %d\n", wynik);
+    return NULL;
+  }
+
   sleep(1);
   printf("ThreadFn\n");
-  pthread_exit(NULL);
+  return NULL;
 }
 
-int main(int argc, char *argv[]) {
-
+int main(void) {
   pthread_t tid;
   int ret = pthread_create(&tid, NULL, threadFn, NULL);
   if (ret != 0) {
-    perror("Thread Creation Error\n");
-    exit(1);
+    fprintf(stderr, "Blad tworzenia watku: %d\n", ret);
+    return EXIT_FAILURE;
   }
 
   printf("After thread created in Main\n");
   pthread_exit(NULL);
-
-  return 0;
 }
