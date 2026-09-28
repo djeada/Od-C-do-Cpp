@@ -2,6 +2,7 @@
 #define __Student_H__
 
 #include <iostream>
+#include <string>
 
 using namespace std;
 
