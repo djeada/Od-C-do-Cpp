@@ -34,6 +34,24 @@ Kod źródłowy do programów z yt.
 | 24 | Praca z plikami | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/24_praca_z_plikami.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 25 | C vs C++ | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/25_c_vs_cpp.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 
+## Walidacja przykładów
+
+Repozytorium zawiera niezależne przykłady C i C++, dlatego zamiast jednego programu
+budowanego z całego `src/` używane są skrypty sprawdzające każdy przykład osobno.
+
+```sh
+# Kompilacja z -Wall -Wextra -Wpedantic -Werror i linkowanie przykładów
+bash hooks/compile_examples.sh
+
+# Reprezentatywne przykłady pamięci z AddressSanitizer i UBSan
+bash hooks/run_sanitizers.sh
+
+# Smoke test klient-serwer TCP, UDP oraz prostego serwera HTTP
+bash hooks/test_network_examples.sh
+```
+
+Te same kontrole są uruchamiane w GitHub Actions dla pull requestów.
+
 ## Literatura
 
 ### Przewodniki i kursy
