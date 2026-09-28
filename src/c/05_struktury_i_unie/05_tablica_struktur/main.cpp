@@ -1,53 +1,66 @@
 #include <fstream>
 #include <iostream>
+#include <string>
+#include <vector>
 
-using namespace std;
-
-struct student {
-  string imie;
-  string nazwisko;
+struct Student {
+  std::string imie;
+  std::string nazwisko;
   int numer;
 };
 
-void wczytaj_dane(int n, student *nowi_studenci) {
-  for (int i = 0; i < n; i++) {
-    cout << "Podaj imie " << i << "tego studenta: " << endl;
-    cin >> nowi_studenci[i].imie;
-    cout << "Podaj nazwisko" << i << "tego studenta " << endl;
-    cin >> nowi_studenci[i].nazwisko;
-    cout << "Podaj numer" << i << "tego studenta" << endl;
-    cin >> nowi_studenci[i].numer;
+bool wczytaj_dane(std::vector<Student> &studenci) {
+  for (std::size_t i = 0; i < studenci.size(); ++i) {
+    std::cout << "Podaj imie studenta " << i << ": ";
+    if (!(std::cin >> studenci[i].imie)) {
+      return false;
+    }
+
+    std::cout << "Podaj nazwisko studenta " << i << ": ";
+    if (!(std::cin >> studenci[i].nazwisko)) {
+      return false;
+    }
+
+    std::cout << "Podaj numer studenta " << i << ": ";
+    if (!(std::cin >> studenci[i].numer)) {
+      return false;
+    }
   }
+  return true;
 }
 
-void zapisz_dane(string nazwa, int n, student *nowi_studenci) {
-  ofstream plik_studenci;
-  plik_studenci.open(nazwa);
-  for (int i = 0; i < n; i++) {
-    plik_studenci << nowi_studenci[i].imie << ";" << nowi_studenci[i].nazwisko
-                  << ";" << nowi_studenci[i].numer << endl;
+bool zapisz_dane(const std::string &nazwa, const std::vector<Student> &studenci) {
+  std::ofstream plik(nazwa);
+  if (!plik) {
+    return false;
   }
 
-  plik_studenci.close();
+  for (const auto &student : studenci) {
+    plik << student.imie << ';' << student.nazwisko << ';' << student.numer
+         << '\n';
+  }
+
+  return static_cast<bool>(plik);
 }
 
 int main() {
-
-  // pobieramy liczbe studentow
-  cout << "Podaj liczbe studentow: " << endl;
+  std::cout << "Podaj liczbe studentow: ";
   int n;
-  cin >> n;
+  if (!(std::cin >> n) || n < 0) {
+    std::cerr << "Nieprawidlowa liczba studentow.\n";
+    return 1;
+  }
 
-  // alokujemy pamiec
-  student *nowi_studenci = new student[n];
+  std::vector<Student> studenci(static_cast<std::size_t>(n));
+  if (!wczytaj_dane(studenci)) {
+    std::cerr << "Nie udalo sie wczytac danych.\n";
+    return 1;
+  }
 
-  // wypelniamy tablice struktur i pola w tych strukturach
-  wczytaj_dane(n, nowi_studenci);
-
-  // zapisujemy dane w pliku
-  zapisz_dane("lista_studentow.csv", n, nowi_studenci);
-
-  delete[] nowi_studenci;
+  if (!zapisz_dane("lista_studentow.csv", studenci)) {
+    std::cerr << "Nie udalo sie zapisac pliku.\n";
+    return 1;
+  }
 
   return 0;
 }
