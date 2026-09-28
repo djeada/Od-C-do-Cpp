@@ -2,37 +2,65 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *polacz_napisy(char *napis1, char *napis2) {
-  char *wynik = (char *)malloc(strlen(napis1) + strlen(napis2) + 1);
-  strcpy(wynik, napis1); // strcpy dziala nawet dla pustych napisow
-  strcat(wynik, napis2);
+char *polacz_napisy(const char *napis1, const char *napis2) {
+  size_t dlugosc1 = strlen(napis1);
+  size_t dlugosc2 = strlen(napis2);
+  char *wynik = malloc(dlugosc1 + dlugosc2 + 1);
+  if (wynik == NULL) {
+    return NULL;
+  }
+
+  memcpy(wynik, napis1, dlugosc1);
+  memcpy(wynik + dlugosc1, napis2, dlugosc2 + 1);
   return wynik;
 }
 
-char *usun_n_znakow(char *napis, int n) {
-  char *wynik = (char *)malloc(strlen(napis) - n + 1);
-  strncpy(wynik, napis, strlen(napis) - n);
-  wynik[strlen(napis) - n] = '\0';
+char *usun_n_znakow(const char *napis, size_t n) {
+  size_t dlugosc = strlen(napis);
+  if (n > dlugosc) {
+    return NULL;
+  }
+
+  size_t nowa_dlugosc = dlugosc - n;
+  char *wynik = malloc(nowa_dlugosc + 1);
+  if (wynik == NULL) {
+    return NULL;
+  }
+
+  memcpy(wynik, napis, nowa_dlugosc);
+  wynik[nowa_dlugosc] = '\0';
   return wynik;
 }
 
-int main() {
-
-  // utworz string
-  char greeting[] = "Hello";
+int main(void) {
+  char greeting[16] = "Hello";
 
   printf("%s\n", greeting);
 
-  // dodawanie znakow na koniec napisu daje nieprzewidywalne wyniki
   for (int i = 0; i < 10; i++) {
-    greeting[strlen(greeting)] = 'a';
+    size_t dlugosc = strlen(greeting);
+    greeting[dlugosc] = 'a';
+    greeting[dlugosc + 1] = '\0';
   }
 
   printf("%s\n", greeting);
 
-  // lepiej uzyc pamieci sterty
   char *nowyNapis = polacz_napisy("Hello", " World");
+  if (nowyNapis == NULL) {
+    fprintf(stderr, "Nie udalo sie zaalokowac pamieci.\n");
+    return EXIT_FAILURE;
+  }
   printf("%s\n", nowyNapis);
 
-  return 0;
+  char *krotszyNapis = usun_n_znakow(nowyNapis, 6);
+  if (krotszyNapis == NULL) {
+    free(nowyNapis);
+    fprintf(stderr, "Nie udalo sie skrocic napisu.\n");
+    return EXIT_FAILURE;
+  }
+  printf("%s\n", krotszyNapis);
+
+  free(krotszyNapis);
+  free(nowyNapis);
+  return EXIT_SUCCESS;
 }
