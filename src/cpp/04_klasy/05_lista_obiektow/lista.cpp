@@ -1,4 +1,4 @@
-#include "Lista.h"
+#include "lista.h"
 
 Lista::Lista(Student s) { glowa = new Wezel(s); }
 
@@ -62,8 +62,8 @@ ostream &operator<<(ostream &strumien, const Lista &l) {
 
   int i = 1;
   while (strzalka != nullptr) {
-    cout << "Student: " << i << endl;
-    cout << strzalka->getStudent() << endl;
+    strumien << "Student: " << i << endl;
+    strumien << strzalka->getStudent() << endl;
     strzalka = strzalka->getNastepny();
     i++;
   }
