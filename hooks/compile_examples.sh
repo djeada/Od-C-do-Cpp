@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD_DIR="$(mktemp -d)"
 trap 'rm -rf "$BUILD_DIR"' EXIT
+
+failures=0
 
 compile_one() {
     local compiler="$1"
@@ -11,8 +13,23 @@ compile_one() {
     local file="$3"
     local object="$BUILD_DIR/$(echo "$file" | tr '/ ' '__').o"
 
-    echo "Compiling $file"
-    "$compiler" "$standard" -Wall -Wextra -Wpedantic -Werror -c "$ROOT/$file" -o "$object"
+    echo "::group::Compiling $file"
+    if ! "$compiler" "$standard" -Wall -Wextra -Wpedantic -Werror         -c "$ROOT/$file" -o "$object"; then
+        echo "::error file=$file::Compilation failed"
+        failures=$((failures + 1))
+    fi
+    echo "::endgroup::"
+}
+
+link_example() {
+    local name="$1"
+    shift
+    echo "::group::Linking $name"
+    if ! g++ -std=c++17 -Wall -Wextra -Wpedantic -Werror "$@"         -o "$BUILD_DIR/$name"; then
+        echo "::error::Linking $name failed"
+        failures=$((failures + 1))
+    fi
+    echo "::endgroup::"
 }
 
 while IFS= read -r -d '' file; do
@@ -25,16 +42,19 @@ while IFS= read -r -d '' file; do
     compile_one g++ -std=c++17 "$relative"
 done < <(find "$ROOT/src" -type f \( -name '*.cpp' -o -name '*.cc' -o -name '*.cxx' \) -size +0c -print0 | sort -z)
 
-echo "Linking multi-file examples"
+link_example pracownik     "$ROOT/src/cpp/04_klasy/02_pracownik/main.cpp"     "$ROOT/src/cpp/04_klasy/02_pracownik/pracownik.cpp"
 
-g++ -std=c++17 -Wall -Wextra -Wpedantic -Werror     "$ROOT/src/cpp/04_klasy/02_pracownik/main.cpp"     "$ROOT/src/cpp/04_klasy/02_pracownik/pracownik.cpp"     -o "$BUILD_DIR/pracownik"
+link_example zespolona     "$ROOT/src/cpp/04_klasy/03_liczba_zespolona/main.cpp"     "$ROOT/src/cpp/04_klasy/03_liczba_zespolona/zespolona.cpp"
 
-g++ -std=c++17 -Wall -Wextra -Wpedantic -Werror     "$ROOT/src/cpp/04_klasy/03_liczba_zespolona/main.cpp"     "$ROOT/src/cpp/04_klasy/03_liczba_zespolona/zespolona.cpp"     -o "$BUILD_DIR/zespolona"
+link_example lista_obiektow     "$ROOT/src/cpp/04_klasy/05_lista_obiektow/main.cpp"     "$ROOT/src/cpp/04_klasy/05_lista_obiektow/lista.cpp"     "$ROOT/src/cpp/04_klasy/05_lista_obiektow/student.cpp"
 
-g++ -std=c++17 -Wall -Wextra -Wpedantic -Werror     "$ROOT/src/cpp/04_klasy/05_lista_obiektow/main.cpp"     "$ROOT/src/cpp/04_klasy/05_lista_obiektow/lista.cpp"     "$ROOT/src/cpp/04_klasy/05_lista_obiektow/student.cpp"     -o "$BUILD_DIR/lista_obiektow"
+link_example stos     "$ROOT/src/cpp/12_struktury_danych/01_stos/main.cpp"     "$ROOT/src/cpp/12_struktury_danych/01_stos/stos.cpp"
 
-g++ -std=c++17 -Wall -Wextra -Wpedantic -Werror     "$ROOT/src/cpp/12_struktury_danych/01_stos/main.cpp"     "$ROOT/src/cpp/12_struktury_danych/01_stos/stos.cpp"     -o "$BUILD_DIR/stos"
+link_example hash     "$ROOT/src/cpp/12_struktury_danych/02_tablica_mieszajaca/main.cpp"     "$ROOT/src/cpp/12_struktury_danych/02_tablica_mieszajaca/hash.cpp"
 
-g++ -std=c++17 -Wall -Wextra -Wpedantic -Werror     "$ROOT/src/cpp/12_struktury_danych/02_tablica_mieszajaca/main.cpp"     "$ROOT/src/cpp/12_struktury_danych/02_tablica_mieszajaca/hash.cpp"     -o "$BUILD_DIR/hash"
+if (( failures > 0 )); then
+    echo "$failures compilation/linking checks failed."
+    exit 1
+fi
 
 echo "All source files compile successfully."
