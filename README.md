@@ -2,7 +2,7 @@
 
 Kod źródłowy do programów z yt.
 
-![c_do_cpp](https://user-images.githubusercontent.com/37275728/213450004-e61a5056-f357-40b2-971f-ef0fa53d880f.png)
+<img width="1254" height="1254" alt="computer" src="https://github.com/user-attachments/assets/3f3e412c-5786-4c76-984b-518ce8a11e03" />
 
 ## Notatki
 
