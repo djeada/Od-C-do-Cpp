@@ -7,6 +7,12 @@ trap 'rm -rf "$BUILD_DIR"' EXIT
 
 failures=0
 
+while IFS= read -r -d '' file; do
+    relative="${file#"$ROOT/"}"
+    echo "::error file=$relative::Source file is empty"
+    failures=$((failures + 1))
+done < <(find "$ROOT/src" -type f \\( -name '*.c' -o -name '*.cpp' -o -name '*.cc' -o -name '*.cxx' -o -name '*.h' -o -name '*.hpp' \\) -empty -print0)
+
 compile_one() {
     local compiler="$1"
     local standard="$2"
