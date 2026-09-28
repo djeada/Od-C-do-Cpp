@@ -6,26 +6,18 @@ union Ocena {
   float wynik;
 };
 
-int main() {
+int main(void) {
   union Ocena ocena;
 
   ocena.litera = 'A';
+  printf("Aktywne pole litera: %c\n", ocena.litera);
+
   ocena.zaokraglenie = 10;
-  ocena.wynik = 9.7;
+  printf("Aktywne pole zaokraglenie: %d\n", ocena.zaokraglenie);
 
-  printf("Uczen otrzymal ocene %c %d %f\n", ocena.litera, ocena.zaokraglenie,
-         ocena.wynik);
+  ocena.wynik = 9.7f;
+  printf("Aktywne pole wynik: %.1f\n", ocena.wynik);
 
-  union Ocena ocena2;
-
-  ocena2.litera = 'B';
-  printf("Uczen otrzymal ocene %c\n", ocena2.litera);
-
-  ocena2.zaokraglenie = 8;
-  printf("Uczen otrzymal ocene %d\n", ocena2.zaokraglenie);
-
-  ocena2.wynik = 7.8;
-  printf("Uczen otrzymal ocene %f\n", ocena2.wynik);
-
+  printf("Unia przechowuje w danym momencie wartość jednego aktywnego pola.\n");
   return 0;
 }
