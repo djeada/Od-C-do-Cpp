@@ -1,7 +1,7 @@
 #ifndef __Lista_H__
 #define __Lista_H__
 
-#include "Student.h"
+#include "student.h"
 
 using namespace std;
 
