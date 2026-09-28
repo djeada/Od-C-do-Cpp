@@ -59,7 +59,7 @@ $$
 Var[X]=\int_{-\infty}^{\infty}(x- E[X])^{2}f_X(x)dx
 $$
 
-Prawo wielkich liczb (LLN) gwarantuje zbieżność średniej $\bar X\_n$ do $E\[X]$ przy $n\to\infty$, a centralne tw. graniczne (CLT) – normalne odchylenie $O(n^{-1/2})$.
+Prawo wielkich liczb (LLN) gwarantuje zbieżność średniej $\bar X\_n$ do $E[X]$ przy $n\to\infty$, a centralne tw. graniczne (CLT) – normalne odchylenie $O(n^{-1/2})$.
 
 #### Prawdziwa losowość vs. pseudolosowość
 
@@ -77,7 +77,7 @@ $$
 który przy zadanym ziarnie $s\_0$ tworzy powtarzalną sekwencję. Parametry:
 
 * **Okres** $p$ – najmniejsze $k>0$ z $s\_{n+k}=s\_n$.
-* **Wymiar równomierności** – równomierne pokrycie hipersześcianu $\[0,1)^d$.
+* **Wymiar równomierności** – równomierne pokrycie hipersześcianu $[0,1)^d$.
 * **Test next-bit** (dla RNG kryptograficznych) – nieprzewidywalność kolejnego bitu z prawdopodobieństwem istotnie $>\tfrac12$.
 
 Statystyczne testy jakości
@@ -150,7 +150,7 @@ W symulacjach replikowalnych podajemy jawnie wartość seeda; w sytuacjach wymag
 
 Poniżej znajdują się przykłady wykorzystania biblioteki `<random>` w praktycznych scenariuszach, ilustrujące różne zastosowania dystrybucji.
 
-#### Liczba z przedziału $\[a,b]\subset\mathbb Z$
+#### Liczba z przedziału $[a,b]\subset\mathbb Z$
 
 Wygenerujemy liczbę całkowitą z zadanego przedziału.
 
@@ -160,7 +160,7 @@ std::uniform_int_distribution<int> dist(a,b);
 int x = dist(gen);
 ```
 
-*Własności.*  $\Pr{X=k}=1/(b-a+1)$. Oczekiwana wartość $E\[X]=\tfrac{a+b}{2}$, wariancja $\sigma^2=\tfrac{(b-a+1)^2-1}{12}$.
+*Własności.*  $\Pr{X=k}=1/(b-a+1)$. Oczekiwana wartość $E[X]=\tfrac{a+b}{2}$, wariancja $\sigma^2=\tfrac{(b-a+1)^2-1}{12}$.
 
 #### Rzut monetą – dystrybucja Bernoulliego
 
@@ -171,7 +171,7 @@ std::bernoulli_distribution coin(0.5);
 bool isHeads = coin(gen);
 ```
 
-*Analiza.*  $X\sim\mathrm{Bern}(p)$: $E\[X]=p$, Var\[X]=p(1-p).
+*Analiza.*  $X\sim\mathrm{Bern}(p)$: $E[X]=p$, Var[X]=p(1-p).
 Dla $n$ rzutów błąd względny częstości maleje jak $O!\bigl(n^{-1/2}\bigr)$.
 
 #### Rzut sześciościenną kostką
@@ -184,7 +184,7 @@ int result = d6(gen);
 ```
 
 Rozkład dyskretny równomierny na ${1,\dots,6}$.
-$E\[X]=3.5,; \sigma^2=\tfrac{35}{12}$.
+$E[X]=3.5,; \sigma^2=\tfrac{35}{12}$.
 
 #### Generator silnych haseł
 
@@ -226,7 +226,7 @@ I=\int_{a}^{b}g(x)dx,
 \hat I_N = (b-a)\frac1N\sum_{k=1}^N g(U_k),\quad U_k\sim\mathcal U(a,b).
 $$
 
-*Błąd przeciętny* $RMSE=\sigma/\sqrt N$ z $\sigma^2=Var\[g(U)]$.
+*Błąd przeciętny* $RMSE=\sigma/\sqrt N$ z $\sigma^2=Var[g(U)]$.
 
 **Uwaga.**  Dla funkcji silnie oscylujących warto stosować *ważoną próbę* (importance sampling) lub *stratyfikację*.
 
@@ -266,7 +266,7 @@ $$
 \mathbb P(X=k)=\frac1{b-a+1},\qquad k=a,\dots,b
 $$
 
-Wersja ciągła na przedziale $\[a,b]$:
+Wersja ciągła na przedziale $[a,b]$:
 
 $$
 f(x)=\frac1{b-a}\mathbf 1_{[a,b]}(x)
@@ -300,9 +300,9 @@ int k = U(gen);
 
 > **Rada.**  Generator wywołuj **raz** i przekazuj referencję; kosztowna inicjalizacja `std::random_device{}` nie powinna znajdować się w pętli.
 
-##### Przykład: 10 liczb w zakresie $\[1,100]$
+##### Przykład: 10 liczb w zakresie $[1,100]$
 
-Poniżej przykład wylosowania dziesięciu liczb z przedziału \[1,100]:
+Poniżej przykład wylosowania dziesięciu liczb z przedziału $[1,100]$:
 
 ```cpp
 std::cout << "Uniform[1,100]: ";
@@ -410,7 +410,7 @@ for(int i=0;i<10;++i) std::cout << B(gen) << ' ';
 
 Tabela poniżej zestawia informacje o omawianych dystrybucjach, umożliwiając szybkie porównanie:
 
-| Rozkład              | Kod dystr. `<random>`           | Parametry      | $E\[X]$          | $Var\[X]$                 | Typ danych    |
+| Rozkład              | Kod dystr. `<random>`           | Parametry      | $E[X]$          | $Var[X]$                 | Typ danych    |
 | -------------------- | ------------------------------- | -------------- | ------------------ | --------------------------- | ------------- |
 | Równomierny (dyskr.) | `std::uniform_int_distribution` | $a,b$        | $\tfrac{a+b}{2}$ | $\tfrac{(b-a+1)^2-1}{12}$ | całkowite     |
 | Normalny             | `std::normal_distribution`      | $\mu,\sigma$ | $\mu$            | $\sigma^2$                | zmiennoprzec. |
@@ -444,7 +444,7 @@ $$
 | Aspekt                    | Wartość dodana                       | Komentarz matematyczny                                                    |
 | ------------------------- | ------------------------------------ | ------------------------------------------------------------------------- |
 | **Okres**                 | $2^{19937}-1$                      | eliminuje cykliczność w trwałych symulacjach                              |
-| **Równomierność**         | 623-wymiarowa                        | równy rozkład punktów w hipersześcianie $\[0,1)^{623}$                   |
+| **Równomierność**         | 623-wymiarowa                        | równy rozkład punktów w hipersześcianie $[0,1)^{623}$                   |
 | **Bogactwo dystrybucji**  | normalna, Poissona, gamma…           | każda dystrybucja to transformacja $X=F^{-1}(U)$ lub specjalny algorytm |
 | **Konfigurowalne ziarno** | deterministyczne lub `random_device` | replikowalność lub entropia systemowa                                     |
 | **Przenośność**           | zdefiniowane przez ISO/IEC 14882     | identyczna sekwencja dla tego samego seeda na wszystkich kompilatorach    |
