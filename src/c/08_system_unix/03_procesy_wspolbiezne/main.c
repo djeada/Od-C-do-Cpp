@@ -1,39 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
-// Przyklad szeregowego vs rowneleglego programu
+static pid_t uruchom_sleep(void) {
+  pid_t pid = fork();
+  if (pid < 0) {
+    perror("fork");
+    return -1;
+  }
 
-// int forkNexec(StrVec argList);
+  if (pid == 0) {
+    execl("/bin/sleep", "sleep", "1", (char *)NULL);
+    perror("execl");
+    _exit(EXIT_FAILURE);
+  }
 
-void szeregowo() {
-  char *const parametry[] = {"/bin/sleep", "5", NULL};
+  return pid;
+}
 
-  int pid1 = fork();
-  execv("/bin/sleep", parametry);
+void szeregowo(void) {
+  pid_t pid1 = uruchom_sleep();
+  if (pid1 < 0) {
+    return;
+  }
   waitpid(pid1, NULL, 0);
 
-  int pid2 = fork();
-  execv("/bin/sleep", parametry);
+  pid_t pid2 = uruchom_sleep();
+  if (pid2 < 0) {
+    return;
+  }
   waitpid(pid2, NULL, 0);
 }
 
-void rownolegle() {
-  char *const parametry[] = {"sleep", "5", NULL};
+void rownolegle(void) {
+  pid_t pid1 = uruchom_sleep();
+  pid_t pid2 = uruchom_sleep();
 
-  int pid1 = fork();
-  int pid2 = fork();
-
-  execv("/bin/sleep", parametry);
-  execv("/bin/sleep", parametry);
-
-  waitpid(pid1, NULL, 0);
-  waitpid(pid2, NULL, 0);
+  if (pid1 > 0) {
+    waitpid(pid1, NULL, 0);
+  }
+  if (pid2 > 0) {
+    waitpid(pid2, NULL, 0);
+  }
 }
 
-int main() {
-
-  // szeregowo();
+int main(void) {
   rownolegle();
-
-  return 0;
+  return EXIT_SUCCESS;
 }
