@@ -1,171 +1,267 @@
-## Wyjątki
+# Wyjątki w C++
 
-Wyjątki to mechanizm w języku C++, który pozwala programistom obsługiwać sytuacje wyjątkowe lub błędy w czasie wykonywania programu. Gdy wystąpi błąd lub nieprzewidziana sytuacja, można "rzucić" wyjątek, który może być następnie "przechwycony" i odpowiednio obsłużony.
+Wyjątki pozwalają oddzielić normalny przebieg programu od obsługi sytuacji wyjątkowych. Mechanizm opiera się na `throw`, `try` i `catch`, a podczas propagacji wyjątku niszczone są lokalne obiekty o automatycznym czasie życia.
 
-Oto kilka typowych funkcji biblioteki standardowej C++, które mogą rzucać wyjątki podczas nieprawidłowego użycia:
+## Cele
 
-### 1. std::vector::at()
-Ta funkcja próbuje uzyskać dostęp do elementu wektora na określonej pozycji. Gdy indeks jest poza zakresem, funkcja rzuca wyjątek `std::out_of_range`.
+Po tej prezentacji powinieneś umieć:
 
-```cpp
-std::vector<int> vec = {1, 2, 3};
-try {
-    int value = vec.at(5);  // Nieistniejący indeks
-} catch (std::out_of_range& e) {
-    std::cout << "Błąd: " << e.what() << std::endl;
-}
-```
+- rzucić i przechwycić wyjątek,
+- wyjaśnić stack unwinding,
+- stosować RAII razem z wyjątkami,
+- łapać wyjątki przez `const&`,
+- rozpoznać sytuacje, w których wyjątek nie jest dobrym mechanizmem sterowania.
 
-### 2. std::stoi()
+## Obsługa błędów bez wyjątków
 
-Próbuje konwertować ciąg znaków na liczbę całkowitą. Jeśli operacja konwersji nie powiedzie się, funkcja rzuca wyjątek std::invalid_argument.
+W C typowe podejścia to:
 
-```cpp
-std::string str = "ABC";  // Ciąg, który nie jest liczbą
-try {
-    int value = std::stoi(str);
-} catch (std::invalid_argument& e) {
-    std::cout << "Błąd: " << e.what() << std::endl;
-}
-```
+- specjalna wartość zwracana,
+- kod błędu,
+- `errno`,
+- parametr wyjściowy.
 
-### 3. std::find()
-
-Choć ta funkcja nie rzuca wyjątku std::out_of_range w przypadku pustego zakresu (jak sugerowano wcześniej), warto wiedzieć, jak działa. Zwraca ona iterator do pierwszego wystąpienia danego elementu. Jeśli elementu nie ma w kolekcji, zwraca iterator "za ostatnim" elementem.
-
-```cpp
-std::vector<int> vec = {1, 2, 3};
-auto it = std::find(vec.begin(), vec.end(), 4);  // 4 nie istnieje w vec
-if (it == vec.end()) {
-    std::cout << "Nie znaleziono elementu\n";
-}
-```
-
-Przy pracy z wyjątkami ważne jest, aby być świadomym, które funkcje mogą je rzucać, a także pamiętać o odpowiednim ich przechwytywaniu, aby zapewnić bezpieczne i przewidywalne działanie programu.
-
-## Historia obsługi błędów
-
-Przed wprowadzeniem mechanizmu wyjątków do języków programowania, obsługa błędów była realizowana za pomocą różnych technik. W języku C, który nie obsługuje wyjątków w sposób wbudowany, korzystano głównie z poniższych podejść:
-
-### 1. Kodowanie błędów jako wartości zwracanej przez funkcję
-
-Funkcje zwracały specyficzne wartości, które oznaczały błędy. Na przykład, jeśli operacja nie powiodła się, funkcja mogła zwrócić wartość ujemną lub specjalny wskaźnik, tak jak to ma miejsce w przypadku funkcji `fopen()`. W odpowiedzi na taką wartość, programista musiał napisać odpowiedni kod obsługi błędu.
+Przykład:
 
 ```c
-FILE* file = fopen("plik.txt", "r");
+#include <stdio.h>
+
+FILE *file = fopen("plik.txt", "r");
+
 if (file == NULL) {
-    perror("Nie udało się otworzyć pliku");
-    exit(EXIT_FAILURE);
+    perror("fopen");
+    return 1;
 }
 ```
 
-### 2. Zmienne globalne przechowujące informacje o błędzie
+Taki model jest poprawny, ale kod wywołujący musi pamiętać o sprawdzaniu wyniku każdej operacji.
 
-W niektórych sytuacjach funkcje zwracały wartość sugerującą sukces lub porażkę operacji, ale dokładne informacje o błędzie były przechowywane w zmiennej globalnej. Na przykład, errno to globalna zmienna używana przez wiele funkcji w C do komunikowania informacji o błędzie.
-
-```c
-extern int errno;
-double result = sqrt(-1.0);
-if (result == -1.0 && errno == EDOM) {
-    perror("Nieprawidłowy argument");
-}
-```
-
-### 3. Makra preprocesora do obsługi błędów
-
-Niektóre funkcje, takie jak `assert()`, zostały zdefiniowane jako makra, które sprawdzały pewne warunki w czasie wykonywania programu. Jeśli warunek nie był spełniony, program był przerywany z odpowiednim komunikatem błędu.
-
-```c
-#include <assert.h>
-int divide(int a, int b) {
-    assert(b != 0);  // Program zostanie przerwany, jeśli b będzie równa 0
-    return a / b;
-}
-```
-
-Choć te metody były skuteczne, miały swoje ograniczenia i często prowadziły do skomplikowanego kodu. Wprowadzenie mechanizmu wyjątków, początkowo w językach takich jak C++, uczyniło obsługę błędów bardziej przejrzystą i elastyczną, co pozwoliło na tworzenie bardziej niezawodnych i łatwiejszych do utrzymania aplikacji.
-
-## Mechanizm wyjątków w C++
-
-Mechanizm wyjątków w C++ pozwala na obsługę nieprzewidzianych sytuacji (błędów) w programie. Składa się on z trzech głównych elementów: `try`, `catch` oraz `throw`.
-
-### Blok `try`
-
-To sekcja kodu, w której umieszczane są instrukcje mogące potencjalnie rzucić wyjątek. Jeśli w bloku `try` wystąpi wyjątek, normalny przebieg wykonywania programu zostanie przerwany, a kontrola zostanie przekazana do odpowiadającego mu bloku `catch`.
-
-### Blok `catch`
-
-Bloki `catch` służą do obsługi wyjątków rzuconych w bloku `try`. Każdy blok `catch` jest zaprojektowany do obsługi konkretnego typu wyjątku, który jest określany w jego definicji. W przypadku wystąpienia wyjątku w bloku `try`, program szuka odpowiedniego bloku `catch` (tj. pasującego do typu rzuconego wyjątku) i wykonuje jego instrukcje.
-
-### Instrukcja `throw`
-
-Instrukcja `throw` jest używana do rzucania wyjątków. Można rzucać wyjątki dowolnego typu: od wbudowanych typów danych, poprzez obiekty klasy, aż po wskaźniki.
-
-### Przykład użycia
+## `try`, `throw`, `catch`
 
 ```cpp
 #include <iostream>
+#include <stdexcept>
+
+double divide(double a, double b) {
+    if (b == 0.0) {
+        throw std::invalid_argument("dzielenie przez zero");
+    }
+
+    return a / b;
+}
 
 int main() {
     try {
-        int x = 10;
-        int y = 0;
-        if (y == 0) {
-            throw "Division by zero!"; // rzucenie wyjątku typu const char*
-        }
-        int z = x / y;
-        std::cout << z << std::endl;
+        std::cout << divide(10.0, 0.0) << '\n';
+    } catch (const std::invalid_argument& e) {
+        std::cerr << "błąd: " << e.what() << '\n';
     }
-    catch (const char* errorMsg) {
-        std::cout << "Caught exception: " << errorMsg << std::endl;
-    }
-    return 0;
 }
 ```
 
-W powyższym kodzie, jeśli y jest równa 0, program rzuca wyjątek typu `const char*`. Dzięki temu, zamiast kontynuować obliczenia, program przekazuje kontrolę do bloku catch, który obsługuje ten konkretny typ wyjątku.
+Po wykonaniu `throw` sterowanie przechodzi do pasującego `catch`.
 
-Korzystanie z wyjątków w C++ znacząco ułatwia zarządzanie błędami w porównaniu z tradycyjnymi metodami, takimi jak zwracanie kodów błędów czy użycie globalnych zmiennych.
+## Stack unwinding
 
-## Definiowanie własnych wyjątków w C++
+Jeżeli wyjątek nie zostanie obsłużony w bieżącej funkcji, propaguje się wyżej po stosie wywołań.
 
-C++ oferuje wiele standardowych wyjątków, które są często używane w praktyce. Jednakże w wielu przypadkach przydatne jest definiowanie własnych wyjątków, które lepiej opisują konkretną sytuację błędu w naszym programie.
-
-### Standardowe wyjątki:
-
-* `std::bad_alloc` - ten wyjątek jest rzucony, gdy operacja alokacji pamięci nie powiedzie się z powodu braku dostępnej pamięci.
-* `std::logic_error` - reprezentuje błędy wynikające z błędnej logiki programu, takie jak błędne użycie funkcji bibliotecznej czy próba dostępu poza zakresem tablicy.
-* `std::runtime_error` - dotyczy błędów pojawiających się w trakcie działania programu, które nie są bezpośrednio związane z błędami logiki, takich jak niepowodzenie operacji wejścia/wyjścia.
-
-### Tworzenie własnych wyjątków:
-
-Własne wyjątki w C++ tworzy się przez dziedziczenie po jednym z istniejących wyjątków (zwykle po `std::exception` lub jednym z jego pochodnych). Takie podejście pozwala na korzystanie z istniejącej infrastruktury wyjątków, jednocześnie dodając specyfikę związaną z konkretnym błędem.
+Podczas tego procesu niszczone są lokalne obiekty:
 
 ```cpp
-#include <exception>
-#include <string>
+void f() {
+    std::string text = "dane";
+    std::vector<int> values(100);
 
-class WlasnyWyjatek : public std::exception {
-public:
-    WlasnyWyjatek(const std::string& wiadomosc) : wiadomosc(wiadomosc) {}
-
-    const char* what() const noexcept override {
-        return wiadomosc.c_str();
-    }
-
-private:
-    std::string wiadomosc;
-};
+    g();  // jeśli g() rzuci wyjątek, text i values zostaną zniszczone
+}
 ```
 
-W powyższym kodzie stworzyliśmy wyjątek WlasnyWyjatek, który przechowuje wiadomość opisującą błąd. Można go następnie rzucić i obsłużyć w programie tak samo, jak standardowe wyjątki:
+To jest jeden z powodów, dla których RAII tak dobrze współpracuje z wyjątkami.
+
+## RAII zamiast ręcznego sprzątania
+
+Ryzykowny styl:
+
+```cpp
+Resource *r = new Resource;
+
+operation();  // może rzucić
+
+delete r;
+```
+
+Jeżeli `operation()` rzuci wyjątek, `delete` nie zostanie wykonane.
+
+Lepszy model:
+
+```cpp
+auto r = std::make_unique<Resource>();
+
+operation();
+```
+
+`std::unique_ptr` zwolni zasób automatycznie podczas normalnego wyjścia i podczas stack unwinding.
+
+## Standardowe wyjątki
+
+Często spotykane typy:
+
+- `std::invalid_argument`,
+- `std::out_of_range`,
+- `std::runtime_error`,
+- `std::logic_error`,
+- `std::bad_alloc`.
+
+Przykład `std::vector::at()`:
+
+```cpp
+std::vector<int> values = {1, 2, 3};
+
+try {
+    std::cout << values.at(10) << '\n';
+} catch (const std::out_of_range& e) {
+    std::cerr << e.what() << '\n';
+}
+```
+
+## `std::stoi()` może rzucić różne wyjątki
 
 ```cpp
 try {
-    throw WlasnyWyjatek("To jest mój własny wyjątek!");
-} catch (const WlasnyWyjatek& e) {
-    std::cout << e.what() << std::endl;
+    int value = std::stoi(text);
+} catch (const std::invalid_argument& e) {
+    // tekst nie rozpoczyna się poprawną liczbą
+} catch (const std::out_of_range& e) {
+    // wynik nie mieści się w int
 }
 ```
 
-Dzięki definiowaniu własnych wyjątków, możemy lepiej opisać i obsłużyć różne błędne sytuacje, które mogą wystąpić w naszym programie.
+Warto znać kontrakt konkretnej funkcji zamiast zakładać jeden wspólny sposób raportowania błędów.
+
+## Brak wyniku nie zawsze jest wyjątkiem
+
+`std::find()` nie rzuca wyjątku tylko dlatego, że elementu nie ma:
+
+```cpp
+auto it = std::find(values.begin(), values.end(), 42);
+
+if (it == values.end()) {
+    // brak elementu jest normalnym wynikiem wyszukiwania
+}
+```
+
+To dobra ilustracja zasady: wyjątki są przeznaczone do sytuacji wyjątkowych dla danego interfejsu, a nie do każdego alternatywnego wyniku.
+
+## Łap przez `const&`
+
+Preferowany styl:
+
+```cpp
+catch (const std::exception& e) {
+    std::cerr << e.what() << '\n';
+}
+```
+
+Zalety:
+
+- brak niepotrzebnej kopii,
+- zachowanie polimorfizmu,
+- możliwość obsługi klas pochodnych.
+
+Bardziej szczegółowe typy należy łapać przed ogólnymi:
+
+```cpp
+try {
+    // ...
+} catch (const std::out_of_range& e) {
+    // szczegółowo
+} catch (const std::exception& e) {
+    // ogólnie
+}
+```
+
+## Własny wyjątek
+
+Najprościej często dziedziczyć po istniejącym typie standardowym:
+
+```cpp
+#include <stdexcept>
+#include <string>
+
+class ConfigError : public std::runtime_error {
+public:
+    explicit ConfigError(const std::string& message)
+        : std::runtime_error(message) {}
+};
+```
+
+Użycie:
+
+```cpp
+throw ConfigError("brak pola 'port'");
+```
+
+Dzięki dziedziczeniu można przechwycić błąd zarówno jako `ConfigError`, jak i ogólnie jako `std::exception`.
+
+## Czego lepiej nie rzucać?
+
+Język pozwala rzucać obiekty wielu typów, ale w praktycznym C++ lepiej unikać:
+
+```cpp
+throw "error";  // const char*
+throw 42;       // int
+```
+
+Klasy wyjątków niosą typ, komunikat i współpracują z hierarchią `std::exception`.
+
+## `noexcept`
+
+Funkcja oznaczona `noexcept` deklaruje, że nie powinna wypuścić wyjątku na zewnątrz:
+
+```cpp
+void swap(Widget& a, Widget& b) noexcept;
+```
+
+Jeżeli wyjątek opuści funkcję `noexcept`, program wywoła `std::terminate()`.
+
+`noexcept` ma znaczenie m.in. dla destruktorów, operacji przenoszenia i optymalizacji kontenerów standardowych.
+
+## Kiedy używać wyjątków?
+
+Wyjątki dobrze pasują, gdy:
+
+- operacja nie może spełnić swojego kontraktu,
+- błąd powinien przejść przez kilka warstw wywołań,
+- kod używa RAII do bezpiecznego zarządzania zasobami.
+
+Nie zawsze są najlepsze, gdy:
+
+- alternatywny wynik jest częścią normalnego sterowania,
+- kod działa w środowisku bez wyjątków,
+- interfejs systemowy naturalnie używa kodów błędów,
+- wymagania czasu rzeczywistego zabraniają nieprzewidywalnych ścieżek obsługi.
+
+## Najczęstsze pułapki
+
+- Łapanie wyjątków przez wartość zamiast przez `const&`.
+- Ręczne zarządzanie zasobami, które przeciekną podczas stack unwinding.
+- `catch (...)` bez jasnego planu dalszej obsługi.
+- Rzucanie surowych napisów lub liczb.
+- Używanie wyjątków jako zamiennika zwykłych instrukcji warunkowych.
+- Ignorowanie informacji o tym, jakie wyjątki może zgłosić używane API.
+
+## Podsumowanie
+
+Najważniejszy przepływ:
+
+```text
+throw
+  |
+szukanie pasującego catch
+  |
+niszczenie lokalnych obiektów po drodze
+  |
+catch
+```
+
+Wyjątki są najbezpieczniejsze wtedy, gdy zasoby są zarządzane przez RAII, a kod jasno odróżnia normalne wyniki od sytuacji, w których operacja nie może zostać poprawnie wykonana.

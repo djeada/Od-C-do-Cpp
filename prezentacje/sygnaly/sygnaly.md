@@ -1,98 +1,193 @@
-## Sygnały w języku C
+# Sygnały w C i systemach POSIX
 
-Sygnały w języku C to mechanizm umożliwiający asynchroniczną komunikację między procesami. Są to specjalne zdarzenia, które mogą zostać wysłane do procesu, aby poinformować go o wystąpieniu pewnego zdarzenia, np. odbioru danych od innego procesu, końcu działania innego procesu lub błędzie wewnętrznym. Sygnały mogą być wykorzystywane w różnorodnych sytuacjach, od obsługi wyjątkowych warunków (jak próba dzielenia przez zero) po komunikację między procesami.
+Sygnał jest asynchronicznym powiadomieniem wysyłanym do procesu. System operacyjny używa sygnałów m.in. do informowania o przerwaniu z terminala, błędach wykonania i zmianie stanu procesu potomnego.
 
-Po otrzymaniu sygnału, proces ma trzy podstawowe opcje:
-1. Wykonać domyślne działanie związane z sygnałem.
-2. Obsłużyć sygnał za pomocą zdefiniowanego przez użytkownika przerwania.
-3. Zignorować sygnał (choć warto zaznaczyć, że nie wszystkie sygnały są ignorowalne).
+## Cele
 
-## Komunikacja międzyprocesowa (IPC) i rola sygnałów
+Po tej prezentacji powinieneś umieć:
 
-Kiedy mówimy o komunikacji między procesami w kontekście systemów operacyjnych, sygnały to tylko jedna z wielu technik służących do tego celu. IPC (Inter-Process Communication) to zbiorczy termin dla mechanizmów, które pozwalają procesom na wymianę danych i komunikację ze sobą. 
+- wyjaśnić, czym sygnał różni się od kanału przesyłania danych,
+- wysłać sygnał przez `raise()` lub `kill()`,
+- zainstalować handler przez `sigaction()`,
+- wskazać operacje niedozwolone w handlerze,
+- rozpoznać rolę maski sygnałów.
 
-Sygnały w kontekście IPC służą głównie do informowania procesów o pewnych zdarzeniach. Można je traktować jako pewnego rodzaju "budziki", które informują proces o tym, że coś ważnego się stało. Na przykład, sygnał może być użyty do poinformowania procesu, że inny proces, z którym współpracuje, zakończył działanie lub wymaga uwagi.
+## Co może zrobić proces po otrzymaniu sygnału?
 
-Inne mechanizmy IPC obejmują:
-- **Potoki (Pipes):** Umożliwiają przesyłanie danych między spokrewnionymi procesami w jednym kierunku.
-- **Gniazda (Sockets):** Pozwalają na komunikację między procesami zarówno lokalnie, jak i w sieci.
-- **Kolejki komunikatów:** Umożliwiają wymianę danych w formie komunikatów między procesami.
-- **Semafory:** Używane do synchronizacji dostępu do wspólnych zasobów.
-- **Pamięć współdzielona:** Umożliwia wielu procesom dostęp do wspólnego bloku pamięci.
+Dla większości sygnałów proces może:
 
-Podczas gdy każdy z tych mechanizmów pełni unikalną rolę w komunikacji między procesami, sygnały są często używane jako mechanizm powiadamiania lub alarmowania procesów o konkretnych zdarzeniach.
+1. wykonać działanie domyślne,
+2. zainstalować własną funkcję obsługi,
+3. zignorować sygnał.
 
-## Generowanie sygnałów
+Dwa ważne wyjątki:
 
-W języku C biblioteka `<signal.h>` dostarcza funkcji służących do generowania i obsługi sygnałów. Możemy generować sygnały za pomocą funkcji `raise()` i `kill()`.
+- `SIGKILL` — nie można go przechwycić ani zignorować,
+- `SIGSTOP` — nie można go przechwycić ani zignorować.
 
-- **raise(int signum)**: Wysyła sygnał o określonym numerze (signum) do aktualnie wykonywanego programu. Jeśli operacja przebiegnie pomyślnie, funkcja zwraca 0. W przypadku błędu zwraca wartość różną od zera.
+## Typowe sygnały
 
-- **kill(pid_t pid, int signum)**: Wysyła sygnał o określonym numerze (signum) do procesu o podanym identyfikatorze (pid). Umożliwia to komunikację sygnałami między różnymi procesami. Jeśli operacja zakończy się powodzeniem, zwraca 0, w przeciwnym razie zwraca wartość -1.
+| Sygnał | Typowe źródło / znaczenie |
+| --- | --- |
+| `SIGINT` | przerwanie z terminala, zwykle Ctrl+C |
+| `SIGTERM` | prośba o zakończenie procesu |
+| `SIGKILL` | bezwarunkowe zakończenie |
+| `SIGSTOP` | zatrzymanie procesu |
+| `SIGCONT` | wznowienie procesu |
+| `SIGCHLD` | zmiana stanu procesu potomnego |
+| `SIGPIPE` | zapis do potoku/gniazda bez czytelnika |
 
-Po wysłaniu pewnych sygnałów (na przykład SIGINT lub SIGTERM), domyślne działanie to zakończenie procesu. W tym przypadku kod po instrukcji `raise()` lub `kill()` nie zostanie wykonany, chyba że sygnał został przechwycony i obsłużony w inny sposób.
+Dokładne działania domyślne i dostępność sygnałów należy sprawdzać w dokumentacji danej platformy, np. `man 7 signal`.
 
-```c
-#include <signal.h>
-#include <stdio.h>
+## Sygnały a IPC
 
-int main(int argc, char *argv[])
-{
-  // wysłanie sygnału SIGINT do aktualnie wykonywanego programu
-  if (raise(SIGINT) != 0) {
-    perror("Błąd podczas wysyłania sygnału");
-    return 1;
-  }
+Sygnały są częścią szerokiej rodziny mechanizmów IPC, ale najlepiej traktować je jako **powiadomienia**, a nie kanał do przesyłania dużych danych.
 
-  // Jeśli sygnał SIGINT nie zostanie obsłużony w specjalny sposób, 
-  // ta linijka nie zostanie wykonana
-  printf("Wysłano sygnał SIGINT \n");
+Inne mechanizmy IPC:
 
-  return 0;
-}
-```
+- potoki,
+- FIFO,
+- gniazda,
+- kolejki komunikatów,
+- pamięć współdzielona,
+- semafory.
 
-Warto również pamiętać, że niektóre sygnały nie mogą być zignorowane lub przechwycone, takie jak SIGKILL.
+Przykładowo sygnał może powiedzieć „coś się wydarzyło”, a właściwe dane mogą być odczytane z potoku lub pamięci współdzielonej.
 
-## Obsługa sygnałów
-
-Obsługa sygnałów w języku C umożliwia procesowi reagowanie na określone sygnały w sposób zdefiniowany przez programistę. To, jak proces reaguje na sygnał, zależy od zarejestrowanej funkcji obsługi dla tego sygnału.
-
-Aby zarejestrować funkcję obsługi dla sygnału, używana jest funkcja `signal()`, która przyjmuje dwa argumenty: numer sygnału oraz wskaźnik do funkcji obsługi.
-
-Poniżej przedstawiono przykład obsługi sygnału `SIGINT`:
+## Wysyłanie sygnału do siebie: `raise()`
 
 ```c
 #include <signal.h>
 #include <stdio.h>
 
-void obsluga(int signum)
-{
-    printf("Otrzymano sygnał %d\n", signum);
-}
+int main(void) {
+    puts("przed raise");
 
-int main()
-{
-    if (signal(SIGINT, obsluga) == SIG_ERR) {
-        perror("Nie można zarejestrować funkcji obsługi");
+    if (raise(SIGTERM) != 0) {
+        perror("raise");
         return 1;
     }
 
-    printf("Program oczekuje na sygnał...\n");
-
-    while(1); // nieskończona pętla oczekiwania na sygnał
-
+    puts("ta linia zwykle nie zostanie wykonana");
     return 0;
 }
 ```
 
-W powyższym kodzie:
+Przy domyślnej obsłudze `SIGTERM` proces zostanie zakończony.
 
-- Funkcja obsluga służy jako handler dla sygnału SIGINT.
-- Używając funkcji `signal()`, rejestrujemy funkcję obsluga jako handler dla sygnału SIGINT.
-- Główna pętla programu jest nieskończona, więc program będzie oczekiwać na sygnały w nieskończoność.
-- Gdy proces otrzyma sygnał SIGINT, wywoła funkcję obsluga, która wyświetli na ekranie informację o otrzymanym sygnale.
+## Wysyłanie sygnału do procesu: `kill()`
 
-Chociaż sygnał SIGINT można wygenerować, używając kombinacji klawiszy Ctrl+C w terminalu, warto pamiętać, że sygnały można wysyłać również przy użyciu różnych narzędzi systemowych i funkcji programistycznych, takich jak `kill()`.
+`kill()` jest interfejsem POSIX:
 
-Pamiętaj też, że obsługa sygnałów powinna być jak najkrótsza i unikać wywoływania funkcji, które nie są bezpieczne dla sygnałów (takich jak `malloc`, `free` i wielu innych). Dlatego często rekomenduje się ustawianie flag w handlerach sygnałów i obsługę sygnału w głównej części programu.
+```c
+#include <signal.h>
+#include <sys/types.h>
+
+if (kill(pid, SIGTERM) < 0) {
+    perror("kill");
+}
+```
+
+Nazwa bywa myląca: `kill()` nie zawsze „zabija” proces. Wysyła wskazany sygnał, a efekt zależy od tego sygnału i jego obsługi.
+
+## `signal()` czy `sigaction()`?
+
+ISO C udostępnia `signal()`, ale w programach POSIX zwykle preferuje się `sigaction()`, ponieważ daje większą kontrolę nad maską i flagami obsługi.
+
+```c
+#include <signal.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
+static volatile sig_atomic_t stop_requested = 0;
+
+static void handle_sigint(int signum) {
+    (void)signum;
+    stop_requested = 1;
+}
+
+int main(void) {
+    struct sigaction action;
+    memset(&action, 0, sizeof(action));
+
+    action.sa_handler = handle_sigint;
+    sigemptyset(&action.sa_mask);
+
+    if (sigaction(SIGINT, &action, NULL) < 0) {
+        perror("sigaction");
+        return 1;
+    }
+
+    puts("Ctrl+C ustawi flagę zakończenia");
+
+    while (!stop_requested) {
+        sleep(1);
+    }
+
+    puts("kończę poza handlerem");
+    return 0;
+}
+```
+
+Handler robi tylko minimalną rzecz: ustawia flagę typu `sig_atomic_t`. Normalna logika programu wykonuje się poza handlerem.
+
+## Dlaczego nie `printf()` w handlerze?
+
+Sygnał może przerwać program praktycznie w dowolnym miejscu. Jeżeli handler wywoła funkcję, która nie jest **async-signal-safe**, może wejść w konflikt z przerwaną operacją tej samej biblioteki.
+
+W handlerze należy unikać m.in.:
+
+- `printf()`,
+- `malloc()` i `free()`,
+- większości funkcji biblioteki standardowej,
+- skomplikowanej logiki.
+
+POSIX definiuje ograniczony zestaw funkcji async-signal-safe, np. `write()` i `_exit()`.
+
+## Maska sygnałów
+
+Proces może tymczasowo blokować dostarczanie wybranych sygnałów.
+
+Do pracy z maską w POSIX służą m.in.:
+
+- `sigemptyset()`,
+- `sigaddset()`,
+- `sigprocmask()`,
+- `pthread_sigmask()` w programach wielowątkowych,
+- `sigsuspend()`.
+
+Blokowanie sygnału jest przydatne podczas modyfikowania danych, które mogłyby zostać równocześnie użyte przez handler.
+
+## Standardowe sygnały nie są kolejką komunikatów
+
+Wiele zwykłych sygnałów POSIX może się **zlewać**: jeżeli ten sam sygnał zostanie wysłany kilka razy, zanim proces go obsłuży, program nie powinien zakładać, że handler zostanie wykonany dokładnie tyle samo razy.
+
+Dlatego licznik zdarzeń lub dane powinny być przekazywane innym mechanizmem, jeżeli utrata informacji jest niedopuszczalna.
+
+## `SIGCHLD` i procesy potomne
+
+Gdy proces potomny zmieni stan, rodzic może otrzymać `SIGCHLD`.
+
+Typowy serwer lub shell wykorzystuje to do odebrania statusu przez `waitpid()` i usunięcia zakończonych procesów zombie.
+
+Obsługa `SIGCHLD` wymaga ostrożności, ponieważ w czasie jednego przebudzenia mogło zakończyć się więcej niż jedno dziecko.
+
+## Najczęstsze pułapki
+
+- Używanie `printf()` lub alokacji pamięci w handlerze.
+- Próba przechwycenia `SIGKILL` lub `SIGSTOP`.
+- Traktowanie sygnałów jako niezawodnej kolejki zdarzeń.
+- Wykonywanie całej logiki aplikacji w handlerze zamiast ustawienia flagi.
+- Brak rozróżnienia między mechanizmami ISO C (`signal`, `raise`) a API POSIX (`sigaction`, `kill`, maski sygnałów).
+
+## Podsumowanie
+
+Bezpieczny model myślenia:
+
+1. sygnał **powiadamia** proces,
+2. handler wykonuje minimalną pracę,
+3. właściwa logika odbywa się w normalnym przepływie programu,
+4. dane przekazujemy przez mechanizm do tego przeznaczony.
+
+W kodzie POSIX `sigaction()` jest zwykle lepszym punktem wyjścia niż proste `signal()`.
