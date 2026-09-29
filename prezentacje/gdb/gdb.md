@@ -1,144 +1,191 @@
-## Debugowanie programów przy użyciu GDB
+# Debugowanie programów z GDB
 
-GDB (GNU Debugger) to wszechstronne narzędzie służące do debugowania programów napisanych głównie w języku C i C++, choć obsługuje również wiele innych języków. Z jego pomocą można kontrolować przebieg wykonywania programu, zatrzymywać go w kluczowych momentach (tzw. breakpointy), analizować wartości zmiennych, a także śledzić wywołania funkcji.
+GDB (GNU Debugger) pozwala zatrzymywać program, wykonywać go krokowo, sprawdzać wartości zmiennych i analizować stos wywołań. Najwięcej zyskujemy, gdy program został skompilowany z informacjami debugowania.
 
-## Funkcje i możliwości GDB
+## Cele
 
-1. Ustawianie breakpointów w określonych miejscach w kodzie.
-2. Krokowe wykonywanie programu.
-3. Analiza wartości zmiennych w trakcie wykonywania programu.
-4. Śledzenie stosu wywołań funkcji.
-5. Modyfikowanie wartości zmiennych w trakcie debugowania.
-6. Analiza kodu binarnego i asemblera.
+Po tej prezentacji powinieneś umieć:
 
-## Instalacja GDB
+- skompilować program do debugowania,
+- ustawić breakpoint i uruchomić program pod kontrolą GDB,
+- rozróżnić `step`, `next` i `continue`,
+- sprawdzić zmienne oraz stos wywołań,
+- użyć watchpointa do znalezienia miejsca zmiany wartości.
 
-GDB jest narzędziem dostępnym na wiele platform i systemów operacyjnych, w tym na większość dystrybucji systemów Unix (jak Linux) oraz na Windows poprzez narzędzia takie jak Cygwin.
+## Kompilacja do debugowania
 
-Aby zainstalować GDB w systemie Linux, można skorzystać z odpowiedniego menadżera pakietów. Poniżej znajdują się przykłady dla kilku popularnych dystrybucji:
-
-### Ubuntu (i pochodne):
+Dla programu w C:
 
 ```bash
-sudo apt update
-sudo apt install gdb
+gcc -g -O0 -Wall -Wextra main.c -o program
 ```
 
-### Fedora:
+Dla C++:
 
 ```bash
-sudo dnf install gdb
+g++ -g -O0 -Wall -Wextra main.cpp -o program
 ```
 
-### Arch Linux:
+- `-g` dodaje informacje debugowania.
+- `-O0` wyłącza optymalizacje, dzięki czemu wykonywanie krokowe jest łatwiejsze do śledzenia.
+- Program zoptymalizowany również można debugować, ale część zmiennych lub linii może nie odpowiadać bezpośrednio kodowi źródłowemu.
+
+## Uruchomienie GDB
 
 ```bash
-sudo pacman -S gdb
+gdb ./program
 ```
 
-## Przykłady użycia GDB
-
-GDB oferuje mnóstwo funkcji do efektywnego debugowania aplikacji. Oto kilka podstawowych przykładów użycia tego narzędzia:
-
-### Uruchomienie programu w trybie debugowania
-
-Aby rozpocząć debugowanie programu, uruchom GDB z nazwą programu jako argument. Jeżeli chcesz korzystać z trybu tekstowego z bardziej rozbudowanym interfejsem użytkownika, dodaj opcję `-tui`.
+Tryb tekstowego interfejsu użytkownika:
 
 ```bash
-gdb -tui sciezka_do_programu
+gdb -tui ./program
 ```
 
-### Ustawianie breakpointów
+Najprostszy przebieg sesji:
 
-Breakpoint to miejsce w kodzie, w którym GDB zatrzyma wykonanie programu. Możesz ustawić breakpointy na konkretnej linii kodu, w funkcji lub nawet przy określonych warunkach.
-
-```bash
-break main           # ustawia breakpoint na początku funkcji main
-break file.c:12      # ustawia breakpoint na linii 12 pliku file.c
-break function       # ustawia breakpoint na początku funkcji function
+```text
+(gdb) break main
+(gdb) run
+(gdb) next
+(gdb) print zmienna
+(gdb) continue
+(gdb) quit
 ```
 
-Jeśli chcesz ustawić breakpoint, który zostanie aktywowany tylko wtedy, gdy pewien warunek zostanie spełniony, możesz użyć:
+## Breakpointy
 
-```bash
-break file.c:12 if variable == 10  # zatrzymuje się na linii 12 tylko, gdy variable ma wartość 10
+Breakpoint zatrzymuje program przed wykonaniem wskazanej linii lub funkcji.
+
+```text
+(gdb) break main
+(gdb) break plik.c:42
+(gdb) break funkcja
 ```
 
-### Zarządzanie breakpointami
+Breakpoint warunkowy:
 
-Aby usunąć breakpoint, można użyć komendy delete z numerem breakpointu lub bez niego (aby usunąć wszystkie breakpointy).
-
-```bash
-delete 1            # usuwa breakpoint o numerze 1
-delete               # usuwa wszystkie breakpointy
+```text
+(gdb) break plik.c:42 if licznik == 10
 ```
 
-### Wykonywanie programu
+Przydatne polecenia:
 
-Po ustawieniu breakpointów możesz uruchomić program przy użyciu komendy run. Jeśli program ma argumenty, podaj je po run.
-
-```bash
-run arg1 arg2       # uruchamia program z argumentami arg1 i arg2
+```text
+(gdb) info breakpoints
+(gdb) disable 2
+(gdb) enable 2
+(gdb) delete 2
 ```
 
-Jeśli program został już wcześniej uruchomiony i chcesz go ponownie uruchomić, po prostu użyj komendy run ponownie.
+## Sterowanie wykonaniem
 
-Warto dodać, że opcja -q nie jest typową opcją dla komendy run w GDB. Zamiast tego, jest to opcja dla samego GDB, która powoduje, że GDB działa w trybie "cichym", z mniejszą ilością informacji wyjściowych. Jeżeli chcesz uruchomić program bez zatrzymywania się na breakpointach, możesz użyć komendy continue lub skrótu c.
+| Polecenie | Znaczenie |
+| --- | --- |
+| `run` | uruchom lub uruchom ponownie program |
+| `continue` / `c` | wykonuj do następnego zatrzymania |
+| `next` / `n` | wykonaj następną linię bez wchodzenia do funkcji |
+| `step` / `s` | wykonaj następną linię, wchodząc do wywołanej funkcji |
+| `finish` | wykonuj do powrotu z bieżącej funkcji |
+| `until` | wykonuj do późniejszej linii w bieżącej ramce |
 
-```bash
-continue          # kontynuuje wykonanie programu do następnego breakpointu lub do jego zakończenia
+Argumenty programu można podać po `run`:
+
+```text
+(gdb) run plik.txt --verbose
 ```
 
-###  Wyświetlanie wartości zmiennych
+## Zmienne i wyrażenia
 
-Aby przejrzeć wartości zmiennych lokalnych aktualnej funkcji, użyj:
-
-```bash
-info locals
+```text
+(gdb) print x
+(gdb) print tablica[3]
+(gdb) print *ptr
+(gdb) info locals
+(gdb) info args
 ```
 
-Jeśli chcesz wyświetlić wartość konkretnej zmiennej, możesz użyć poniższej komendy:
+Stałe śledzenie wyrażenia:
 
-```bash
-print nazwa_zmiennej
+```text
+(gdb) display licznik
+(gdb) undisplay 1
 ```
 
-### Śledzenie modyfikacji zmiennej
+## Watchpointy
 
-Jeśli chcesz, by GDB zatrzymał wykonanie programu za każdym razem, gdy dana zmienna jest modyfikowana, użyj:
+Watchpoint zatrzymuje program, gdy zmieni się obserwowana wartość.
 
-```bash
-watch nazwa_zmiennej
+```text
+(gdb) watch saldo
+(gdb) continue
 ```
 
-### Wyświetlanie stosu wywołań funkcji
+To szczególnie przydatne, gdy wiadomo **co** zostało nadpisane, ale nie wiadomo **gdzie**.
 
-Aby zobaczyć listę funkcji, które zostały wywołane aż do aktualnej linii kodu, użyj:
+Dostępne są też:
 
-```bash
-bt  # skrót od 'backtrace'
+```text
+(gdb) rwatch zmienna   # zatrzymanie przy odczycie
+(gdb) awatch zmienna   # zatrzymanie przy odczycie lub zapisie
 ```
 
-### Sterowanie wykonywaniem programu
+Obsługa zależy od możliwości sprzętowych i systemu.
 
-1. Przejście do definicji funkcji lub wejście w nią:
-Jeśli zatrzymałeś się przed wywołaniem funkcji i chcesz przejść do jej definicji (lub "wejść" w nią), użyj:
+## Stos wywołań
 
-```bash
-step
+Gdy program zatrzyma się w błędnym miejscu:
+
+```text
+(gdb) backtrace
+(gdb) frame 2
+(gdb) info locals
 ```
 
-2. Przejście do następnej linii kodu (bez wchodzenia do funkcji):
-Jeśli nie chcesz wchodzić do definicji funkcji i wolisz przejść do następnej linii kodu w bieżącej funkcji, użyj:
+Skrót dla `backtrace` to `bt`.
 
-```bash
+Przykładowy schemat analizy awarii:
+
+1. Uruchom program poleceniem `run`.
+2. Po zatrzymaniu wykonaj `bt`.
+3. Przejdź do interesującej ramki poleceniem `frame N`.
+4. Sprawdź argumenty i zmienne lokalne.
+5. Ustaw breakpoint wcześniej i odtwórz problem.
+
+## Kod źródłowy i pamięć
+
+```text
+(gdb) list
+(gdb) list funkcja
+(gdb) x/16xb ptr
+(gdb) x/8gx ptr
+```
+
+Polecenie `x` pozwala oglądać pamięć w różnych formatach. Jest przydatne m.in. przy wskaźnikach, buforach i analizie uszkodzeń pamięci.
+
+## Najczęstsze pułapki
+
+- Bez `-g` debugowanie kodu źródłowego jest znacznie mniej wygodne.
+- Optymalizacje mogą zmienić kolejność instrukcji lub usunąć zmienne.
+- `next` nie wchodzi do funkcji, a `step` wchodzi.
+- Watchpoint obserwuje zmianę wartości, a breakpoint miejsce wykonania.
+- Sam komunikat o segmentation fault zwykle nie wystarcza — najpierw sprawdź `bt`.
+
+## Podsumowanie
+
+Minimalny zestaw poleceń, który warto zapamiętać:
+
+```text
+break
+run
 next
-```
-
-### Zakończenie pracy z GDB
-
-Gdy skończysz debugowanie i chcesz zakończyć pracę z GDB, wpisz:
-
-```bash
+step
+continue
+print
+watch
+backtrace
+frame
 quit
 ```
+
+GDB najlepiej traktować jako narzędzie do stawiania hipotez: zatrzymaj program przed podejrzanym miejscem, sprawdź stan i zawężaj obszar, w którym powstaje błąd.
