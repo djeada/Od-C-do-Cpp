@@ -1,200 +1,194 @@
-## Automatyzacja procesu budowania w programowaniu
+# Automatyzacja budowania z Make
 
-Podczas pracy nad projektami programistycznymi, szczególnie w językach jak C lub C++, bezpośrednie wywoływanie kompilatora z terminala może być początkowo wystarczające. Jednak z rosnącą złożonością projektu, większą ilością plików źródłowych, modułów oraz zależnościami, potrzeba zastosowania narzędzi automatyzujących proces budowania staje się kluczowa.
+Przy jednym pliku wystarczy wywołać kompilator ręcznie. Gdy projekt rośnie, potrzebujemy sposobu na opisanie zależności między plikami i wykonywanie tylko tych kroków, które są konieczne. Do tego służy `make`.
+
+## Cele
+
+Po tej prezentacji powinieneś umieć:
+
+- wyjaśnić, po co używa się systemu budowania,
+- napisać prostą regułę w `Makefile`,
+- używać zmiennych automatycznych `$@`, `$^` i `$<`,
+- zbudować projekt z wielu plików,
+- dodać cele `clean` i `test`.
+
+## Od kodu źródłowego do programu
+
+Uproszczony przepływ dla C/C++:
+
+1. **Preprocessing** — rozwinięcie `#include`, `#define` i kompilacji warunkowej.
+2. **Kompilacja** — analiza programu i wygenerowanie kodu asemblerowego lub wewnętrznej reprezentacji prowadzącej do kodu maszynowego.
+3. **Asemblacja** — utworzenie pliku obiektowego, np. `main.o`.
+4. **Linkowanie** — połączenie plików obiektowych i bibliotek w plik wykonywalny.
+
+Przydatne opcje GCC/Clang:
 
 ```bash
-gcc -Wall -Wextra -Werror -o program.exe main.c
+gcc -E main.c              # tylko preprocessing
+gcc -S main.c              # zatrzymaj się na kodzie asemblerowym
+gcc -c main.c -o main.o    # utwórz plik obiektowy
+gcc main.o -o program      # linkowanie
 ```
 
-Pojawia się pytanie: Jak zarządzać kompilacją w skomplikowanych projektach z wieloma plikami, flagami i opcjami? Oto kilka wyzwań, które mogą się pojawić:
+## Po co Make?
 
-- Zarządzanie zależnościami między plikami.
-- Kompilacja tylko tych plików, które zostały zmienione.
-- Zastosowanie różnych flag dla różnych części projektu.
-- Generowanie dokumentacji.
-- Uruchamianie testów automatycznych.
+Dla projektu:
 
-Aby sprostać tym wyzwaniom, programiści korzystają z narzędzi takich jak make, CMake, Autotools i innych.
-
-### Proces kompilacji w języku C
-
-Każdy program napisany w języku C przechodzi przez kilka etapów przetwarzania przed stworzeniem ostatecznego pliku wykonywalnego:
-
-- **Preprocesor**: Obsługuje dyrektywy takie jak #include czy #define oraz eliminuje komentarze.
-- **Analiza**: Sprawdza poprawność składni kodu, szuka błędów.
-- **Kompilacja**: Konwertuje kod źródłowy na kod maszynowy.
-- **Assembler**: Tworzy plik obiektowy z kodu maszynowego.
-- **Linker**: Łączy różne pliki obiektowe i tworzy jeden plik wykonywalny.
-
-Różne flagi kompilatora, takie jak `-E`, `-S` czy `-c`, pozwalają kontrolować, na którym z tych etapów kompilator powinien się zatrzymać.
-
-### Make - narzędzie do automatyzacji procesu budowania
-
-Make to popularne narzędzie, które pozwala automatyzować proces budowania projektów. Jego główną zaletą jest zdolność do wykrywania, które części programu wymagają ponownej kompilacji, co przyspiesza proces budowy.
-
-Aby korzystać z Make, należy stworzyć specjalny plik o nazwie Makefile, który zawiera instrukcje dotyczące budowy projektu. 
-
-Plik Makefile jest specyficznym plikiem tekstowym używanym przez narzędzie `make`, który określa zależności między plikami źródłowymi a poleceniami niezbędnymi do ich kompilacji i łączenia w gotowy program lub bibliotekę.
-
-Podstawowym elementem w Makefile są reguły, które wskazują, jakie pliki zależą od innych i jakie polecenia należy wykonać, aby wygenerować te zależności.
-
-Typowa reguła w Makefile ma następującą postać:
-
-```makefile
-target: dependencies
-    recipe
-
-    target - cel, który ma zostać utworzony.
-    dependencies - lista plików, od których zależy cel.
-    recipe - polecenia, które należy wykonać, aby zbudować cel.
+```text
+main.c
+parser.c
+parser.h
+io.c
+io.h
 ```
 
-Przykład struktury Makefile
+nie chcemy za każdym razem kompilować wszystkiego. `make` porównuje zależności i czasy modyfikacji plików, a następnie przebudowuje potrzebne cele.
+
+## Reguła w Makefile
+
+Podstawowa postać:
 
 ```makefile
-CC=gcc
-CFLAGS=-Wall -Wextra -Werror
-SRC=main.c utils.c
-OBJ=$(SRC:.c=.o)
+cel: zaleznosci
+<TAB>polecenie
+```
 
-executable: $(OBJ)
-	$(CC) -o $@ $^
+Przykład:
+
+```makefile
+main.o: main.c parser.h
+	$(CC) $(CFLAGS) -c main.c -o main.o
+```
+
+**Ważne:** polecenie w klasycznym Makefile zaczyna się znakiem tabulacji, a nie spacjami.
+
+## Zmienne
+
+```makefile
+CC := gcc
+CFLAGS := -Wall -Wextra -Wpedantic
+```
+
+Użycie:
+
+```makefile
+main.o: main.c
+	$(CC) $(CFLAGS) -c main.c -o main.o
+```
+
+Często spotykane grupy flag:
+
+- `CPPFLAGS` — opcje preprocessora, np. `-Iinclude`,
+- `CFLAGS` — opcje kompilatora C,
+- `CXXFLAGS` — opcje kompilatora C++,
+- `LDFLAGS` — opcje linkera,
+- `LDLIBS` — biblioteki, np. `-lm`.
+
+## Zmienne automatyczne
+
+W przepisie reguły można używać:
+
+| Zmienna | Znaczenie |
+| --- | --- |
+| `$@` | nazwa celu |
+| `$^` | wszystkie zależności |
+| `$<` | pierwsza zależność |
+
+Przykład:
+
+```makefile
+%.o: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+```
+
+## Projekt z wielu plików
+
+```makefile
+CC := gcc
+CPPFLAGS :=
+CFLAGS := -Wall -Wextra -Wpedantic -O2
+
+TARGET := program
+SRC := main.c parser.c io.c
+OBJ := $(SRC:.c=.o)
+
+.PHONY: all clean test
+
+all: $(TARGET)
+
+$(TARGET): $(OBJ)
+	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+test: $(TARGET)
+	./$(TARGET) < input.txt > output.txt
+	diff -u expected_output.txt output.txt
 
 clean:
-	rm -f *.o executable
+	rm -f $(OBJ) $(TARGET) output.txt
 ```
 
-Opis elementów w powyższym przykładzie:
-
-- `CC` - zmienna określająca używany kompilator.
-- `CFLAGS` - flagi, które zostaną przekazane do kompilatora.
-- `SRC` - lista plików źródłowych projektu.
-- `OBJ` - lista plików obiektowych wygenerowanych na podstawie SRC.
-- `executable` - cel główny pliku wyjściowego.
-- `$(OBJ)` - zmienna reprezentująca pliki obiektowe.
-- `$(CC) -o $@ $^` - polecenie linkera do utworzenia pliku wykonywalnego.
-- `%.o: %.c` - wzorzec reguły mówiący, jak zbudować plik obiektowy z pliku źródłowego.
-- `$(CC) $(CFLAGS) -c $< -o $@` - polecenie kompilacji pliku źródłowego.
-- `clean` - cel specjalny, który pozwala na usunięcie plików tymczasowych i pliku wykonywalnego.
-
-Warto zauważyć, że w Makefile używane są specjalne zmienne, takie jak $@ (reprezentująca cel), $^ (reprezentująca wszystkie zależności) i $< (reprezentująca pierwszą zależność). Dzięki nim, Makefile jest bardziej elastyczny i czytelny.
-
-### Przykład 1: Kompilacja jednego pliku źródłowego
-
-Poniżej przedstawiono podstawowy plik Makefile do kompilacji jednego pliku źródłowego:
-
-```makefile
-CC=gcc
-
-executable: main.c
-	$(CC) -o executable main.c
-```
-
-Aby przeprowadzić kompilację, wystarczy użyć komendy:
+Teraz:
 
 ```bash
-make executable
-```
-
-### Przykład 2: Kompilacja wielu plików źródłowych
-
-Jeśli pracujemy z projektem złożonym z wielu plików źródłowych, takich jak `main.c`, `file1.c` i `file2.c`, możemy skorzystać z Makefile do automatycznego kompilowania i łączenia tych plików w jeden plik wykonywalny.
-
-Oto przykład takiego pliku Makefile:
-
-```makefile
-CC=gcc
-CFLAGS=-Wall -Wextra -Werror
-SRC=main.c file1.c file2.c
-OBJS=$(SRC:.c=.o)
-
-my_program: $(OBJS)
-	$(CC) $(CFLAGS) -o my_program $(OBJS)
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-clean:
-	rm -f $(OBJS) my_program
-```
-
-W tym przypadku:
-
-- Utworzono listę plików źródłowych w zmiennej `SRC`.
-- Użyto zastępowania tekstu (`$(SRC:.c=.o)`) do automatycznego generowania odpowiednich nazw plików obiektowych na podstawie plików źródłowych.
-- Reguła`%.o: %.c` definiuje, jak skompilować plik obiektowy z danego pliku źródłowego.
-- Cel clean pozwala na szybkie usunięcie plików obiektowych i wykonywalnego, jeśli chcemy oczyścić katalog projektu.
-
-Aby zbudować cały projekt, wystarczy uruchomić:
-
-```bash
-make my_program
-```
-
-A do usunięcia wszystkich skompilowanych plików:
-
-```bash
+make
+make test
 make clean
 ```
 
-### Przykład 3: Kompilacja biblioteki
+## Cele pozorne i `.PHONY`
 
-Kiedy korzystamy z zewnętrznych bibliotek, niezbędne jest ich skompilowanie i połączenie z naszym głównym kodem. Możemy określić dedykowane reguły dla każdej z bibliotek, a następnie odwołać się do nich w regule głównego pliku wykonywalnego:
+Cele takie jak `clean` lub `test` nie reprezentują plików. Warto oznaczać je jako `.PHONY`:
 
 ```makefile
-CC=gcc
-CFLAGS=-Wall -Wextra -Werror
-LIBS=-lm
-OBJS=main.o my_library.o
+.PHONY: clean test
+```
 
-my_library.o: my_library.c my_library.h
-	$(CC) $(CFLAGS) -c my_library.c -o my_library.o
+Dzięki temu przypadkowy plik o nazwie `clean` nie zablokuje wykonania celu.
 
-my_program: $(OBJS)
-	$(CC) $(CFLAGS) -o my_program $(OBJS) $(LIBS)
+## Automatyczne zależności nagłówków
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+Ręczne dopisywanie każdego nagłówka łatwo prowadzi do błędów. GCC i Clang mogą generować pliki zależności:
 
+```makefile
+CFLAGS += -MMD -MP
+DEPS := $(OBJ:.o=.d)
+
+-include $(DEPS)
+```
+
+Przy kompilacji powstaną pliki `.d`, które opisują zależności plików obiektowych od nagłówków.
+
+Wtedy warto rozszerzyć `clean`:
+
+```makefile
 clean:
-	rm -f $(OBJS) my_program
+	rm -f $(OBJ) $(DEPS) $(TARGET)
 ```
 
-W powyższym przypadku, dodaliśmy regułę `my_library.o` odpowiedzialną za kompilację kodu źródłowego `my_library.c` do pliku obiektowego `my_library.o`. W regule my_program, odnosimy się do `my_library.o` oraz zmiennej `LIBS`, które są niezbędne do zlinkowania z głównym kodem.
+## Make a CMake
 
-### Przykład 4: Wykonywanie testów
+`make` wykonuje reguły zapisane w Makefile. CMake to generator systemów budowania — może wygenerować m.in. Makefile lub pliki dla Ninja i IDE.
 
-Poniżej znajduje się Makefile umożliwiający nie tylko kompilację programu, ale także automatyczne wykonanie zestawu testów:
+W praktyce:
 
-```makefile
-CC=gcc
-CFLAGS=-Wall -Wextra -Werror
+- mały projekt lub ćwiczenie → ręczny Makefile jest świetny do nauki zależności,
+- większy wieloplatformowy projekt → często wygodniejszy jest CMake, Meson lub inny wyższy poziom.
 
-# Lista plików źródłowych
-SOURCES=main.c myfunc.c
+## Najczęstsze pułapki
 
-# Plik wykonywalny
-EXECUTABLE=myprog
+- Brak zależności od nagłówka może spowodować użycie starego pliku obiektowego.
+- `make` nie analizuje semantyki C/C++; opiera się na grafie zależności i plikach.
+- `-Werror` bywa użyteczne w CI, ale nie zawsze warto wymuszać je podczas każdej lokalnej kompilacji.
+- Kolejność bibliotek przy linkowaniu może mieć znaczenie.
+- Komenda `clean` powinna usuwać wyłącznie artefakty generowane.
 
-# Pliki obiektowe
-OBJECTS=$(SOURCES:.c=.o)
+## Podsumowanie
 
-# Reguła do kompilacji pliku wykonywalnego
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) -o $@
+Najważniejsza idea Make to:
 
-# Reguła do kompilacji plików źródłowych
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+> **cel zależy od innych plików, a przepis mówi, jak go odtworzyć.**
 
-# Reguła do automatycznego wykonywania testów
-test:
-	./$(EXECUTABLE) < input.txt > output.txt
-	diff -q output.txt expected_output.txt && echo "Tests passed!" || echo "Tests failed!"
-	rm output.txt
-```
-
-Reguła test korzysta z narzędzia diff, które porównuje wynikowy plik `output.txt` z oczekiwanym wynikiem `expected_output.txt`. Jeśli pliki są identyczne, testy przechodzą pomyślnie. Wejście dla testowanego programu jest pobierane z pliku `input.txt`, a wyniki zapisywane są do `output.txt`. Po zakończeniu testów, `output.txt` zostaje usunięty.
+Dobrze napisany Makefile skraca czas budowania, dokumentuje proces kompilacji i daje jeden powtarzalny sposób uruchamiania testów oraz innych zadań projektu.
