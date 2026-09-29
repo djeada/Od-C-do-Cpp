@@ -1,283 +1,269 @@
-## Programowanie sieciowe w C
+# Programowanie sieciowe w C
 
-Programowanie sieciowe w C pozwala tworzyć aplikacje komunikujące się z innymi komputerami przez sieć. C, ze względu na swoją wydajność i dostęp do niskopoziomowych funkcji systemowych, jest popularnym wyborem dla programistów sieci.
+Gniazda (sockets) są podstawowym interfejsem systemowym do komunikacji sieciowej. W systemach POSIX korzystamy z nich przez funkcje takie jak `socket()`, `bind()`, `listen()`, `accept()`, `connect()`, `send()` i `recv()`.
 
-- **C i programowanie sieciowe**: C jest językiem, który dostarcza narzędzi do niskopoziomowego dostępu do zasobów systemu. Umożliwia to tworzenie wydajnych aplikacji sieciowych.
-- **Protokoły sieciowe**: Chociaż TCP jest jednym z najczęściej używanych protokołów do komunikacji sieciowej w C, UDP jest innym ważnym protokołem, który pozwala na szybszą, choć mniej niezawodną, komunikację.
-  
-## Model klient-serwer w C
+## Cele
 
-Model klient-serwer to podstawowy model komunikacyjny w sieciach komputerowych. Jest on powszechnie używany w programowaniu sieciowym w C.
+Po tej prezentacji powinieneś umieć:
 
-1. **Inicjacja połączenia**: Klient inicjuje połączenie wysyłając zapytanie do serwera. Musi znać adres IP i port serwera.
-2. **Nawiązanie połączenia**: Serwer słucha na określonym porcie i akceptuje lub odrzuca przychodzące zapytania o połączenie.
-3. **Komunikacja**: Po nawiązaniu połączenia, klient i serwer mogą wymieniać się danymi.
-4. **Zamknięcie połączenia**: Po zakończeniu wymiany danych, połączenie może być zamknięte zarówno przez klienta, jak i serwera.
-5. **Wielokrotne połączenia**: Serwer jest zaprojektowany tak, aby obsługiwać wiele jednoczesnych połączeń z różnymi klientami.
-6. **Protokoły komunikacji**: Komunikacja między klientem a serwerem może odbywać się poprzez protokoły takie jak TCP lub UDP. Te protokoły umożliwiają komunikację w sieciach LAN (lokalne sieci komputerowe) oraz WAN (szerokopasmowe sieci komputerowe).
-7. **Kluczowa koncepcja**: Model klient-serwer jest jednym z kluczowych pojęć w programowaniu sieciowym, umożliwiającym tworzenie rozproszonych aplikacji.
+- odróżnić TCP od UDP,
+- opisać cykl życia gniazda klienta i serwera,
+- wyjaśnić rolę adresu IP i portu,
+- rozumieć, że TCP jest strumieniem bajtów bez granic wiadomości,
+- poprawnie interpretować wyniki `send()` i `recv()`.
 
-Programowanie sieciowe w C pozwala tworzyć różnorodne aplikacje, od prostych chatów po zaawansowane serwery baz danych. Znajomość modelu klient-serwer oraz protokołów komunikacyjnych jest kluczowa dla efektywnego tworzenia aplikacji sieciowych w C.
+## Model klient-serwer
 
-## Typy serwerów
+![Schemat klient-serwer](diagram.jpg)
 
-Pod względem sposobu obsługi klientów, serwery można podzielić na dwa główne typy: iteracyjne i współbieżne.
+W najprostszym modelu:
 
-### Serwery iteracyjne
+1. serwer wiąże gniazdo z adresem i portem,
+2. serwer czeka na klientów,
+3. klient łączy się z adresem serwera,
+4. obie strony wymieniają dane,
+5. po zakończeniu zamykają gniazda.
 
-* Obsługują jeden klient w danej chwili.
-* Po obsłużeniu jednego klienta, serwer przechodzi do obsługi kolejnego.
-* Pozostali klienci muszą czekać, aż serwer zakończy obsługę bieżącego klienta.
-* Prostota i przewidywalność są głównymi zaletami tego podejścia.
-* Idealne dla aplikacji, gdzie jednoczesne połączenia są rzadkie lub gdzie obsługa klienta jest szybka i nieblokująca.
-* Jednakże, w środowiskach o wysokim natężeniu ruchu, mogą prowadzić do opóźnień.
+## TCP a UDP
 
-### Serwery współbieżne
+| Cecha | TCP | UDP |
+| --- | --- | --- |
+| Model | połączeniowy | datagramowy |
+| Kolejność danych | zachowana | brak gwarancji |
+| Dostarczenie | retransmisja i kontrola po stronie protokołu | brak gwarancji |
+| Granice wiadomości | nie — strumień bajtów | tak — datagramy |
+| Typ gniazda | `SOCK_STREAM` | `SOCK_DGRAM` |
+| Typowe użycie | HTTP, SSH, bazy danych | DNS, telemetry, multimedia, gry |
 
-* Możliwość obsługi wielu klientów jednocześnie.
-* Każde nowe połączenie z klientem jest obsługiwane w osobnym procesie lub wątku.
-* Dzięki temu, żaden klient nie musi czekać na obsługę innego klienta.
-* Skomplikowanie implementacji jest zazwyczaj większe w porównaniu z serwerami iteracyjnymi, ale oferują one znacznie lepszą skalowalność.
-* Idealne dla aplikacji, które muszą obsługiwać wiele równoczesnych połączeń, takich jak serwery www czy bazy danych.
-* Zastosowanie odpowiednich technik współbieżności może także pomóc w efektywnym wykorzystaniu wielordzeniowych procesorów.
+UDP nie jest po prostu „szybszym TCP”. Ma inne własności i mniejszy narzut protokołu, ale aplikacja sama musi zdecydować, co zrobić z utratą, duplikacją lub zmianą kolejności datagramów.
 
-Podczas wyboru między serwerem iteracyjnym a współbieżnym, warto uwzględnić wymagania dotyczące wydajności, złożoność implementacji oraz charakterystykę oczekiwanej komunikacji z klientami.
+## Adres IP i port
 
-## Komunikacja między gniazdami
+Adres IP identyfikuje interfejs hosta w sieci. Port identyfikuje punkt końcowy używany przez proces.
 
-Gniazda to abstrakcyjne punkty końcowe dla wysyłania lub odbierania danych w sieci. Gdy dwa procesy chcą się komunikować przez sieć, tworzą gniazda, które służą jako ich "drzwi" do sieci. 
+Dla IPv4 często spotkamy `struct sockaddr_in`, a dla IPv6 `struct sockaddr_in6`. W kodzie przenośnym warto korzystać z `getaddrinfo()`, który ukrywa wiele szczegółów adresowania.
 
-### Podstawy gniazd
+## Cykl życia serwera TCP
 
-* **Definicja**: Gniazda to interfejsy API umożliwiające komunikację międzyprocesową na różnych maszynach przez sieć.
-* **Protokoły**: Komunikacja może odbywać się za pomocą protokołów TCP (połączeniowy) lub UDP (bezpołączeniowy).
-* **Tworzenie gniazda**: Aby rozpocząć komunikację sieciową, aplikacja musi najpierw otworzyć gniazdo, określając rodzaj protokołu i typ gniazda.
-
-### Typy gniazd
-
-1. **Gniazda strumieniowe (SOCK_STREAM)**
-   * Używają protokołu TCP.
-   * Zapewniają niezawodną, dwukierunkową komunikację strumieniową.
-   * Dane są wysyłane jako ciągły strumień bajtów, co gwarantuje ich kolejność i niezawodność.
-   * Typowo stosowane w aplikacjach wymagających niezawodności, takich jak serwery WWW czy FTP.
-
-2. **Gniazda pakietowe (SOCK_DGRAM)**
-   * Używają protokołu UDP.
-   * Umożliwiają wysyłanie i odbieranie pojedynczych pakietów danych.
-   * Nie gwarantują kolejności ani dostarczenia pakietów.
-   * Szybkie i lekkie, idealne dla aplikacji wymagających minimalnego opóźnienia, takich jak gry online czy transmisje wideo na żywo.
-  
-### Protokoły komunikacyjne:
-
-- **TCP (Transmission Control Protocol)**: Jest to protokół połączeniowy i zapewnia niezawodny strumień danych. W przypadku połączeń TCP, komunikacja zaczyna się od trzyetapowego uścisku dłoni (three-way handshake).
-- **UDP (User Datagram Protocol)**: Jest to protokół bezpołączeniowy, co oznacza, że dane są wysyłane jako pojedyncze pakiety bez nawiązywania i zamykania połączenia.
-
-### Adresowanie:
-
-Dla każdego gniazda kluczowe jest adresowanie, które obejmuje adres IP i numer portu. Adres IP identyfikuje maszynę w sieci, podczas gdy port identyfikuje konkretny proces działający na tej maszynie.
-
-### 1. Tworzenie gniazda
-
-Aby nawiązać komunikację, proces musi najpierw utworzyć gniazdo za pomocą funkcji `socket()`. 
-
-```c
-int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+```text
+socket()
+   |
+bind()
+   |
+listen()
+   |
+accept()
+   |
+recv() / send()
+   |
+close()
 ```
 
-### 2. Nawiązywanie połączenia
+`accept()` zwraca **nowy deskryptor** dla konkretnego klienta. Gniazdo nasłuchujące pozostaje dostępne do przyjmowania kolejnych połączeń.
 
-Serwer:
-  - Związanie gniazda z konkretnym adresem IP i portem przy użyciu funkcji `bind()`.
-  - Nasłuchiwanie na połączenia przychodzące za pomocą funkcji `listen()`.
-  - Akceptacja połączeń przychodzących za pomocą funkcji `accept()`.
-  
-Klient:
-  - Łączenie się z serwerem za pomocą funkcji `connect()`.
+## Cykl życia klienta TCP
 
-### 3. Komunikacja
+```text
+socket()
+   |
+connect()
+   |
+send() / recv()
+   |
+close()
+```
 
-Po nawiązaniu połączenia, procesy mogą zacząć się komunikować.
-
-- **Wysyłanie danych**: Procesy używają funkcji `send()` (lub `write()`) do wysyłania danych przez gniazdo.
-- **Odbieranie danych**: Procesy używają funkcji `recv()` (lub `read()`) do odbierania danych z gniazda.
-
-### 4. Zamykanie gniazda
-
-Po zakończeniu komunikacji, gniazda są zamykane za pomocą funkcji `close()`. Można także częściowo zamykać gniazdo dla wysyłania lub odbierania danych za pomocą funkcji `shutdown()`.
-
-### Przykład
+## Tworzenie gniazda
 
 ```c
-#include <stdio.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
 
-int main() {
-    int sockfd;
-    struct sockaddr_in server_addr;
-
-    // Tworzenie gniazda TCP
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) {
-        perror("Nie można utworzyć gniazda");
-        return 1;
-    }
-
-    // Konfiguracja adresu serwera
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(8080);
-    server_addr.sin_addr.s_addr = INADDR_ANY;
-
-    // ...
-
-    close(sockfd);
-    return 0;
+int fd = socket(AF_INET, SOCK_STREAM, 0);
+if (fd < 0) {
+    perror("socket");
 }
 ```
 
-## Struktury używane w programowaniu sieciowym w C
+- `AF_INET` — IPv4,
+- `AF_INET6` — IPv6,
+- `SOCK_STREAM` — strumień, zwykle TCP,
+- `SOCK_DGRAM` — datagramy, zwykle UDP.
 
-W programowaniu sieciowym w języku C, wiele funkcji API korzysta z konkretnych struktur danych do przechowywania informacji na temat gniazd, adresów i innych aspektów komunikacji sieciowej. Poniżej omówiono kilka kluczowych struktur:
+## Kolejność bajtów
 
-### sockaddr_in
-
-To jest główna struktura używana do przechowywania adresów w protokole IPv4.
-
-```c
-struct sockaddr_in {
-    short            sin_family;   // rodzina adresów, zwykle ustawiana na AF_INET
-    unsigned short   sin_port;     // numer portu (w kolejności sieciowej)
-    struct in_addr   sin_addr;     // struktura IPv4 adresu
-    char             sin_zero[8];  // padding do rozmiaru `sockaddr`
-};
-```
-
-Składnik in_addr:
+Porty i część pól protokołów są zapisywane w sieciowej kolejności bajtów.
 
 ```c
-struct in_addr {
-    unsigned long s_addr;  // adres IPv4 w formie liczby (kolejność sieciowa)
-};
+uint16_t port = htons(8080);
 ```
 
-### sockaddr_in6
+Przydatne funkcje:
 
-Struktura ta jest używana do przechowywania adresów w protokole IPv6.
+- `htons()` / `ntohs()` — 16 bitów,
+- `htonl()` / `ntohl()` — 32 bity.
+
+## Serwer i `INADDR_ANY`
+
+Dla serwera IPv4 można związać gniazdo ze wszystkimi lokalnymi interfejsami:
 
 ```c
-struct sockaddr_in6 {
-    u_int16_t       sin6_family;   // rodzina adresów, AF_INET6
-    u_int16_t       sin6_port;     // numer portu
-    u_int32_t       sin6_flowinfo; // pole flow info
-    struct in6_addr sin6_addr;     // struktura adresu IPv6
-    u_int32_t       sin6_scope_id; // pole zakresu
-};
+struct sockaddr_in addr = {0};
+
+addr.sin_family = AF_INET;
+addr.sin_port = htons(8080);
+addr.sin_addr.s_addr = htonl(INADDR_ANY);
 ```
 
-Składnik in6_addr:
+`INADDR_ANY` służy do **lokalnego bindu serwera**. Nie jest adresem zdalnego serwera, z którym klient powinien się łączyć.
+
+## Minimalny szkielet serwera TCP
 
 ```c
-struct in6_addr {
-    unsigned char   s6_addr[16];   // adres IPv6
-};
+#include <arpa/inet.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
+int main(void) {
+    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_fd < 0) {
+        perror("socket");
+        return EXIT_FAILURE;
+    }
+
+    int yes = 1;
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
+
+    struct sockaddr_in addr = {0};
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(8080);
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    if (bind(server_fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+        perror("bind");
+        close(server_fd);
+        return EXIT_FAILURE;
+    }
+
+    if (listen(server_fd, 16) < 0) {
+        perror("listen");
+        close(server_fd);
+        return EXIT_FAILURE;
+    }
+
+    int client_fd = accept(server_fd, NULL, NULL);
+    if (client_fd < 0) {
+        perror("accept");
+        close(server_fd);
+        return EXIT_FAILURE;
+    }
+
+    char buffer[1024];
+    ssize_t n = recv(client_fd, buffer, sizeof(buffer), 0);
+
+    if (n > 0) {
+        printf("odebrano %zd bajtów\n", n);
+    } else if (n == 0) {
+        printf("klient zamknął połączenie\n");
+    } else {
+        perror("recv");
+    }
+
+    close(client_fd);
+    close(server_fd);
+    return EXIT_SUCCESS;
+}
 ```
 
-### sockaddr
+To przykład dydaktyczny: obsługuje tylko jednego klienta i nie implementuje pełnego protokołu aplikacyjnego.
 
-Ogólna struktura adresowa. W praktyce jest rzadko używana bezpośrednio, ale jest często wymagana przez funkcje gniazd, które przyjmują zarówno sockaddr_in, jak i sockaddr_in6.
+## TCP nie zachowuje granic wiadomości
+
+Jeżeli klient wykona:
 
 ```c
-struct sockaddr {
-    unsigned short  sa_family;     // rodzina adresów
-    char            sa_data[14];   // adres i port
-};
+send(fd, "ABC", 3, 0);
+send(fd, "DEF", 3, 0);
 ```
 
-### addrinfo
+serwer nie ma gwarancji, że zobaczy dwa osobne odczyty po 3 bajty. Może otrzymać np.:
 
-Używana przez funkcję getaddrinfo(), która jest używana do tłumaczenia nazw hostów na adresy oraz odwrotnie. Pomaga również w konfiguracji struktur gniazd.
+- 6 bajtów naraz,
+- 2 bajty, a potem 4,
+- albo inny podział strumienia.
+
+Dlatego protokół aplikacyjny musi sam wyznaczać granice wiadomości, np. przez:
+
+- stałą długość,
+- separator,
+- nagłówek z długością,
+- format ramkowany.
+
+## Częściowy zapis i odczyt
+
+`send()` może wysłać mniej bajtów, niż poprosiliśmy. Kod powinien obsłużyć pozostałą część bufora.
+
+`recv()` zwraca:
+
+- `> 0` — liczbę odebranych bajtów,
+- `0` — druga strona zakończyła wysyłanie w sposób uporządkowany,
+- `-1` — błąd; szczegóły są dostępne przez `errno`.
+
+Nie wolno zakładać, że jedno `send()` odpowiada jednemu `recv()`.
+
+## Rozwiązywanie nazw przez `getaddrinfo()`
+
+Zamiast ręcznie kodować tylko IPv4, można użyć:
 
 ```c
-struct addrinfo {
-    int             ai_flags;      // flagi AI_PASSIVE, AI_CANONNAME itd.
-    int             ai_family;     // AF_INET, AF_INET6, AF_UNSPEC
-    int             ai_socktype;   // SOCK_STREAM, SOCK_DGRAM
-    int             ai_protocol;   // protokół używany w gnieździe
-    size_t          ai_addrlen;    // długość adresu w ai_addr
-    char            *ai_canonname; // kanoniczna nazwa hosta
-    struct sockaddr *ai_addr;      // wskaźnik na adres
-    struct addrinfo *ai_next;      // następny wpis na liście
-};
+#include <netdb.h>
+
+struct addrinfo hints = {0};
+hints.ai_family = AF_UNSPEC;
+hints.ai_socktype = SOCK_STREAM;
+
+struct addrinfo *result = NULL;
+int rc = getaddrinfo("example.com", "80", &hints, &result);
 ```
 
-## Kluczowe funkcje
+`AF_UNSPEC` pozwala otrzymać zarówno adresy IPv4, jak i IPv6.
 
-W języku C, istnieje wiele funkcji służących do obsługi gniazd, które pozwalają na nawiązywanie, obsługę i zamykanie połączeń sieciowych. Oto bardziej szczegółowy przegląd kluczowych funkcji:
+Po użyciu listy trzeba wykonać:
 
-### 1. `socket()`
-- **Opis**: Tworzy nowe gniazdo i zwraca jego deskryptor.
-- **Argumenty**: 
-  - `int domain` (np. AF_INET dla IPv4)
-  - `int type` (np. SOCK_STREAM dla TCP, SOCK_DGRAM dla UDP)
-  - `int protocol` (często ustawiane na 0, co pozwala systemowi wybrać domyślny protokół dla danego typu gniazda)
-- **Zwraca**: Deskryptor gniazda lub -1 w przypadku błędu.
+```c
+freeaddrinfo(result);
+```
 
-### 2. `bind()`
-- **Opis**: Powiązuje gniazdo z określonym adresem IP i portem.
-- **Argumenty**: 
-  - `int sockfd` (deskryptor gniazda)
-  - `const struct sockaddr *addr` (adres, z którym ma być powiązane gniazdo)
-  - `socklen_t addrlen` (rozmiar struktury adresu)
-- **Zwraca**: 0 w przypadku powodzenia lub -1 w przypadku błędu.
+## Serwery współbieżne
 
-### 3. `listen()`
-- **Opis**: Pozwala gniazdu nasłuchiwać na połączenia przychodzące.
-- **Argumenty**:
-  - `int sockfd` (deskryptor gniazda)
-  - `int backlog` (maksymalna liczba połączeń oczekujących w kolejce)
-- **Zwraca**: 0 w przypadku powodzenia lub -1 w przypadku błędu.
+Serwer może obsługiwać wielu klientów na różne sposoby:
 
-### 4. `accept()`
-- **Opis**: Akceptuje połączenie przychodzące na gniazdo.
-- **Argumenty**: 
-  - `int sockfd` (deskryptor gniazda)
-  - `struct sockaddr *addr` (opcjonalnie może zawierać adres klienta)
-  - `socklen_t *addrlen` (rozmiar struktury adresu; wartość jest aktualizowana przy wywołaniu funkcji)
-- **Zwraca**: Deskryptor nowego gniazda dla połączenia lub -1 w przypadku błędu.
+- proces na klienta,
+- wątek na klienta,
+- pula wątków,
+- pętla zdarzeń z `select()`, `poll()`, `epoll()`, `kqueue()` itp.
 
-### 5. `connect()`
-- **Opis**: Próbuje nawiązać połączenie z serwerem na określonym adresie IP i porcie.
-- **Argumenty**: 
-  - `int sockfd` (deskryptor gniazda)
-  - `const struct sockaddr *addr` (adres serwera)
-  - `socklen_t addrlen` (rozmiar struktury adresu)
-- **Zwraca**: 0 w przypadku powodzenia lub -1 w przypadku błędu.
+Nie ma jednego najlepszego modelu. Wybór zależy od liczby połączeń, kosztu obsługi klienta, platformy i wymagań projektu.
 
-### 6. `send()`
-- **Opis**: Wysyła dane przez gniazdo.
-- **Argumenty**: 
-  - `int sockfd` (deskryptor gniazda)
-  - `const void *buf` (wskaźnik na dane do wysłania)
-  - `size_t len` (rozmiar danych)
-  - `int flags` (opcjonalne flagi; często ustawiane na 0)
-- **Zwraca**: Liczbę bajtów wysłanych lub -1 w przypadku błędu.
+## Najczęstsze pułapki
 
-### 7. `recv()`
-- **Opis**: Odbiera dane z gniazda.
-- **Argumenty**: 
-  - `int sockfd` (deskryptor gniazda)
-  - `void *buf` (bufor do odbioru danych)
-  - `size_t len` (maksymalny rozmiar bufora)
-  - `int flags` (opcjonalne flagi; często ustawiane na 0)
-- **Zwraca**: Liczbę bajtów odebranych lub -1 w przypadku błędu.
+- Traktowanie TCP jak protokołu wiadomości zamiast strumienia bajtów.
+- Ignorowanie częściowych wyników `send()` i `recv()`.
+- Brak obsługi błędów i przerwań systemowych.
+- Mylenie adresu lokalnego do `bind()` z adresem zdalnym do `connect()`.
+- Zakładanie, że struktury adresowe mają identyczny layout na każdej platformie.
+- Brak limitów czasu i limitów rozmiaru danych w kodzie produkcyjnym.
+- Niezamykanie deskryptorów po błędzie.
 
-### 8. `close()`
-- **Opis**: Zamyka gniazdo i zwalnia wszystkie związane z nim zasoby.
-- **Argument**: 
-  - `int sockfd` (deskryptor gniazda)
-- **Zwraca**: 0 w przypadku powodzenia lub -1 w przypadku błędu.
+## Podsumowanie
 
-## Implementacja klient-serwer z użyciem TCP
+Najważniejszy model TCP:
 
-![client_server(1)](https://user-images.githubusercontent.com/37275728/220887792-7a43fa1c-67fe-456c-9c3d-3f284d7460e5.png)
+```text
+serwer: socket -> bind -> listen -> accept -> recv/send -> close
+klient: socket -> connect ----------> send/recv -> close
+```
 
+Najważniejsza zasada praktyczna: **TCP dostarcza uporządkowany strumień bajtów, ale granice wiadomości definiuje aplikacja.**
