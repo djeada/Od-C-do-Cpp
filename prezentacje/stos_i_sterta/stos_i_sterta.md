@@ -1,73 +1,212 @@
-## Pamięć operacyjna
+# Stos, sterta i czas życia obiektów
 
-Pamięć operacyjna, często nazywana pamięcią RAM (Random Access Memory), to rodzaj pamięci komputera, w którym system operacyjny, aplikacje i dane w użyciu są tymczasowo przechowywane, by mogły być szybko dostępne dla procesora.
+W rozmowach o pamięci często używamy pojęć „stos” i „sterta”. W C i C++ jeszcze ważniejsze jest jednak rozumienie **czasu życia obiektu** oraz tego, kto odpowiada za zwolnienie zasobu.
 
-Pamięć, w której programy przechowują dane podczas wykonywania, podzielona jest głównie na:
+## Cele
 
-- Stos
-- Stertę
+Po tej prezentacji powinieneś umieć:
 
-## Stos
+- odróżnić automatyczny i dynamiczny czas przechowywania,
+- wyjaśnić typową rolę stosu i sterty,
+- poprawnie parować `malloc/free` oraz `new/delete`,
+- rozpoznać dangling pointer i wyciek pamięci,
+- wyjaśnić, dlaczego nowoczesny C++ preferuje RAII.
 
-* Stos to część pamięci, która przechowuje tymczasowe zmienne, argumenty przekazywane funkcjom oraz zmienne lokalne tworzone w obrębie funkcji.
-* Zmienne są dostępne tylko lokalnie, tzn. wewnątrz funkcji, w której zostały zadeklarowane.
-* Kiedy funkcja kończy swoje działanie, jej zmienne są automatycznie usuwane ze stosu.
-* Jest to liniowa struktura danych, działająca według zasady LIFO (Last In, First Out), co określa porządek dodawania i usuwania elementów.
-* Wielkość stosu jest ograniczona i zależy od systemu oraz architektury komputera. Przekroczenie tego limitu prowadzi do błędu "stack overflow".
-* Dostęp do zmiennej zapisanej na stosie poza jej zakresem funkcji jest błędem i może prowadzić do nieprzewidywalnego zachowania programu.
+## Typowy układ pamięci procesu
 
-## Sterta
+![Przykładowy układ pamięci procesu](pamiec.png)
 
-* Sterta to obszar pamięci, który może być dynamicznie zarządzany przez program.
-* Sterta wymaga ręcznego zarządzania pamięcią, co oznacza, że programista musi jawnie alokować i zwalniać pamięć. Do tego celu używane są wskaźniki.
-* Pamięć na stercie jest alokowana przy użyciu funkcji, takich jak `malloc`, a zwalniana za pomocą funkcji `free` w języku C.
-* Niewłaściwe zarządzanie stertą, np. niezwalnianie zaalokowanej pamięci, może prowadzić do wycieków pamięci.
-* Zmienne zdefiniowane na stercie są dostępne z różnych części programu, aż do momentu ich dealokacji.
-* Chociaż stos jest zazwyczaj szybszy w dostępie do pamięci niż sterta, sterta oferuje większą elastyczność, umożliwiając dynamiczne alokowanie i dealokowanie pamięci w trakcie działania programu.
+Rzeczywisty układ zależy od systemu, formatu pliku wykonywalnego i mechanizmów ochrony pamięci. Schematy ze „stosem” i „stertą” są użytecznym modelem, ale nie stanowią kompletnego opisu całej pamięci procesu.
 
-## Po co używać sterty?
+## Stos i automatyczny czas przechowywania
 
-- Dzięki stercie, zmienna lub obiekt stworzony w funkcji może przetrwać dłużej niż czas trwania tej funkcji.
-- Sterta umożliwia dynamiczną alokację pamięci. Oznacza to, że możemy przydzielić pamięć w trakcie działania programu, w zależności od aktualnych potrzeb.
-- Pamięć zaalokowana na stercie będzie dostępna aż do momentu, kiedy jawnie zostanie zwolniona przez programistę.
-- Sterta jest znacznie większa niż stos. W przypadku pracy z dużymi ilościami danych, takimi jak obrazy czy filmy, używanie sterty jest niezbędne.
-- Wiele struktur danych i klas w bibliotece standardowej (np. `std::vector`, `std::string`) trzyma swoje dane na stercie, aby zapewnić elastyczność w zarządzaniu pamięcią.
+Typowa lokalna zmienna ma automatyczny czas przechowywania:
 
-## Przykład
+```cpp
+void funkcja() {
+    int licznik = 0;
+}
+```
 
-W poniższym przykładzie pierwsza funkcja `utworz_tablice` tworzy tablicę na stercie, a druga, `utworz_tablice_zle`, próbuje stworzyć tablicę na stosie o zmiennej długości i zwrócić wskaźnik do niej, co jest nieprawidłowe.
+Jej czas życia kończy się przy opuszczeniu zakresu.
 
-```c++
-int* utworz_tablice(int rozmiar) {
-    int* tablica = (int*) malloc(rozmiar * sizeof(int));
-    return tablica;
+W praktycznych implementacjach takie obiekty często znajdują się w ramce stosu, choć standard języka opisuje przede wszystkim czas przechowywania i semantykę, a nie konkretny adres fizyczny.
+
+Stos jest zwykle:
+
+- szybki w tworzeniu i zwalnianiu ramek,
+- ograniczony rozmiarem,
+- powiązany z wywołaniami funkcji,
+- zarządzany automatycznie przez mechanizm wywołań.
+
+## Sterta i dynamiczny czas przechowywania
+
+Pamięć dynamiczna jest przydzielana w czasie działania programu i żyje do chwili jawnego zwolnienia albo przejęcia jej przez obiekt zarządzający zasobem.
+
+W C:
+
+```c
+#include <stdlib.h>
+
+size_t n = 100;
+int *data = malloc(n * sizeof *data);
+
+if (data == NULL) {
+    /* obsługa błędu */
 }
 
-// Nielegalne w C++. Gdy kompilujesz z flagą -pedantic, g++ zgłosi błąd
-int* utworz_tablice_zle(int rozmiar) {
-    int tablica[rozmiar] = {0};
+/* użycie data */
+
+free(data);
+data = NULL;
+```
+
+W C nie trzeba rzutować wyniku `malloc()`.
+
+## Zasięg to nie to samo co czas życia
+
+To, że obiekt ma dynamiczny czas życia, nie oznacza, że jest „widoczny wszędzie”.
+
+```cpp
+void f() {
+    int *p = new int(42);
+    // nazwa p jest lokalna dla f
+    delete p;
+}
+```
+
+Dostęp do obiektu zależy od tego, czy kod posiada wskaźnik lub referencję do niego. Zasięg nazwy i miejsce/czas przechowywania to różne pojęcia.
+
+## Nie zwracaj wskaźnika do lokalnego obiektu
+
+Błąd:
+
+```cpp
+int* zle() {
+    int tablica[10] = {};
     return tablica;
 }
 ```
 
-Warto zwrócić uwagę, że dynamiczna alokacja pamięci, choć potężna, niesie za sobą odpowiedzialność za odpowiednie zarządzanie pamięcią, w tym zwalnianie pamięci, która nie jest już potrzebna.
+Po wyjściu z funkcji czas życia tablicy się kończy. Zwrócony wskaźnik staje się **dangling pointer**.
 
-## Malloc vs new (free vs delete)
+Lepsze rozwiązania w C++:
 
-| Kategoria                                | malloc                               | new                              |
-| ---------------------------------------- | ------------------------------------ | -------------------------------- |
-| Rodzaj                                   | funkcja                              | operator                         |
-| Typ zwracany                             | zwraca `void*`                       | nic nie zwraca                   |
-| Reakcja na błąd                          | w razie błędu zwraca `NULL`          | w razie błędu wyrzuca wyjątek    |
-| Nadpisywanie                             | nie może być nadpisany              | może być nadpisany              |
-| Określenie liczby bajtów do alokacji     | sami podajemy liczbę bajtów         | kompilator liczy za nas         |
+```cpp
+#include <array>
 
-### Kluczowe różnice:
+std::array<int, 10> dobrze() {
+    return {};
+}
+```
 
-1. **Rezerwacja pamięci:** Obydwie funkcje - `new` i `malloc` - służą do rezerwacji pamięci.
-2. **Inicjalizacja zasobów:** Tylko `new` po rezerwacji pamięci dodatkowo inicjalizuje zasoby (np. wywołując konstruktor w przypadku obiektów).
-3. **Niszczenie zasobów:** Tylko `delete` przed zwolnieniem pamięci niszczy zasoby (np. wywołując destruktor w przypadku obiektów).
-4. **Zwalnianie pamięci:** Obydwa - `delete` i `free` - służą do zwalniania pamięci, ale powinny być używane w parach odpowiednio z `new` i `malloc`.
+albo dla rozmiaru znanego dopiero w czasie działania:
 
-### Dlaczego zaleca się `new` i `delete` w C++?
-Stosowanie `new` i `delete` zamiast `malloc` i `free` jest zalecane w C++, ponieważ pozwala to na korzystanie z mechanizmu zarządzania pamięcią zwanej RAII (Resource Acquisition Is Initialization). Dzięki temu można uniknąć problemów związanych z wyciekami pamięci, a także poprawić czytelność i bezpieczeństwo kodu.
+```cpp
+#include <vector>
+
+std::vector<int> dobrze(std::size_t n) {
+    return std::vector<int>(n);
+}
+```
+
+## `malloc/free` a `new/delete`
+
+| Cecha | `malloc/free` | `new/delete` |
+| --- | --- | --- |
+| Język | C i dostępne także z C++ | C++ |
+| Wynik alokacji | `void*` | wskaźnik odpowiedniego typu |
+| Konstruktor | nie | tak |
+| Destruktor | nie | tak |
+| Błąd alokacji | `NULL` | domyślnie `std::bad_alloc` |
+| Rozmiar | podawany w bajtach | wyliczany z typu |
+
+Pary muszą się zgadzać:
+
+```text
+malloc  <-> free
+calloc  <-> free
+realloc <-> free
+new     <-> delete
+new[]   <-> delete[]
+```
+
+Mieszanie tych mechanizmów prowadzi do niezdefiniowanego zachowania.
+
+## `new` zwraca wskaźnik
+
+```cpp
+int *p = new int(42);
+delete p;
+```
+
+Dla tablicy:
+
+```cpp
+int *data = new int[100];
+delete[] data;
+```
+
+Surowe `new` i `delete` są poprawnymi elementami języka, ale w kodzie aplikacyjnym zwykle nie są pierwszym wyborem.
+
+## RAII w nowoczesnym C++
+
+RAII oznacza, że zasób jest własnością obiektu, a jego zwolnienie następuje automatycznie w destruktorze.
+
+Najczęściej lepiej użyć kontenera:
+
+```cpp
+std::vector<int> data(100);
+```
+
+albo inteligentnego wskaźnika:
+
+```cpp
+auto value = std::make_unique<int>(42);
+```
+
+Nie trzeba wtedy ręcznie pisać `delete`.
+
+RAII działa także podczas wyjątków i wcześniejszych wyjść z funkcji, co znacząco zmniejsza ryzyko wycieków.
+
+## Stos a sterta — praktyczne porównanie
+
+![Stos i sterta](stos_sterta.png)
+
+| Cecha | Typowy stos | Pamięć dynamiczna |
+| --- | --- | --- |
+| Zarządzanie | automatyczne | allocator / obiekt zarządzający |
+| Czas życia | zwykle związany z zakresem | sterowany przez program |
+| Koszt przydziału | zwykle bardzo niski | zwykle wyższy |
+| Rozmiar | relatywnie ograniczony | zwykle znacznie większy |
+| Typowe użycie | lokalne obiekty, ramki wywołań | dane o dynamicznym rozmiarze/czasie życia |
+
+Nie należy jednak zakładać, że „sterta jest zawsze wolna, a stos zawsze szybki” dla każdego dostępu. Różnice dotyczą głównie sposobu alokacji, lokalności danych i modelu zarządzania.
+
+## Najczęstsze błędy pamięci
+
+- wyciek pamięci — utrata ostatniego wskaźnika do zaalokowanego bloku,
+- use-after-free — użycie obiektu po zakończeniu jego czasu życia,
+- double free / double delete — podwójne zwolnienie,
+- dangling pointer — wskaźnik do obiektu, który już nie istnieje,
+- stack overflow — wyczerpanie stosu, np. przez bardzo głęboką rekursję,
+- przekroczenie granic bufora.
+
+Do wykrywania takich błędów warto używać m.in. AddressSanitizer:
+
+```bash
+g++ -fsanitize=address,undefined -g program.cpp -o program
+```
+
+## Podsumowanie
+
+W C programista często jawnie zarządza pamięcią dynamiczną przez `malloc/free`.
+
+W nowoczesnym C++ preferowany model to:
+
+1. obiekty o automatycznym czasie życia,
+2. kontenery standardowe, np. `std::vector` i `std::string`,
+3. inteligentne wskaźniki, gdy potrzebna jest dynamiczna własność,
+4. surowe `new/delete` tylko tam, gdzie naprawdę są potrzebne.
+
+Najważniejsze pytanie brzmi nie „stos czy sterta?”, lecz: **kto jest właścicielem zasobu i kiedy kończy się jego czas życia?**
