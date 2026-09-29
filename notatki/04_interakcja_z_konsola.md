@@ -1,283 +1,241 @@
-## Interakcja z konsolą
+# Interakcja z konsolą
 
-Interakcja z konsolą jest kluczowym mechanizmem, który pozwala programowi na komunikację z użytkownikiem. Dzięki niej można wyświetlać informacje oraz odbierać dane wprowadzane przez użytkownika. Podczas uruchomienia programu, system operacyjny dostarcza trzy główne strumienie:
+Program często musi pokazać użytkownikowi wynik albo poprosić go o dane. Konsola jest jednym ze sposobów takiej komunikacji. Warto myśleć o niej jak o dwóch kierunkach przepływu informacji: program wysyła tekst na zewnątrz, a dane wpisane przez użytkownika trafiają do programu.
 
-- `stdin` - strumień wejściowy, skąd program odczytuje dane,
-- `stdout` - strumień wyjściowy, gdzie program wypisuje dane,
-- `stderr` - strumień błędów, służący do komunikatów o błędach.
+System udostępnia programowi trzy standardowe strumienie:
 
-### W języku C
+- `stdin` — standardowe wejście; zwykle znaki wpisane przez użytkownika;
+- `stdout` — standardowe wyjście; zwykłe komunikaty programu;
+- `stderr` — wyjście przeznaczone na błędy i ostrzeżenia.
 
-W języku C do interakcji z konsolą używamy funkcji z biblioteki `stdio.h`. Najczęściej są to `printf` (do wypisywania) oraz `scanf` (do odczytu).
+Strumienie mogą być powiązane z terminalem, ale mogą też zostać przekierowane, na przykład do pliku. Dzięki temu program nie musi wiedzieć, czy jego wynik ogląda człowiek, czy zapisuje go inne narzędzie.
 
-#### Specyfikatory formatu dla `printf` i `scanf`
+## Wejście i wyjście w C
 
-| Specyfikator formatu | Typ danych          | Opis                                        |
-|----------------------|---------------------|---------------------------------------------|
-| `%d`                 | int                 | Całkowita liczba ze znakiem                 |
-| `%u`                 | unsigned int        | Całkowita liczba bez znaku                  |
-| `%ld`                | long                | Całkowita liczba długa ze znakiem           |
-| `%lu`                | unsigned long       | Całkowita liczba długa bez znaku            |
-| `%lld`               | long long           | Całkowita liczba długa długa ze znakiem     |
-| `%llu`               | unsigned long long  | Całkowita liczba długa długa bez znaku      |
-| `%f`                 | float               | Liczba zmiennoprzecinkowa                   |
-| `%lf`                | double              | Liczba zmiennoprzecinkowa podwójnej precyzji|
-| `%Lf`                | long double         | Liczba zmiennoprzecinkowa z długą precyzją  |
-| `%c`                 | char                | Znak                                        |
-| `%s`                 | char*               | Łańcuch znaków                              |
-| `%p`                 | void*               | Adres wskaźnika                             |
+W C funkcje obsługujące standardowe wejście i wyjście są zadeklarowane w nagłówku `<stdio.h>`. Najczęściej na początku nauki spotkasz `printf` do wypisywania i `scanf` do odczytywania.
 
-#### Funkcje wejścia/wyjścia
+### Wypisywanie wartości przez `printf`
 
-##### `printf`
-
-Funkcja `printf` służy do wyświetlania danych na standardowym wyjściu. Może ona przyjmować różne specyfikatory formatu, które określają sposób wyświetlania danych. Przykłady użycia:
+`printf` składa tekst z dwóch części: zwykłych znaków oraz specyfikatorów formatu, takich jak `%d`. Każdy specyfikator mówi, jak wypisać odpowiadający mu argument.
 
 ```c
 #include <stdio.h>
 
-int main() {
-    int liczba = 10;
-    float liczbaZmiennoprzecinkowa = 3.14;
+int main(void) {
+    int liczba = 12;
+    double cena = 3.5;
     char znak = 'A';
-    char lancuch[] = "Hello, world!";
 
-    printf("Liczba całkowita: %d\n", liczba);
-    printf("Liczba zmiennoprzecinkowa: %.2f\n", liczbaZmiennoprzecinkowa);
-    printf("Znak: %c\n", znak);
-    printf("Łańcuch znaków: %s\n", lancuch);
-
+    printf("Liczba: %d, cena: %.2f, znak: %c\n", liczba, cena, znak);
     return 0;
 }
 ```
 
-##### `scanf`
+W tym wywołaniu `%d` zastępuje wartość `liczba`, `%.2f` wypisuje `cena` z dwiema cyframi po kropce, a `%c` wstawia znak. `\n` kończy wiersz. Specyfikatory i argumenty muszą do siebie pasować i występować w tej samej kolejności. Niezgodny typ może prowadzić do błędnego wyniku, a w C nawet do niezdefiniowanego działania programu.
 
-Funkcja `scanf` służy do odczytywania danych ze standardowego wejścia. Także używa specyfikatorów formatu do określania typu danych, które mają być odczytane. Przykład użycia:
+Najczęściej używane specyfikatory:
 
-```c
-#include <stdio.h>
+| Specyfikator | `printf` — argument | `scanf` — adres zmiennej |
+|---|---|---|
+| `%d` | `int` | `int *` |
+| `%u` | `unsigned int` | `unsigned int *` |
+| `%ld` | `long` | `long *` |
+| `%lld` | `long long` | `long long *` |
+| `%f` | `float` jest przekazywany jako `double` | `float *` |
+| `%lf` | `double` (w `printf` działa jak `%f`) | `double *` |
+| `%Lf` | `long double` | `long double *` |
+| `%c` | znak przekazany jako `int` | `char *` |
+| `%s` | tablica znaków zakończona `\0` | miejsce na tablicę znaków |
 
-int main() {
-    int liczba;
-    float liczbaZmiennoprzecinkowa;
-    char znak;
-    char lancuch[100];
+Istotna różnica dotyczy liczb zmiennoprzecinkowych: do `printf` zarówno `float`, jak i `double` wypisujemy przez `%f`; do `scanf` dla `float` używamy `%f`, a dla `double` — `%lf`.
 
-    printf("Podaj liczbę całkowitą: ");
-    scanf("%d", &liczba);
+### Odczytywanie wartości przez `scanf`
 
-    printf("Podaj liczbę zmiennoprzecinkową: ");
-    scanf("%f", &liczbaZmiennoprzecinkowa);
-
-    printf("Podaj znak: ");
-    scanf(" %c", &znak); // Spacja przed %c jest potrzebna, aby zignorować białe znaki
-
-    printf("Podaj łańcuch znaków: ");
-    scanf("%s", lancuch);
-
-    printf("Podano liczbę całkowitą: %d\n", liczba);
-    printf("Podano liczbę zmiennoprzecinkową: %.2f\n", liczbaZmiennoprzecinkowa);
-    printf("Podano znak: %c\n", znak);
-    printf("Podano łańcuch znaków: %s\n", lancuch);
-
-    return 0;
-}
-```
-
-#### Obsługa błędów
-
-Podczas pracy z wejściem i wyjściem warto obsługiwać błędy, które mogą wystąpić, na przykład w przypadku niepoprawnego formatu danych. Przykład obsługi błędów w C:
+`scanf` próbuje odczytać znaki ze standardowego wejścia i zamienić je na wskazane typy. Żeby funkcja mogła zapisać wynik do zmiennej, dla zwykłych zmiennych przekazujemy jej adres, zapisany operatorem `&`.
 
 ```c
 #include <stdio.h>
 
-int main() {
-    int liczba;
+int main(void) {
+    int wiek;
+    double wzrost;
+    char pierwszaLitera;
+    char miasto[50];
 
-    printf("Podaj liczbę: ");
-    if (scanf("%d", &liczba) != 1) {
-        fprintf(stderr, "Błąd: nieprawidłowy format liczby.\n");
+    printf("Podaj wiek: ");
+    if (scanf("%d", &wiek) != 1) {
+        fprintf(stderr, "Nie udało się odczytać wieku.\n");
         return 1;
     }
 
-    printf("Podałeś liczbę: %d\n", liczba);
+    printf("Podaj wzrost w metrach: ");
+    if (scanf("%lf", &wzrost) != 1) {
+        fprintf(stderr, "Nie udało się odczytać wzrostu.\n");
+        return 1;
+    }
+
+    printf("Podaj pierwszą literę imienia: ");
+    if (scanf(" %c", &pierwszaLitera) != 1) {
+        fprintf(stderr, "Nie udało się odczytać znaku.\n");
+        return 1;
+    }
+
+    printf("Podaj nazwę miasta bez spacji: ");
+    if (scanf("%49s", miasto) != 1) {
+        fprintf(stderr, "Nie udało się odczytać nazwy miasta.\n");
+        return 1;
+    }
+
+    printf("Wiek: %d, wzrost: %.2f m, litera: %c, miasto: %s\n",
+           wiek, wzrost, pierwszaLitera, miasto);
     return 0;
 }
 ```
 
-#### Przykład zaawansowanego programu
+Załóżmy, że użytkownik wpisze kolejno `20`, `1.75`, `A` i `Krakow`. Wywołanie `scanf("%d", &wiek)` odczyta pierwszą liczbę i zapisze ją pod adresem zmiennej `wiek`. Kolejne wywołania wypełnią pozostałe zmienne. Funkcja zwraca liczbę poprawnie odczytanych wartości — dlatego sprawdzenie `!= 1` wykrywa sytuację, w której konwersja jednej wartości się nie udała.
 
-Poniżej znajduje się bardziej zaawansowany przykład, który ilustruje użycie różnych typów danych oraz bardziej rozbudowanej logiki:
+W nazwie tablicy `miasto` nie ma `&`: w tym wywołaniu nazwa tablicy przekazuje adres jej pierwszego elementu. Szerokość `%49s` ogranicza zapis do 49 znaków, zostawiając miejsce na końcowy znak `\0` w tablicy o rozmiarze 50. `%s` kończy odczyt na pierwszym białym znaku, więc ta wersja nie wczyta nazwy zawierającej spacje.
+
+Spacja przed `%c` jest celowa. Po wcześniejszym wpisaniu liczby w strumieniu zwykle zostaje znak końca wiersza. Samo `%c` odczytałoby ten znak, a format `" %c"` najpierw pomija białe znaki, a potem pobiera właściwy znak.
+
+### Odczytywanie całego wiersza w C
+
+Jeśli tekst może zawierać spacje, samo `%s` nie wystarczy. Do wczytania wiersza można użyć `fgets`. Funkcja zapisuje w buforze najwyżej `rozmiar - 1` znaków i dodaje końcowe `\0`.
 
 ```c
 #include <stdio.h>
 #include <string.h>
 
-int main() {
-    char imie[50];
-    int wiek;
-    float wzrost;
-    char kraj[50];
+int main(void) {
+    char imie[100];
 
-    printf("Podaj swoje imię: ");
+    printf("Podaj imię i nazwisko: ");
+    if (fgets(imie, sizeof imie, stdin) == NULL) {
+        fprintf(stderr, "Nie udało się odczytać tekstu.\n");
+        return 1;
+    }
+
+    imie[strcspn(imie, "\n")] = '\0';
+    printf("Witaj, %s!\n", imie);
+    return 0;
+}
 ```
 
-### W języku C++
+`fgets` może zapisać również znak nowego wiersza, jeśli zmieści się w buforze. `strcspn` znajduje jego pozycję, a przypisanie `\0` usuwa go z tekstu. Jeśli wiersz jest dłuższy niż bufor, odczytany zostanie tylko jego początek; większy lub dowolnie długi tekst wymaga dodatkowej obsługi.
 
-W języku C++ do komunikacji z konsolą używamy biblioteki `iostream`. Dostarcza ona obiekty takie jak `cin`, `cout`, `cerr`, `clog` oraz funkcje takie jak `getline`.
+### Dlaczego warto sprawdzać wynik odczytu
 
-#### Podstawowe operacje
+Zmienne lokalne, którym nie przypisano wartości, nie zawierają bezpiecznej wartości domyślnej. Jeżeli odczyt się nie powiedzie, a program mimo to użyje takiej zmiennej, wynik może być błędny. `scanf` zwraca liczbę poprawnych konwersji, a `fgets` zwraca `NULL`, gdy nie udało się odczytać wiersza. Sprawdź te wyniki przed dalszym użyciem danych.
 
-- `cout` z operatorem `<<` służy do wypisywania na standardowe wyjście.
-- `cin` z operatorem `>>` wczytuje pojedynczą wartość ze standardowego wejścia.
-- `getline(cin, string)` pozwala wczytać cały wiersz tekstu, łącznie ze spacjami.
+Gdy `scanf` nie potrafi zamienić tekstu na oczekiwany typ, błędny fragment zwykle pozostaje w strumieniu. Samo ponowne wywołanie `scanf` może wtedy natrafić na ten sam fragment. Powyższe krótkie programy kończą działanie po błędzie; program, który ma ponawiać pytanie, musi dodatkowo usunąć błędny wiersz i dopiero wtedy poprosić o dane ponownie.
 
-#### Przykład podstawowy
+## Wejście i wyjście w C++
+
+W C++ do standardowej obsługi wejścia i wyjścia służy nagłówek `<iostream>`. Wypisujemy przez `std::cout`, odczytujemy przez `std::cin`, a komunikaty o błędach kierujemy zwykle do `std::cerr`. Przed nazwami umieszczamy `std::`, ponieważ te obiekty należą do przestrzeni nazw `std`.
+
+Operator `<<` przekazuje wartość do strumienia wyjściowego. Operator `>>` pobiera wartość ze strumienia wejściowego i próbuje zapisać ją w zmiennej. Typ zmiennej określa, jaką wartość ma odczytać.
 
 ```cpp
 #include <iostream>
 #include <string>
 
-using namespace std;
-
 int main() {
-    string imie;
+    std::string imie;
     int wiek;
     double wzrost;
 
-    cout << "Podaj swoje imię: ";
-    getline(cin, imie);
-
-    cout << "Podaj swój wiek: ";
-    cin >> wiek;
-
-    cout << "Podaj swój wzrost (w metrach): ";
-    cin >> wzrost;
-
-    cout << "Twoje imię to " << imie << ", masz " << wiek << " lat i masz " << wzrost << " metra wzrostu." << endl;
-
-    return 0;
-}
-```
-
-W powyższym przykładzie program prosi użytkownika o podanie imienia, wieku i wzrostu, a następnie wyświetla te informacje. Dzięki `getline(cin, imie)`, możemy wczytać pełne imię wraz ze spacjami.
-
-#### Obsługa błędów
-
-Podczas pracy z wejściem i wyjściem warto również obsługiwać błędy, które mogą wystąpić, na przykład w przypadku niepoprawnego formatu danych. Poniżej znajduje się przykład obsługi błędów w C++:
-
-```cpp
-#include <iostream>
-
-using namespace std;
-
-int main() {
-    int liczba;
-
-    cout << "Podaj liczbę: ";
-    cin >> liczba;
-
-    if (cin.fail()) {
-        cerr << "Błąd: nieprawidłowy format liczby." << endl;
+    std::cout << "Podaj imię i nazwisko: ";
+    if (!std::getline(std::cin, imie)) {
+        std::cerr << "Nie udało się odczytać imienia.\n";
         return 1;
     }
 
-    cout << "Podałeś liczbę: " << liczba << endl;
+    std::cout << "Podaj wiek: ";
+    if (!(std::cin >> wiek)) {
+        std::cerr << "Wiek musi być liczbą całkowitą.\n";
+        return 1;
+    }
+
+    std::cout << "Podaj wzrost w metrach: ";
+    if (!(std::cin >> wzrost)) {
+        std::cerr << "Wzrost musi być liczbą.\n";
+        return 1;
+    }
+
+    std::cout << imie << ", wiek: " << wiek
+              << ", wzrost: " << wzrost << " m\n";
     return 0;
 }
 ```
 
-W tym przykładzie, jeśli użytkownik poda nieprawidłowy format danych, program wyświetli komunikat o błędzie i zakończy działanie.
+`std::getline(std::cin, imie)` odczytuje cały wiersz, więc imię i nazwisko mogą zawierać spację. Z kolei `std::cin >> wiek` pomija początkowe białe znaki i odczytuje wartość pasującą do typu `int`. W wyrażeniu `if (!(std::cin >> wiek))` program najpierw próbuje odczytać liczbę, a następnie sprawdza, czy operacja się powiodła. Jeśli użytkownik wpisze na przykład słowo zamiast liczby, program wypisze błąd na `std::cerr` i zakończy działanie.
 
-#### Użycie manipulacji wejścia/wyjścia
+### Różnica między `>>` a `getline`
 
-Biblioteka `iomanip` dostarcza manipulatory, które pozwalają formatować wyjście:
+Operator `>>` jest wygodny dla pojedynczych wartości i słów, ale zatrzymuje odczyt tekstu na białym znaku. `std::getline` pobiera cały wiersz aż do znaku nowego wiersza. Połączenie tych metod wymaga uwagi: po `std::cin >> wiek` znak końca wiersza pozostaje w strumieniu. Bez jego pominięcia następujące `getline` może od razu odczytać pusty tekst.
+
+```cpp
+#include <iostream>
+#include <limits>
+#include <string>
+
+int main() {
+    int wiek;
+    std::string imie;
+
+    std::cout << "Podaj wiek: ";
+    if (!(std::cin >> wiek)) {
+        std::cerr << "Wiek musi być liczbą całkowitą.\n";
+        return 1;
+    }
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    std::cout << "Podaj imię i nazwisko: ";
+    std::getline(std::cin, imie);
+
+    std::cout << "Witaj, " << imie << "!\n";
+    return 0;
+}
+```
+
+`ignore` odrzuca znaki aż do końca bieżącego wiersza. `<limits>` jest potrzebny do użycia `std::numeric_limits<std::streamsize>::max()`, czyli maksymalnej liczby znaków, które chcemy pominąć. Nie jest to ogólna metoda „czyszczenia bufora” po każdym wejściu — przydaje się konkretnie wtedy, gdy po odczycie wartości przez `>>` chcemy przejść do odczytu kolejnego wiersza.
+
+### Formatowanie liczb
+
+Nagłówek `<iomanip>` udostępnia manipulatory formatujące. `std::fixed` wybiera zapis dziesiętny o stałej liczbie cyfr po kropce, a `std::setprecision(2)` w tym trybie ustawia dwie cyfry po kropce.
 
 ```cpp
 #include <iostream>
 #include <iomanip>
 
-using namespace std;
-
 int main() {
-    double liczba = 123.456789;
+    double cena = 12.5;
 
-    cout << "Domyślne wyjście: " << liczba << endl;
-    cout << "Wyjście zaokrąglone do 2 miejsc po przecinku: " << fixed << setprecision(2) << liczba << endl;
-    cout << "Wyjście w formacie naukowym: " << scientific << liczba << endl;
-
+    std::cout << "Domyślnie: " << cena << '\n';
+    std::cout << "Do dwóch miejsc: "
+              << std::fixed << std::setprecision(2) << cena << '\n';
     return 0;
 }
 ```
 
-#### Obsługa wejścia z buforowaniem
+Manipulatory takie jak `std::fixed` pozostają aktywne dla kolejnych wartości wypisywanych do tego samego strumienia. Jeśli później potrzebujesz innego formatu, ustaw go jawnie.
 
-Można również używać `cin.sync()` oraz `cin.ignore()`, aby radzić sobie z problemami buforowania wejścia:
+## Co jest wspólne, a co różni C i C++?
+
+Oba języki korzystają ze standardowych strumieni wejścia i wyjścia, ale udostępniają inne podstawowe interfejsy. W C typ i sposób zapisu danych określamy specyfikatorem formatu funkcji `printf` lub `scanf`. W C++ operatory strumieniowe dobierają obsługę do typu wartości, a tekst wygodnie przechowujemy w `std::string`. Nie mieszaj tych interfejsów bez konkretnego powodu — łatwiej wtedy zrozumieć, skąd pochodzą dane i jak są formatowane.
+
+## Kolorowanie tekstu — temat dodatkowy
+
+Niektóre terminale rozpoznają kody ANSI. Poniższy kod prosi terminal o czerwony tekst, a następnie przywraca domyślny styl:
 
 ```cpp
 #include <iostream>
-#include <string>
-
-using namespace std;
 
 int main() {
-    string imie;
-    int wiek;
-
-    cout << "Podaj swój wiek: ";
-    cin >> wiek;
-
-    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignoruje pozostałe znaki w buforze
-
-    cout << "Podaj swoje imię: ";
-    getline(cin, imie);
-
-    cout << "Twoje imię to " << imie << ", masz " << wiek << " lat." << endl;
-
+    std::cout << "\033[1;31mCzerwony tekst\033[0m\n";
     return 0;
 }
 ```
 
-#### Kolorowanie tekstu w konsoli
-
-Kolorowanie tekstu w konsoli można zrealizować za pomocą kodów ANSI (na systemach uniksowych) lub funkcji konsolowych systemu Windows.
-
-##### Przykład użycia kodów ANSI (Linux/Unix)
-
-```c++
-#include <iostream>
-
-using namespace std;
-
-int main() {
-    cout << "\033[1;31m"; // Ustawienie koloru na czerwony
-    cout << "Czerwony tekst" << endl;
-    cout << "\033[0m";    // Resetowanie koloru
-
-    return 0;
-}
-```
-
-##### Przykład kolorowania w systemie Windows
-
-```c++
-#include <iostream>
-#include <windows.h>
-
-using namespace std;
-
-int main() {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
-    SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
-    cout << "Czerwony tekst" << endl;
-
-    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-    cout << "Domyślny kolor" << endl;
-
-    return 0;
-}
-```
-
-W powyższych przykładach pokazano, jak zmieniać kolor tekstu w konsoli, co może być użyteczne do wyróżniania komunikatów lub interfejsów użytkownika.
+Obsługa kodów zależy od terminala i systemu. Na Windows istnieje też systemowe API (nagłówek `<windows.h>`), ale jest ono specyficzne dla tej platformy. Kolor nie należy do podstawowej obsługi wejścia i wyjścia — program powinien pozostać zrozumiały również wtedy, gdy terminal nie obsługuje kolorów.

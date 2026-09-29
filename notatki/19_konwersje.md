@@ -1,418 +1,258 @@
-## Konwersje
+# Konwersje i rzutowania
 
-Konwersje typów danych są kluczowym elementem programowania zarówno w języku C, jak i C++. Pozwalają na przekształcanie wartości jednego typu na inny, co jest niezbędne w wielu sytuacjach, takich jak operacje arytmetyczne między różnymi typami, interakcja z funkcjami bibliotecznymi czy manipulacja danymi na niskim poziomie. Chociaż podstawowe mechanizmy konwersji są dostępne w obu językach, C++ wprowadza bardziej zaawansowane i bezpieczne narzędzia. Zrozumienie różnic między konwersjami w C i C++ oraz umiejętne ich stosowanie jest kluczowe dla pisania efektywnego i bezpiecznego kodu.
+Program często łączy wartości różnych typów: dzieli liczbę całkowitą przez zmiennoprzecinkową, przekazuje wskaźnik do funkcji albo zamienia obiekt jednego rodzaju na drugi. **Konwersja** to zmiana wartości lub sposobu, w jaki program może z niej korzystać, na inny typ. Może wykonać się niejawnie albo na nasze jawne żądanie.
 
-### Rzutowanie w C
+Słowo **rzutowanie** zwykle oznacza jawną składnię, na przykład `(double)x` w C albo `static_cast<double>(x)` w C++. Rzutowanie mówi kompilatorowi, jaką konwersję próbujemy wykonać; nie sprawia samo z siebie, że konwersja jest poprawna, bezstratna albo bezpieczna. To szczególnie ważne przy wskaźnikach. W notatkach o wskaźnikach i przeciążaniu funkcji pojawiają się podobne pytania: jaki typ ma wyrażenie i którą wersję funkcji kompilator wybierze.
 
-Rzutowanie w języku C jest mechanizmem pozwalającym na jawne przekształcenie jednej wartości na inny typ danych. Jest to szczególnie przydatne, gdy chcemy wymusić określone zachowanie kompilatora lub gdy pracujemy z interfejsami wymagającymi konkretnych typów danych. Jednak niewłaściwe użycie rzutowania może prowadzić do nieoczekiwanych rezultatów, trudnych do wykrycia błędów oraz niezdefiniowanego zachowania programu. Dlatego ważne jest zrozumienie zasad i ograniczeń rzutowania w C.
+## Konwersje arytmetyczne w C
 
-#### Podstawowe rzutowanie
-
-Podstawowe rzutowanie w C pozwala na konwersję między typami arytmetycznymi, takimi jak `int`, `float`, `double`, `char` itp. Rzutowanie może być wykorzystywane do:
-
-- Konwersji między typami całkowitymi i zmiennoprzecinkowymi, np. z `int` na `double`.
-- Zmiany rozmiaru typu, np. z `int` na `short`.
-- Wymuszenia określonego typu w operacjach arytmetycznych, aby uniknąć automatycznej promocji typów.
-
-Ogólny schemat rzutowania:
+Rzutowanie w stylu C ma postać `(typ_docelowy)wyrażenie`. Najpierw obliczane jest wyrażenie, następnie jego wartość zostaje przekonwertowana na wskazany typ.
 
 ```c
-(typ_docelowy)wartość;
+int liczba = 10;
+double szersza = (double)liczba;
+
+double pomiar = 3.75;
+int calkowita = (int)pomiar;  // 3
 ```
 
-**Przykład rzutowania zmiennej typu `int` na `double`:**
+W pierwszym przypadku wartość `10` jest reprezentowana jako `double`, a zmienna `liczba` nadal ma typ `int`. Zwykłe wartości całkowite dają się dokładnie przedstawić jako `double`, ale typ zmiennoprzecinkowy nie musi dokładnie reprezentować każdej możliwej dużej liczby całkowitej — przy konwersji może wtedy zniknąć część precyzji. W drugim przykładzie część ułamkowa zostaje odrzucona: konwersja obcina w kierunku zera, więc `(int)-3.75` daje `-3`, a nie `-4`. Jeśli część całkowita wyniku nie mieści się w typie docelowym, zachowanie jest niezdefiniowane. Nie używaj więc rzutowania jako sposobu sprawdzania, czy liczba mieści się w typie.
+
+### Typ wyrażenia ma znaczenie
+
+Rzutowanie może zmienić wynik całego wyrażenia, jeśli wykonamy je przed operacją. Dzielenie dwóch liczb całkowitych jest całkowite:
 
 ```c
-int a = 10;
-double b = (double)a;
+int a = 7;
+int b = 2;
+
+double wynik1 = a / b;          // Najpierw int: 7 / 2 daje 3, potem 3 staje się 3.0
+double wynik2 = (double)a / b;  // a staje się double; b też jest konwertowane do double
+                                // dzielenie daje 3.5
 ```
 
-W tym przypadku wartość zmiennej `a` jest konwertowana na typ `double` i przypisywana do zmiennej `b`. Ponieważ konwersja z `int` na `double` jest poszerzająca (ang. *widening conversion*), nie występuje utrata danych.
+Przypisanie wyniku do `double` nie zmienia wstecz typu operacji. Jeśli chcemy dzielenia zmiennoprzecinkowego, co najmniej jeden operand musi mieć taki typ już w chwili dzielenia.
 
-**Przykład rzutowania z utratą danych:**
+Przed obliczeniem kompilator stosuje też **promocje całkowitoliczbowe**. Na przykład `unsigned char` o wartości `250` jest zwykle promowany do `int`, bo `int` może reprezentować wszystkie wartości tego typu:
 
 ```c
-double x = 3.14159;
-int y = (int)x;  // y będzie równe 3
+unsigned char x = 250;
+unsigned char y = 10;
+int suma = x + y;  // Oba argumenty są promowane do int; suma wynosi 260
 ```
 
-Tutaj część ułamkowa liczby `x` zostaje odrzucona, co może prowadzić do błędów, jeśli nie jest to zamierzone działanie.
+Promocja dotyczy wartości użytej w wyrażeniu, nie zmienia deklarowanego typu zmiennej `x` ani `y`. Po promocjach **zwykłe konwersje arytmetyczne** ustalają wspólny typ operandów. Przy typach zmiennoprzecinkowych słabszy typ, np. `float`, może zostać podniesiony do `double`; przy mieszaniu typów całkowitych ze znakiem i bez znaku wynik zależy od ich rang i zakresów. Konwersja do typu całkowitego o mniejszym zakresie może utracić informację. Reguły wyniku poza zakresem typu ze znakiem różnią się między językami i wersjami standardu, dlatego najpierw sprawdź zakres, jeśli ma on znaczenie.
 
-##### Zasady konwersji arytmetycznych
+Mieszanie `signed` i `unsigned` jest częstym źródłem zaskoczeń:
 
-- Typy takie jak `char` i `short` są automatycznie promowane do `int` podczas operacji arytmetycznych.
-- W operacjach mieszanych typ całkowity jest konwertowany na zmiennoprzecinkowy.
-- W operacjach z udziałem różnych typów zmiennoprzecinkowych (`float`, `double`, `long double`), niższy typ jest konwertowany na wyższy.
+```c
+int s = -1;
+unsigned int u = 1;
 
-##### Potencjalne problemy
+/* int i unsigned int mają tę samą rangę.
+   s zostaje przekonwertowane do unsigned int, a -1 daje UINT_MAX.
+   Dlatego porównanie s < u jest fałszywe. */
+if (s < u) {
+    /* ... */
+}
+```
 
-- Rzutowanie z typu o większym zakresie do typu o mniejszym zakresie może prowadzić do utraty danych.
-- Przy konwersjach między typami o różnych zakresach wartości może dojść do przepełnienia lub niedomiaru, co skutkuje niezdefiniowanym zachowaniem.
-- Rzutowanie między typami ze znakiem i bez znaku (`signed` i `unsigned`) może prowadzić do nieoczekiwanych wyników.
+Konwersja liczby całkowitej do typu bez znaku jest określona modulo `UINT_MAX + 1` dla `unsigned int` (analogicznie dla innego typu bez znaku). To zawijanie wartości, a nie sygnał błędu. Przepełnienie arytmetyczne typu ze znakiem nie ma takiej gwarancji i w C prowadzi do niezdefiniowanego zachowania. Jeżeli zakres wartości ma znaczenie, sprawdź go przed obliczeniem i nie polegaj na rzutowaniu ani na mieszaniu znaków.
 
-**Zalecenia:**
+## Wskaźniki w C
 
-- Zawsze analizuj, czy rzutowanie jest bezpieczne i nie prowadzi do utraty istotnych informacji.
-- Unikaj niejawnych konwersji między typami o różnych zakresach i precyzji.
-- W razie wątpliwości korzystaj z jawnego rzutowania, aby zaznaczyć intencje.
+Rzutowanie wskaźnika zmienia typ, pod którym program próbuje używać adresu. Nie konwertuje obiektu na nowy typ i nie przekształca automatycznie jego bajtów.
 
-#### Rzutowanie wskaźników
-
-Rzutowanie wskaźników w C jest bardziej złożone i niesie ze sobą większe ryzyko błędów. Wskaźniki reprezentują adresy w pamięci, a nieprawidłowe ich użycie może prowadzić do naruszenia pamięci (ang. *segmentation fault*) lub innych poważnych błędów.
-
-W języku C istnieje wskaźnik typu `void *`, który jest ogólnym wskaźnikiem mogącym przechowywać adres dowolnego typu danych. Jest on często używany w funkcjach biblioteki standardowej, takich jak `malloc()`, `qsort()`, `bsearch()`, gdzie typ danych jest nieznany lub może się różnić.
-
-##### Przykład użycia wskaźnika `void *`:
+W C wynik `malloc` ma typ `void *`. Taki wskaźnik można przypisać do wskaźnika na obiekt bez rzutowania:
 
 ```c
 #include <stdio.h>
 #include <stdlib.h>
 
-int main() {
-    void *ptr = malloc(sizeof(int));  // Alokacja pamięci dla typu int
-    if (ptr == NULL) {
+int main(void) {
+    int *liczba = malloc(sizeof *liczba);
+    if (liczba == NULL) {
         perror("malloc");
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
 
-    int *int_ptr = (int *)ptr;  // Rzutowanie wskaźnika void* na int*
-    *int_ptr = 42;
-    printf("Wartość: %d\n", *int_ptr);
-
-    free(ptr);  // Zwolnienie pamięci
+    *liczba = 42;
+    printf("%d\n", *liczba);
+    free(liczba);
     return 0;
 }
 ```
 
-W powyższym przykładzie:
+Zapis `sizeof *liczba` wiąże ilość pamięci z typem wskazywanym przez `liczba`; dzięki temu zmiana typu wskaźnika nie wymaga ręcznej zmiany liczby w `sizeof`. W C rzutowanie wyniku `malloc` jest zbędne i może ukryć brak deklaracji tej funkcji. W C++ `void *` nie konwertuje się niejawnie do `int *`, a pamięć dla obiektów zwykle uzyskuje się przez typowane narzędzia języka, nie przez kopiowanie tego idiomu C.
 
-- Funkcja `malloc()` zwraca wskaźnik typu `void *`.
-- Rzutujemy go na `int *`, aby móc pracować z nim jako ze wskaźnikiem na `int`.
-- Przypisujemy wartość do zaalokowanej pamięci i wyświetlamy ją.
-
-##### Niebezpieczeństwa związane z rzutowaniem wskaźników
-
-- Rzutowanie wskaźnika na nieodpowiedni typ może prowadzić do odczytywania lub zapisywania nieprawidłowych danych.
-- Niektóre architektury wymagają, aby dane były wyrównane do określonych granic pamięci. Rzutowanie wskaźnika na typ o innym wymaganym wyrównaniu może prowadzić do błędów.
-- Kompilatory zakładają, że wskaźniki różnego typu nie wskazują na ten sam obszar pamięci. Naruszenie tej zasady może prowadzić do niezdefiniowanego zachowania.
-
-**Przykład błędnego rzutowania wskaźników:**
+Nie rób tego:
 
 ```c
-float f = 3.14f;
-int *int_ptr = (int *)&f;
-printf("Wartość int: %d\n", *int_ptr);
+float pomiar = 3.14f;
+int *adres = (int *)&pomiar;
+printf("%d\n", *adres);  // Niepoprawny odczyt przez niezgodny typ
 ```
 
-Tutaj interpretujemy bajty reprezentujące liczbę zmiennoprzecinkową jako liczbę całkowitą, co zazwyczaj nie ma sensu i może prowadzić do nieprzewidywalnych wyników.
+`adres` ma typ `int *`, ale wskazuje na obiekt typu `float`. Odczyt przez taki wskaźnik może naruszać wyrównanie, efektywny typ i reguły aliasowania. W rezultacie program może działać inaczej po zmianie kompilatora lub opcji optymalizacji. Jeśli potrzebujesz obejrzeć reprezentację obiektu bajt po bajcie, w C użyj wskaźnika do `unsigned char` i pamiętaj, że otrzymane bajty zależą od reprezentacji używanej przez maszynę. Jeśli potrzebujesz przenośnego zapisu danych, zdefiniuj format zamiast kopiować surowe bajty obiektu.
 
-##### Bezpieczne praktyki
+## Jawne operatory konwersji w C++
 
-- Jeśli to możliwe, trzymaj się oryginalnych typów.
-- Upewnij się, że rzutowane wskaźniki spełniają wymagania wyrównania dla docelowego typu.
-- Korzystaj z `void *` ostrożnie**, używaj go tylko wtedy, gdy jest to konieczne i zawsze rzutuj z powrotem na właściwy typ przed użyciem.
+C++ ma kilka operatorów rzutowania. Ich nazwy ułatwiają rozpoznanie intencji i wyszukiwanie ryzykownych miejsc w kodzie. Nie są one „bezpiecznymi wersjami” rzutowania: każdy pozwala wykonać określoną operację, której warunki nadal muszą być spełnione.
 
-### Konwersja w C++
+### `static_cast`
 
-Język C++ wprowadza bardziej zaawansowane mechanizmy konwersji, które mają na celu zwiększenie bezpieczeństwa i czytelności kodu. W przeciwieństwie do C, gdzie rzutowanie jest proste, ale potencjalnie niebezpieczne, C++ oferuje zestaw operatorów rzutowania, które są bardziej restrykcyjne i precyzyjne w swoim działaniu. Pozwalają one na wyraźne określenie intencji programisty i redukują ryzyko błędów wynikających z niejawnych lub niezamierzonych konwersji.
+Używaj `static_cast` dla zwykłych konwersji arytmetycznych i konwersji w hierarchii klas, których poprawność wynika z wiedzy o programie.
 
-#### static_cast
+```cpp
+int liczba = 10;
+double pomiar = static_cast<double>(liczba);  // 10.0
+double ulamek = 3.75;
+int obciety = static_cast<int>(ulamek);       // 3; konwersja obcina część ułamkową
 
-`static_cast` jest jednym z operatorów konwersji w C++, służącym do przeprowadzania konwersji między typami, których konwersja jest znana i sprawdzana w czasie kompilacji. Jest to najbardziej ogólny i najczęściej używany operator rzutowania w C++. Pozwala na:
+struct Baza {
+    virtual ~Baza() = default;
+};
+struct Pochodna : Baza {};
 
-- Konwersje między typami arytmetycznymi, np. z `int` na `double` i odwrotnie.
-- Rzutowanie wskaźników w hierarchii dziedziczenia klas, upcasting i downcasting bez kontroli bezpieczeństwa w czasie wykonania.
-- Konwersje między typami wskaźników i referencji, pod warunkiem, że istnieje odpowiednia ścieżka konwersji.
-
-**Przykłady:**
-
-I. **Konwersja między typami arytmetycznymi:**
-
-```c++
-int i = 42;
-double d = static_cast<double>(i);  // d = 42.0
+Pochodna obiekt;
+Baza *baza = &obiekt;
+Pochodna *pochodna = static_cast<Pochodna *>(baza);  // Poprawne: obiekt jest Pochodna
 ```
 
-II. **Upcasting w hierarchii klas:**
+Konwersja w górę z `Pochodna *` do `Baza *` jest bezpieczna i zwykle zachodzi niejawnie. Konwersja arytmetyczna `static_cast<int>(3.75)` również obcina część ułamkową; nie sprawdza, czy wynik zachowa potrzebną precyzję ani czy konwersja zmieści się w typie. Konwersja w dół za pomocą `static_cast` nie sprawdza typu obiektu. Jej warunkiem jest to, że wskaźnik bazowy rzeczywiście wskazuje na podobiekt `Baza` wewnątrz obiektu `Pochodna`. Jeśli nie:
 
-```c++
-class Base {};
-class Derived : public Base {};
-
-Derived *d = new Derived();
-Base *b = static_cast<Base *>(d);  // Bezpieczne - upcasting
+```cpp
+Baza tylkoBaza;
+Baza *b = &tylkoBaza;
+Pochodna *p = static_cast<Pochodna *>(b);  // Niezdefiniowane zachowanie
 ```
 
-III. **Downcasting (niezalecane z `static_cast`):**
+Kompilator może zaakceptować ten zapis, ale obiekt `tylkoBaza` nie zawiera części `Pochodna`. Nie dereferencjonuj takiego wskaźnika. Gdy rzeczywisty typ nie jest znany, w hierarchii polimorficznej użyj `dynamic_cast` albo zaprojektuj interfejs tak, by nie trzeba było rozpoznawać typu pochodnego.
 
-```c++
-Base *b = new Derived();
-Derived *d = static_cast<Derived *>(b);  // Niebezpieczne - brak kontroli w czasie wykonania
+`static_cast` nie usuwa `const` ani `volatile` i nie pozwala na dowolne rzutowanie między niepowiązanymi typami wskaźników.
+
+### `dynamic_cast`
+
+`dynamic_cast` sprawdza w czasie działania, czy wskaźnik lub referencja wskazuje na obiekt żądanego typu. Przy konwersji w dół lub w poprzek hierarchii klasa źródłowa musi być polimorficzna, czyli mieć co najmniej jedną funkcję wirtualną. Najczęściej rolę tę spełnia wirtualny destruktor.
+
+```cpp
+struct Baza {
+    virtual ~Baza() = default;
+};
+struct Pochodna : Baza {
+    void wykonaj() {}
+};
+struct Inna : Baza {};
+
+Inna innyObiekt;
+Baza *baza = &innyObiekt;
+
+if (Pochodna *p = dynamic_cast<Pochodna *>(baza)) {
+    p->wykonaj();  // Ta gałąź wykonałaby się tylko dla rzeczywistego obiektu Pochodna
+} else {
+    // Rzutowanie wskaźnika nie powiodło się: wynik to nullptr
+}
 ```
 
-W powyższym przykładzie, jeśli `b` nie wskazuje na obiekt typu `Derived`, wynik może być niezdefiniowany. Dlatego do downcastingu zaleca się używanie `dynamic_cast`.
+Tutaj `baza` wskazuje na `Inna`, więc wynik rzutowania to `nullptr` i `wykonaj` nie jest wywołane. Przy rzutowaniu referencji nie ma wartości `nullptr`; niepowodzenie powoduje wyjątek `std::bad_cast` (deklaracja jest w `<typeinfo>`). Jeśli kod stale sprawdza typy pochodne, wiele takich kontroli może wskazywać, że lepiej dodać wirtualną operację do interfejsu `Baza`.
 
-##### Ograniczenia `static_cast`
+### `const_cast`
 
-- Nie sprawdza poprawności rzutowania podczas działania programu.
-- Nie pozwala na usuwanie kwalifikatora `const` lub `volatile`; do tego służy `const_cast`.
-- Nie można go użyć do rzutowania między wskaźnikami na niepowiązane typy.
+`const_cast` może dodać lub usunąć kwalifikator `const` albo `volatile`. Nie zmienia jednak tego, czy obiekt został pierwotnie zadeklarowany jako stały.
 
-##### Zalety `static_cast`
+```cpp
+int wartosc = 10;              // Obiekt sam w sobie nie jest const
+const int *widok = &wartosc;   // Przez ten wskaźnik nie wolno go zmieniać
+int *zapis = const_cast<int *>(widok);
+*zapis = 20;                   // Poprawne: pierwotny obiekt wartosc nie jest const
 
-- Jest bardziej bezpieczny niż tradycyjne rzutowanie w stylu C, ponieważ jest bardziej restrykcyjny.
-- Poprawia czytelność kodu, jasno wskazując intencje programisty.
-- Łatwiejszy do zlokalizowania podczas przeglądania kodu lub analiz statycznych.
+const int stala = 10;
+const int *widokStalej = &stala;
+int *blednyZapis = const_cast<int *>(widokStalej);
+// *blednyZapis = 20;          // Niezdefiniowane zachowanie
+```
 
-#### dynamic_cast
+Typowy powód użycia to stare API z parametrem `char *`, które w rzeczywistości tylko czyta tekst. Usunięcie `const` jest wtedy dopuszczalne wyłącznie, jeśli funkcja go nie modyfikuje. Lepszą naprawą jest zmiana sygnatury funkcji na `const char *`, jeśli mamy wpływ na API. Rzutowanie nie chroni przed funkcją, która jednak zapisze do przekazanej pamięci.
 
-`dynamic_cast` to operator konwersji, który służy do bezpiecznego rzutowania wskaźników i referencji w hierarchii dziedziczenia klas polimorficznych (tj. takich, które zawierają co najmniej jedną wirtualną funkcję). Poprawność tej konwersji jest sprawdzana w czasie działania programu, co oznacza, że program sprawdzi podczas wykonania, czy rzutowanie jest właściwe.
+### `reinterpret_cast`
 
-##### Zastosowanie `dynamic_cast`
+`reinterpret_cast` pozwala na określone konwersje niskopoziomowe, m.in. między niepowiązanymi typami wskaźników. Nie wykonuje konwersji wartości liczbowej tak jak `static_cast` i nie daje ogólnego pozwolenia na odczytanie wskazywanego obiektu jako innego typu.
 
-Najczęstszym zastosowaniem `dynamic_cast` jest **downcasting**, czyli rzutowanie wskaźnika lub referencji z klasy bazowej na klasę pochodną, gdy nie mamy pewności co do rzeczywistego typu obiektu.
+```cpp
+struct DaneA { int liczba; };
+struct DaneB { double liczba; };
 
-**Przykład:**
+DaneA a{42};
+DaneB *b = reinterpret_cast<DaneB *>(&a);  // Rzutowanie może być dozwolone składniowo
+// b->liczba;  // Nie wolno zakładać, że pod tym adresem istnieje obiekt DaneB
+```
 
-```c++
-#include <iostream>
-#include <typeinfo>
+Samo utworzenie takiego wskaźnika nie tworzy obiektu `DaneB`, nie zapewnia mu właściwego wyrównania ani czasu życia. Dereferencja może prowadzić do niezdefiniowanego zachowania. Do kopiowania reprezentacji typów trywialnie kopiowalnych w C++20 można rozważyć `std::bit_cast` z `<bit>`; źródło i cel muszą mieć ten sam rozmiar. `bit_cast` także nie definiuje przenośnego formatu pliku ani sieciowego — bajty reprezentacji mogą zależeć od platformy.
 
-class Base {
+Nie używaj `reinterpret_cast` tylko dlatego, że kompilator odrzuca inne rzutowanie. Najpierw ustal, jaki obiekt faktycznie znajduje się pod danym adresem i jakie reguły pamięci obowiązują.
+
+## Własne konwersje w C++
+
+Konstruktor z jednym wymaganym argumentem może pozwolić przekształcić inny typ w obiekt klasy. Bez `explicit` taka konwersja może zostać użyta niejawnie:
+
+```cpp
+class Ulamek {
 public:
-    virtual ~Base() = default;
+    Ulamek(int liczba) : licznik_(liczba), mianownik_(1) {}
+private:
+    int licznik_;
+    int mianownik_;
 };
 
-class Derived : public Base {
+Ulamek u = 5;  // Kompilator tworzy Ulamek z liczby 5
+```
+
+To zachowanie nie zawsze jest pożądane: liczba całkowita może nie być oczywistym zamiennikiem ułamka przy wyborze przeciążonej funkcji. `explicit` blokuje taką niejawną konwersję, ale pozwala jawnie utworzyć obiekt:
+
+```cpp
+class Ulamek {
 public:
-    void specificFunction() {
-        std::cout << "Funkcja specyficzna dla klasy Derived\n";
-    }
+    explicit Ulamek(int liczba) : licznik_(liczba), mianownik_(1) {}
+private:
+    int licznik_;
+    int mianownik_;
 };
 
-int main() {
-    Base *b = new Derived();
-
-    Derived *d = dynamic_cast<Derived *>(b);
-    if (d != nullptr) {
-        d->specificFunction();
-    } else {
-        std::cout << "Rzutowanie nie powiodło się.\n";
-    }
-
-    delete b;
-    return 0;
-}
+Ulamek u{5};       // Poprawne: jawna inicjalizacja
+// Ulamek v = 5;   // Błąd: wymagałoby niejawnej konwersji
 ```
 
-- Tworzymy obiekt klasy `Derived`, ale przechowujemy go we wskaźniku typu `Base *`.
-- Używamy `dynamic_cast` do sprawdzenia, czy `b` rzeczywiście wskazuje na obiekt typu `Derived`.
-- Jeśli rzutowanie się powiedzie, możemy bezpiecznie wywołać funkcje specyficzne dla `Derived`.
+Funkcja konwersji działa w przeciwną stronę — przekształca obiekt na inny typ. Dla konwersji, która nie powinna następować przypadkiem, również używaj `explicit`:
 
-##### Rzutowanie referencji
-
-Przy rzutowaniu referencji, jeśli rzutowanie się nie powiedzie, zostanie rzucony wyjątek `std::bad_cast`:
-
-```c++
-try {
-    Base &refBase = *b;
-    Derived &refDerived = dynamic_cast<Derived &>(refBase);
-    refDerived.specificFunction();
-} catch (const std::bad_cast &e) {
-    std::cout << "Rzutowanie nie powiodło się: " << e.what() << '\n';
-}
-```
-
-##### Wymagania dla `dynamic_cast`
-
-- Klasa bazowa musi zawierać przynajmniej jedną wirtualną funkcję (najczęściej jest to wirtualny destruktor).
-- Mechanizm RTTI (Run-Time Type Information) musi być włączony w kompilatorze (domyślnie jest włączony).
-
-##### Zalety i wady
-
-**Zalety**:
-
-- Zapewnia poprawność rzutowania w czasie wykonania.
-- Ułatwia pracę z hierarchiami klas polimorficznych.
-
-**Wady**:
-
-- Sprawdzanie typu w czasie wykonania może być kosztowne.
-- Nadużywanie może prowadzić do trudnego w utrzymaniu kodu.
-
-#### const_cast
-
-`const_cast` to operator rzutowania używany do dodawania lub usuwania kwalifikatorów `const` lub `volatile` z typu danych. Jest to jedyny operator rzutowania, który może zmieniać kwalifikatory typu.
-
-##### Przykłady użycia
-
-1. **Usunięcie kwalifikatora `const`:**
-
-```c++
-const int a = 10;
-int *p = const_cast<int *>(&a);
-*p = 20;  // Niezdefiniowane zachowanie!
-```
-
-Modyfikacja obiektu pierwotnie zadeklarowanego jako `const` prowadzi do niezdefiniowanego zachowania. Nawet jeśli kompilator nie zgłosi błędu, wynik może być nieprzewidywalny.
-
-2. **Bezpieczne użycie `const_cast`:**
-
-```c++
-void printMessage(char *msg) {
-   // ... przetwarzanie wiadomości
-}
-
-int main() {
-   const char *text = "Witaj świecie!";
-   printMessage(const_cast<char *>(text));
-   return 0;
-}
-```
-
-Jeśli jesteśmy pewni, że funkcja `printMessage` nie modyfikuje przekazanego tekstu, możemy bezpiecznie usunąć kwalifikator `const`. Lepszym rozwiązaniem byłoby jednak poprawienie sygnatury funkcji, aby przyjmowała `const char *`.
-
-##### Zastosowania `const_cast`
-
-- Gdy funkcje nie używają kwalifikatorów `const`, a my chcemy przekazać im stałe dane.
-- Możemy również użyć `const_cast` do dodania kwalifikatora `const`, chociaż rzadko jest to potrzebne.
-
-##### Ostrzeżenia
-
-- Modyfikacja obiektu pierwotnie zadeklarowanego jako `const` jest zabroniona.
-- Używaj `const_cast` tylko wtedy, gdy masz pewność, że nie naruszasz zasad bezpieczeństwa i integralności danych.
-- Zamiast usuwać `const`, lepiej dostosować funkcje, aby akceptowały stałe argumenty.
-
-#### reinterpret_cast
-
-`reinterpret_cast` to najbardziej "brutalny" sposób konwersji w C++. Pozwala na reinterpretację bitów obiektu jako innego typu bez jakiejkolwiek konwersji danych. Jest to przydatne w sytuacjach niskopoziomowych, ale niesie ze sobą duże ryzyko błędów.
-
-##### Przykłady użycia
-
-1. **Konwersja wskaźnika na typ całkowity:**
-
-```c++
-void *ptr = malloc(10);
-std::uintptr_t addr = reinterpret_cast<std::uintptr_t>(ptr);
-std::cout << "Adres: " << addr << '\n';
-```
-
-2. **Rzutowanie między niepowiązanymi typami wskaźników:**
-
-```c++
-class A { /* ... */ };
-class B { /* ... */ };
-
-A *a = new A();
-B *b = reinterpret_cast<B *>(a);  // Niebezpieczne!
-```
-
-Taki kod jest potencjalnie niebezpieczny i może prowadzić do niezdefiniowanego zachowania.
-
-##### Zastosowania `reinterpret_cast`
-
-- Konwersja obiektu do ciągu bajtów i odwrotnie.
-- Dostęp do rejestrów sprzętowych lub specjalnych obszarów pamięci.
-- Manipulacja pamięcią na niskim poziomie, np. w implementacji własnego alokatora pamięci.
-
-##### Ostrzeżenia i dobre praktyki
-
-- Rzutowanie wskaźników na niepowiązane typy i ich używanie może prowadzić do niezdefiniowanego zachowania.
-- Wynik działania `reinterpret_cast` może różnić się w zależności od platformy, kompilatora i architektury.
-- Stosuj `reinterpret_cast` tylko wtedy, gdy nie ma innej możliwości i jesteś świadomy ryzyka.
-- Jeśli potrzebujesz konwersji między typami wskaźników w hierarchii klas, użyj `static_cast` lub `dynamic_cast`. Do konwersji typów arytmetycznych stosuj `static_cast`.
-
-#### Własne konwersje
-
-C++ pozwala na definiowanie własnych konwersji typów poprzez przeciążanie operatorów konwersji oraz konstruktorów konwersji. Pozwala to na elastyczne i intuicyjne przekształcanie obiektów jednego typu na inny.
-
-##### Operatory konwersji
-
-Operator konwersji to specjalna funkcja składowa klasy, która umożliwia przekształcenie obiektu klasy na inny typ.
-
-**Składnia:**
-
-```c++
-operator typ_docelowy() const;
-```
-
-**Przykład:**
-
-```c++
+```cpp
 #include <cmath>
 
-class Complex {
+class Zespolona {
 public:
-    double real, imag;
-    Complex(double r, double i) : real(r), imag(i) {}
+    Zespolona(double rzeczywista, double urojona)
+        : rzeczywista_(rzeczywista), urojona_(urojona) {}
 
-    // Konwersja na double - zwracamy moduł liczby zespolonej
-    operator double() const {
-        return sqrt(real * real + imag * imag);
+    explicit operator double() const {
+        return std::hypot(rzeczywista_, urojona_);
     }
-};
 
-int main() {
-    Complex c(3.0, 4.0);
-    double magnitude = c;  // używa operatora konwersji
-    std::cout << "Moduł: " << magnitude << '\n';  // wyświetli 5.0
-    return 0;
-}
-```
-
-##### Konstruktor konwersji
-
-Konstruktor, który przyjmuje jeden argument, może służyć jako konstruktor konwersji, umożliwiający tworzenie obiektu danej klasy z innego typu.
-
-**Przykład:**
-
-```c++
-class Fraction {
 private:
-    int numerator;
-    int denominator;
-public:
-    Fraction(int n, int d) : numerator(n), denominator(d) {}
-
-    // Konstruktor konwersji z int
-    Fraction(int wholeNumber) : numerator(wholeNumber), denominator(1) {}
+    double rzeczywista_;
+    double urojona_;
 };
 
-int main() {
-    Fraction f = 5;  // Używa konstruktora konwersji
-    return 0;
-}
+Zespolona z{3.0, 4.0};
+double modul = static_cast<double>(z);  // Jawnie prosimy o moduł: 5.0
 ```
 
-##### Słowo kluczowe `explicit`
+Jawność ogranicza przypadkowe konwersje, ale nie ocenia ich sensu matematycznego. Projektuj konwersję tak, by jej wynik miał jedno intuicyjne znaczenie; w przeciwnym razie lepsza może być nazwana metoda, np. `modul()`.
 
-Aby uniknąć niejawnych konwersji, które mogą prowadzić do nieoczekiwanych wyników, można użyć słowa kluczowego `explicit`:
+### Jak wybierać zapis
 
-```c++
-class Fraction {
-public:
-    explicit Fraction(int wholeNumber) : numerator(wholeNumber), denominator(1) {}
-    // ...
-};
+- Dla wartości arytmetycznych najpierw sprawdź typ operacji i możliwą utratę zakresu lub precyzji; jawny zapis nie usuwa tych ograniczeń.
+- Dla rzutowania w dół w hierarchii użyj `dynamic_cast`, jeśli rzeczywisty typ jest niepewny. `static_cast` wymaga, byś już wiedział, że obiekt ma odpowiedni typ pochodny.
+- `const_cast` stosuj tylko przy znanej gwarancji, że obiekt nie jest modyfikowany przez API albo sam nie był pierwotnie stały.
+- `reinterpret_cast` zostaw dla interfejsów niskopoziomowych z dobrze udokumentowanymi warunkami pamięci.
+- Dla własnych klas preferuj `explicit`, gdy niejawną konwersję trudno uznać za oczywistą.
 
-int main() {
-    Fraction f1 = 5;            // Błąd kompilacji
-    Fraction f2(5);             // Poprawne
-    Fraction f3 = Fraction(5);  // Poprawne
-    return 0;
-}
-```
-
-##### Dobre praktyki
-
-- Definiuj tylko te konwersje, które mają sens w kontekście Twojej klasy i nie wprowadzają dwuznaczności.
-- Stosuj `explicit`, aby zapobiec niezamierzonym konwersjom, które mogą prowadzić do błędów.
-- Upewnij się, że konwersje są intuicyjne dla innych programistów i poprawiają czytelność kodu.
-
-##### Potencjalne problemy
-
-- Zbyt wiele możliwych konwersji może prowadzić do konfliktów i utrudniać kompilację.
-- Niejawne konwersje mogą prowadzić do wywoływania niewłaściwych funkcji przeciążonych lub operatorów.
-- Używaj operatorów konwersji z rozwagą i tylko wtedy, gdy jest to uzasadnione.
-- Preferuj jawne konwersje za pomocą konstruktorów i słowa kluczowego `explicit`.
-- Zawsze rozważ wpływ na czytelność i utrzymanie kodu.
+Konwersja decyduje, jaki typ argumentu otrzyma wywoływana funkcja. W następnej notatce zobaczymy to w praktyce na lambdach: obiektach funkcyjnych, które przyjmują argumenty i mogą przechowywać własny stan.

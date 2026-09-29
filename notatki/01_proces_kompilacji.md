@@ -1,493 +1,239 @@
-## Proces kompilacji
+# Proces kompilacji
 
-Proces kompilacji to złożony ciąg etapów, który przekształca kod źródłowy napisany w języku wysokiego poziomu na kod maszynowy zrozumiały dla procesora. Kompilacja zapewnia, że kod jest poprawny pod względem składniowym i semantycznym, a także optymalizuje go pod kątem wydajności. Poniżej szczegółowo omówione są poszczególne etapy kompilacji.
+Programista zapisuje instrukcje w pliku źródłowym, na przykład `main.cpp`. Procesor nie wykonuje bezpośrednio takiego tekstu: potrzebuje instrukcji maszynowych przygotowanych dla konkretnej architektury. Kompilacja przekształca więc kod źródłowy w program, który system operacyjny może uruchomić.
 
-### 1. Etap preprocesowania
+Warto poznać ten proces, bo pomaga zrozumieć, dlaczego jedne błędy pojawiają się podczas kompilacji, inne podczas linkowania, a jeszcze inne dopiero po uruchomieniu programu. Polecenie `g++` zwykle uruchamia kilka etapów za nas, ale pod spodem nadal muszą się one odbyć.
 
-Preprocesor jest pierwszym narzędziem, które działa na kodzie źródłowym przed właściwą kompilacją. Jego główne zadania to:
+## Od plików źródłowych do programu
 
-I. **Włączanie zawartości plików nagłówkowych**
+Mały program może mieścić się w jednym pliku. Większy projekt dzieli się na kilka plików, aby oddzielić części programu i łatwiej nad nimi pracować. Poniższy przykład składa się z pliku z deklaracją funkcji, pliku z jej definicją oraz pliku zawierającego `main`.
 
-Dyrektywy preprocesora takie jak `#include <nazwa_pliku.h>` lub `#include "nazwa_pliku.h"` służą do włączenia zawartości innych plików do bieżącego kodu. Dzięki temu możliwe jest korzystanie z deklaracji funkcji, klas czy zmiennych zdefiniowanych w innych plikach, co promuje modularność i reużywalność kodu.
+Plik `powitanie.hpp` informuje inne pliki, że istnieje funkcja o nazwie `wypisz_powitanie`:
 
-**Przykład:**
-
-```c
-#include <stdio.h> // Załącza standardową bibliotekę wejścia/wyjścia
-#include "moje_funkcje.h" // Załącza plik nagłówkowy zdefiniowany przez użytkownika
+```cpp
+// powitanie.hpp
+void wypisz_powitanie(); // deklaracja: mówi, jak funkcję wywołać
 ```
 
-II. **Przetwarzanie makr**
+Plik `powitanie.cpp` zawiera definicję, czyli właściwy kod funkcji:
 
-Makra umożliwiają definiowanie stałych, funkcji makro oraz zastępowanie fragmentów kodu. Są one przetwarzane przez preprocesor i nie istnieją w skompilowanym kodzie.
+```cpp
+// powitanie.cpp
+#include "powitanie.hpp"
+#include <iostream>
 
-**Przykład stałej:**
-
-```c
-#define PI 3.14159
+void wypisz_powitanie() { // definicja: opisuje, co funkcja robi
+    std::cout << "Witaj!\n";
+}
 ```
 
-**Przykład funkcji makro:**
+Plik `main.cpp` korzysta z deklaracji i wywołuje funkcję:
 
-```c
-#define MAX(a,b) ((a) > (b) ? (a) : (b))
+```cpp
+// main.cpp
+#include "powitanie.hpp"
+
+int main() {
+    wypisz_powitanie();
+}
 ```
 
-III. **Warunkowe kompilowanie**
+Deklaracja w nagłówku pozwala kompilatorowi sprawdzić wywołanie w `main.cpp`. Sama deklaracja nie zawiera jednak instrukcji, które wypisują tekst. Ich definicja znajduje się w `powitanie.cpp`. Na końcu procesu trzeba więc połączyć wyniki przygotowane dla obu plików źródłowych.
 
-Dyrektywy takie jak `#ifdef`, `#ifndef`, `#if`, `#else`, `#elif`, `#endif` pozwalają na kompilowanie fragmentów kodu tylko wtedy, gdy spełnione są określone warunki. Jest to użyteczne przy kompilacji kodu dla różnych platform lub konfiguracji.
+## Etapy procesu
 
-**Przykład:**
+Dokładny podział pracy zależy od kompilatora. W typowym procesie można jednak wyróżnić preprocesowanie, analizę i kompilację kodu, przygotowanie plików obiektowych oraz linkowanie.
 
-```c
-#ifdef DEBUG
-printf("Wartość zmiennej x: %d\n", x);
-#endif
-```
+### 1. Preprocesowanie
 
-IV. **Usuwanie komentarzy**
+Preprocesor wykonuje dyrektywy rozpoczynające się od `#`. Najczęściej spotkasz `#include`, `#define` i warunkowe dyrektywy, takie jak `#if`. Przykładowo `#include "powitanie.hpp"` sprawia, że zawartość nagłówka zostaje uwzględniona w przetwarzanym pliku źródłowym.
 
-Preprocesor usuwa wszystkie komentarze (`//` oraz `/* */`), ponieważ nie są one potrzebne w dalszych etapach kompilacji i nie wpływają na działanie programu.
+Na tym etapie kompilator jeszcze nie sprawdza, czy wyrażenia są poprawne. Preprocesor przygotowuje tekst, który później będzie analizowany. Szczegóły jego działania i typowe pułapki opisuje następna notatka.
 
-### 2. Analiza kodu źródłowego
+Każdy plik źródłowy `.cpp` jest zwykle przetwarzany osobno. Dlatego `main.cpp` i `powitanie.cpp` przejdą własne preprocesowanie, a każdy z nich utworzy osobną jednostkę translacji.
 
-Po preprocesowaniu kod trafia do właściwego kompilatora, który przeprowadza analizę w trzech głównych krokach:
+### 2. Analiza i kompilacja kodu
 
-I. **Analiza leksykalna (tokenizacja)**
+Kompilator czyta przygotowany kod i sprawdza go etapami.
 
-Kod źródłowy jest dzielony na podstawowe jednostki zwane tokenami. Tokeny mogą być słowami kluczowymi (`if`, `while`), identyfikatorami (nazwy zmiennych i funkcji), literałami (np. liczby, łańcuchy znaków), operatorami (`+`, `-`, `*`, `/`) oraz znakami interpunkcyjnymi.
+Najpierw dzieli tekst na tokeny, czyli rozpoznawalne elementy języka: słowa kluczowe, nazwy, liczby, operatory i znaki interpunkcyjne. W instrukcji:
 
-**Przykład:**
-
-Kod:
-
-```c
+```cpp
 int suma = a + b;
 ```
 
-Tokeny:
+tokenami są między innymi `int`, `suma`, `=`, `a`, `+`, `b` i `;`. Ten podział pozwala kompilatorowi rozpoznać kolejną warstwę: strukturę instrukcji.
 
-- `int`
-- `suma`
-- `=`
-- `a`
-- `+`
-- `b`
-- `;`
+Następnie sprawdza składnię, czyli to, czy tokeny są ułożone zgodnie z gramatyką języka. Brak średnika albo niedomknięty nawias powoduje błąd składni. Można to porównać do zdania złożonego ze znanych słów, ale ułożonego według niewłaściwych reguł.
 
-II. **Analiza składniowa (parsing)**
+Podczas tej analizy kompilator buduje wewnętrzny opis struktury programu, często nazywany drzewem składniowym. Dla `int suma = a + b;` taki opis pokazuje, że jest to deklaracja zmiennej typu `int`, której wartość początkową oblicza dodawanie `a + b`. To ważne, bo kompilator nie działa na pojedynczych słowach w oderwaniu od siebie: musi wiedzieć, które wyrażenie jest argumentem którego operatora.
 
-Na tym etapie kompilator sprawdza, czy sekwencja tokenów tworzy poprawne konstrukcje zgodne z gramatyką języka. Tworzone jest drzewo składniowe (AST - Abstract Syntax Tree), które reprezentuje hierarchiczną strukturę programu.
+Potem kompilator sprawdza znaczenie kodu w danym miejscu. Weryfikuje, czy użyte nazwy zostały zadeklarowane, czy są widoczne w tym zakresie oraz czy typy pasują do wykonywanych operacji. Na przykład przypisanie napisu do zmiennej typu `int` nie ma oczekiwanego sensu:
 
-**Przykład drzewa składniowego dla `int suma = a + b;`:**
-
-```
-Deklaracja zmiennej
-|
-+-- Typ: int
-+-- Nazwa: suma
-+-- Inicjalizacja
-    |
-    +-- Wyrażenie arytmetyczne
-        |
-        +-- Operator: +
-        +-- Operand lewy: a
-        +-- Operand prawy: b
+```cpp
+int liczba = "tekst"; // błąd: napis nie jest wartością typu int
 ```
 
-III. **Analiza semantyczna**: 
+Poprawna składnia nie gwarantuje więc poprawnego programu. `int liczba = "tekst";` przypomina poprawnie zbudowaną instrukcję, ale jej elementy są niezgodne typami.
 
-Sprawdzana jest poprawność semantyczna kodu, czyli czy wyrażenia mają sens w kontekście języka. Obejmuje to:
+Po analizie kompilator może przekształcić program do wewnętrznej postaci pośredniej, czyli IR (ang. *intermediate representation*). IR ułatwia optymalizowanie kodu i przygotowanie go dla różnych procesorów. Kompilator może na przykład usunąć obliczenie, którego wynik nigdzie nie jest używany. Nie oznacza to, że dowolną zmianę w źródle można usunąć: wynik programu musi zachować wymagane działanie.
 
-- Upewnienie się, że operacje są wykonywane na kompatybilnych typach danych (np. nie można dodać liczby całkowitej do wskaźnika bez odpowiedniej konwersji).
-- Sprawdzenie, czy wszystkie użyte identyfikatory (zmienne, funkcje) zostały zadeklarowane wcześniej.
-- Ustalanie, czy identyfikatory są używane w odpowiednim zakresie (lokalnym czy globalnym).
-- Weryfikacja zgodności sygnatur funkcji, liczby i typów argumentów.
+Następnie kompilator przygotowuje kod dla wybranej architektury. Często tworzy po drodze kod asemblera — tekstową reprezentację instrukcji procesora. Assembler tłumaczy taki kod na instrukcje maszynowe i zapisuje wynik w pliku obiektowym. Współczesne kompilatory mogą łączyć te kroki lub ukrywać je pod jednym poleceniem, więc plik asemblera nie zawsze jest widoczny w zwykłej pracy.
 
-**Przykład błędu semantycznego:**
+### 3. Plik obiektowy
 
-```c
-int x = "tekst"; // Przypisanie łańcucha znaków do zmiennej typu int
-```
+Wynik kompilowania pojedynczego pliku źródłowego często zapisuje się jako plik obiektowy: na przykład `main.o` albo `main.obj`. Zawiera on kod maszynowy oraz informacje potrzebne linkerowi. Nie musi być jeszcze samodzielnym programem.
 
-### 3. Generacja plików obiektowych
+Wewnątrz pliku obiektowego mogą znajdować się różne sekcje. Sekcja `.text` zwykle zawiera kod maszynowy, a `.data` — zainicjalizowane dane globalne i statyczne. Sekcja `.bss` służy zwykle danym globalnym i statycznym, które mają początkową wartość zero. Plik zawiera też tablicę symboli, opisującą nazwy funkcji i danych, oraz informacje o relokacji, które podpowiadają linkerowi, jak uzupełnić adresy. To uproszczony opis: format i nazwy sekcji zależą od systemu oraz formatu pliku obiektowego.
 
-Po pomyślnym przejściu analiz, kompilator przystępuje do generowania kodu pośredniego:
-
-I. **Generacja kodu pośredniego (Intermediate Representation - IR)**
-
-- Kompilator tworzy kod w wewnętrznym, niezależnym od maszyny formacie, który ułatwia optymalizacje i dalsze przetwarzanie.
-- Na poziomie IR kompilator może przeprowadzać różne optymalizacje, takie jak eliminacja martwego kodu, rozwijanie pętli czy optymalizacja dostępu do pamięci.
-- IR jest przekształcany w kod maszynowy specyficzny dla docelowej architektury procesora.
-
-II. **Tworzenie plików obiektowych**
-
-Wynikowy kod maszynowy wraz z informacjami o symbolach i sekcjach jest zapisywany w plikach obiektowych (`.o`, `.obj`). Pliki te zawierają również informacje potrzebne do linkowania, takie jak tablice symboli i informacje o relokacji.
-
-**Struktura pliku obiektowego:**
-
-- **Sekcje kodu (`.text`)** zawierają kod wykonywalny programu.
-- **Sekcje danych (`.data`, `.bss`)** przechowują zainicjalizowane i niezainicjalizowane zmienne globalne i statyczne.
-- **Tablica symboli** to lista wszystkich symboli (funkcji, zmiennych) z ich adresami i atrybutami.
-- **Informacje o relokacji** to dane potrzebne do prawidłowego połączenia adresów podczas linkowania.
+W przykładzie `main.o` zawiera wywołanie `wypisz_powitanie`, ale jego definicja powstaje podczas kompilowania `powitanie.cpp` do `powitanie.o`. Plik obiektowy może więc zawierać odwołanie do nazwy, której definicja znajduje się gdzie indziej. Informacje o takich odwołaniach linker rozwiąże w następnym etapie.
 
 ### 4. Linkowanie
 
-Linker jest narzędziem, które łączy wiele plików obiektowych i bibliotek w jeden plik wykonywalny:
+Linker łączy pliki obiektowe oraz potrzebne biblioteki. Dopasowuje odwołania do funkcji i zmiennych do ich definicji, a także ustala adresy potrzebne w gotowym programie.
 
-I. **Łączenie symboli**
+W naszym przykładzie linker łączy `main.o` z `powitanie.o`. W pierwszym pliku znajduje wywołanie `wypisz_powitanie`, a w drugim — kod tej funkcji. Wynikiem może być plik wykonywalny, na przykład `program`.
 
-Linker przegląda tablice symboli wszystkich plików obiektowych, aby zmapować wywołania funkcji i odwołania do zmiennych na ich rzeczywiste definicje.
+Kod z biblioteki statycznej jest włączany do programu, więc zwykle nie trzeba dostarczać tej biblioteki osobno przy uruchomieniu. Biblioteka dynamiczna pozostaje osobnym plikiem; program i inne aplikacje mogą korzystać z jej wspólnej kopii, ale system musi ją znaleźć podczas uruchamiania. To, jak dokładnie działa ten mechanizm i jak nazywają się pliki bibliotek, zależy od systemu.
 
-**Przykład:**
+Gdy korzystamy z własnej biblioteki, linker musi wiedzieć, gdzie jej szukać i jak się nazywa. W narzędziach GNU opcja `-L` dodaje katalog wyszukiwania, a `-l` wskazuje bibliotekę. Na przykład `-L./lib -lmatematyka` prosi o wyszukanie biblioteki o nazwie odpowiadającej `matematyka` w katalogu `./lib`. Nazwa pliku i zasady wyszukiwania różnią się między systemami.
 
-Jeśli funkcja `void funkcja()` jest zadeklarowana w `plik1.o`, a wywoływana w `plik2.o`, linker połączy te referencje.
-
-II. **Rozwiązanie referencji do bibliotek**:
-
-- Kod z bibliotek statycznych (`.a`, `.lib`) jest kopiowany bezpośrednio do pliku wykonywalnego. Powoduje to zwiększenie rozmiaru pliku wykonywalnego, ale nie wymaga obecności bibliotek podczas uruchamiania programu.
-- Linker tworzy odwołania do bibliotek dynamicznych (`.so`, `.dll`), które są ładowane do pamięci w czasie uruchamiania programu. Umożliwia to współdzielenie kodu biblioteki między różnymi programami i zmniejsza rozmiar pliku wykonywalnego.
-
-III. **Relokacja**
-
-Linker dostosowuje adresy pamięci w kodzie, aby odzwierciedlić rzeczywiste rozmieszczenie kodu i danych w pamięci.
-
-IV. **Tworzenie pliku wykonywalnego**
-
-Po zakończeniu wszystkich powyższych kroków, linker generuje finalny plik wykonywalny, który zawiera skompilowany kod gotowy do uruchomienia przez system operacyjny.
-
-**Dodatkowe aspekty linkowania:**
-
-- Linker musi rozwiązać zarówno symbole globalne (dostępne dla innych modułów), jak i lokalne (prywatne dla modułu).
-- Jeśli dwa moduły definiują symbole o tej samej nazwie, może dojść do konfliktu. Dlatego ważne jest stosowanie unikalnych nazw lub specyfikatorów dostępu.
-- Linker tworzy mapę pamięci programu, określając, gdzie w pamięci zostaną umieszczone poszczególne sekcje kodu i danych.
-
-## Dlaczego nie piszemy bezpośrednio w assemblerze?
-
-Choć assembler daje pełną kontrolę nad sprzętem i pozwala na pisanie bardzo wydajnego kodu, programowanie w nim jest niepraktyczne dla większości zastosowań z kilku kluczowych powodów:
-
-- Pisanie kodu w assemblerze jest skomplikowane i czasochłonne. Nawet proste operacje wymagają wielu instrukcji, co sprawia, że tworzenie i utrzymanie dużych aplikacji jest nieefektywne.
-- Kod assemblera jest specyficzny dla architektury procesora. Oznacza to, że kod napisany dla jednej architektury (np. x86) nie będzie działał na innej (np. ARM) bez znaczących modyfikacji.
-- Kod assemblera jest trudniejszy do zrozumienia i utrzymania. Brakuje w nim abstrakcji dostępnych w językach wysokiego poziomu, co utrudnia zarządzanie złożonymi strukturami danych i logiką biznesową.
-- Języki wysokiego poziomu oferują zaawansowane funkcje, takie jak zarządzanie pamięcią, programowanie obiektowe, wyjątki czy generyki, które upraszczają tworzenie skomplikowanych aplikacji.
-- Nowoczesne kompilatory potrafią generować bardzo wydajny kod maszynowy, często lepiej zoptymalizowany niż kod pisany ręcznie w assemblerze. Kompilatory korzystają z zaawansowanych technik optymalizacyjnych, analizując kod na poziomie całego programu.
-- Pisanie w assemblerze zwiększa ryzyko popełnienia błędów, takich jak błędy zarządzania pamięcią (np. wycieki pamięci, przepełnienia bufora), które mogą prowadzić do luk bezpieczeństwa.
-- W środowisku zespołowym łatwiej jest współpracować nad kodem napisanym w języku wysokiego poziomu, który jest bardziej czytelny i zrozumiały dla większej liczby programistów.
-
-**Przykład:**
-
-Dodanie dwóch liczb w C:
-
-```c
-int a = 5;
-int b = 10;
-int c = a + b;
-```
-
-Dodanie dwóch liczb w Asemblerze (dla architektury x86):
-
-```assembly
-section .data
-    a dd 5        ; zmienna a = 5
-    b dd 10       ; zmienna b = 10
-    c dd 0        ; zmienna c = 0, tutaj zostanie zapisany wynik
-
-section .text
-    global _start
-
-_start:
-    mov eax, [a]   ; załaduj wartość zmiennej a do rejestru eax
-    add eax, [b]   ; dodaj wartość zmiennej b do eax
-    mov [c], eax   ; zapisz wynik do zmiennej c
-
-    ; zakończenie programu (system call exit)
-    mov eax, 1     ; kod systemowy dla exit
-    xor ebx, ebx   ; kod powrotu 0
-    int 0x80       ; wywołanie systemu
-```
-
-
-**Zastosowania assemblera:**
-
-- Niskopoziomowe operacje na sprzęcie, sterowniki urządzeń czy systemy wbudowane o ograniczonych zasobach.
-- W niektórych przypadkach kluczowe fragmenty kodu wymagają ręcznej optymalizacji.
-- Nauka działania procesora, architektury komputerów i systemów operacyjnych.
-
-## Kompilacja z wiersza poleceń
-
-Kompilacja z wiersza poleceń daje programiście pełną kontrolę nad procesem kompilacji i pozwala na dostosowanie opcji kompilatora do specyficznych potrzeb projektu.
-
-### Kompilacja kodu w C przy użyciu `gcc`
-
-`gcc` jest potężnym narzędziem, które oferuje wiele opcji:
-
-Podstawowa kompilacja:
+Na systemach uniksowych biblioteka statyczna ma zwykle rozszerzenie `.a`, a dynamiczna — `.so` lub `.dylib`; na Windows często spotyka się `.lib` i `.dll`. Po skompilowaniu `powitanie.cpp` do `powitanie.o` można utworzyć bibliotekę statyczną i połączyć z nią `main.o`:
 
 ```bash
-gcc main.c -o program
+ar rcs libpowitanie.a powitanie.o
+g++ main.o -L. -lpowitanie -o program
 ```
 
-Opcje kompilatora:
-
-I. **Standard języka (`-std`)**: Określa, który standard języka C ma być użyty (np. `c89`, `c99`, `c11`).
+W poleceniu `-lpowitanie` pomija się prefiks `lib` oraz rozszerzenie pliku. Wariant z biblioteką dynamiczną na systemie Linux może wyglądać tak:
 
 ```bash
-gcc -std=c11 main.c -o program
+g++ -fPIC -c powitanie.cpp -o powitanie.o
+g++ -shared -o libpowitanie.so powitanie.o
+g++ main.o -L. -lpowitanie -o program
 ```
 
-II. **Ostrzeżenia (`-Wall`, `-Wextra`, `-Werror`)**:
+`-fPIC` przygotowuje kod do umieszczenia w bibliotece współdzielonej, a `-shared` tworzy taką bibliotekę. Samo poprawne linkowanie nie wystarczy: podczas uruchamiania system musi jeszcze znaleźć plik `.so`. Sposób wskazywania bibliotek w czasie działania zależy od systemu i konfiguracji. Nie należy zakładać, że biblioteka dynamiczna będzie szukana w dowolnym katalogu.
 
-- `-Wall`: Włącza podstawowy zestaw ostrzeżeń.
-- `-Wextra`: Włącza dodatkowe ostrzeżenia.
-- `-Werror`: Traktuje ostrzeżenia jako błędy.
+## Kompilowanie z wiersza poleceń
 
-**Przykład:**
+Sterownik `g++` może wykonać wszystkie etapy i od razu zbudować program z kilku plików:
 
 ```bash
-gcc -Wall -Wextra -Werror main.c -o program
+g++ -std=c++20 -Wall -Wextra -pedantic main.cpp powitanie.cpp -o program
 ```
 
-III. **Optymalizacje (`-O`, `-O1`, `-O2`, `-O3`, `-Os`)**:
+`-std=c++20` wybiera standard języka, `-Wall -Wextra` włącza zestaw ostrzeżeń, a `-pedantic` prosi o zwracanie uwagi na rozszerzenia poza standardem. Ostrzeżenia nie zawsze oznaczają błąd, ale często wskazują na kod, który warto sprawdzić. `-o program` określa nazwę pliku wynikowego. Jeśli pominiemy `-o`, nazwa domyślna zależy od systemu i kompilatora.
 
-- `-O1`: Podstawowe optymalizacje.
-- `-O2`: Zalecany poziom optymalizacji dla większości programów.
-- `-O3`: Maksymalne optymalizacje (może zwiększyć rozmiar kodu).
-- `-Os`: Optymalizacja pod kątem rozmiaru kodu.
-
-**Przykład:**
+Możemy też rozdzielić kompilowanie od linkowania. Opcja `-c` każe przygotować plik obiektowy i zakończyć pracę przed linkowaniem:
 
 ```bash
-gcc -O2 main.c -o program
+g++ -std=c++20 -Wall -Wextra -c main.cpp -o main.o
+g++ -std=c++20 -Wall -Wextra -c powitanie.cpp -o powitanie.o
+g++ main.o powitanie.o -o program
 ```
 
-IV. **Debugowanie (`-g`)**: Dodaje informacje debugowania, które są niezbędne podczas używania debugerów takich jak `gdb`.
+Dwa pierwsze polecenia przetwarzają pliki źródłowe osobno. Trzecie łączy gotowe pliki obiektowe. Taki podział ma znaczenie w większych projektach: zmiana jednego pliku zwykle wymaga ponownego zbudowania tylko jego części, a potem ponownego linkowania programu.
 
-**Przykład:**
+Opcje narzędzi GNU pozwalają również zatrzymać proces wcześniej: `-E` wypisuje wynik preprocesowania, `-S` przygotowuje kod asemblera, a `-c` kończy na pliku obiektowym. Te opcje przydają się, gdy chcemy zobaczyć, na którym etapie pojawia się problem; na co dzień kompilator zwykle wykonuje te etapy automatycznie.
+
+Do pliku C używa się zwykle sterownika `gcc`, a do C++ — `g++`. To nazwy narzędzi z rodziny GCC; inne kompilatory mogą używać innych poleceń i opcji.
+
+Analogiczny przykład dla pojedynczego pliku C wygląda tak:
 
 ```bash
-gcc -g main.c -o program
+gcc -std=c11 -Wall -Wextra main.c -o program_c
 ```
 
-V. **Definiowanie makr (`-D`)**: Pozwala na definiowanie makr z poziomu kompilacji.
+Tutaj `-std=c11` wybiera C11, a pozostałe opcje mają podobne znaczenie jak w przykładzie C++. Do wieloplikowego projektu C podaje się kilka plików `.c` albo kompiluje je osobno do plików obiektowych i łączy.
 
-**Przykład:**
+### Przydatne opcje kompilatora
+
+Opcje pozwalają określić sposób budowania programu. Najczęściej podczas nauki przydadzą się:
+
+- `-std=c++20` wybiera standard C++20. Można wskazać inny standard obsługiwany przez zainstalowany kompilator.
+- `-Wall -Wextra` włącza wiele ostrzeżeń. Nie są to wszystkie możliwe ostrzeżenia, ale pomagają zauważyć podejrzany kod.
+- `-g` dodaje informacje pomocne dla debugera, który pozwala śledzić wykonanie programu i oglądać wartości zmiennych.
+- `-O2` włącza optymalizacje. Spotkasz również `-O1` i `-O3`, a `-Os` prosi o optymalizację rozmiaru. Numery nie są uniwersalną miarą jakości ani szybkości programu — dokładny zestaw zmian zależy od kompilatora. Przy szukaniu błędu początkującej osobie zwykle łatwiej pracować bez optymalizacji; optymalizacje warto włączać, gdy program działa poprawnie i pomiar wydajności wskazuje taką potrzebę.
+- `-DDEBUG` definiuje makro `DEBUG`, a `-I./include` dodaje katalog wyszukiwania plików nagłówkowych.
+- `-Werror` zmienia ostrzeżenia w błędy. Nie jest konieczne na początku nauki, bo ostrzeżenia zależą od kompilatora, ale nie warto ich też bezmyślnie wyłączać.
+
+Opcje można połączyć w jednym poleceniu:
 
 ```bash
-gcc -DDEBUG main.c -o program
+g++ -std=c++20 -Wall -Wextra -g -I./include main.cpp powitanie.cpp -o program
 ```
 
-VI. **Ścieżki do plików nagłówkowych (`-I`)**: Dodaje dodatkowe ścieżki, w których kompilator szuka plików nagłówkowych.
+W przykładzie kompilator ma szukać nagłówków w `include`, ostrzegać o części typowych problemów i dołączyć dane dla debugera. Nie trzeba od razu pamiętać wszystkich opcji; ważne jest, by rozumieć, że wybierają one konfigurację budowania.
 
-**Przykład:**
+### Budowanie większego projektu
 
-```bash
-gcc -I./include main.c -o program
-```
+W małym ćwiczeniu można wpisać wszystkie pliki źródłowe w jednym poleceniu. Gdy plików jest więcej, powtarzanie tych poleceń staje się uciążliwe. Narzędzie `make` odczytuje reguły z pliku `Makefile` i uruchamia tylko te kroki, których wyniki są nieaktualne. W praktycznych projektach podobną rolę pełnią też inne systemy budowania.
 
-VII. **Linkowanie z bibliotekami (`-l`, `-L`)**:
+`Makefile` zawiera zależności i polecenia, na przykład informację, że `program` zależy od `main.o` i `powitanie.o`, a każdy plik `.o` zależy od odpowiadającego mu pliku `.cpp`. Dzięki temu zmiana `powitanie.cpp` nie wymaga ponownego kompilowania wszystkich źródeł. Szczegóły składni Makefile są osobnym tematem; na tym etapie wystarczy wiedzieć, że automatyzuje opisane wcześniej polecenia.
 
-- `-l`: Określa nazwę biblioteki do linkowania (np. `-lm` dla biblioteki matematycznej).
-- `-L`: Dodaje ścieżkę do poszukiwania bibliotek.
-
-**Przykład:**
-
-```bash
-gcc main.c -o program -L./lib -lmojabiblioteka
-```
-
-**Kompilacja wielu plików:**
-
-Jeśli projekt składa się z wielu plików źródłowych:
-
-```bash
-gcc plik1.c plik2.c plik3.c -o program
-```
-
-**Kompilacja etapowa:**
-
-I. Kompilacja do plików obiektowych:
-   
-```bash
-gcc -c plik1.c -o plik1.o
-gcc -c plik2.c -o plik2.o
-```
-
-II. Linkowanie plików obiektowych:
-
-```bash
-gcc plik1.o plik2.o -o program
-```
-
-### Kompilacja programu w C++ przy użyciu `g++`
-
-`g++` działa podobnie do `gcc`, ale jest przeznaczony dla języka C++.
-
-Podstawowa kompilacja:
-
-```bash
-g++ main.cpp -o program
-```
-
-Opcje kompilatora:
-
-I. **Standard języka (`-std`)**: Dostępne standardy to m.in. `c++98`, `c++03`, `c++11`, `c++14`, `c++17`, `c++20`.
-
-```bash
-g++ -std=c++17 main.cpp -o program
-```
-
-II. **Ostrzeżenia i rygorystyczność (`-Wall`, `-Wextra`, `-pedantic`)**:
-
-Przykład:
-
-```bash
-g++ -Wall -Wextra -pedantic main.cpp -o program
-```
-
-III. **Optymalizacje, debugowanie, definiowanie makr, ścieżki do plików nagłówkowych i bibliotek**: Działają analogicznie jak w `gcc`.
-
-Przykład z wieloma opcjami:
-
-```bash
-g++ -std=c++20 -O2 -Wall -Wextra -g -I./include -L./lib -lmojabiblioteka main.cpp -o program
-```
-
-### Formatowanie kodu przy użyciu `clang-format`
-
-`clang-format` to narzędzie do automatycznego formatowania kodu zgodnie z określonym stylem. Dzięki temu kod jest spójny i czytelny dla wszystkich członków zespołu.
-
-Konfiguracja stylu:
-
-- Plik konfiguracyjny `.clang-format` można umieścić w katalogu głównym projektu.
-- Styl można określić jako jeden z predefiniowanych (`LLVM`, `Google`, `Chromium`, `Mozilla`, `WebKit`) lub zdefiniować własny.
-
-Przykład pliku `.clang-format`:
-
-```yaml
-BasedOnStyle: LLVM
-IndentWidth: 4
-ColumnLimit: 100
-```
-
-Formatowanie plików:
-
-I. Formatowanie pojedynczego pliku:
-
-```bash
-clang-format -i plik.cpp
-```
-
-II. Automatyczne formatowanie wszystkich plików w projekcie:
-  
-```bash
-find . -regex '.*\.\(cpp\|hpp\|c\|h\)' -exec clang-format -style=file -i {} \;
-```
-
-### Dostosowywanie opcji kompilacji
-
-I. **Profilowanie wydajności (`-pg`):**
-
-Dodaje informacje potrzebne do profilowania programu narzędziami takimi jak `gprof`.
-
-```bash
-gcc -pg main.c -o program
-```
-
-II. **Analiza statyczna:**
-
-Narzędzia takie jak `cppcheck` pozwalają na statyczną analizę kodu w celu wykrycia potencjalnych błędów.
-
-Przykład:
-
-```bash
-cppcheck --enable=all --inconclusive --std=c11 main.c
-```
-
-III. **Tworzenie bibliotek:**
-
-**Biblioteki statyczne (`.a`):**
-
-1. Kompilacja plików obiektowych:
-
-```bash
-gcc -c plik1.c -o plik1.o
-gcc -c plik2.c -o plik2.o
-```
-
-2. Utworzenie biblioteki:
-
-```bash
-ar rcs libmojabiblioteka.a plik1.o plik2.o
-```
-
-3. Użycie biblioteki podczas kompilacji programu:
-
-```bash
-gcc main.c -L. -lmojabiblioteka -o program
-```
-
-**Biblioteki dynamiczne (`.so`):**
-
-1. Kompilacja z opcją tworzenia kodu współdzielonego:
-
-```bash
-gcc -fPIC -c plik1.c -o plik1.o
-gcc -fPIC -c plik2.c -o plik2.o
-```
-
-2. Utworzenie biblioteki:
-
-```bash
-gcc -shared -o libmojabiblioteka.so plik1.o plik2.o
-```
-
-3. Użycie biblioteki podczas kompilacji programu:
-
-```bash
-gcc main.c -L. -lmojabiblioteka -o program
-```
-
-4. Ustawienie zmiennej środowiskowej `LD_LIBRARY_PATH`:
-
-```bash
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:.
-```
-
-**Korzystanie z `make` i `Makefile`:**
-
-Automatyzacja procesu kompilacji przy użyciu narzędzia `make`.
-
-Przykład prostego `Makefile`:
+Oto mały przykład dla projektu z wcześniejszej lekcji:
 
 ```make
-CC=gcc
-CFLAGS=-Wall -Wextra -std=c11 -O2
-LDFLAGS=
+CXX = g++
+CXXFLAGS = -std=c++20 -Wall -Wextra -pedantic
+OBJS = main.o powitanie.o
 
-SOURCES=main.c plik1.c plik2.c
-OBJECTS=$(SOURCES:.c=.o)
-TARGET=program
+.PHONY: all clean
 
-all: $(TARGET)
+all: program
 
-$(TARGET): $(OBJECTS)
-  $(CC) $(LDFLAGS) -o $@ $^
+program: $(OBJS)
+	$(CXX) $(OBJS) -o program
 
-%.o: %.c
-  $(CC) $(CFLAGS) -c -o $@ $<
+main.o: main.cpp powitanie.hpp
+	$(CXX) $(CXXFLAGS) -c main.cpp -o main.o
+
+powitanie.o: powitanie.cpp powitanie.hpp
+	$(CXX) $(CXXFLAGS) -c powitanie.cpp -o powitanie.o
 
 clean:
-  rm -f $(OBJECTS) $(TARGET)
+	rm -f $(OBJS) program
 ```
 
-Uruchomienie kompilacji:
-  
-```bash
-make
+Reguły `main.o` i `powitanie.o` opisują, jak powstają pliki obiektowe. Zależność od `powitanie.hpp` mówi `make`, że zmianę nagłówka trzeba uwzględnić przy budowaniu obu plików. Reguła `program` linkuje obiekty, a `clean` usuwa wyniki budowania. Wcięcia przed poleceniami w Makefile muszą być znakami tabulacji. Uruchomienie `make` buduje domyślny cel `all`; `make clean` usuwa pliki wynikowe.
+
+### Narzędzia używane obok kompilatora
+
+Nie każde narzędzie związane z kodem uczestniczy w tworzeniu pliku wykonywalnego. `clang-format` automatycznie porządkuje odstępy i układ kodu, ale nie sprawdza, czy program działa. Na przykład `clang-format -i main.cpp` formatuje wskazany plik.
+
+Analizator statyczny, taki jak `cppcheck`, przegląda kod i szuka części błędów bez uruchamiania programu. Może znaleźć problemy, których nie zgłosiła zwykła kompilacja, ale nie zastępuje kompilatora ani dokładnego przeglądu kodu.
+
+Profilowanie odpowiada na inne pytanie: które fragmenty działają wolno podczas wykonania. Nie warto optymalizować na podstawie przypuszczeń. Najpierw mierzy się program narzędziem profilującym, a dopiero potem sprawdza wskazane miejsca. Opcja `-pg` w niektórych narzędziach GNU dodaje dane dla profilera `gprof`; szczegóły zależą od używanego systemu i narzędzi.
+
+## Jak rozpoznać, na którym etapie pojawił się błąd?
+
+Komunikat kompilatora zwykle zawiera nazwę pliku i numer wiersza, ale rodzaj problemu zależy od tego, który etap go wykrył.
+
+- **Błąd składni lub znaczenia** pojawia się podczas analizy pliku źródłowego. Przykładem jest brak średnika albo użycie niezadeklarowanej zmiennej.
+- **Błąd linkowania** pojawia się, gdy kod poprawnie się skompilował, ale linker nie znalazł definicji potrzebnej funkcji lub zmiennej. Tak będzie na przykład wtedy, gdy zapomnimy dołączyć `powitanie.o` do końcowego polecenia.
+- **Błąd działania programu** występuje już po uruchomieniu. Program mógł przejść kompilowanie i linkowanie, a mimo to obliczać niewłaściwy wynik albo zakończyć pracę z błędem.
+
+Rozróżnienie tych sytuacji zawęża poszukiwanie przyczyny: brak średnika poprawia się w kodzie źródłowym, brakujący plik dodaje do linkowania, a błędny wynik analizuje w logice programu.
+
+## Dlaczego piszemy w C lub C++, a nie bezpośrednio w asemblerze?
+
+Asembler opisuje instrukcje bliskie temu, co wykonuje procesor. Daje precyzyjną kontrolę, ale wymaga znajomości konkretnej architektury i dużej liczby szczegółów. Ta sama prosta operacja może wymagać innych instrukcji na różnych procesorach.
+
+W C i C++ zapisujemy zamiar, na przykład `int wynik = a + b;`, a kompilator dobiera instrukcje dla wybranego procesora. Zwykle ułatwia to czytanie, przenoszenie i utrzymywanie programu. Kompilator może też optymalizować kod, ale nie oznacza to, że zawsze wygeneruje najlepszy możliwy kod. Asembler nadal bywa potrzebny w wąskich, niskopoziomowych zastosowaniach; nie jest jednak konieczny do nauki zwykłego programowania.
+
+Dla intuicji, w przykładowym asemblerze x86 dodawanie może wymagać osobnych poleceń do wczytania wartości do rejestru, dodania ich i zapisania wyniku:
+
+```asm
+mov eax, [a]   ; wczytaj a do rejestru eax
+add eax, [b]   ; dodaj b do wartości w eax
+mov [wynik], eax ; zapisz wynik w pamięci
 ```
 
-Usunięcie plików obiektowych i wykonywalnych:
+To tylko fragment w konkretnej składni, nie kompletny program. Pokazuje, że nawet proste działanie wymaga wiedzy o rejestrach, pamięci i architekturze. W C++ możemy wyrazić to samo krócej: `int wynik = a + b;`.
 
-```bash
-make clean
-```
+Ręczne pisanie asemblera nadal ma zastosowanie przy pracy blisko sprzętu, w niektórych systemach wbudowanych oraz przy analizie działania procesora. W typowych aplikacjach język wyższego poziomu jest łatwiejszy do utrzymania, a kompilator zwykle potrafi wygenerować dobry kod maszynowy. Pisanie ręcznie w asemblerze nie gwarantuje większej szybkości.
+
+## Podsumowanie drogi programu
+
+Kod źródłowy jest najpierw przygotowywany przez preprocesor, potem analizowany i tłumaczony na kod dla docelowej platformy. Każdy plik źródłowy może dać osobny plik obiektowy. Linker łączy te pliki i biblioteki w wynik, który system może uruchomić. W następnej notatce przyjrzymy się dokładniej pierwszemu z tych etapów: działaniu preprocesora.

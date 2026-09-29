@@ -1,236 +1,242 @@
-## L-wartości i R-wartości w C++ (wreszcie “po ludzku”)
+# L-wartości i R-wartości w C++
 
-W C++ bardzo dużo rzeczy kręci się wokół pytania: **czy dane wyrażenie wskazuje na „konkretny obiekt w pamięci”**, czy jest tylko **tymczasowym wynikiem obliczeń**. Z tego biorą się L-wartości (*lvalues*) i R-wartości (*rvalues*). Zrozumienie tego tematu odblokowuje m.in.:
+Ta lekcja rozdziela trzy pojęcia: **wartość obiektu**, **kategorię wyrażenia** i **referencję**. Ma to znaczenie przy przypisywaniu do zmiennych, przekazywaniu argumentów funkcjom i przenoszeniu obiektów.
 
-* dlaczego raz możesz przekazać zmienną do `T&`, a raz nie,
-* kiedy kompilator kopiuje, a kiedy może **przenieść** obiekt,
-* czemu `std::move` istnieje i co naprawdę robi.
+## Wartość obiektu a kategoria wyrażenia
 
-Na start — dwa najważniejsze typy referencji:
+Zmienna `x` może przechowywać liczbę `10`. To jest wartość zmiennej. Wyrażenie `x` ma natomiast kategorię wartości, która mówi, jak można użyć tego wyrażenia.
 
-* `T&`  → **lvalue reference** (referencja do L-wartości)
-* `T&&` → **rvalue reference** (referencja do R-wartości)
-
-### Intuicja: “czy ma nazwę i adres?”
-
-Najprostsza (praktyczna) heurystyka:
-
-* **L-wartość**: zwykle ma **nazwę**, **da się wskazać jej adres** (`&x`) i “żyje dłużej niż chwilę”.
-* **R-wartość**: zwykle jest **tymczasowa** (wynik wyrażenia, literal, wartość zwracana przez funkcję przez wartość) i nie możesz jej sensownie traktować jako trwałego obiektu.
-
-> Uwaga: w nowoczesnym C++ są jeszcze pojęcia `prvalue`, `xvalue`, `glvalue` — ale do większości codziennych przypadków wystarczy solidnie opanować “lvalue vs rvalue”.
-
-### L-wartości (lvalues)
-
-**L-wartość** to wyrażenie, które identyfikuje **konkretny obiekt** (z miejscem w pamięci). Klasycznie: coś, co **może** stać po lewej stronie `=` (jeśli jest modyfikowalne).
-
-#### Najprostsze przykłady
+- **L-wartość** (*lvalue*) oznacza konkretny obiekt.
+- **R-wartość** (*rvalue*) zwykle dostarcza wynik obliczenia albo wartość tymczasową.
 
 ```cpp
-int x = 10;      // x jest L-wartością
-x = 20;          // OK: przypisanie do L-wartości
+int x = 10;       // x oznacza istniejący obiekt
+x = 20;           // zmieniamy wartość tego obiektu
 
-int* px = &x;    // OK: można pobrać adres L-wartości
+int y = x + 5;    // x + 5 jest wynikiem obliczenia: 25
 ```
 
-#### L-wartość może być modyfikowalna lub nie
+Po tych instrukcjach `x` przechowuje `20`, a `y` przechowuje `25`. Wyrażenie `x` oznacza obiekt, w którym przechowywane jest `x`, natomiast `x + 5` daje nowy wynik. Dlatego `x` jest L-wartością, a `x + 5` jest R-wartością.
+
+Nazwa może mylić: **L-wartość nie oznacza po prostu wyrażenia po lewej stronie `=`**. Stała także jest L-wartością, choć nie można jej zmienić:
 
 ```cpp
-int x = 1;            // modyfikowalna L-wartość
-const int cx = 2;     // niemodyfikowalna L-wartość
-
-x = 5;                // OK
-// cx = 6;            // BŁĄD: const, nie wolno zmieniać
+const int limit = 100;
+// limit = 200;  // błąd: obiekt jest stały
 ```
 
-#### Operatory, które często “dają L-wartość”
+Kategoria wyrażenia i możliwość modyfikacji to dwie różne sprawy. O zapisie do obiektu decyduje również jego typ, na przykład kwalifikator `const`.
 
-**Indeksowanie `[]`** – zwraca element, który zwykle jest L-wartością:
+## L-wartości: wyrażenia oznaczające obiekt
+
+Zmienna, element tablicy i dereferencja poprawnego wskaźnika są typowymi L-wartościami:
 
 ```cpp
-int a[3] = {0, 0, 0};
-a[1] = 7;     // a[1] jest L-wartością
+int main() {
+    int x = 10;
+    int numbers[3] = {4, 5, 6};
+    int* pointer = &x;
+
+    x = 11;             // x oznacza obiekt x
+    numbers[1] = 50;    // numbers[1] oznacza drugi element tablicy
+    *pointer = 12;      // *pointer oznacza obiekt x
+
+    // x ma teraz 12, a numbers[1] ma 50
+}
 ```
 
-**Dereferencja `*`** – wynik jest L-wartością (jeśli wskaźnik wskazuje na obiekt):
+Operator `&` pobiera adres obiektu. Operator `*` użyty przed wskaźnikiem daje dostęp do obiektu pod zapisanym adresem. Ponieważ `pointer` przechowuje adres `x`, wyrażenia `*pointer` i `x` odnoszą się do tego samego obiektu. Wskaźniki omówimy dokładniej w następnej lekcji.
 
-```cpp
-int x = 10;
-int* p = &x;
-
-*p = 99;      // *p jest L-wartością
-```
-
-**Prefiksowe `++x`** zwraca L-wartość:
+Prefiksowy operator zwiększania także daje dostęp do obiektu, który zmienia:
 
 ```cpp
 int x = 1;
-++x = 10;     // działa (choć rzadko tak się pisze)
+++x = 10;  // poprawne, ale nieczytelne: ++x oznacza nadal obiekt x
 ```
 
-### R-wartości (rvalues)
+W zwykłym kodzie lepiej napisać po prostu `x = 10`. Ten przykład pokazuje, że nazwa „L-wartość” nie jest tylko opisem lewej strony przypisania.
 
-**R-wartość** to wyrażenie, które jest zwykle **tymczasową wartością** — “wynikiem obliczeń”. Najczęściej pojawia się po prawej stronie przypisania.
+## R-wartości: wyniki i wartości tymczasowe
 
-#### Typowe przykłady
-
-```cpp
-int x = 3;        // 3 to R-wartość (literal)
-int y = x + 4;    // (x + 4) to R-wartość (wynik wyrażenia)
-```
-
-#### Czego nie wolno z R-wartością?
-
-Nie możesz przypisywać “do wyniku obliczenia”:
+Literały i wyniki zwykłych działań arytmetycznych są typowymi R-wartościami:
 
 ```cpp
 int x = 5;
-// (x + 1) = 10;   // BŁĄD: (x + 1) jest R-wartością
+int a = 42;        // 42 jest R-wartością
+int b = x + 1;     // x + 1 jest R-wartością
+// (x + 1) = 10;   // błąd: wyniku obliczenia nie można tak zmienić
+// int* p = &(x + 1); // błąd: nie można pobrać adresu takiego wyniku
 ```
 
-Zwykle nie pobierzesz też adresu tymczasowej R-wartości:
+Funkcja zwracająca wynik przez wartość również zwykle daje R-wartość:
 
 ```cpp
-int x = 5;
-// int* p = &(x + 1); // BŁĄD: nie bierze się adresu R-wartości
-```
-
-#### Funkcja zwracająca przez wartość → rvalue
-
-```cpp
-int add(int a, int b) {
-    return a + b;      // zwraca tymczasowy wynik
+int add(int left, int right) {
+    return left + right;
 }
 
 int main() {
-    int r = add(2, 3); // add(2,3) jest R-wartością
+    int result = add(2, 3);  // wywołanie dostarcza wynik 5
 }
 ```
 
-### Podsumowanie: L vs R w jednym miejscu
+To jest użyteczna intuicja, ale nie cała reguła C++. W dokładniejszym podziale R-wartości obejmują *prvalue* oraz *xvalue*. Nie każda R-wartość jest więc „wartością bez obiektu”: na przykład `std::move(x)` odnosi się do istniejącego `x`, ale pozwala wybrać operację przenoszącą. Na początek zapamiętaj typowe przykłady: nazwa zmiennej `x` jest L-wartością, a `42` i `x + 1` są R-wartościami.
 
-| Cecha                                  | L-wartość         | R-wartość                                 |
-| -------------------------------------- | ----------------- | ----------------------------------------- |
-| “Ma własny obiekt / miejsce w pamięci” | zazwyczaj tak     | zazwyczaj nie (tymczasowa)                |
-| Adres `&`                              | zwykle można      | zwykle nie                                |
-| Może stać po lewej stronie `=`         | jeśli nie-const   | nie                                       |
-| Przykłady                              | `x`, `a[i]`, `*p` | `42`, `x+1`, `f()` (zwraca przez wartość) |
+## Referencja jest aliasem obiektu
 
-### L/R w kontekście funkcji i referencji
-
-Tu robi się naprawdę praktycznie.
-
-#### Przekazanie przez wartość
-
-Funkcja dostaje kopię, więc może przyjąć i L-wartość, i R-wartość:
+Referencja to druga nazwa istniejącego obiektu. Nie tworzy kopii:
 
 ```cpp
-void f(int v) { }
-
 int main() {
-    int x = 10;
-    f(x);    // L-wartość OK
-    f(20);   // R-wartość OK
+    int original = 5;
+    int& alias = original;  // alias odnosi się do tego samego obiektu
+
+    alias = 8;              // zmienia original
+    // original ma teraz 8
 }
 ```
 
-#### `T&` — referencja do L-wartości
+Referencję trzeba powiązać z obiektem przy deklaracji. Nie można później przepiąć jej na inny obiekt. Wskaźnik jest inny: to osobna zmienna przechowująca adres i może mieć wartość `nullptr`. Porównanie referencji ze wskaźnikiem znajduje się w następnej lekcji.
 
-Taka funkcja wymaga **czegoś trwałego** (L-wartości), bo chce “podpiąć się” pod istniejący obiekt.
+## Parametry funkcji: kopia czy ten sam obiekt?
+
+### Przekazanie przez wartość: `T`
+
+Parametr `T value` jest osobną zmienną funkcji. Zmiana parametru nie zmienia argumentu wywołującego:
 
 ```cpp
-void g(int& v) {
-    v *= 2;
+#include <iostream>
+
+void setToZero(int value) {
+    value = 0;  // zmieniamy lokalną kopię
 }
 
 int main() {
-    int x = 10;
-    g(x);     // OK (L-wartość)
-
-    // g(20); // BŁĄD (R-wartość nie pasuje do int&)
+    int score = 7;
+    setToZero(score);
+    std::cout << score << '\n';  // 7
 }
 ```
 
-#### `const T&` — ważny wyjątek
+Funkcja może przyjąć L-wartość i R-wartość, bo w obu przypadkach tworzy własny parametr. Dla małych typów, takich jak `int`, przekazanie przez wartość jest zwykle dobrym wyborem.
 
-To jest bardzo częsty wzorzec: **można podać i L-wartość, i R-wartość**, bo nie modyfikujesz argumentu, a kompilator może bezpiecznie “przedłużyć życie” tymczasowego obiektu na czas wywołania.
+### Niestała referencja: `T&`
 
-```cpp
-void h(const int& v) { }
-
-int main() {
-    int x = 10;
-    h(x);     // OK
-    h(20);    // OK
-}
-```
-
-#### `T&&` — referencja do R-wartości (C++11+)
-
-Pozwala przechwytywać tymczasowe obiekty **albo** obiekty, które jawnie “oddajesz do przeniesienia”.
+Parametr `T&` wiąże się z L-wartością. Funkcja może zmienić ten sam obiekt, który przekazał wywołujący:
 
 ```cpp
-#include <utility>
+#include <iostream>
 
-void k(int&& v) {
-    // v to nazwana zmienna, ale związana z R-wartością
+void addOne(int& value) {
+    ++value;  // value jest inną nazwą argumentu
 }
 
 int main() {
-    k(20);          // OK: literal to R-wartość
-
-    int x = 10;
-    // k(x);        // BŁĄD: x jest L-wartością
-    k(std::move(x)); // OK: “traktuj x jak R-wartość”
+    int score = 7;
+    addOne(score);
+    std::cout << score << '\n';  // 8
+    // addOne(7);                // błąd: int& nie wiąże się z R-wartością
 }
 ```
 
-**Co robi `std::move`?**
-Nie przenosi samo z siebie. To tylko **rzutowanie** (konwersja) mówiące: *“od teraz możesz traktować ten obiekt jak R-wartość (czyli wolno z niego ‘zabrać’ zasoby)”*.
+Użyj `T&`, gdy zmiana argumentu jest częścią zadania funkcji. Nie używaj go tylko po to, by uniknąć kopiowania małej liczby.
 
-### Semantyka przenoszenia (move semantics) — krótko i konkretnie
+### Referencja do stałej: `const T&`
 
-Przenoszenie ma sens wtedy, gdy obiekt posiada zasób (np. bufor w pamięci). Zamiast kopiować cały zasób, można “przepiąć” wskaźniki/uchwyty.
+`const T&` pozwala czytać obiekt bez tworzenia kopii i nie pozwala zmieniać go przez tę referencję. Może też przyjąć wartość tymczasową:
 
-Najczytelniej widać to na `std::vector`, `std::string`, itp.
+```cpp
+#include <iostream>
+#include <string>
 
-#### Minimalny przykład z logowaniem kopii i przeniesienia
+void print(const std::string& text) {
+    std::cout << text << '\n';
+}
+
+int main() {
+    std::string message = "Cześć";
+    print(message);                 // referencja do istniejącego obiektu
+    print(std::string("Witaj"));    // obiekt tymczasowy żyje przez wywołanie
+}
+```
+
+Tymczasowy argument do parametru funkcji istnieje do końca wyrażenia zawierającego wywołanie. Nie zachowuj referencji ani wskaźnika do takiego argumentu na później: po zakończeniu wywołania obiekt może już nie istnieć.
+
+### Referencja R-wartości: `T&&`
+
+Parametr `T&&` może wiązać się z R-wartością. Przydaje się między innymi w funkcjach i konstruktorach przenoszących:
 
 ```cpp
 #include <iostream>
 #include <utility>
-#include <vector>
 
-struct Box {
-    std::vector<int> data;
+void acceptTemporary(int&& value) {
+    std::cout << value << '\n';
+}
 
-    Box() = default;
+int main() {
+    int x = 10;
+    acceptTemporary(20);            // 20 jest R-wartością
+    // acceptTemporary(x);          // błąd: x jest L-wartością
+    acceptTemporary(std::move(x));  // jawnie traktujemy x jako R-wartość
+}
+```
 
-    Box(const Box& other) : data(other.data) {
-        std::cout << "COPY\n";
+Wewnątrz funkcji parametr `value` ma nazwę, więc samo wyrażenie `value` jest L-wartością — mimo że jego typ to `int&&`. To ważna reguła przy implementowaniu przenoszenia.
+
+## `std::move` i przenoszenie
+
+`std::move` z nagłówka `<utility>` samo nie przenosi danych. Pozwala potraktować obiekt jako R-wartość. Dopiero konstruktor lub operator przypisania typu obiektu może wykonać przeniesienie.
+
+```cpp
+#include <iostream>
+#include <string>
+#include <utility>
+
+struct Message {
+    std::string text;
+
+    explicit Message(std::string value)
+        : text(std::move(value)) {}
+
+    Message(const Message& other)
+        : text(other.text) {
+        std::cout << "kopiowanie\n";
     }
 
-    Box(Box&& other) noexcept : data(std::move(other.data)) {
-        std::cout << "MOVE\n";
+    Message(Message&& other)
+        : text(std::move(other.text)) {
+        std::cout << "przenoszenie\n";
     }
 };
 
 int main() {
-    Box a;
-    a.data = {1,2,3};
+    Message first("długi tekst");
+    Message copy = first;                // kopiuje napis
+    Message moved = std::move(first);    // wybiera konstruktor przenoszący
 
-    Box b = a;             // COPY (a jest L-wartością)
-    Box c = std::move(a);  // MOVE (a “oddane” do przeniesienia)
+    std::cout << copy.text << '\n';
+    std::cout << moved.text << '\n';
 }
 ```
 
-#### Co z obiektem “po przeniesieniu”?
+Przy `copy` powstaje niezależna kopia `first.text`. Przy `moved` wyrażenie `std::move(first)` pozwala wybrać konstruktor `Message(Message&&)`, który przekazuje napis do przenoszącego konstruktora `std::string`. Szczegóły przejęcia zasobu zależą od implementacji `std::string`.
 
-Obiekt źródłowy (np. `a`) jest w stanie **moved-from**: ma być poprawny (da się go zniszczyć, przypisać mu nową wartość), ale jego zawartość jest zwykle “pusta/neutralna”. Dla `std::vector` najczęściej będzie pusty.
+Po przeniesieniu `first` nadal jest poprawnym obiektem: można go zniszczyć albo przypisać mu nową wartość. Jego poprzednia zawartość może się zmienić; dla `std::string` jest poprawna, ale nieokreślona przez ogólną regułę języka. Nie zakładaj, że zawsze będzie pusty. Przenoszenie jest przydatne głównie dla obiektów zarządzających zasobami, takich jak napisy i wektory; dla `int` zwykle niczego nie zyskujemy.
 
-### Najczęstsze błędy i proste reguły
+## Jak wybrać parametr
 
-* Jeśli funkcja ma **modyfikować** argument: użyj `T&`.
-* Jeśli funkcja ma tylko **czytać** i chcesz przyjąć także tymczasowe: `const T&`.
-* Jeśli funkcja ma **przejąć zasoby** (np. zapisać w środku) i chcesz wykorzystać przenoszenie: `T&&` (lub przeciążenia / forwarding).
-* `std::move(x)` nie przenosi “magicznie” — tylko pozwala wybrać ścieżkę przenoszącą (konstruktor/operatory move).
+| Zapis | Co otrzymuje funkcja | Typowe zastosowanie |
+| --- | --- | --- |
+| `T value` | własną kopię | małe wartości |
+| `T& value` | dostęp do zmiennego obiektu wywołującego | funkcja ma zmienić argument |
+| `const T& value` | dostęp tylko do odczytu, także do wartości tymczasowej | odczyt większego obiektu bez kopii |
+| `T&& value` | dostęp do R-wartości | implementacja przenoszenia lub API przyjmujące tymczasowe obiekty |
+
+## Najważniejsze wnioski
+
+- Kategoria wyrażenia i możliwość modyfikacji obiektu to odrębne sprawy: L-wartość może być stała.
+- `x`, `tab[0]` i `*pointer` to typowe L-wartości; `42`, `x + 1` i wynik funkcji zwracany przez wartość to typowe R-wartości.
+- Referencja jest aliasem, a nie kopią ani wskaźnikiem.
+- Nazwany parametr jest L-wartością wewnątrz funkcji, także gdy zadeklarowano go jako `T&&`.
+- `std::move(x)` nie przenosi samo z siebie. Umożliwia wybranie operacji przenoszącej, która może zmienić stan `x`.

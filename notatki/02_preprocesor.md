@@ -1,267 +1,205 @@
-## Preprocesor
+# Preprocesor
 
-Preprocesor to specjalne narzędzie, które działa na kodzie źródłowym przed właściwym procesem kompilacji. W kontekście języków programowania takich jak C i C++, preprocesor jest integralną częścią kompilatora, która przekształca kod źródłowy na podstawie specjalnych dyrektyw. Dyrektywy preprocesora rozpoczynają się od znaku `#` i są przetwarzane przed analizą składniową przez kompilator. Dzięki temu programista może modyfikować kod źródłowy w sposób dynamiczny, kontrolować kompilację warunkową, definiować makra i zarządzać załączaniem plików nagłówkowych. Preprocesor nie jest samodzielnym narzędziem działającym w pełnej izolacji – większość nowoczesnych kompilatorów uruchamia go automatycznie jako pierwszy etap procesu kompilacji, co z punktu widzenia programisty wygląda, jakby było zintegrowane w jednym pakiecie.
+W poprzedniej notatce zobaczyliśmy, że przed analizą kodu kompilator przetwarza dyrektywy takie jak `#include`. Robi to preprocesor. Jego zadaniem jest przygotowanie tekstu źródłowego: dołącza wskazane pliki, rozwija makra i wybiera fragmenty objęte kompilacją warunkową.
 
-Dyrektywy preprocesora mogą być umieszczone w dowolnym miejscu w kodzie źródłowym, jednak dla zachowania czytelności i dobrej organizacji kodu zazwyczaj umieszcza się je na początku pliku lub przed fragmentami kodu, których dotyczą. W dużych projektach często spotyka się pliki nagłówkowe zawierające tylko makra i dyrektywy warunkowe, co sprzyja modularności i łatwiejszemu zarządzaniu konfiguracją kompilacji.
+Preprocesor nie wykonuje programu i nie sprawdza typów tak jak kompilator. Działa wcześniej, na tekście. Dlatego dyrektywy z `#` mogą zmienić to, jaki kod trafi do kompilatora, ale nie potrafią na przykład sprawdzić wartości zmiennej podczas działania programu.
 
-### Funkcje preprocesora
+Komentarze również nie są instrukcjami programu. W trakcie wczesnego przetwarzania zostają zastąpione białymi znakami, dzięki czemu nie zmieniają sąsiadujących tokenów. Pisze się je dla osób czytających kod; procesor nie wykonuje ich treści.
 
-Dyrektywy preprocesora pełnią różne funkcje, w tym:
+Przykłady w tej notatce są zapisane w C++. W C działają te same podstawowe dyrektywy, choć nazwy nagłówków i kod korzystający z bibliotek mogą się różnić.
 
-#### 1. Załączanie bibliotek
+## Dołączanie plików przez `#include`
 
-Dyrektywa `#include` służy do włączania zawartości innych plików do naszego kodu źródłowego. Jest to kluczowe dla modularności kodu oraz ponownego wykorzystania istniejących funkcji i definicji. Załączane pliki mogą zawierać deklaracje funkcji, klasy, zmienne globalne oraz inne dyrektywy preprocesora. W efekcie, gdy plik nagłówkowy jest załączany w wielu miejscach, unikamy powtarzalności tych samych definicji – wystarczy zmodyfikować kod raz w pliku nagłówkowym, a wszystkie miejsca, w których go dołączamy, otrzymują nowe definicje.
+Gdy plik źródłowy korzysta z funkcji lub typu opisanego w nagłówku, musi znać jego deklarację. `#include` włącza treść wskazanego pliku do przetwarzanego pliku źródłowego. Można to sobie wyobrazić jako tekstowe rozwinięcie nagłówka w miejscu dyrektywy.
 
-Są dwa sposoby użycia dyrektywy `#include`:
-
-**Załączanie bibliotek standardowych**:
-
-```c++
-#include <iostream>
+```cpp
+#include <iostream>       // nagłówek biblioteki standardowej C++
+#include "powitanie.hpp"  // nagłówek z bieżącego projektu
 ```
 
-Gdy używamy nawiasów ostrokątnych `< >`, preprocesor szuka pliku nagłówkowego `iostream` w standardowych katalogach kompilatora przeznaczonych na pliki nagłówkowe biblioteki standardowej. W tym przypadku dołączamy standardową bibliotekę wejścia/wyjścia, która zawiera deklaracje dla strumieni takich jak `std::cin` i `std::cout`. Po włączeniu biblioteki standardowej zyskujemy dostęp do predefiniowanych klas, funkcji oraz innych elementów niezbędnych do podstawowej funkcjonalności języka.
+Nawiasy ostre stosuje się zwykle dla nagłówków bibliotek, a cudzysłowy — dla plików projektu. To konwencja dotycząca sposobu wyszukiwania plików: dokładne katalogi przeszukiwane przez kompilator zależą od jego konfiguracji.
 
-**Załączanie plików lokalnych**:
+Warto rozdzielić dwie rzeczy: dołączenie nagłówka udostępnia deklaracje, ale samo w sobie nie łączy gotowej definicji funkcji z programem. Na przykład nagłówek może powiedzieć kompilatorowi, że istnieje `void wypisz_powitanie();`, a kod tej funkcji może znajdować się w osobnym pliku `.cpp`. Pliki obiektowe trzeba później połączyć linkerem.
 
-```c++
-#include "moj_plik.h"
+### Dlaczego nagłówki mają strażniki?
+
+Jeden nagłówek może zostać dołączony do pliku kilka razy pośrednio: na przykład `main.cpp` dołącza `a.hpp` i `b.hpp`, a oba te nagłówki dołączają `wspolne.hpp`. Wielokrotne przetworzenie tej samej deklaracji lub definicji może spowodować błędy. Strażnik nagłówka sprawia, że treść zostanie uwzględniona tylko raz w danej jednostce translacji:
+
+```cpp
+// wspolne.hpp
+#ifndef WSPOLNE_HPP
+#define WSPOLNE_HPP
+
+int oblicz_sume(int a, int b);
+
+#endif // WSPOLNE_HPP
 ```
 
-Gdy używamy cudzysłowów `" "`, preprocesor najpierw szuka pliku `moj_plik.h` w bieżącym katalogu (czyli tam, gdzie znajduje się plik źródłowy), a następnie w standardowych katalogach kompilatora. Ten sposób jest używany do załączania własnych plików nagłówkowych projektu. Dzięki temu programista może tworzyć wiele małych, wyspecjalizowanych plików `.h`, które zawierają tylko deklaracje potrzebnych funkcji, klas czy zmiennych, i rozdzielać logikę na mniejsze moduły.
+Przy pierwszym przejściu `WSPOLNE_HPP` nie jest jeszcze zdefiniowane, więc preprocesor wchodzi do bloku i definiuje makro. Gdy ponownie napotka ten nagłówek, warunek `#ifndef` jest fałszywy i jego zawartość zostaje pominięta. Nazwa strażnika powinna być charakterystyczna dla pliku, aby nie zderzyła się z inną nazwą.
 
-**Przykład działania:**
+W wielu popularnych kompilatorach działa też prostsze `#pragma once`, które zapobiega wielokrotnemu dołączeniu pliku. Jest szeroko obsługiwane, ale nie jest przenośnym zamiennikiem zdefiniowanym w taki sam sposób jak standardowe dyrektywy. Strażniki są bezpiecznym, powszechnym rozwiązaniem.
 
-Załóżmy, że mamy plik `funkcje.h` z deklaracją funkcji:
+Zapis `#pragma once` wygląda tak:
 
-```c++
-// funkcje.h
-void wypisz_powitanie();
-```
-
-I plik `funkcje.cpp` z definicją funkcji:
-
-```c++
-// funkcje.cpp
-#include "funkcje.h"
-#include <iostream>
-
-void wypisz_powitanie() {
-    std::cout << "Witaj, świecie!" << std::endl;
-}
-```
-
-W pliku `main.cpp` możemy załączyć `funkcje.h` i użyć funkcji `wypisz_powitanie()`:
-
-```c++
-// main.cpp
-#include "funkcje.h"
-
-int main() {
-    wypisz_powitanie();
-    return 0;
-}
-```
-
-Dzięki dyrektywie `#include` nasz kod jest czytelny i dobrze zorganizowany. Inaczej musielibyśmy wielokrotnie wstawiać definicję funkcji czy deklaracje zmiennych, co skutkowałoby bałaganem i trudnościami w utrzymaniu projektu.
-
-#### 2. Definiowanie stałych i makr
-
-Dyrektywa `#define` pozwala na tworzenie makr preprocesora, które mogą być używane do zastępowania tekstu w kodzie źródłowym. Makra mogą być prostymi stałymi, które zastępują określony identyfikator określoną wartością, lub mogą być bardziej złożone i przyjmować argumenty, działając podobnie do funkcji. Mechanizm ten bywa przydatny do definiowania nazw skrótowych dla długich, powtarzających się wyrażeń lub wstawiania stałych, które nie mają narzuconego konkretnego typu (np. liczby czy łańcuchy znaków).
-
-**Definiowanie stałych tekstowych lub liczbowych**:
-
-```c++
-#define PI 3.141592653589793
-#define NAZWA "Jan Kowalski"
-```
-
-Tutaj `PI` zostanie zastąpione przez wartość `3.141592653589793` wszędzie tam, gdzie występuje w kodzie, a `NAZWA` przez tekst `"Jan Kowalski"`. W praktyce takie stałe często definiuje się jako `constexpr` lub `const` w C++, dzięki czemu zyskujemy lepszą kontrolę nad typem, ale makra wciąż bywają przydatne w kodzie pisanym w stylu C lub w sytuacjach, gdy zależy nam na szybkim „tekstem za tekst”.
-
-**Uwaga:** Makra nie są ograniczone typami danych i nie są sprawdzane pod względem typów przez kompilator, co może prowadzić do błędów, jeśli nie są używane ostrożnie. Kompilator po prostu zastępuje tekst. Dla nowoczesnych projektów w C++ bardziej zalecane jest stosowanie stałych (`const` lub `constexpr`) oraz szablonów, aby zapewnić lepszą kontrolę typów.
-
-**Definiowanie makr z parametrami (makra funkcji)**:
-
-```c++
-#define MAX(x, y) ((x) > (y) ? (x) : (y))
-```
-
-To makro porównuje dwie wartości i zwraca większą z nich. Należy zwrócić uwagę na umieszczanie parametrów i całego wyrażenia w nawiasach, aby uniknąć błędów wynikających z nieoczekiwanej kolejności wykonywania operacji i minimalizować ryzyko rozbudowanych wyrażeń wstawianych bez kontroli. 
-
-**Przykład problemu z makrami bez nawiasów:**
-
-```c++
-#define SQR(x) x * x
-
-int a = 5;
-int b = SQR(a + 1); // Oczekiwany wynik: 36, faktyczny wynik: 11
-```
-
-Makro zostanie zastąpione jako:
-
-```c++
-int b = a + 1 * a + 1;
-```
-
-Co daje:
-
-```c++
-int b = a + (1 * a) + 1;
-```
-
-Czyli dla `a = 5`, `b = 5 + 5 + 1 = 11`.
-
-Poprawne makro powinno być zdefiniowane jako:
-
-```c++
-#define SQR(x) ((x) * (x))
-```
-
-Dzięki temu każda wstawka `SQR(a + 1)` zostanie przetworzona jako `((a + 1) * (a + 1))`.
-
-#### 3. Warunkowa kompilacja
-
-Dyrektywy preprocesora pozwalają na kompilację określonych fragmentów kodu w zależności od spełnienia określonych warunków. Jest to niezwykle użyteczne w przypadku pisania kodu przenośnego, który musi działać na różnych platformach, lub włączania dodatkowych funkcji podczas debugowania. Kompilacja warunkowa sprawdza się również, gdy zależnie od środowiska czy wersji biblioteki pewne fragmenty muszą zostać włączone bądź wyłączone.
-
-**Dyrektywy warunkowe**:
-
-- `#if` ... `#endif`
-- `#ifdef` ... `#endif`
-- `#ifndef` ... `#endif`
-- `#else`
-- `#elif`
-
-**Przykład użycia `#ifdef` i `#ifndef`:**
-
-```c++
-#ifndef NDEBUG
-#define DEBUG
-#endif
-
-#ifdef DEBUG
-std::cout << "Debugowanie włączone" << std::endl;
-#endif
-```
-
-W powyższym przykładzie, jeśli symbol `NDEBUG` nie jest zdefiniowany, zostanie zdefiniowany symbol `DEBUG`, a następnie kod wewnątrz `#ifdef DEBUG` zostanie skompilowany. W efekcie programista może włączyć lub wyłączyć komunikaty debugowania, definiując bądź nie definiując `NDEBUG`.
-
-**Użycie `#if` i wyrażeń logicznych:**
-
-```c++
-#define WERSJA 2
-
-#if WERSJA == 1
-// Kod dla wersji 1
-#elif WERSJA == 2
-// Kod dla wersji 2
-#else
-// Kod dla innych wersji
-#endif
-```
-
-Preprocesor może wykonywać proste operacje arytmetyczne i logiczne na wartościach zdefiniowanych przez `#define`. Na przykład, jeśli `WERSJA` wynosi 2, zostanie skompilowany kod tylko z sekcji `#elif WERSJA == 2`.
-
-**Kompilacja warunkowa w zależności od platformy:**
-
-```c++
-#ifdef _WIN32
-// Kod specyficzny dla Windows
-#elif __linux__
-// Kod specyficzny dla Linuxa
-#elif __APPLE__
-// Kod specyficzny dla macOS
-#else
-// Kod dla innych platform
-#endif
-```
-
-Symbole takie jak `_WIN32`, `__linux__`, `__APPLE__` są predefiniowane przez kompilatory i pozwalają na pisanie przenośnego kodu. Jest to szczególnie przydatne w aplikacjach wieloplatformowych, gdy pewne funkcje czy biblioteki są dostępne tylko na danej platformie.
-
-#### 4. Usuwanie definicji
-
-Dyrektywa `#undef` służy do usuwania wcześniej zdefiniowanych makr lub stałych. Jest to przydatne, gdy chcemy redefiniować makro lub upewnić się, że dane makro nie jest już aktywne w dalszej części kodu. W niektórych sytuacjach może być wymagane, żeby o to samo makro nie „konkurowały” różne sekcje kodu.
-
-**Przykład użycia `#undef`:**
-
-```c++
-#define BUFOR 1024
-
-// Kod używający BUFOR
-
-#undef BUFOR
-
-#define BUFOR 2048
-
-// Kod używający nowej wartości BUFOR
-```
-
-W tym przypadku najpierw definiujemy `BUFOR` jako `1024`, następnie go usuwamy za pomocą `#undef`, a potem redefiniujemy jako `2048`. Zmiana wartości makra w trakcie procesu preprocesora bywa rzadko stosowana, jednak w specyficznych przypadkach potrafi być przydatna.
-
-**Uwaga:** Należy być ostrożnym z używaniem `#undef`, aby nie wprowadzić niejasności w kodzie, szczególnie w dużych projektach, gdzie wiele modułów może oczekiwać określonej wartości makra.
-
-### 5. Inne dyrektywy preprocesora
-
-**Dyrektywa `#pragma`**:
-
-Dyrektywa `#pragma` jest używana do przekazywania specjalnych instrukcji do kompilatora. Konkretne znaczenie `#pragma` może się różnić w zależności od kompilatora, dlatego jest ona często używana w sposób przenośny z rozwagą. Niektóre kompilatory mogą ignorować nieznane `#pragma`, inne mogą generować ostrzeżenia. 
-
-**Przykład:**
-
-```c++
+```cpp
 #pragma once
 ```
 
-Dyrektywa `#pragma once` zapewnia, że plik nagłówkowy zostanie dołączony tylko raz podczas kompilacji, nawet jeśli zostanie załączony wielokrotnie w różnych miejscach. Jest to alternatywa dla tradycyjnych strażników nagłówków (`include guards`):
+Umieszcza się go na początku nagłówka zamiast strażnika. Wybierz jeden z tych sposobów i stosuj go konsekwentnie w projekcie.
 
-```c++
-#ifndef NAZWA_PLIKU_H
-#define NAZWA_PLIKU_H
+## Makra i podstawianie tekstu
 
-// Zawartość pliku nagłówkowego
+`#define` wprowadza makro. Preprocesor zastępuje jego nazwę wskazanym tekstem, zanim kompilator sprawdzi kod. Makro nie jest zmienną ani funkcją: nie ma własnego typu i kompilator nie analizuje jego argumentów tak jak argumentów zwykłej funkcji.
 
+Przykład makra bez argumentów:
+
+```cpp
+#define PI 3.14159
+
+double pole_kola(double promien) {
+    return PI * promien * promien;
+}
+```
+
+Definicja obowiązuje od miejsca, w którym pojawia się `#define`, do końca jednostki translacji albo do chwili usunięcia jej dyrektywą `#undef`. Dlatego makro nazwane `PI` nie jest zmienną o zasięgu funkcji: jego podmiana może dotyczyć całego dalszego kodu przetwarzanego pliku.
+
+Przed analizą kompilatora użycie `PI` zostanie zastąpione tekstem `3.14159`. W nowym kodzie C++ stałą liczbową zwykle lepiej zapisać jako `constexpr`, bo ma wtedy typ i podlega regułom języka:
+
+```cpp
+constexpr double pi = 3.14159;
+```
+
+### Nawiasy w makrach funkcyjnych
+
+Makro może przyjmować argumenty, ale nadal działa przez podstawienie tekstu. To łatwo przeoczyć, bo zapis makra przypomina wywołanie funkcji.
+
+Rozważmy błędne makro:
+
+```cpp
+#define KWADRAT(x) x * x
+
+int a = 5;
+int wynik = KWADRAT(a + 1);
+```
+
+Preprocesor wstawi argument dosłownie. Otrzymamy więc:
+
+```cpp
+int wynik = a + 1 * a + 1;
+```
+
+Mnożenie ma pierwszeństwo przed dodawaniem, więc przy `a == 5` wyrażenie oznacza `5 + (1 * 5) + 1`, czyli `11`. Nie jest to oczekiwany kwadrat liczby `6`.
+
+Nawiasy wokół argumentu i całego wyrażenia naprawiają ten konkretny błąd:
+
+```cpp
+#define KWADRAT(x) ((x) * (x))
+```
+
+Teraz `KWADRAT(a + 1)` rozwija się do `((a + 1) * (a + 1))`. Nadal jednak nie jest to bezpieczne zastępstwo funkcji. Argument trafia do makra dwa razy, więc przekazanie wyrażenia, które zmienia stan — na przykład `i++` — może spowodować nieoczekiwane zachowanie. W C++ do obliczeń lepiej użyć funkcji; makr używa się głównie tam, gdzie potrzebna jest właśnie praca preprocesora.
+
+## Wybieranie kodu przed kompilacją
+
+Dyrektywy `#if`, `#ifdef`, `#ifndef`, `#elif`, `#else` i `#endif` pozwalają włączyć wybrane wiersze do kodu przekazanego kompilatorowi, a inne pominąć. Przydaje się to między innymi do ustawień debugowania albo kodu zależnego od platformy.
+
+Poniższy kompletny przykład wypisuje informację diagnostyczną tylko wtedy, gdy makro `NDEBUG` nie zostało zdefiniowane:
+
+```cpp
+#include <iostream>
+
+int main() {
+#ifndef NDEBUG
+    std::cout << "Wersja z informacją diagnostyczną\n";
+#endif
+
+    std::cout << "Program działa\n";
+}
+```
+
+Gdy preprocesor napotka `#ifndef NDEBUG`, sprawdza wyłącznie, czy makro o tej nazwie istnieje. Jeśli istnieje, pomija aż do `#endif` tekst diagnostyczny. W przeciwnym razie pozostawia ten tekst dla kompilatora. Makro można zdefiniować w poleceniu kompilacji opcją `-DNDEBUG` w narzędziach GNU. Biblioteka standardowa używa `NDEBUG` między innymi do wyłączania sprawdzeń `assert`.
+
+`#ifdef NAZWA` pyta, czy makro jest zdefiniowane. Nie sprawdza, czy jego wartość jest równa `1`. Do sprawdzania wartości służy `#if`:
+
+```cpp
+#define WERSJA 2
+
+#if WERSJA == 1
+    // kod dla wersji 1
+#elif WERSJA == 2
+    // kod dla wersji 2
+#else
+    // kod dla pozostałych wersji
 #endif
 ```
 
-W nowoczesnym C++ i w większości popularnych kompilatorów `#pragma once` jest bardzo szeroko wspierana i pozwala uprościć pliki nagłówkowe.
+Preprocesor wybiera gałąź na podstawie wyrażenia złożonego ze stałych całkowitych i makr. Nie może w tym miejscu zapytać o wartość zmiennej programu, ponieważ zmienna nie została jeszcze utworzona ani program nie został uruchomiony.
 
-**Dyrektywa `#error`**:
+Jeśli w wyrażeniu `#if` użyjesz nazwy, która nie jest zdefiniowanym makrem, preprocesor potraktuje ją jak `0`. Literówka w nazwie wersji może więc po cichu wybrać inną gałąź, zamiast dać błąd. Gdy warunek ma sprawdzać samo istnienie makra, użyj `#ifdef NAZWA` albo `#if defined(NAZWA)`.
 
-Dyrektywa `#error` pozwala na wygenerowanie błędu kompilacji z określonym komunikatem. Jest to użyteczne do wykrywania niepożądanych warunków podczas preprocesowania. Jeśli podczas kompilacji okaże się, że mamy niewłaściwą konfigurację lub kluczowe makro nie jest zdefiniowane, można wywołać `#error` z komunikatem, co przerwie kompilację i zwróci uwagę programisty na problem.
+Makra platformowe mogą służyć do wyboru fragmentów przeznaczonych dla danego systemu. Ich nazwy i znaczenie zależą od kompilatora oraz platformy, więc samo użycie `#ifdef` nie czyni programu przenośnym. W większym projekcie warto ograniczać taki kod do miejsc, które rzeczywiście wymagają funkcji systemowych.
 
-**Przykład:**
+Przykład pokazuje sam mechanizm, a nie gotowy sposób na przenośność całego programu:
 
-```c++
+```cpp
+#if defined(_WIN32)
+    // fragment przeznaczony dla środowiska Windows
+#elif defined(__linux__)
+    // fragment przeznaczony dla środowiska Linux
+#else
+    // pozostałe środowiska
+#endif
+```
+
+Nazwy `_WIN32` i `__linux__` są dostarczane przez narzędzia dla odpowiednich platform. Kod wewnątrz każdej gałęzi nadal musi być poprawny dla kompilatora, który ją wybierze.
+
+## Pozostałe przydatne dyrektywy
+
+`#undef NAZWA` usuwa bieżącą definicję makra. Po tej dyrektywie preprocesor nie będzie już rozwijał `NAZWA` według poprzedniej definicji. Ponowne definiowanie tego samego makra w różnych miejscach zwykle utrudnia zrozumienie kodu, dlatego `#undef` przydaje się głównie w szczególnych przypadkach.
+
+```cpp
+#define ROZMIAR_BUFORA 1024
+// Tutaj ROZMIAR_BUFORA rozwija się do 1024.
+
+#undef ROZMIAR_BUFORA
+// Od tego miejsca ta nazwa nie jest już makrem.
+```
+
+`#error` zatrzymuje przetwarzanie i wyświetla komunikat. Można dzięki niemu jasno zgłosić brak wymaganego ustawienia:
+
+```cpp
 #ifndef WERSJA
-#error "Makro WERSJA musi być zdefiniowane"
+#error "Musisz zdefiniować makro WERSJA"
 #endif
 ```
 
-Jeśli `WERSJA` nie jest zdefiniowane, kompilacja zostanie przerwana z komunikatem błędu. Jest to skuteczny sposób na upewnienie się, że środowisko kompilacji zostało prawidłowo skonfigurowane.
+Jeśli `WERSJA` nie zostało zdefiniowane, kompilator zatrzyma proces na etapie preprocesowania i poda wskazany komunikat. `#warning` bywa obsługiwane przez kompilatory, ale jego dostępność i zachowanie zależą od narzędzia.
 
-**Dyrektywa `#warning`** (w niektórych kompilatorach):
+Przykład `#warning`:
 
-Niektóre kompilatory obsługują dyrektywę `#warning`, która generuje ostrzeżenie podczas kompilacji. Jest to wygodne, gdy chcemy przekazać informację dla innych programistów (lub samego siebie w przyszłości), że pewna funkcjonalność jest eksperymentalna, przestarzała lub wymaga dodatkowej uwagi.
-
-```c++
-#warning "Ta funkcja jest przestarzała"
+```cpp
+#warning "Ta część programu wymaga sprawdzenia"
 ```
 
-To ostrzeżenie informuje programistę o potencjalnych problemach, ale nie przerywa kompilacji.
+Kompilator może wtedy wypisać ostrzeżenie i kontynuować pracę. Ponieważ obsługa tej dyrektywy różni się między kompilatorami, nie należy jej traktować jako przenośnego mechanizmu wymaganego przez język.
 
-**Predefiniowane makra preprocesora:**
+Kompilator udostępnia też predefiniowane nazwy. `__FILE__` oznacza nazwę bieżącego pliku, a `__LINE__` — numer wiersza. W C++ można użyć ich na przykład w prostym komunikacie diagnostycznym:
 
-Preprocesor definiuje również kilka standardowych makr, które mogą być używane w kodzie:
+```cpp
+#include <iostream>
 
-- `__FILE__` – nazwa bieżącego pliku źródłowego
-- `__LINE__` – numer linii w bieżącym pliku źródłowym
-- `__DATE__` – data kompilacji
-- `__TIME__` – czas kompilacji
-- `__func__` – nazwa bieżącej funkcji (C99 i nowsze)
-
-**Przykład użycia:**
-
-```c++
-std::cout << "Błąd w pliku " << __FILE__ << " w linii " << __LINE__ << std::endl;
+int main() {
+    std::cout << "Plik: " << __FILE__
+              << ", wiersz: " << __LINE__ << '\n';
+}
 ```
 
-Ta linia kodu wypisze informację o miejscu wystąpienia błędu, co jest pomocne podczas debugowania. W połączeniu ze stosowaniem makr warunkowych można tworzyć inteligentne mechanizmy logowania czy śledzenia działania programu (tzw. logging lub tracing), które w finalnej wersji można wyłączyć, by nie spowalniać działania aplikacji.
+`__DATE__` i `__TIME__` dostarczają datę i czas kompilacji. Z kolei `__func__` jest w C++ nazwą dostępną wewnątrz funkcji, a nie makrem preprocesora. Takie informacje bywają przydatne przy diagnozowaniu błędów, choć w praktycznych projektach zwykle korzysta się z bibliotek do logowania.
+
+## Najczęstsze nieporozumienia
+
+- **„`#include` wstawia do programu gotową funkcję”.** Zwykle nagłówek udostępnia jej deklarację; definicja może być w innym pliku i wymagać linkowania.
+- **„Makro jest funkcją”.** Makro zastępuje tekst przed sprawdzaniem typów i składni. Nie zapewnia takich samych reguł jak funkcja.
+- **„`#ifdef WERSJA` sprawdza, czy WERSJA wynosi 1”.** Sprawdza tylko, czy nazwa makra została zdefiniowana. Do sprawdzenia liczby służy `#if WERSJA == 1`.
+- **„Preprocesor widzi wartości zmiennych”.** Nie widzi ich podczas działania programu. Kompilacja warunkowa wybiera tekst wcześniej, przed kompilowaniem.
+
+Kiedy preprocesor zakończy pracę, kompilator analizuje przygotowany kod. W następnej notatce przejdziemy od tego tekstu do podstawowych obiektów programu: zmiennych, ich typów i wartości.

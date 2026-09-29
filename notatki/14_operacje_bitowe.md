@@ -1,493 +1,179 @@
-## Operacje bitowe
+# Operacje bitowe w C i C++
 
-Operacje bitowe umożliwiają manipulację poszczególnymi bitami w liczbie. Są one niezbędne w wielu niskopoziomowych zadaniach programistycznych, takich jak prace z rejestrami, komunikacja sprzętowa czy optymalizacje. W językach C i C++ dostępne są następujące operacje bitowe:
+Poprzednia notatka pokazała, że tekst i inne dane są przechowywane w pamięci jako bajty. Bajt składa się z bitów — najmniejszych jednostek, które mają wartość `0` albo `1`. Operacje bitowe pozwalają sprawdzić lub zmienić wybrane bity liczby. Najczęściej używa się ich do flag, masek, pól protokołów i danych sprzętowych.
 
-### AND
-Operacja AND (koniunkcja) zwraca 1 na określonych bitach, tylko jeśli obie liczby mają wartość 1 na tych samych bitach. Jest to operacja logiczna, która działa na poziomie bitowym.
+Do pracy z maskami wybieraj typy całkowite **bez znaku**, np. `uint8_t` lub `uint32_t` z nagłówka `<stdint.h>`. Wartości bez znaku mają przewidywalną reprezentację binarną modulo rozmiaru typu. Dokładne typy takie jak `uint32_t` są dostępne wtedy, gdy implementacja ma typ o dokładnie takiej szerokości.
 
-| Wejście 1 | Wejście 2 | Wyjście |
-|-----------|-----------|---------|
-| 0         | 0         | 0       |
-| 0         | 1         | 0       |
-| 1         | 0         | 0       |
-| 1         | 1         | 1       |
+## Jak czytać zapis binarny
 
-Przykład: `5 (0101) & 3 (0011) = 1 (0001)`
+W zapisie binarnym każda pozycja odpowiada potędze dwójki. Czytamy od prawej: pozycje mają wagi `1`, `2`, `4`, `8` i tak dalej. Na przykład ośmiobitowy zapis liczby 13 wygląda tak:
+
+```text
+pozycja:  7 6 5 4 3 2 1 0
+waga:    128 64 32 16 8 4 2 1
+wartość:   0  0  0  0 1 1 0 1  = 8 + 4 + 1 = 13
+```
+
+Pozycję bitu liczymy zwykle od zera, zaczynając od prawej strony — to **najmniej znaczący bit**. Wartość `13` ma więc ustawione bity `0`, `2` i `3`.
+
+## AND, OR i XOR na przykładzie
+
+Operatory działają na odpowiadających sobie parach bitów. W tym przykładzie zapisujemy wartości na czterech pozycjach, aby dało się zobaczyć każdą z nich:
+
+```text
+           0101   (5)
+           0011   (3)
+AND  (&)   0001   (1)   jedynka zostaje tylko tam, gdzie obie liczby mają 1
+OR   (|)   0111   (7)   jedynka jest tam, gdzie co najmniej jedna liczba ma 1
+XOR  (^)   0110   (6)   jedynka jest tam, gdzie liczby mają różne bity
+```
+
+Zasada dla pojedynczego bitu jest następująca:
+
+| `a` | `b` | `a & b` | `a \| b` | `a ^ b` |
+|---:|---:|---:|---:|---:|
+| 0 | 0 | 0 | 0 | 0 |
+| 0 | 1 | 0 | 1 | 1 |
+| 1 | 0 | 0 | 1 | 1 |
+| 1 | 1 | 1 | 1 | 0 |
+
+AND (`&`) wybiera wspólne jedynki, dlatego nadaje się do sprawdzania i izolowania bitów. OR (`|`) łączy ustawione bity, więc nadaje się do włączania flag. XOR (`^`) zmienia bit na przeciwny tylko tam, gdzie maska ma `1`.
+
+Operatory bitowe nie są tym samym co logiczne. `&&`, `||` i `!` służą do wyrażeń prawda/fałsz i zwracają wynik logiczny. `&`, `|` i `^` działają na każdym bicie liczb całkowitych. Zapis `a & b` może więc dać np. `1`, `4` lub `0`, a nie wyłącznie prawdę/fałsz.
+
+## Negacja bitowa: dlaczego trzeba znać szerokość
+
+Operator `~` odwraca **wszystkie** bity typu: każdą jedynkę zmienia w zero, a każde zero w jedynkę. Nie można więc zapisać po prostu „negacją `0101` jest `1010`” bez określenia szerokości. Dla ośmiu bitów:
+
+```text
+x       = 00000101
+~x      = 11111010
+```
+
+W kodzie C/C++ `~` odwraca bity całej wartości typu, a nie tylko tych, które akurat narysowaliśmy. Na przykład `~UINT32_C(5)` ma 32 bity: `11111111 11111111 11111111 11111010`. Przy maskowaniu interesuje nas zwykle skutek operacji, a nie samodzielne wypisanie negowanej maski.
+
+## Maska: wybór i zmiana bitu
+
+**Maska** to liczba, w której jedynki wskazują bity, na których chcemy wykonać operację. Maska dla bitu numer `n` to jedynka przesunięta w lewo o `n` pozycji: `1 << n`. Dla przykładu, maska bitu numer 2 w ośmiobitowym widoku to `00000100`.
+
+Rozważmy `flags = 5`, czyli `00000101`. To mogą być flagi stanu, w których bity `0` i `2` są włączone. Poniższy kod sprawdza, włącza, wyłącza i przełącza flagę. Wypisanie jest szesnastkowe, ale obok każdej operacji rozpisano jej sens na ośmiu bitach.
 
 ```c
+#include <inttypes.h>
+#include <stdint.h>
 #include <stdio.h>
 
-int main() {
-    int a = 5; // 0101 w binarnym
-    int b = 3; // 0011 w binarnym
-    printf("%d & %d = %d\n", a, b, a & b);  // Wynik: 1
+int main(void) {
+    uint32_t flags = UINT32_C(5);       /* dolne bity: 00000101 */
+    uint32_t maska_bitu_2 = UINT32_C(1) << 2; /* 00000100 */
+
+    /* Sprawdzenie: 00000101 & 00000100 = 00000100, więc bit jest ustawiony. */
+    if ((flags & maska_bitu_2) != 0) {
+        puts("Bit 2 jest ustawiony.");
+    }
+
+    /* Ustawienie bitu 1: 00000101 | 00000010 = 00000111. */
+    flags |= UINT32_C(1) << 1;
+    printf("Po ustawieniu bitu 1: 0x%08" PRIX32 "\n", flags);
+
+    /* Wyzerowanie bitu 2: 00000111 & 11111011 = 00000011. */
+    flags &= ~maska_bitu_2;
+    printf("Po wyzerowaniu bitu 2: 0x%08" PRIX32 "\n", flags);
+
+    /* Przełączenie bitu 0: 00000011 ^ 00000001 = 00000010. */
+    flags ^= UINT32_C(1);
+    printf("Po przełączeniu bitu 0: 0x%08" PRIX32 "\n", flags);
     return 0;
 }
 ```
 
-### OR
-Operacja OR (alternatywa) zwraca 1 na określonych bitach, jeśli przynajmniej jedna z liczb ma wartość 1 na tych bitach. Jest to operacja logiczna, która działa na poziomie bitowym.
+Każdy zapis ma określoną rolę:
 
-| Wejście 1 | Wejście 2 | Wyjście |
-|-----------|-----------|---------|
-| 0         | 0         | 0       |
-| 0         | 1         | 1       |
-| 1         | 0         | 1       |
-| 1         | 1         | 1       |
+- `(flags & maska) != 0` sprawdza, czy co najmniej jeden bit wskazany maską jest włączony. Dla maski jednego bitu jest to sprawdzenie tego bitu.
+- `flags |= maska` włącza bity z maski, nie wyłączając pozostałych.
+- `flags &= ~maska` wyłącza bity z maski. Negacja daje jedynki poza wskazanymi miejscami, a AND zachowuje pozostałe bity `flags`.
+- `flags ^= maska` przełącza wskazane bity: `0` staje się `1`, a `1` staje się `0`.
 
-Przykład: `5 (0101) | 3 (0011) = 7 (0111)`
+To są wzorce aktualizacji flag. Przed użyciem maski trzeba wiedzieć, ile bitów ma typ i czy numer bitu mieści się w tym zakresie.
 
-```c
-#include <stdio.h>
+## Przesunięcia bitowe i typowe pułapki
 
-int main() {
-    int a = 5;
-    int b = 3;
-    printf("%d | %d = %d\n", a, b, a | b);  // Wynik: 7
-    return 0;
-}
+Przesunięcie w lewo `x << n` przenosi bity `x` o `n` miejsc w stronę bardziej znaczących pozycji, wprowadzając z prawej zera. Dla wartości bez znaku `5` na czterech bitach:
+
+```text
+00000101 << 2  = 00010100
+5 * 4          = 20
 ```
 
-### XOR
-Operacja XOR (alternatywa wyłączająca) zwraca 1 na określonych bitach, jeśli tylko jedna z liczb ma wartość 1 na tych bitach.
+Przesunięcie w prawo wartości bez znaku usuwa najmniej znaczące bity, a z lewej wprowadza zera. Dla nieujemnych liczb całkowitych `20 >> 2` daje `5`. Można to rozumieć jako dzielenie całkowite przez `2^n`, o ile mówimy o wartości bez znaku.
 
-| Wejście 1 | Wejście 2 | Wyjście |
-|-----------|-----------|---------|
-| 0         | 0         | 0       |
-| 0         | 1         | 1       |
-| 1         | 0         | 1       |
-| 1         | 1         | 0       |
+Nie używaj przesunięcia jako „sprytnego mnożenia” bez powodu — współczesny kompilator potrafi zoptymalizować zwykłe mnożenie. Przesunięcie jest przede wszystkim sposobem budowania i rozpakowywania pól bitowych.
 
-Przykład: `5 (0101) ^ 3 (0011) = 6 (0110)`
+W C i C++ liczba przesunięć musi być nieujemna i mniejsza od szerokości typu po całkowitych promocjach. Przesunięcie o szerokość typu lub więcej ma niezdefiniowane zachowanie. Nie przesuwaj też dodatniej liczby ze znakiem w lewo tak, by wynik nie mieścił się w typie. Do masek twórz jedynkę jako bez znaku, na przykład `UINT32_C(1) << n`, a przed przesunięciem sprawdzaj `n < 32`.
 
-```c
-#include <stdio.h>
+Przesunięcia wartości ujemnych ze znakiem są mniej przenośne i bywają zależne od typu oraz standardu. Jeśli operujesz na bitach, przechowuj dane w typie bez znaku. W ten sposób unikniesz mylenia reprezentacji liczby ujemnej z regułami arytmetycznymi.
 
-int main() {
-    int a = 5;
-    int b = 3;
-    printf("%d ^ %d = %d\n", a, b, a ^ b);  // Wynik: 6
-    return 0;
-}
-```
+## Bajty i tablica bitowa
 
-### NOT
-Operacja NOT (negacja) inwertuje każdy bit w liczbie. Działa jako negacja bitowa.
-
-| Wejście | Wyjście |
-|:-------:|:-------:|
-|    0    |    1    |
-|    1    |    0    |
-
-Przykład: `~5 (0101) staje się (1010)`. Warto jednak zwrócić uwagę na to, że wynik takiej operacji zależy od systemu liczbowego i rozmiaru typu.
+Osiem flag logicznych można przechować w jednym bajcie. W większej tablicy numer bitu rozbijamy na dwie wartości: `indeks / 8` wskazuje bajt, a `indeks % 8` — bit wewnątrz tego bajtu.
 
 ```c
+#include <stdint.h>
 #include <stdio.h>
 
-int main() {
-    int a = 5;
-    printf("~%d = %d\n", a, ~a);
-    return 0;
-}
-```
+#define LICZBA_BITOW 1024
 
-### Przesunięcie w lewo
-Operacja left shift (przesunięcie w lewo) przesuwa bity w liczbie o określoną liczbę pozycji w lewo, wypełniając prawą stronę zerami. Każde przesunięcie w lewo o 1 bit jest równoważne pomnożeniu liczby przez 2.
+int main(void) {
+    uint8_t bity[LICZBA_BITOW / 8] = {0};
+    unsigned indeks = 100;
 
-Przykład: `5 (0101) << 2 = 20 (10100)`
+    if (indeks >= LICZBA_BITOW) {
+        return 1; /* nie wolno wyjść poza tablicę */
+    }
 
-```c
-#include <stdio.h>
+    unsigned numer_bajtu = indeks / 8;   /* 100 / 8 = 12 */
+    unsigned pozycja = indeks % 8;       /* 100 % 8 = 4 */
+    uint8_t maska = (uint8_t)(1u << pozycja); /* 00010000 */
 
-int main() {
-    int a = 5;
-    printf("%d << 2 = %d\n", a, a << 2);  // Wynik: 20
-    return 0;
-}
-```
-
-### Przesunięcie w prawo
-Operacja right shift (przesunięcie w prawo) przesuwa bity w liczbie o określoną liczbę pozycji w prawo. W przypadku liczb nieujemnych lewa strona jest wypełniana zerami, podczas gdy dla liczb ujemnych lewa strona jest wypełniana jedynkami (zachowanie to zależy od implementacji). Każde przesunięcie w prawo o 1 bit jest równoważne podzieleniu liczby przez 2.
-
-Przykład: `5 (0101) >> 2 = 1 (0001)`
-
-```c
-#include <stdio.h>
-
-int main() {
-    int a = 5;
-    printf("%d >> 2 = %d\n", a, a >> 2);  // Wynik: 1
-    return 0;
-}
-```
-
-### Maski bitowe
-Maski bitowe to technika wykorzystywana do izolowania, ustawiania lub zerowania określonych bitów w liczbie. Na przykład:
-
-```c
-#include <stdio.h>
-
-int main() {
-    int mask = 0xF0; // maska 11110000
-    int value = 0xA5; // wartość 10100101
-    int result = value & mask; // wynik 10100000
-    printf("Wynik maski bitowej: 0x%X\n", result);  // Wynik: 0xA0
-    return 0;
-}
-```
-
-#### Sprawdzanie, czy n-ty bit jest ustawiony
-
-Aby sprawdzić, czy n-ty bit jest ustawiony (czyli równy 1) w liczbie, można użyć operatora AND (&) z odpowiednią maską. Maska dla n-tego bitu ma wartość 1 przesuniętą w lewo o n pozycji.
-
-```c
-#include <stdio.h>
-
-int main() {
-    int value = 0xA5; // wartość 10100101
-    int n = 4; // sprawdzamy 4-ty bit (licząc od zera)
-    int mask = 1 << n; // maska 00010000
-    int result = value & mask; // wynik maskowania
-    if (result != 0) {
-        printf("Bit %d jest ustawiony.\n", n);
-    } else {
-        printf("Bit %d nie jest ustawiony.\n", n);
+    bity[numer_bajtu] |= maska; /* ustaw bit 4 w bajcie nr 12 */
+    if ((bity[numer_bajtu] & maska) != 0) {
+        puts("Bit 100 jest ustawiony.");
     }
     return 0;
 }
 ```
 
-#### Ustawianie n-tego bitu
+Indeks `100` oznacza tu bit numer `4` w trzynastym bajcie, bo liczenie bajtów zaczyna się od zera. Sama tablica zajmuje `1024 / 8 = 128` bajtów. Najpierw sprawdzamy zakres indeksu, bo poprawne obliczenie maski nie ochroni przed dostępem poza tablicę.
 
-Aby ustawić (włączyć) n-ty bit w liczbie, używamy operatora OR (|) z odpowiednią maską.
+## Jedna ustawiona jedynka: potęga dwójki
+
+Dodatnia potęga dwójki ma dokładnie jeden bit ustawiony: `1` to `0001`, `2` to `0010`, `4` to `0100`, `8` to `1000`. Wyrażenie `x & (x - 1)` zeruje najmniej znaczący ustawiony bit. Dla `x = 8`:
+
+```text
+x       = 1000
+x - 1   = 0111
+x & (x - 1) = 0000
+```
+
+Jeśli `x` miało więcej niż jedną jedynkę, po wyzerowaniu jednej zostanie jeszcze inna. Dlatego dla wartości bez znaku wynik równy zero oznacza, że niezerowe `x` jest potęgą dwójki:
 
 ```c
-#include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
 
-int main() {
-    int value = 0xA5; // wartość 10100101
-    int n = 3; // ustawiamy 3-ci bit (licząc od zera)
-    int mask = 1 << n; // maska 00001000
-    int result = value | mask; // wynik 10101101
-    printf("Wynik po ustawieniu bitu %d: 0x%X\n", n, result);
-    return 0;
+bool czy_potega_dwojki(uint32_t x) {
+    return x != 0 && (x & (x - 1)) == 0;
 }
 ```
 
-#### Zerowanie n-tego bitu
+Warunek `x != 0` jest konieczny: zero także spełniałoby samo równanie `x & (x - 1) == 0`, ale zero nie jest dodatnią potęgą dwójki.
 
-Aby wyzerować (wyłączyć) n-ty bit w liczbie, używamy operatora AND (&) z zanegowaną maską.
+## Kiedy operacje bitowe są przydatne
 
-```c
-#include <stdio.h>
+Flagi są użyteczne, gdy wiele niezależnych informacji logicznych trzeba trzymać razem, np. stany połączenia: „aktywny”, „zaszyfrowany”, „oczekuje na potwierdzenie”. Maski służą do odczytu lub zmiany wybranej informacji bez zmieniania pozostałych. Tablice bitowe oszczędzają pamięć, gdy trzeba przechować tysiące wartości prawda/fałsz. Protokoły i formaty plików również często opisują znaczenie poszczególnych bitów bajtu.
 
-int main() {
-    int value = 0xA5; // wartość 10100101
-    int n = 5; // zerujemy 5-ty bit (licząc od zera)
-    int mask = ~(1 << n); // maska 11011111
-    int result = value & mask; // wynik 10000101
-    printf("Wynik po wyzerowaniu bitu %d: 0x%X\n", n, result);
-    return 0;
-}
-```
+Operacje XOR spotyka się w prostych sumach kontrolnych, ale taka suma nie jest skrótem kryptograficznym: nie chroni danych przed celowym fałszerstwem. Nie twórz własnych funkcji kryptograficznych przez składanie kilku operatorów bitowych. Do bezpieczeństwa używaj sprawdzonych bibliotek.
 
-#### Odwrócenie n-tego bitu
+## Od bajtów do obiektów
 
-Aby sflipować (zmienić na przeciwny) n-ty bit w liczbie, używamy operatora XOR (^) z odpowiednią maską.
-
-```c
-#include <stdio.h>
-
-int main() {
-    int value = 0xA5; // wartość 10100101
-    int n = 2; // flipujemy 2-gi bit (licząc od zera)
-    int mask = 1 << n; // maska 00000100
-    int result = value ^ mask; // wynik 10100001
-    printf("Wynik po sflipowaniu bitu %d: 0x%X\n", n, result);
-    return 0;
-}
-```
-
-### Praktyczne zastosowania operacji bitowych
-
-Operacje bitowe są podstawowymi narzędziami w programowaniu niskopoziomowym, umożliwiającymi bezpośrednią manipulację na poziomie bitów danych binarnych. Działają one wyłącznie na liczbach całkowitych, ponieważ tylko one mają precyzyjnie zdefiniowaną reprezentację bitową. Choć w codziennym programowaniu wysokopoziomowym operacje bitowe nie są tak powszechne, ich znajomość jest niezbędna w wielu dziedzinach, takich jak programowanie systemowe, systemy wbudowane, optymalizacja kodu czy kryptografia.
-
-#### Optymalizacje wydajności
-
-Operacje bitowe są niezwykle efektywne pod względem wydajności, ponieważ są bezpośrednio wspierane przez większość procesorów na poziomie sprzętowym. Można je wykorzystać do optymalizacji kodu poprzez zastępowanie kosztownych operacji arytmetycznych, takich jak mnożenie czy dzielenie, prostymi operacjami bitowymi, takimi jak przesunięcia bitowe.
-
-**Przesunięcia bitowe jako szybkie mnożenie i dzielenie:**
-
-Operacje przesunięcia bitowego w lewo (`<<`) i w prawo (`>>`) są równoważne odpowiednio mnożeniu i dzieleniu przez potęgi dwójki. Przesunięcie o `n` pozycji odpowiada mnożeniu lub dzieleniu przez `2^n`.
-
-**Przykład:**
-
-```c
-#include <stdio.h>
-
-int main() {
-    int value = 16;
-    int result_multiplication = value * 8; // Mnożenie przez 8
-    int result_shift = value << 3; // Przesunięcie w lewo o 3 bity (mnożenie przez 2^3 = 8)
-
-    printf("Wynik mnożenia: %d\n", result_multiplication);
-    printf("Wynik przesunięcia: %d\n", result_shift);
-
-    return 0;
-}
-```
-
-**Analiza:**
-
-- `value * 8` wykonuje standardowe mnożenie całkowite.
-- `value << 3` przesuwa bity wartości `value` o 3 pozycje w lewo, efektywnie mnożąc przez 8.
-
-**Wynik:**
-
-```
-Wynik mnożenia: 128
-Wynik przesunięcia: 128
-```
-
-**Uwagi dotyczące wydajności:**
-
-- W przeszłości różnica w wydajności między mnożeniem/dzieleniem a przesunięciami bitowymi była znacząca.
-- Współczesne kompilatory i procesory często optymalizują te operacje automatycznie, jednak w krytycznych sekcjach kodu ręczne zastosowanie operacji bitowych może nadal przynieść korzyści.
-
-#### Manipulacja maskami bitowymi i flagami
-
-Operacje bitowe są niezbędne w sytuacjach, gdzie trzeba zarządzać pojedynczymi bitami w liczbach całkowitych, na przykład podczas obsługi flag, rejestrów sprzętowych czy protokołów komunikacyjnych.
-
-| Operacja                        | Opis                                                   |
-|----------------------------------|--------------------------------------------------------|
-| `value \|= (1 << n);`            | Ustawia bit na pozycji `n`.                            |
-| `value &= ~(1 << n);`            | Zeruje bit na pozycji `n`.                             |
-| `value ^= (1 << n);`             | Zmienia stan bitu na pozycji `n` na przeciwny.         |
-
-**Przykład:**
-
-```c
-#include <stdio.h>
-
-int main() {
-    unsigned char status_register = 0x00; // Rejestr statusu początkowo wyzerowany
-
-    // Ustawienie flagi na pozycji bitu 2
-    status_register |= (1 << 2);
-
-    printf("Rejestr po ustawieniu bitu 2: 0x%X\n", status_register);
-
-    // Sprawdzenie, czy flaga na pozycji bitu 2 jest ustawiona
-    if (status_register & (1 << 2)) {
-        printf("Flaga bitu 2 jest ustawiona.\n");
-    }
-
-    // Wyzerowanie flagi na pozycji bitu 2
-    status_register &= ~(1 << 2);
-
-    printf("Rejestr po wyzerowaniu bitu 2: 0x%X\n", status_register);
-
-    // Sprawdzenie, czy flaga na pozycji bitu 2 jest wyzerowana
-    if (!(status_register & (1 << 2))) {
-        printf("Flaga bitu 2 jest wyzerowana.\n");
-    }
-
-    return 0;
-}
-```
-
-- `status_register` reprezentuje 8-bitowy rejestr statusu.
-- Operacje bitowe pozwalają na manipulację poszczególnymi flagami bez wpływu na pozostałe bity.
-
-**Wynik:**
-
-```
-Rejestr po ustawieniu bitu 2: 0x4
-Flaga bitu 2 jest ustawiona.
-Rejestr po wyzerowaniu bitu 2: 0x0
-Flaga bitu 2 jest wyzerowana.
-```
-
-#### Przesyłanie i formatowanie danych
-
-W komunikacji sprzętowej oraz sieciach komputerowych operacje bitowe są kluczowe przy implementacji protokołów, które często wymagają manipulacji na poziomie pojedynczych bitów, bajtów czy określonych pól w strukturach danych.
-
-**Implementacja sumy kontrolnej:**
-
-Sumy kontrolne służą do wykrywania błędów w transmisji danych. Prostą formą sumy kontrolnej jest operacja XOR na wszystkich bajtach danych.
-
-**Przykład:**
-
-```c
-#include <stdio.h>
-
-int main() {
-    unsigned char data[] = {0x5A, 0xA5, 0xFF, 0x00}; // Przykładowe dane
-    unsigned char checksum = 0;
-
-    // Obliczanie sumy kontrolnej XOR
-    for (int i = 0; i < sizeof(data); i++) {
-        checksum ^= data[i];
-    }
-
-    printf("Suma kontrolna: 0x%X\n", checksum);
-
-    return 0;
-}
-```
-
-- Suma kontrolna jest obliczana poprzez zastosowanie operacji XOR na każdym bajcie danych.
-- Operacja XOR ma właściwość, że jeśli ten sam bajt zostanie użyty dwa razy, wynik XOR powróci do poprzedniej wartości, co jest użyteczne w detekcji błędów.
-
-**Wynik:**
-
-```
-Suma kontrolna: 0xFF
-```
-
-#### Algorytmy i struktury danych
-
-Operacje bitowe są wykorzystywane w optymalizacji algorytmów i struktur danych, zwłaszcza tam, gdzie liczy się wydajność i efektywność pamięciowa.
-
-**Sprawdzanie potęgi dwójki:**
-
-Częstym zadaniem jest sprawdzenie, czy dana liczba jest potęgą dwójki, co można efektywnie zrobić za pomocą operacji bitowych.
-
-**Przykład:**
-
-```c
-#include <stdio.h>
-
-// Funkcja do sprawdzania, czy liczba jest potęgą dwójki
-int isPowerOfTwo(unsigned int x) {
-    return (x != 0) && ((x & (x - 1)) == 0);
-}
-
-int main() {
-    for (unsigned int num = 0; num <= 17; num++) {
-        if (isPowerOfTwo(num)) {
-            printf("%u jest potęgą dwójki.\n", num);
-        } else {
-            printf("%u nie jest potęgą dwójki.\n", num);
-        }
-    }
-
-    return 0;
-}
-```
-
-- Liczby będące potęgami dwójki mają tylko jeden bit ustawiony na `1` w reprezentacji binarnej.
-- Wyrażenie `x & (x - 1)` wyzeruje najmniej znaczący ustawiony bit. Jeśli wynik jest `0`, to znaczy, że liczba miała tylko jeden bit ustawiony, czyli jest potęgą dwójki.
-
-**Wynik:**
-
-```
-0 nie jest potęgą dwójki.
-1 jest potęgą dwójki.
-2 jest potęgą dwójki.
-3 nie jest potęgą dwójki.
-4 jest potęgą dwójki.
-5 nie jest potęgą dwójki.
-6 nie jest potęgą dwójki.
-7 nie jest potęgą dwójki.
-8 jest potęgą dwójki.
-9 nie jest potęgą dwójki.
-10 nie jest potęgą dwójki.
-11 nie jest potęgą dwójki.
-12 nie jest potęgą dwójki.
-13 nie jest potęgą dwójki.
-14 nie jest potęgą dwójki.
-15 nie jest potęgą dwójki.
-16 jest potęgą dwójki.
-17 nie jest potęgą dwójki.
-```
-
-#### Bezpieczeństwo i kryptografia
-
-Operacje bitowe są podstawą wielu algorytmów kryptograficznych i funkcji haszujących. Pozwalają na efektywną i kontrolowaną manipulację danymi na poziomie bitów, co jest kluczowe w zapewnianiu bezpieczeństwa danych.
-
-**Implementacja prostego algorytmu haszującego:**
-
-Funkcje haszujące przekształcają dane wejściowe w skrót o stałej długości. Operacje bitowe są często używane do miksowania bitów wejściowych w celu uzyskania równomiernego rozkładu wartości wyjściowych.
-
-**Przykład:**
-
-```c
-#include <stdio.h>
-
-// Prosta funkcja haszująca wykorzystująca rotacje bitowe i operacje XOR
-unsigned int simpleHash(const char *str) {
-    unsigned int hash = 0;
-    while (*str) {
-        hash ^= (unsigned int)(*str);
-        hash = (hash << 5) | (hash >> (27)); // Rotacja w lewo o 5 bitów
-        str++;
-    }
-    return hash;
-}
-
-int main() {
-    const char *data = "Hello, World!";
-    unsigned int hash = simpleHash(data);
-
-    printf("Hasz dla \"%s\": 0x%X\n", data, hash);
-
-    return 0;
-}
-```
-
-- Funkcja haszująca używa operacji XOR oraz rotacji bitowych do efektywnego miksowania danych wejściowych.
-- Rotacja bitowa (`(hash << 5) | (hash >> (27))`) przesuwa bity w taki sposób, że bity wypadające z jednej strony są wprowadzane z drugiej, co zapobiega utracie informacji.
-
-**Wynik:**
-
-```
-Hasz dla "Hello, World!": 0xFCDE2E86
-```
-
-**Uwagi dotyczące bezpieczeństwa:**
-
-- Proste funkcje haszujące nie są bezpieczne kryptograficznie i nie powinny być używane w aplikacjach wymagających wysokiego poziomu bezpieczeństwa.
-- W kryptografii stosuje się zaawansowane funkcje haszujące, takie jak SHA-256, które również intensywnie wykorzystują operacje bitowe.
-
-#### Implementacja zaawansowanych struktur danych
-
-Operacje bitowe pozwalają na tworzenie wydajnych i kompaktowych struktur danych, takich jak:
-
-- **Tablice bitowe (bitset)** umożliwiają przechowywanie dużych zbiorów wartości logicznych w skompresowanej formie.
-- **Drzewa trie i radix** wykorzystują bity kluczy do nawigacji po strukturze drzewa, co pozwala na szybkie wyszukiwanie.
-
-**Przykład: Tablica bitowa**
-
-```c
-#include <stdio.h>
-#include <string.h>
-
-#define MAX 1024
-
-int main() {
-    unsigned char bitmap[MAX / 8]; // Tablica bitowa dla 1024 bitów
-    memset(bitmap, 0, sizeof(bitmap)); // Inicjalizacja zerami
-
-    // Ustawienie bitu o indeksie 100
-    bitmap[100 / 8] |= (1 << (100 % 8));
-
-    // Sprawdzenie, czy bit o indeksie 100 jest ustawiony
-    if (bitmap[100 / 8] & (1 << (100 % 8))) {
-        printf("Bit 100 jest ustawiony.\n");
-    } else {
-        printf("Bit 100 nie jest ustawiony.\n");
-    }
-
-    return 0;
-}
-```
-
-- Tablica `bitmap` pozwala na przechowywanie 1024 bitów w 128 bajtach.
-- Operacje bitowe pozwalają na efektywne zarządzanie poszczególnymi bitami w tablicy.
-
-**Wynik:**
-
-```
-Bit 100 jest ustawiony.
-```
+Operacje bitowe opisują, jak odczytać lub zmienić reprezentację liczby, a nie co ta liczba oznacza w programie. Jeśli bajty i flagi mają tworzyć jeden sensowny element, np. wiadomość z treścią, statusem i operacjami zmiany statusu, warto ująć je w typ złożony. W C może to być `struct`, a w C++ klasa może dodatkowo ukryć szczegóły reprezentacji i udostępnić tylko poprawne operacje. To przejście — od surowych wartości do danych z odpowiedzialnością i regułami — jest tematem następnej notatki.

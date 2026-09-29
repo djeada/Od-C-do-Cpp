@@ -1,476 +1,394 @@
-## Programowanie Obiektowe 
+# Programowanie obiektowe w C++
 
-Programowanie obiektowe (ang. **Object-Oriented Programming**, OOP) to obecnie jeden z najważniejszych i najpowszechniej stosowanych paradygmatów w inżynierii oprogramowania. Jego główne założenie polega na tym, aby w procesie tworzenia oprogramowania dzielić skomplikowane problemy na mniejsze, łatwiejsze do zrozumienia fragmenty, które reprezentujemy w postaci **obiektów**. Takie podejście prowadzi do tworzenia bardziej modularnych, czytelnych i łatwiejszych w utrzymaniu aplikacji, zwłaszcza w dużych projektach programistycznych. 
+W poprzednich notatkach tekst był ciągiem bajtów, a maska pozwalała wybrać bity opisujące stan. W programie można te dane połączyć: na przykład wiadomość ma treść i status „przeczytana”. Klasa pozwala przechowywać taki stan razem z operacjami, które go zmieniają. To podstawowa idea programowania obiektowego: program organizujemy wokół elementów mających własne dane i jasno określone czynności.
 
-W języku C++ idea obiektowości jest mocno zakorzeniona; klasa czy obiekt to pojęcia pierwszoplanowe. Dzięki temu możliwe jest wykorzystanie takich mechanizmów jak dziedziczenie, polimorfizm czy enkapsulacja, co z kolei pozwala na efektywną organizację kodu. W niniejszych notatkach omówimy fundamentalne aspekty programowania obiektowego w C++ – od klas, obiektów i konstruktorów, przez destruktory, poziomy dostępu, aż po wskaźniki na obiekty i mechanizmy takie jak **przeciążanie operatorów**, **pola statyczne**, **funkcje zaprzyjaźnione**, **struktury**, **unie** i **pola bitowe**.  
+Klasy nie trzeba tworzyć dla każdego kawałka danych. Dobrze służy wtedy, gdy chcemy określić, co element przechowuje, za co odpowiada i jakie reguły muszą pozostać prawdziwe podczas jego używania.
 
-Dzięki temu zestawowi informacji będziesz w stanie zrozumieć, jak poprawnie definiować klasy i obiekty w C++, jak zarządzać ich cyklem życia (tworzenie i usuwanie), oraz jakie są zasady rządzące dostępem do prywatnych (i chronionych) składników. Dodatkowo przekonasz się, jak można nadawać operatorom nowe znaczenia, jakie korzyści daje stosowanie pól i metod statycznych, a także kiedy warto sięgnąć po struktury, unie i pola bitowe.
+## Klasa opisuje obiekty, obiekt ma własny stan
 
-### Klasy i Obiekty
+**Klasa** jest definicją rodzaju obiektu: opisuje, jakie dane i operacje będą dostępne. **Obiekt** jest konkretnym egzemplarzem tej klasy. Można myśleć o klasie jak o projekcie, a o obiekcie jak o jednej wykonanej według niego rzeczy. Każdy obiekt ma własne wartości pól, nawet jeśli wszystkie obiekty utworzono z tej samej klasy.
 
-**Klasa** to szablon definiujący strukturę i zachowanie obiektów, czyli zbiór pól (przechowujących dane) oraz metod (zapewniających zestaw operacji na tych danych). **Obiekt** to konkretny egzemplarz (instancja) klasy, posiadający własny stan, zależny od wartości pól. W C++ deklarację klasy rozpoczynamy słowem kluczowym `class` wraz z nazwą klasy, po której następują sekcje określające modyfikatory dostępu (`public`, `private`, `protected`) i odpowiadające im pola oraz metody.
-
-**Przykład prostej klasy**
-
-Poniższy przykład prezentuje klasę `Prostokat`, która posiada dwa pola (długości boków `a` i `b`), a także metodę `pole()` służącą do wyliczania pola prostokąta:
+Poniższa klasa przechowuje treść wiadomości oraz dwie flagi. Flagi są liczbą, a jej bity odpowiadają statusom. To połączenie z poprzednią notatką o operacjach bitowych: klasa ukrywa maski i daje nazwy operacjom, które zmieniają status.
 
 ```cpp
-class Prostokat {
-private:
-  int a;
-  int b;
+#include <iostream>
+#include <string>
 
+class Wiadomosc {
 public:
+    explicit Wiadomosc(const std::string& tresc)
+        : tresc_(tresc), flagi_(0) {}
 
-  Prostokat(int a, int b) : a(a), b(b) {}
+    const std::string& tresc() const {
+        return tresc_;
+    }
 
-  int pole() const { 
-    return a * b; 
+    void oznacz_przeczytana() {
+        flagi_ |= PRZECZYTANA;
+    }
 
-  }
+    void oznacz_wazna() {
+        flagi_ |= WAZNA;
+    }
 
-};
-```
+    bool czy_przeczytana() const {
+        return (flagi_ & PRZECZYTANA) != 0;
+    }
 
-Możemy następnie tworzyć obiekty tej klasy i korzystać z metod, np.:
+    bool czy_wazna() const {
+        return (flagi_ & WAZNA) != 0;
+    }
 
-```cpp
-Prostokat p(3, 4);
-std::cout << p.pole() << std::endl; // Wyświetli: 12
-```
-
-**Zalety** tworzenia klas i obiektów:
-
-- Kod staje się **bardziej zorganizowany** – różne elementy aplikacji mają swoje odpowiedzialności.
-- Umożliwia tworzenie **wielu obiektów** na podstawie jednego projektu (klasy), przy czym każdy obiekt może mieć własny, unikalny stan.
-- Zapewnia duże możliwości rozbudowy i modyfikacji kodu bez naruszania innych jego części.
-
-### Dlaczego Programowanie Obiektowe?
-
-Programowanie obiektowe wyróżnia się spośród innych paradygmatów (np. proceduralnego, funkcyjnego) przede wszystkim koncentracją na **modelowaniu rzeczywistości** za pomocą obiektów odzwierciedlających elementy świata lub abstrakcyjne koncepty. Do najważniejszych zalet należą:
-
-1. **Enkapsulacja** (ang. *encapsulation*) – łączenie danych i metod w klasach oraz ukrywanie informacji wewnątrz obiektów. Zapobiega to bezpośredniej manipulacji stanem obiektu przez zewnętrzny kod, co ułatwia zachowanie spójności danych.
-2. **Reużywalność kodu** (ang. *reusability*) – raz zdefiniowana klasa może być wykorzystywana w różnych częściach projektu, a także w innych projektach. Sprzyja to oszczędności czasu i nakładu pracy.
-3. **Modularność** – rozbijanie problemu na mniejsze, bardziej zrozumiałe elementy. Każda klasa odpowiada za precyzyjnie zdefiniowaną część funkcjonalności.
-4. **Polimorfizm** – możliwość tworzenia interfejsów, które są implementowane w różny sposób przez różne klasy pochodne. Ułatwia to rozbudowę i modyfikację istniejącego kodu.
-5. **Dziedziczenie** – tworzenie nowych klas na bazie już istniejących, przy zachowaniu i możliwościach rozszerzania ich funkcjonalności. Sprzyja hierarchizacji i ponownemu wykorzystaniu wspólnych fragmentów.
-
-### Konstruktory
-
-Konstruktory to specjalne metody wywoływane **automatycznie** w chwili tworzenia nowego obiektu klasy. Odpowiadają za **inicjalizację** pól i przygotowanie obiektu do użycia. Wyróżniamy kilka rodzajów konstruktorów:
-
-- **Konstruktor domyślny** – nie przyjmuje argumentów; tworzy obiekt z założonymi wartościami początkowymi.
-- **Konstruktor z parametrami** – pozwala przekazać wartości początkowe dla pól. 
-- **Konstruktor kopiujący** – tworzy nowy obiekt będący kopią już istniejącego obiektu tej samej klasy.
-- **Konstruktor przenoszący** – optymalizuje proces tworzenia obiektu z innego, tymczasowego obiektu, zwłaszcza gdy obiekt zarządza **zasobami dynamicznymi** (np. dużą tablicą w pamięci).
-
-**Przykład klas z różnymi konstruktorami**
-
-```cpp
-class Prostokat {
 private:
-  int a;
-  int b;
+    enum : unsigned int {
+        PRZECZYTANA = 1u << 0,
+        WAZNA = 1u << 1
+    };
 
-public:
-
-  // Konstruktor domyślny
-
-  Prostokat() : a(1), b(1) {} 
-
-  // Konstruktor z parametrami
-
-  Prostokat(int a, int b) : a(a), b(b) {}
-
-  // Konstruktor kopiujący
-
-  Prostokat(const Prostokat &p) : a(p.a), b(p.b) {}
-
-  // Konstruktor przenoszący
-
-  Prostokat(Prostokat &&p) : a(p.a), b(p.b) {
-    p.a = 0;
-    p.b = 0;
-
-  }
-
-};
-```
-
-W powyższym przykładzie pokazano wszystkie cztery rodzaje konstruktorów. Dzięki nim możemy tworzyć obiekty zarówno z domyślnymi wartościami (np. `(1,1)`), jak i z wartościami przekazanymi podczas tworzenia, a także kopiować i przenosić obiekty w bardziej zaawansowanych scenariuszach.
-
-### Destruktor
-
-Destruktor to specjalna metoda klasy, wywoływana **automatycznie** w momencie niszczenia obiektu, np. gdy wychodzi on poza zakres widoczności lub gdy używamy operatora `delete`. Jej nazwa pokrywa się z nazwą klasy, ale jest poprzedzona znakiem `~` (tylda). Głównym zadaniem destruktora jest **zwalnianie zasobów** przydzielonych w trakcie życia obiektu oraz wykonywanie innych niezbędnych operacji porządkowych.
-
-**Przykład użycia destruktora**
-
-```cpp
-class Prostokat {
-private:
-  int a;
-  int b;
-
-public:
-  Prostokat(int a, int b) : a(a), b(b) {}
-
-  ~Prostokat() { 
-    std::cout << "Destruktor wywołany" << std::endl; 
-  }
+    std::string tresc_;
+    unsigned int flagi_;
 };
 
 int main() {
-  {
-    Prostokat p(2,3);
-    // W tym bloku p istnieje 
-  }
-  // Po zakończeniu bloku p zostaje zniszczony i wywołany destruktor
-  return 0;
+    Wiadomosc pierwsza("Spotkanie o 15:00");
+    Wiadomosc druga("Przynieś notatki");
+
+    std::cout << pierwsza.tresc() << '\n';
+    std::cout << pierwsza.czy_przeczytana() << '\n'; // 0: początkowo nieprzeczytana
+
+    pierwsza.oznacz_przeczytana();
+    pierwsza.oznacz_wazna();
+
+    std::cout << pierwsza.czy_przeczytana() << '\n'; // 1
+    std::cout << pierwsza.czy_wazna() << '\n';      // 1
+    std::cout << druga.czy_przeczytana() << '\n';   // 0: drugi obiekt ma własny stan
+
+    Wiadomosc* wskaznik = &druga;
+    wskaznik->oznacz_przeczytana();
+    std::cout << druga.czy_przeczytana() << '\n';   // 1: zmieniliśmy wskazywany obiekt
 }
 ```
 
-Gdy obiekt `p` zostanie zniszczony, na ekranie zostanie wyświetlony komunikat. W sytuacjach, kiedy klasa zarządza zasobami (np. pamięcią dynamicznie przydzieloną przez `new`), w destruktorze należy zadbać o ich prawidłowe zwolnienie.
+Gdy program wykonuje `Wiadomosc pierwsza(...)`, konstruktor tworzy nowy obiekt. Inicjalizuje `tresc_` przekazanym tekstem, a `flagi_` zerem — zatem na początku żaden status nie jest włączony. Następnie powstaje niezależny obiekt `druga`; zmiany statusu pierwszej wiadomości nie zmieniają drugiej.
 
-### Poziomy Dostępu w Klasie
+`oznacz_przeczytana()` wykonuje OR z maską `0001`, więc ustawia bit numer 0, nie zmieniając pozostałych bitów. `czy_przeczytana()` wykonuje AND z tą samą maską: wynik niezerowy oznacza, że bit jest ustawiony. Analogicznie działa status ważności na bicie numer 1. Użytkownik klasy nie musi pamiętać, że „przeczytana” oznacza bit zero — wywołuje metodę o mówiącej nazwie.
 
-W C++ dostęp do członków klasy (pól i metod) regulują trzy modyfikatory:
+Ostatnie trzy wiersze kodu pokazują wskaźnik: `&druga` pobiera adres istniejącego obiektu, a `wskaznik->oznacz_przeczytana()` wywołuje metodę właśnie na tym obiekcie. Wskaźnik przechowuje adres, nie kopię wiadomości. Po tej operacji status `druga` jest już włączony.
 
-I. **public**  
+## Enkapsulacja: ukryj reprezentację, udostępnij operacje
 
-Składniki publiczne są dostępne dla wszystkich, również spoza klasy. Zazwyczaj deklarujemy tutaj metody, które tworzą zewnętrzny interfejs klasy (np. `pole()`).
+Pola `tresc_` i `flagi_` są prywatne (`private`), a metody do odczytu i zmiany statusu są publiczne (`public`). Takie połączenie ukrytych danych i kontrolowanych operacji nazywa się **enkapsulacją**.
 
-II. **private**  
+Gdyby `flagi_` było publiczne, kod korzystający z klasy mógłby wpisać do niego dowolną liczbę, np. ustawić bity dla statusów, których klasa w ogóle nie rozumie. W obecnej wersji obiekt rozpoczyna działanie z zerem, a jego publiczne metody zmieniają tylko dwa znane bity. Dzięki temu spełniona jest reguła (nazywana **niezmiennikiem obiektu**): „w polu statusu wolno ustawiać tylko bity zdefiniowane przez `Wiadomosc`”. Każda nowa metoda zmieniająca status powinna tę regułę zachować.
 
-Składniki prywatne są dostępne wyłącznie dla metod wewnątrz tej samej klasy (oraz dla funkcji zaprzyjaźnionych). Używamy tego poziomu, by ukryć „wnętrzności” klasy przed kodem zewnętrznym.
+Enkapsulacja nie polega wyłącznie na ukrywaniu pól. Klasa ma pilnować zasad swojego modelu. Przykładowo klasa konta bankowego mogłaby zabronić wypłaty większej niż saldo, a klasa prostokąta mogłaby wymagać dodatnich boków. Konstruktor ustanawia początkowy poprawny stan; każda metoda, która go zmienia, musi utrzymać tę samą regułę. Jeżeli publiczne pola pozwalają w dowolnej chwili wpisać błędne wartości, obiekt nie ma jak tych zasad dopilnować.
 
-III. **protected**  
-
-Składniki chronione są widoczne w klasie bazowej i wszystkich klasach pochodnych (w dziedziczeniu), lecz nie są dostępne dla innych klas czy funkcji spoza hierarchii dziedziczenia.
-
-Domyślnie, jeśli nie określimy modyfikatora, składniki klasy w C++ są **prywatne**. 
-
-**Przykład ilustrujący poziomy dostępu**
-
-```cpp
-class Prostokat {
-private:
-  int a;
-  int b;
-
-public:
-
-  Prostokat(int a, int b) : a(a), b(b) {}
-
-  int pole() const { 
-    return a * b; 
-
-  }
-
-};
-
-int main() {
-
-  Prostokat prostokat(2, 3);
-  std::cout << prostokat.pole() << std::endl; // OK, metoda publiczna
-
-  // std::cout << prostokat.a << std::endl;  // Błąd! 'a' jest prywatne
-  return 0;
-
-}
-```
-
-Powyższy przykład obrazuje, że do `pole()` mamy pełny dostęp, natomiast bezpośrednie odczytanie pola `a` jest niemożliwe spoza klasy.
-
-### Wskaźnik na Obiekt
-
-Wskaźniki (ang. *pointers*) to jeden z podstawowych elementów C++. Możemy za ich pomocą stworzyć wskaźnik na obiekt konkretnej klasy. Umożliwia to m.in. dynamiczne tworzenie obiektów w trakcie działania programu, przekazywanie obiektów do funkcji „po referencji” czy zarządzanie tablicami obiektów.
-
-**Przykład wykorzystania wskaźnika**
+Na koncie bankowym niezmiennikiem może być „saldo nie jest ujemne”. Obiekt zaczyna ze stanem 100 zł zapisanym w groszach. Wypłata 120 zł zostaje odrzucona, bo zmieniłaby saldo na wartość ujemną; stan konta pozostaje wtedy bez zmian:
 
 ```cpp
 #include <iostream>
 
-class Foo {
-private:
-  int bar;
-
+class Konto {
 public:
-  Foo() : bar(0) {}
+    bool wyplac(int kwota_groszy) {
+        if (kwota_groszy <= 0 || kwota_groszy > saldo_grosze_) {
+            return false; // odmowa: saldo nie zostaje zmienione
+        }
+        saldo_grosze_ -= kwota_groszy;
+        return true;
+    }
 
-  void setBar(int value) { 
-    bar = value; 
-  }
-  int getBar() const { 
-    return bar; 
-  }
+    int saldo() const {
+        return saldo_grosze_;
+    }
+
+private:
+    int saldo_grosze_ = 10000; // stan początkowy: 100 zł
 };
 
 int main() {
-  Foo fooInstance;
-  Foo* fooPointer = &fooInstance;  // wskaźnik na istniejący obiekt
-  
-  fooPointer->setBar(10);
-  std::cout << fooPointer->getBar() << std::endl; // Wyświetli 10
-
-  return 0;
+    Konto konto;
+    bool wyplacono = konto.wyplac(12000); // próba wypłaty 120 zł
+    std::cout << wyplacono << '\n';       // 0: operacja odrzucona
+    std::cout << konto.saldo() << '\n';   // 10000: nadal 100 zł
 }
 ```
 
-W powyższym kodzie operator `->` pozwala wywołać metodę `setBar()` i odczytać wartość `getBar()` na obiekcie wskazywanym przez `fooPointer`. Wskaźniki pozwalają także na manualne zarządzanie pamięcią, np. przy użyciu operatora `new`.
+`saldo_grosze_` jest prywatne, więc kod zewnętrzny nie może ustawić go np. na `-2000`. Jedyną pokazaną drogą zmiany salda jest `wyplac`, a ta metoda zmniejsza je wyłącznie po sprawdzeniu warunków. Właśnie dlatego stan i reguła powinny należeć do tej samej klasy.
 
-### Przeciążanie Operatorów
+Publiczne metody tworzą **interfejs klasy**: mówią, co użytkownik może z obiektem zrobić. Pole prywatne opisuje, jak klasa przechowuje dane. Jeśli później zmienimy `flagi_` na dwa pola `bool`, korzystający z klasy może nadal wywoływać te same metody. Taki podział pozwala zmieniać wnętrze bez zmuszania reszty programu do poznawania szczegółów.
 
-Przeciążanie operatorów (ang. *operator overloading*) umożliwia zdefiniowanie, jak dany **operator** (np. `+`, `-`, `*`, `==`, `<<`, `()`, `[]`) powinien zachować się w kontekście obiektów naszej klasy. W efekcie możemy pisać kod bliższy naturalnej notacji matematycznej lub poprawiający czytelność.
+## Poziomy dostępu
 
-**Przykład przeciążenia operatora `+`**
+C++ ma trzy główne modyfikatory dostępu:
+
+- `public` — element należy do interfejsu widocznego dla kodu używającego obiektu;
+- `private` — element jest dostępny tylko wewnątrz klasy i dla jej funkcji zaprzyjaźnionych;
+- `protected` — element jest dostępny wewnątrz klasy oraz jej klas pochodnych, ale nie dla dowolnego kodu z zewnątrz.
+
+W klasie (`class`) składniki są domyślnie prywatne. Przy dziedziczeniu domyślny poziom również jest prywatny. `protected` bywa przydatne w hierarchiach, ale nadmierne odsłanianie pól klasie pochodnej wiąże ją ze szczegółami implementacji klasy bazowej. Często lepiej udostępnić funkcję `protected`, która wykonuje dozwoloną operację.
+
+## Konstruktor i powstanie obiektu
+
+Konstruktor jest wywoływany przy tworzeniu obiektu. Ma nazwę klasy i nie ma typu zwracanego. Jego lista inicjalizacyjna (część po dwukropku) ustawia pola, zanim wykona się ciało konstruktora. W przykładzie powyżej `tresc_(tresc), flagi_(0)` określa stan początkowy nowej wiadomości.
+
+Możemy zdefiniować kilka konstruktorów z różnymi parametrami, np. jeden przyjmujący tekst, a drugi tworzący pustą wiadomość. W klasie `Wiadomosc` z pierwszego przykładu zdefiniowaliśmy tylko konstruktor przyjmujący tekst. Dlatego `Wiadomosc w("Treść");` jest poprawne, ale `Wiadomosc w;` nie — nie ma konstruktora bezargumentowego. Dodaj taki konstruktor tylko wtedy, gdy pusty obiekt ma sens w modelu.
+
+Kompilator może też tworzyć operacje kopiowania i przenoszenia:
+
+- konstruktor kopiujący tworzy nowy obiekt ze stanu istniejącego obiektu;
+- konstruktor przenoszący może przejąć zasoby obiektu tymczasowego;
+- przypisanie kopiuje albo przenosi stan do już istniejącego obiektu.
+
+Zakładając, że definicja klasy `Wiadomosc` z pierwszego przykładu jest dostępna, poniższy `main` pokazuje kopię dwóch wiadomości:
 
 ```cpp
-class Prostokat {
-private:
-  int a;
-  int b;
-
-public:
-
-  Prostokat(int width, int height) : a(width), b(height) {}
-
-  // Przeciążenie operatora +
-
-  Prostokat operator+(const Prostokat &other) const {
-    return Prostokat(a + other.a, b + other.b);
-
-  }
-
-  void display() const {
-    std::cout << "Prostokat(" << a << ", " << b << ")" << std::endl;
-
-  }
-
-};
-
 int main() {
-
-  Prostokat rect1(2, 3);
-
-  Prostokat rect2(4, 5);
-
-  Prostokat rectSum = rect1 + rect2;
-  rectSum.display();  // Wyświetli: Prostokat(6, 8)
-
-  return 0;
-
+    Wiadomosc oryginal("Plan na jutro");
+    Wiadomosc kopia = oryginal;
+    oryginal.oznacz_przeczytana();
+    std::cout << kopia.czy_przeczytana() << '\n'; // 0: kopia zachowuje własny stan
 }
 ```
 
-Dzięki przeciążeniu operatora `+`, zapis `rect1 + rect2` staje się intuicyjny, a jednocześnie zwraca nowy obiekt o odpowiednio obliczonych wymiarach.
+`kopia` jest odrębnym obiektem. Zawiera ten sam tekst i statusy co `oryginal` w chwili kopiowania, ale późniejsza zmiana statusu jednego z nich nie zmienia drugiego. `std::string` sam poprawnie kopiuje własne znaki, dlatego dla takiej klasy zwykle nie trzeba pisać konstruktora kopiującego ręcznie.
 
-### Pola i Metody Statyczne
+Współczesne C++ zaleca tzw. **regułę zera**: jeśli zasoby, takie jak pamięć tekstu, przechowujemy w gotowych typach zarządzających nimi (`std::string`, `std::vector`, `std::unique_ptr`), zwykle nie piszemy samodzielnie destruktora ani własnych metod kopiowania/przenoszenia. Ręczne zarządzanie zasobem wymaga przemyślenia kopiowania, przenoszenia i zwalniania, inaczej łatwo o wyciek lub dwukrotne zwolnienie pamięci.
 
-Pola i metody **statyczne** (ang. *static*) związane są z całą klasą, a nie z konkretnymi jej egzemplarzami. Oznacza to, że istnieje **jedna wspólna kopia** takiego pola dla wszystkich obiektów danej klasy. Metody statyczne mogą być wywoływane niezależnie od istnienia konkretnych instancji, używając składni `NazwaKlasy::nazwaMetody()`.
+## Czas życia i destruktor
 
-**Przykład pola statycznego liczącego obiekty**
+Obiekt lokalny istnieje od miejsca utworzenia do końca otaczającego go bloku. Wtedy C++ automatycznie wywołuje destruktor — metodę zapisaną jako `~NazwaKlasy()`. Destruktor jest potrzebny przede wszystkim wtedy, gdy klasa bezpośrednio zarządza zasobem, który trzeba zwolnić. W typowym kodzie nie pisze się destruktora, który tylko wyświetla komunikat.
+
+```cpp
+int main() {
+    {
+        Wiadomosc tymczasowa("Ta wiadomość istnieje w bloku");
+        // W tym miejscu obiekt można używać.
+    } // kończy się zakres: niszczony jest obiekt tymczasowa
+}
+```
+
+Nie wolno użyć `delete` do takiego obiektu lokalnego. `delete` jest przeznaczone dla obiektów zaalokowanych odpowiednim `new`, ale w zwykłym C++ należy preferować obiekty lokalne i gotowe typy zarządzające pamięcią. Jeśli polimorficzne obiekty klas pochodnych są usuwane przez wskaźnik do klasy bazowej, destruktor bazowy powinien być wirtualny.
+
+## Referencje i wskaźniki do obiektów
+
+Funkcja często ma tylko odczytać istniejący obiekt, bez tworzenia kopii. Przyjmujemy wtedy referencję do stałego obiektu (`const T&`). Po definicji klasy `Wiadomosc` z pierwszego przykładu można napisać:
 
 ```cpp
 #include <iostream>
 
-class Prostokat {
-private:
-  static int liczbaProstokatow; // Statyczne pole klasy
-
-public:
-  Prostokat() { 
-    liczbaProstokatow++; 
-  }
-  ~Prostokat() { 
-    liczbaProstokatow--; 
-  }
-
-  static int getLiczbaProstokatow() { 
-    return liczbaProstokatow; 
-  }
-};
-
-// Inicjalizacja pola statycznego
-int Prostokat::liczbaProstokatow = 0;
-
-int main() {
-  {
-    Prostokat p1;
-    Prostokat p2;
-    Prostokat p3;
-    std::cout << "Aktualna liczba obiektów: "
-              << Prostokat::getLiczbaProstokatow() << std::endl;  // 3
-  }
-  std::cout << "Aktualna liczba obiektów: "
-            << Prostokat::getLiczbaProstokatow() << std::endl;    // 0
-
-  return 0;
+void wypisz(const Wiadomosc& wiadomosc) {
+    std::cout << wiadomosc.tresc() << '\n';
 }
 ```
 
-Dzięki polom statycznym możemy łatwo śledzić, ile obiektów danej klasy zostało stworzonych w danej chwili. W niektórych zastosowaniach (np. zarządzanie ograniczonymi zasobami) taka informacja może być kluczowa.
+Referencja musi odnosić się do istniejącego obiektu. `const` oznacza, że ta funkcja może odczytywać obiekt, ale nie zmieniać go przez tę referencję. Wskaźnik (`T*`) może nie wskazywać na obiekt — może mieć wartość `nullptr` — i wymaga sprawdzenia, zanim zostanie użyty. Operator `->` wywołuje metodę obiektu wskazywanego przez wskaźnik. W nowoczesnym C++ do współdzielenia lub przekazania własności obiektu dynamicznego służą inteligentne wskaźniki, np. `std::unique_ptr`, zamiast ręcznej pary `new`/`delete`.
 
-### Funkcje Zaprzyjaźnione
+## Odpowiedzialność klasy i współpraca typów
 
-**Funkcje zaprzyjaźnione** (ang. *friend functions*) to funkcje lub całe klasy, którym dana klasa „ufa” na tyle, że zezwala im na dostęp do swoich **prywatnych** i **chronionych** pól i metod. Stosuje się je w sytuacjach, gdy dwie (lub więcej) struktur danych muszą bardzo ściśle ze sobą współpracować albo gdy potrzebna jest specjalna funkcja naruszająca normalne reguły enkapsulacji, ale nadal mająca uzasadnienie projektowe.
+Wiadomość zna swoją treść i potrafi raportować lub zmieniać własne statusy. Kod poza klasą decyduje, kiedy poprosić ją o taką zmianę, ale nie grzebie bezpośrednio w jej reprezentacji. To jest podział odpowiedzialności: każdy typ powinien odpowiadać za spójność tych danych i operacji, które do niego należą.
 
-**Przykład funkcji zaprzyjaźnionej `swap`**
+Ten sam pomysł działa w większym programie. Klasa `Dokument` może przechowywać tekst w `std::string` i udostępnić wyszukiwanie słowa. Klasa `Wiadomosc` może używać kilku flag bitowych, ale ujawniać je przez nazwy metod. Użytkownik klasy pracuje wtedy z pojęciami programu, a nie z liczbami bajtów i maskami. Jeśli typ robi zbyt wiele różnych rzeczy, jego odpowiedzialności należy rozdzielić.
+
+## Dziedziczenie i polimorfizm
+
+Dziedziczenie pozwala zdefiniować klasę pochodną, która jest szczególnym rodzajem klasy bazowej. Stosuj je, gdy ta relacja ma sens, a nie tylko po to, by odziedziczyć kilka pól lub funkcji.
+
+Funkcja wirtualna umożliwia wybranie implementacji na podstawie rzeczywistego typu obiektu, nawet gdy używamy go przez referencję do klasy bazowej:
 
 ```cpp
-
 #include <iostream>
 
-class Prostokat {
-private:
-  int a;
-  int b;
-
+class Powiadomienie {
 public:
-
-  Prostokat(int width, int height) : a(width), b(height) {}
-
-  // Deklaracja funkcji zaprzyjaźnionej
-  friend void swap(Prostokat &p1, Prostokat &p2);
-
+    virtual ~Powiadomienie() = default;
+    virtual void pokaz() const {
+        std::cout << "Nowe powiadomienie\n";
+    }
 };
 
-void swap(Prostokat &p1, Prostokat &p2) {
-  std::swap(p1.a, p2.a);
-  std::swap(p1.b, p2.b);
+class PowiadomienieTekstowe : public Powiadomienie {
+public:
+    void pokaz() const override {
+        std::cout << "Nowa wiadomość tekstowa\n";
+    }
+};
 
+void wyswietl(const Powiadomienie& p) {
+    p.pokaz();
 }
 
 int main() {
-
-  Prostokat p1(1, 2);
-
-  Prostokat p2(3, 4);
-  swap(p1, p2);
-
-  // Aby potwierdzić zamianę, można by dodać metody getA() czy getB() i je wywołać
-  return 0;
-
+    PowiadomienieTekstowe sms;
+    wyswietl(sms); // wypisuje "Nowa wiadomość tekstowa"
 }
 ```
 
-W powyższym kodzie funkcja `swap` może bezpośrednio modyfikować prywatne pola `a` i `b`, ponieważ klasa `Prostokat` zadeklarowała ją jako zaprzyjaźnioną. 
+Jeśli `wyswietl` otrzyma obiekt `PowiadomienieTekstowe`, wywoła jego wersję `pokaz`, mimo że parametr ma typ `const Powiadomienie&`. `override` prosi kompilator o sprawdzenie, czy metoda rzeczywiście nadpisuje funkcję wirtualną z klasy bazowej. Wirtualny destruktor klasy bazowej zapewnia prawidłowe niszczenie obiektu pochodnego, gdy jest usuwany przez wskaźnik do bazy.
 
-### Struktury
+## Przeciążanie operatorów
 
-W C++ **struktura** (ang. *struct*) jest bardzo zbliżona do klasy. Kluczowa różnica polega na tym, że domyślny poziom dostępu w strukturze to **public**, a w klasie – **private**. Struktury, podobnie jak klasy, mogą zawierać zarówno pola, jak i metody czy konstruktory.
+Przeciążenie operatora pozwala określić, co operator taki jak `+`, `==` lub `<<` ma oznaczać dla obiektów własnej klasy. Dobrze użyty zapis odpowiada naturalnemu znaczeniu operacji — np. suma wektorów — i ułatwia czytanie kodu.
 
-#### Struktury w stylu C  
+```cpp
+#include <iostream>
 
-W języku C, `struct` służyła głównie do grupowania danych. Przykład:
+class Wektor2D {
+public:
+    Wektor2D(int x, int y) : x_(x), y_(y) {}
+
+    Wektor2D operator+(const Wektor2D& drugi) const {
+        return Wektor2D(x_ + drugi.x_, y_ + drugi.y_);
+    }
+
+    int x() const { return x_; }
+    int y() const { return y_; }
+
+private:
+    int x_;
+    int y_;
+};
+
+int main() {
+    Wektor2D wynik = Wektor2D(2, 3) + Wektor2D(4, 1);
+    std::cout << '(' << wynik.x() << ", " << wynik.y() << ")\n";
+}
+```
+
+Operator `+` nie zmienia operandów, dlatego metoda jest oznaczona `const` i zwraca nowy obiekt. Nie można tworzyć nowych symboli operatorów ani zmieniać ich pierwszeństwa. Nie przeciążaj operatora w znaczeniu zaskakującym — jeśli `a + b` usuwa plik albo zmienia `b`, zapis przestaje być czytelny.
+
+## Składniki statyczne
+
+Zwykłe pole należy do obiektu, więc każdy egzemplarz ma własną wartość. Pole `static` należy do klasy i jest wspólne dla wszystkich jej obiektów. Statyczna metoda nie jest wywoływana na konkretnym obiekcie i nie ma wskaźnika `this`; może bezpośrednio używać tylko składników statycznych.
+
+```cpp
+#include <iostream>
+
+class Ustawienia {
+public:
+    static int limit;
+
+    static int pobierz_limit() {
+        return limit;
+    }
+};
+
+int Ustawienia::limit = 100;
+
+int main() {
+    std::cout << Ustawienia::pobierz_limit() << '\n';
+}
+```
+
+Definicja `int Ustawienia::limit = 100;` tworzy wspólne pole klasy (dla standardów przed C++17 trzeba umieścić ją poza definicją klasy, zwykle w jednym pliku źródłowym). Wartość odczytuje się przez `Ustawienia::limit`, a nie przez konkretne konto/obiekt. W C++17 można też użyć pola `inline static` zainicjalizowanego wewnątrz klasy.
+
+## Funkcje zaprzyjaźnione
+
+Funkcja zaprzyjaźniona jest zwykłą funkcją spoza klasy, której deklaracja `friend` zezwala na dostęp do prywatnych składników. Przydaje się na przykład przy wypisywaniu obiektu, gdy funkcja `operator<<` ma odczytać kilka prywatnych pól. To wyjątek od enkapsulacji, więc używaj go tylko wtedy, gdy nie da się równie jasno skorzystać z publicznego interfejsu.
+
+```cpp
+#include <iostream>
+
+class Punkt {
+public:
+    Punkt(int x, int y) : x_(x), y_(y) {}
+
+    friend std::ostream& operator<<(std::ostream& out, const Punkt& p) {
+        return out << '(' << p.x_ << ", " << p.y_ << ')';
+    }
+
+private:
+    int x_;
+    int y_;
+};
+
+int main() {
+    Punkt p(2, 5);
+    std::cout << p << '\n'; // (2, 5)
+}
+```
+
+Operator `<<` nie jest metodą `Punkt` — jego lewym argumentem jest strumień `std::cout`. Dzięki `friend` może jednak odczytać prywatne współrzędne `p` i zapisać je do strumienia. Sama funkcja zaprzyjaźniona nie staje się składnikiem klasy.
+
+## `struct` i `class`
+
+W C++ `struct` i `class` mogą zawierać te same rodzaje składników. Różnią się wartościami domyślnymi: w `struct` pola i metody są publiczne, a dziedziczenie jest publiczne; w `class` pola i metody są prywatne, a dziedziczenie prywatne. W praktyce `struct` często opisuje prostą paczkę danych, której pola można bezpośrednio odczytywać, a `class` — typ, który sam pilnuje reguł stanu.
+
+```cpp
+#include <iostream>
+
+struct Wspolrzedne {
+    int x;
+    int y;
+};
+
+int main() {
+    Wspolrzedne p{3, 4};
+    std::cout << p.x << '\n'; // dostęp publiczny
+}
+```
+
+W C `struct` służy do grupowania danych i nie ma metod ani modyfikatorów dostępu. W C nazwa typu wymaga zwykle słowa `struct`, np. `struct Punkt p;`; w C++ wystarczy `Punkt p;`, jeśli typ nazywa się `Punkt`.
 
 ```c
-struct Foo {
-  int bar;
+#include <stdio.h>
+
+struct Wspolrzedne {
+    int x;
+    int y;
 };
 
-int main() {
-  struct Foo foo;
-  foo.bar = 10;
-  return 0;
+int main(void) {
+    struct Wspolrzedne p = {3, 4};
+    printf("(%d, %d)\n", p.x, p.y);
+    return 0;
 }
 ```
 
-#### Struktury w C++  
+W C pola takiej struktury są bezpośrednio dostępne, więc kod może wpisać do nich dowolne wartości. Jeśli program musi pilnować reguły, np. dodatnich wymiarów, trzeba kontrolować zmiany przez funkcje; w C++ może to robić prywatny stan klasy.
 
-W C++ struktura może wyglądać i zachowywać się niemal tak samo jak klasa:
+## Unie i pola bitowe
 
-```cpp
-struct Foo {
-  int bar;
-
-  Foo(int val) : bar(val) {}
-  void wyswietl() {
-    std::cout << bar << std::endl;
-
-  }
-
-};
-
-int main() {
-
-  Foo obiekt_foo(10);
-  obiekt_foo.wyswietl();  // Wyświetli 10
-  return 0;
-
-}
-```
-
-Z racji braku domyślnego `private`, struktury są często stosowane jako **agregaty danych** (tzn. publiczne „paczki” informacji), natomiast do bardziej zaawansowanego modelowania z reguły wybierane są klasy.
-
-### Unie
-
-**Unie** (ang. *unions*) to szczególny typ danych, w którym wszystkie pola współdzielą ten sam obszar pamięci. Przeznaczone są do sytuacji, w których w jednym miejscu przechowujemy kilka typów danych, ale w danym momencie aktywne jest tylko jedno z tych pól. Umożliwiają oszczędność pamięci, ale trzeba ostrożnie z nich korzystać, ponieważ zapis do jednego pola „nadpisuje” pamięć używaną przez pozostałe pola.
-
-**Przykład unii**
+Unia (`union`) daje swoim składowym wspólny obszar pamięci. Kiedy zapiszemy jedną składową, to ona staje się aktywna; nie wolno bezwarunkowo odczytywać innej składowej tak, jakby nadal zawierała swoją poprzednią wartość. W C++17 dla wartości, która może mieć jeden z kilku alternatywnych typów, zazwyczaj łatwiej i bezpieczniej użyć `std::variant`.
 
 ```cpp
+#include <variant>
 #include <iostream>
 
-union Przyklad {
-  int a;
-  float b;
-};
-
 int main() {
-  Przyklad unia;
-  unia.a = 10;
-  std::cout << unia.a << std::endl; // 10
-
-  unia.b = 3.14;
-  std::cout << unia.b << std::endl; // 3.14
-  // unia.a jest teraz niezdefiniowana
-
-  return 0;
+    std::variant<int, float> wartosc = 10;
+    wartosc = 3.14f; // aktywną alternatywą jest teraz float
+    float liczba = std::get<float>(wartosc);
+    std::cout << liczba << '\n';
 }
 ```
 
-Po zapisaniu wartości do `unia.b` nie możemy liczyć na to, że `unia.a` będzie zachowywać dotychczasową wartość. Ten sam obszar pamięci służy aktualnie do przechowywania liczby zmiennoprzecinkowej.
+`std::variant<int, float>` jawnie pamięta, który z dopuszczonych typów jest aktywny. `std::get<float>` odczytuje wartość wtedy, gdy aktywny typ to `float`; w przeciwnym razie zgłasza `std::bad_variant_access`. W odróżnieniu od zwykłej unii typ alternatywy jest częścią stanu obiektu.
 
-### Pola Bitowe
-
-**Pola bitowe** (ang. *bit fields*) to cecha języka C i C++, umożliwiająca zdefiniowanie w strukturze lub klasie pól zajmujących ściśle określoną liczbę bitów. Umożliwia to wydajniejsze wykorzystanie pamięci w sytuacjach, gdy pola mogą przyjmować jedynie ograniczony zakres wartości.
-
-**Przykład pól bitowych**
+Przykład zwykłej unii:
 
 ```cpp
+union Liczba {
+    int calkowita;
+    float rzeczywista;
+};
 
-#include <iostream>
+int main() {
+    Liczba liczba{};
+    liczba.calkowita = 10;       // aktywna składowa: calkowita
+    liczba.rzeczywista = 3.14f;  // teraz aktywna jest rzeczywista
+    // Nie odczytuj teraz liczba.calkowita.
+}
+```
 
+Pole bitowe określa liczbę bitów przeznaczoną na pole całkowite. Może być przydatne, gdy zakres wartości jest mały, ale standard nie gwarantuje przenośnego układu pól w pamięci. Nie zapisuj więc takiej struktury wprost jako przenośnego formatu pliku ani protokołu sieciowego — koduj i dekoduj bity jawnie.
+
+```cpp
 struct Data {
-  unsigned int Rok : 13;    // Zakres: 0–8191
-  unsigned int Miesiac : 4; // Zakres: 0–15
-  unsigned int Dzien : 5;   // Zakres: 0–31
-
+    unsigned int rok : 13;     // zakres wartości: 0–8191
+    unsigned int miesiac : 4;  // 0–15
+    unsigned int dzien : 5;    // 0–31
 };
-
-void wypiszDate(const Data& d) {
-  std::cout << "Mamy dziś: " 
-
-            << d.Dzien << "-" 
-
-            << d.Miesiac << "-" 
-
-            << d.Rok << std::endl;
-
-}
-
-int main() {
-
-  Data d;
-  d.Rok = 2023;
-  d.Miesiac = 8;
-  d.Dzien = 17;
-
-  wypiszDate(d); // Wyświetli: Mamy dziś: 17-8-2023
-  return 0;
-
-}
 ```
 
-Tutaj `Rok` zajmuje tylko 13 bitów, `Miesiac` – 4, a `Dzien` – 5, co w zupełności wystarcza, aby przechowywać rok z pewnego przedziału, miesiąc (1–12) i dzień (1–31). To rozwiązanie jest szczególnie przydatne w systemach wbudowanych lub w sytuacjach, w których liczy się każda jednostka pamięci.
-
+Wartości miesiąca `1`–`12` i dnia `1`–`31` mieszczą się w podanych polach, lecz same pola nie sprawdzają, czy data istnieje — np. czy 31 lutego jest poprawne. To dobry przykład różnicy między **zakresem reprezentacji** (ile wartości da się zapisać) a **regułą modelu** (które z nich mają sens). Jeśli obiekt daty ma pilnować tej reguły, potrzebuje konstruktora i operacji, które sprawdzą kalendarz, zamiast publicznie udostępniać same liczby.

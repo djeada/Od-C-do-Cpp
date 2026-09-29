@@ -1,231 +1,178 @@
-## Przeciążanie
+# Przeciążanie funkcji i operatorów
 
-Przeciążanie (ang. *overloading*) to mechanizm programistyczny umożliwiający definiowanie wielu funkcji lub operatorów o tej samej nazwie, ale różniących się sygnaturą, czyli listą parametrów i ich typami. Dzięki temu kompilator potrafi wybrać odpowiednią wersję funkcji lub operatora na podstawie kontekstu wywołania i przekazanych argumentów. Przeciążanie jest szeroko stosowane w językach programowania takich jak C++, C# czy Java, w celu zwiększenia elastyczności, czytelności oraz reużywalności kodu.
+> Przykłady w tej notatce wymagają C++11.
 
-Mechanizm przeciążania pozwala programistom na tworzenie interfejsów, które są bardziej intuicyjne i spójne, ponieważ umożliwiają użycie tej samej nazwy dla operacji logicznie ze sobą powiązanych, ale działających na różnych typach danych. Jest to szczególnie przydatne w programowaniu obiektowym, gdzie polimorfizm i abstrakcja odgrywają kluczową rolę.
+Przeciążanie pozwala użyć tej samej nazwy dla kilku powiązanych operacji. Kompilator wybiera funkcję na podstawie argumentów wywołania. To wybór **podczas kompilacji** (polimorfizm statyczny), odmienny od polimorfizmu dynamicznego z funkcjami wirtualnymi: w tamtym przypadku wybrana implementacja zależy od rzeczywistego typu obiektu w czasie działania programu. Przeciążanie opisuje wybór między deklaracjami widocznymi w miejscu wywołania.
 
-### Przeciążanie funkcji
+## Przeciążanie funkcji
 
-Przeciążanie funkcji (ang. *function overloading*) pozwala na definiowanie wielu wersji funkcji o tej samej nazwie, ale różniących się listą parametrów. Kompilator na podstawie sygnatury funkcji, czyli liczby, typów i kolejności parametrów, decyduje, którą wersję funkcji wywołać w danym momencie.
-
-#### Zasady przeciążania funkcji
-
-Podczas przeciążania funkcji należy przestrzegać kilku istotnych zasad:
-
-1. Każda przeciążona funkcja musi mieć unikalną sygnaturę. Różnice mogą dotyczyć liczby parametrów, ich typów lub kolejności typów parametrów.
-2. Różnica jedynie w typie zwracanym funkcji nie jest wystarczająca do jej przeciążenia. Kompilator nie jest w stanie rozróżnić funkcji tylko na podstawie typu zwracanego.
-3. Należy unikać sytuacji, w których kompilator nie może jednoznacznie wybrać odpowiedniej funkcji, np. gdy używane są domyślne wartości argumentów w sposób powodujący konflikt.
-
-#### Przykład przeciążania funkcji
-
-Poniższy kod w języku C++ ilustruje przeciążanie funkcji:
+Rozważmy funkcję `pokaz`, która może wyświetlić liczbę całkowitą albo zmiennoprzecinkową:
 
 ```cpp
 #include <iostream>
 
-// Funkcja przyjmująca int
-void f(int a) {
-    std::cout << "Wywołano f(int a) z a = " << a << std::endl;
+void pokaz(int wartosc) {
+    std::cout << "liczba całkowita: " << wartosc << '\n';
 }
 
-// Funkcja przyjmująca double
-void f(double a) {
-    std::cout << "Wywołano f(double a) z a = " << a << std::endl;
+void pokaz(double wartosc) {
+    std::cout << "liczba zmiennoprzecinkowa: " << wartosc << '\n';
 }
 
-// Funkcja przyjmująca int i double
-void f(int a, double b) {
-    std::cout << "Wywołano f(int a, double b) z a = " << a << ", b = " << b << std::endl;
+void pokaz(int kod, double wynik) {
+    std::cout << "kod " << kod << ", wynik " << wynik << '\n';
 }
 
 int main() {
     int x = 5;
     double y = 3.14;
 
-    f(x);          // Wywołuje f(int a)
-    f(y);          // Wywołuje f(double a)
-    f(x, y);       // Wywołuje f(int a, double b)
-
-    return 0;
+    pokaz(x);       // wybiera pokaz(int): typ argumentu pasuje dokładnie
+    pokaz(y);       // wybiera pokaz(double): typ argumentu pasuje dokładnie
+    pokaz(x, y);    // wybiera wersję z dwoma parametrami
 }
 ```
 
-W powyższym przykładzie zdefiniowano trzy funkcje o tej samej nazwie `f`, ale różniące się listą parametrów. Kompilator na podstawie przekazanych argumentów decyduje, którą wersję funkcji wywołać.
+Ten sam identyfikator nie oznacza jednej uniwersalnej funkcji. Są to trzy osobne funkcje o różnych sygnaturach. W uproszczeniu kompilator postępuje tak:
 
-#### Problemy z domyślnymi wartościami argumentów
+1. Zbiera dostępne funkcje o nazwie `pokaz`.
+2. Odrzuca te, których nie da się wywołać z podaną liczbą argumentów albo których parametry nie mogą przyjąć tych argumentów.
+3. Spośród pozostałych wybiera przeciążenie wymagające najlepszych konwersji argumentów.
+4. Jeśli dwie możliwości są równie dobre, wywołanie jest niejednoznaczne i kompilacja kończy się błędem.
 
-Użycie domyślnych wartości argumentów w przeciążanych funkcjach może prowadzić do niejednoznaczności. Rozważmy następujący przykład:
+### Co tworzy nowe przeciążenie?
+
+Funkcje mogą różnić się liczbą, typami lub kolejnością typów parametrów. Sam inny typ zwracany nie wystarczy, ponieważ przy wywołaniu `f(x)` kompilator nie musi znać kontekstu, do którego przypisany będzie wynik:
 
 ```cpp
-#include <iostream>
-
-// Funkcja z jednym parametrem int
-void f(int a) {
-    std::cout << "Wywołano f(int a) z a = " << a << std::endl;
-}
-
-// Funkcja z dwoma parametrami, drugi ma wartość domyślną
-void f(int a, double b = 0.0) {
-    std::cout << "Wywołano f(int a, double b) z a = " << a << ", b = " << b << std::endl;
-}
-
-int main() {
-    f(10);  // Błąd: niejednoznaczne wywołanie
-
-    return 0;
-}
+int    oblicz(int x);
+double oblicz(int x); // błąd: różni się tylko typem zwracanym
 ```
 
-W tym przypadku kompilator nie jest w stanie jednoznacznie określić, którą funkcję wywołać dla `f(10)`, ponieważ oba prototypy funkcji mogą pasować: `f(int a)` oraz `f(int a, double b = 0.0)`.
+Kwalifikator `const` przy parametrze przekazywanym przez wartość także nie tworzy nowego przeciążenia: `void f(int)` i `void f(const int)` są tą samą funkcją. W metodach klasy kwalifikator `const` po liście parametrów ma inne znaczenie — opisuje, czy metoda może zmienić obiekt — i może odróżniać przeciążenia metod dla obiektów stałych i niestałych.
 
-Aby uniknąć takich sytuacji, należy ostrożnie używać domyślnych wartości argumentów w przeciążanych funkcjach i unikać nakładania się sygnatur.
+### Konwersje i niejednoznaczne wywołanie
 
-#### Rozwiązywanie konfliktów
+Gdy nie ma dokładnie pasującego parametru, C++ może wykonać dozwoloną konwersję. Czasem kilka konwersji jest równie dobrych:
 
-Jeśli występuje konflikt, można go rozwiązać na kilka sposobów:
+```cpp
+void wybierz(long wartosc);
+void wybierz(double wartosc);
 
-- Tak, aby sygnatury były jednoznaczne i nie powodowały konfliktów.
-- W przypadku, gdy domyślne wartości powodują niejednoznaczność.
-- Podczas wywołania funkcji można zastosować rzutowanie, aby wymusić wywołanie konkretnej wersji funkcji.
+// wybierz(10); // błąd: z int można przejść do long albo double,
+                // a żadna z tych konwersji nie jest lepsza
+```
 
-### Przeciążanie operatorów
+Nie należy rozwiązywać niejasnego API przez dopisywanie coraz większej liczby przeciążeń. Często czytelniej jest poprawić typ argumentu lub nadać operacjom różne nazwy. Gdy intencja jest jednoznaczna, można też jawnie skonwertować argument: `wybierz(static_cast<long>(10));`.
 
-Przeciążanie operatorów to cecha języka C++, która umożliwia redefiniowanie działania standardowych operatorów dla typów zdefiniowanych przez użytkownika (klas i struktur). Pozwala to na intuicyjne użycie operatorów takich jak `+`, `-`, `*`, `/`, `==`, `!=` itp., w kontekście obiektów klas użytkownika.
+Domyślne argumenty również mogą spowodować niejednoznaczność:
 
-#### Zasady przeciążania operatorów
+```cpp
+void f(int wartosc);
+void f(int wartosc, double mnoznik = 1.0);
 
-- Przeciążany operator musi mieć przynajmniej jeden operand będący obiektem klasy lub struktury zdefiniowanej przez użytkownika.
-- Można przeciążać tylko istniejące operatory. Nie można definiować nowych symboli operatorów.
-- Liczba operandów operatora musi pozostać taka sama jak w wersji wbudowanej.
-- Priorytet i wiązanie operatora pozostają niezmienione.
+// f(10);       // błąd: obie funkcje mogą przyjąć jeden argument
+f(10, 2.0);     // wybiera drugą funkcję, bo przekazano dwa argumenty
+```
 
-#### Przykład przeciążania operatorów
+Liczba argumentów nie rozstrzyga wywołania `f(10)`, ponieważ druga funkcja może uzupełnić brakujący argument wartością domyślną. Usuń jedno z pokrywających się przeciążeń albo zmień nazwę lub liczbę wymaganych parametrów. Komentarze przy błędnych liniach są objaśnieniem — odkomentowanie ich celowo powoduje błąd kompilacji.
 
-Rozważmy klasę `Kompleks`, reprezentującą liczby zespolone:
+Przeciążona nazwa funkcji może nie wskazywać jednej konkretnej funkcji, więc czasem nie można jej przypisać bezpośrednio do wskaźnika. Typ wskaźnika może wtedy wybrać żądaną wersję:
+
+```cpp
+void ustaw(int);
+void ustaw(double);
+
+using FunkcjaNaInt = void (*)(int);
+FunkcjaNaInt operacja = static_cast<FunkcjaNaInt>(ustaw);
+```
+
+To ten sam rodzaj wskaźnika na funkcję, który opisuje [notatka o wskaźnikach](17_zaawansowane_wskazniki.md).
+
+## Przeciążanie operatorów
+
+Operatorów można użyć do zapisu naturalnych operacji na typach zdefiniowanych przez programistę. Dla liczb zespolonych dodawanie `a + b` ma oczywiste znaczenie: dodajemy osobno części rzeczywiste i urojone. Przeciążenie jest przydatne właśnie wtedy, gdy zapis operatorowy wyjaśnia intencję lepiej niż osobna nazwa funkcji.
 
 ```cpp
 #include <iostream>
 
 class Kompleks {
-private:
-    double re;
-    double im;
+    double re_;
+    double im_;
 
 public:
-    Kompleks(double re = 0.0, double im = 0.0) : re(re), im(im) {}
+    Kompleks(double re, double im) : re_(re), im_(im) {}
 
-    // Przeciążenie operatora dodawania
-    Kompleks operator+(const Kompleks& other) const {
-        return Kompleks(re + other.re, im + other.im);
+    Kompleks operator+(const Kompleks& inny) const {
+        return Kompleks(re_ + inny.re_, im_ + inny.im_);
     }
 
-    // Przeciążenie operatora mnożenia
-    Kompleks operator*(const Kompleks& other) const {
-        return Kompleks(re * other.re - im * other.im, re * other.im + im * other.re);
-    }
-
-    // Przeciążenie operatora wyjścia <<
-    friend std::ostream& operator<<(std::ostream& os, const Kompleks& k) {
-        os << "(" << k.re << " + " << k.im << "i)";
-        return os;
+    friend std::ostream& operator<<(std::ostream& wyjscie,
+                                    const Kompleks& liczba) {
+        wyjscie << '(' << liczba.re_ << ", " << liczba.im_ << "i)";
+        return wyjscie;
     }
 };
 
 int main() {
-    Kompleks k1(1.0, 2.0);
-    Kompleks k2(3.0, 4.0);
+    Kompleks a(1, 2);
+    Kompleks b(3, 4);
+    Kompleks suma = a + b;
 
-    Kompleks suma = k1 + k2;         // Użycie operatora +
-    Kompleks iloczyn = k1 * k2;      // Użycie operatora *
-
-    std::cout << "Suma: " << suma << std::endl;
-    std::cout << "Iloczyn: " << iloczyn << std::endl;
-
-    return 0;
+    std::cout << suma << '\n'; // (4, 6i)
 }
 ```
 
-W powyższym przykładzie przeciążono operator `+` do dodawania liczb zespolonych oraz operator `*` do ich mnożenia. Dodatkowo przeciążono operator `<<` w celu wygodnego wyświetlania obiektów klasy `Kompleks`.
+Jak działa ten przykład:
 
-#### Przeciążanie operatorów inkrementacji i dekrementacji
+- `a + b` jest równoważne wywołaniu `a.operator+(b)`. Metoda nie zmienia `a`, dlatego jest oznaczona jako `const`. Parametr jest referencją do stałego obiektu, więc unikamy niepotrzebnego kopiowania argumentu.
+- Wynik dodawania jest nowym obiektem `Kompleks`. Operator `+` zachowuje typowe znaczenie dodawania i nie zmienia niespodziewanie operandów.
+- Operator `<<` ma strumień jako lewy operand: w `std::cout << suma` lewą stroną jest `std::ostream`, której nie możemy zmienić ani dodać do niej naszej metody. Dlatego `operator<<` jest wolną funkcją; `friend` pozwala jej odczytać prywatne części liczby.
+- `operator<<` zwraca strumień przez referencję, co umożliwia łączenie operacji, na przykład `std::cout << suma << '\n';`.
 
-Operatory inkrementacji (`++`) i dekrementacji (`--`) mogą być przeciążane w wersjach przedrostkowych i przyrostkowych. Wersje te różnią się sygnaturą:
+### Reguły i ograniczenia operatorów
 
-- **Operator przedrostkowy** jest przeciążany jako metoda bez parametrów.
-- **Operator przyrostkowy** jest przeciążany jako metoda z fikcyjnym parametrem typu `int`.
+- Co najmniej jeden operand musi mieć typ zdefiniowany przez użytkownika (klasę lub typ wyliczeniowy). Nie można zmienić znaczenia `int + int`.
+- Można przeciążać istniejące operatory, lecz nie tworzyć nowych symboli.
+- Nie zmienia się liczby operandów, priorytetu ani łączności operatora. `a + b * c` nadal grupuje się według zwykłego priorytetu mnożenia.
+- Nie można przeciążyć m.in. operatora zakresu `::`, dostępu do składowej `.`, dostępu do składowej przez wskaźnik `.*`, operatora warunkowego `?:` ani `sizeof`.
 
-Przykład:
+Operator warto przeciążać, gdy operacja ma dla typu naturalne, oczekiwane znaczenie. Nie przeciążaj na przykład `+` po to, by wysyłać wiadomość, zmieniać stan globalny albo usuwać plik — czytelnik ma prawo oczekiwać, że dodawanie nie wykona takich działań. Jeśli zamierzona operacja nie pasuje do zwykłego znaczenia operatora, użyj nazwanej funkcji.
+
+### Inkrementacja przedrostkowa i przyrostkowa
+
+`++x` i `x++` różnią się wynikiem, nie tylko zapisem: wersja przedrostkowa zwiększa obiekt, po czym zwraca go po zmianie; wersja przyrostkowa zwraca kopię sprzed zmiany. Dlatego wersja przyrostkowa ma dodatkowy, nieużywany parametr `int` — to znacznik składni wymagany przez język.
 
 ```cpp
 class Licznik {
-private:
-    int wartość;
+    int wartosc_ = 0;
 
 public:
-    Licznik(int wartość = 0) : wartość(wartość) {}
+    explicit Licznik(int wartosc = 0) : wartosc_(wartosc) {}
 
-    // Operator przedrostkowy ++x
-    Licznik& operator++() {
-        ++wartość;
-        return *this;
+    Licznik& operator++() { // ++licznik
+        ++wartosc_;
+        return *this;       // zwraca ten sam obiekt po zmianie
     }
 
-    // Operator przyrostkowy x++
-    Licznik operator++(int) {
-        Licznik temp(*this);
-        ++wartość;
-        return temp;
+    Licznik operator++(int) { // licznik++
+        Licznik poprzedni = *this;
+        ++wartosc_;
+        return poprzedni;   // zwraca kopię sprzed zmiany
     }
 
-    int getWartość() const {
-        return wartość;
-    }
+    int wartosc() const { return wartosc_; }
 };
-
-int main() {
-    Licznik licznik;
-
-    ++licznik;  // Wywołuje operator przedrostkowy
-    licznik++;  // Wywołuje operator przyrostkowy
-
-    std::cout << "Wartość licznika: " << licznik.getWartość() << std::endl;
-
-    return 0;
-}
 ```
 
-#### Ograniczenia przeciążania operatorów
+Operator przedrostkowy zwraca referencję, bo nie tworzy kopii — wynikiem jest zmieniony licznik. Operator przyrostkowy musi zapamiętać i zwrócić poprzednią wartość, więc zwraca kopię. Jeśli wynik `x++` nie jest potrzebny, `++x` jest prostszym wyborem, zwłaszcza dla typów iteratorów, które mogą być kosztowne do kopiowania.
 
-Nie wszystkie operatory mogą być przeciążane. Do operatorów niepodlegających przeciążeniu należą:
+## Najczęstsze pomyłki
 
-| Nazwa                    | Operator | Opis                                                                 |
-|--------------------------|----------|----------------------------------------------------------------------|
-| **Operator zakresu**      | `::`     | Używany do uzyskania dostępu do członków klasy lub przestrzeni nazw.  |
-| **Operator członkowski**  | `.`      | Używany do uzyskania dostępu do elementów obiektu.                    |
-| **Operator rzutowania typu** | `sizeof` | Zwraca rozmiar typu lub obiektu w bajtach.                           |
-| **Operator warunkowy**    | `?:`     | Używany do wyrażenia warunkowego (skrócona forma instrukcji `if`).    |
+- **Odróżnianie funkcji tylko typem wyniku** — nie tworzy przeciążenia; trzeba zmienić parametry albo nazwę.
+- **Zakładanie, że kompilator zawsze wybierze „najbardziej pasującą” funkcję** — przy równorzędnych konwersjach zgłasza niejednoznaczność. Jawnie popraw typ argumentu albo uprość zestaw przeciążeń.
+- **Przeciążanie operatora dla efektu zaskakującego użytkownika** — składnia zaciemnia wtedy działanie. Operator powinien zachować intuicyjne znaczenie.
+- **Zwracanie nowego obiektu z `operator<<` zamiast referencji do strumienia** — utrudnia albo uniemożliwia łączenie wypisywania.
+- **Traktowanie `++x` i `x++` jako równoważnych** — pierwszy zwraca wartość po zmianie, drugi kopię sprzed zmiany.
 
-Ponadto, nie można zmieniać liczby operandów ani priorytetów operatorów.
-
-#### Dobre praktyki przy przeciążaniu operatorów
-
-- Przeciążone operatory powinny działać w sposób zgodny z ich pierwotnym znaczeniem. Np. operator `+` powinien reprezentować jakąś formę dodawania.
-- Operatory powinny być przeciążane w sposób przewidywalny, bez wprowadzania nieoczekiwanych efektów ubocznych.
-- Kod wykorzystujący przeciążone operatory powinien być czytelny dla innych programistów.
-
-### Zalety i Wady Przeciążania
-
-#### Zalety
-
-1. Umożliwia użycie naturalnej składni dla operacji na typach zdefiniowanych przez użytkownika, co zwiększa zrozumiałość kodu.
-2. Pozwala na dostosowanie zachowania operatorów do specyficznych potrzeb aplikacji.
-3. Dzięki przeciążaniu funkcji można tworzyć uniwersalne interfejsy obsługujące różne typy danych.
-4. Wykorzystuje mechanizmy polimorfizmu na poziomie kompilacji, co może prowadzić do optymalizacji wydajnościowych.
-
-#### Wady
-
-1. Nadmierne przeciążanie może skomplikować proces kompilacji i zwiększyć czas kompilacji.
-2. Może prowadzić do sytuacji, w których kompilator nie jest w stanie jednoznacznie wybrać odpowiedniej funkcji lub operatora.
-3. Zwiększa złożoność kodu, co może utrudniać jego analizę i debugowanie.
-4. Nieodpowiedzialne przeciążanie operatorów może prowadzić do kodu trudnego do zrozumienia i utrzymania.
-5. Użycie przeciążania w sposób nieintuicyjny może wprowadzać zamieszanie i utrudniać zrozumienie kodu przez innych programistów.
+Przeciążenia powinny tworzyć spójny interfejs. Jeśli czytelnik musi zapamiętywać wyjątki od reguł lub odgadywać, która funkcja zostanie wybrana, najpierw uprość API, zamiast dodawać kolejne przeciążenia.

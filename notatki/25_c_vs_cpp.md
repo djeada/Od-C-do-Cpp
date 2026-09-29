@@ -1,252 +1,66 @@
-## C vs C++
+# C i C++: podobne początki, różne języki
 
-C i C++ to dwa języki programowania o wspólnych korzeniach, które odgrywają kluczowe role w dziedzinie informatyki. Chociaż C++ jest często określany jako rozszerzenie C, różnice między nimi są na tyle znaczące, że warto je szczegółowo omówić. W poniższym tekście przedstawimy dogłębną analizę obu języków, zwracając uwagę na ich historię, zgodność, składnię, funkcjonalności oraz zastosowania, z naciskiem na rygor matematyczny i techniczny.
+C i C++ są ze sobą spokrewnione. W obu językach spotkasz typy takie jak `int`, instrukcje `if`, pętle `for` i funkcje zapisane w podobny sposób. Dlatego na początku kod może wyglądać niemal identycznie.
 
-### Historia
+Podobieństwo składni nie oznacza jednak, że są to dwa warianty tego samego języka. C i C++ mają osobne standardy, biblioteki i reguły. Program napisany zgodnie ze standardem C może wymagać zmian, zanim będzie poprawnym programem C++.
 
-#### Język C
+Ta notatka pokazuje, co oba języki mają wspólnego, gdzie różnią się w praktyce i jak te różnice wpływają na sposób pisania programów.
 
-Język C został opracowany na początku lat 70. XX wieku przez Dennisa Ritchiego w Bell Laboratories. Był on ewolucją wcześniejszych języków, takich jak B i BCPL. C powstał w celu stworzenia języka uniwersalnego, który umożliwiłby pisanie systemów operacyjnych oraz programów narzędziowych z wydajnością zbliżoną do asemblera, ale z wyższym poziomem abstrakcji.
+## Skąd wzięły się C i C++?
 
-Kluczowym momentem w historii C było napisanie systemu operacyjnego UNIX w tym języku, co przyczyniło się do jego szerokiej adopcji. Standaryzacja języka nastąpiła w 1989 roku wraz z publikacją standardu ANSI C (znanego również jako C89), a później w standardach ISO C90, C99, C11 i C18, które wprowadzały kolejne usprawnienia i funkcjonalności.
+C powstał na początku lat 70. XX wieku w Bell Laboratories. Dennis Ritchie rozwijał go jako język przydatny do pisania oprogramowania systemowego; ważnym przykładem jest system UNIX. Język został ustandaryzowany pod koniec lat 80.
 
-#### Język C++
+C++ rozwijał Bjarne Stroustrup, również w Bell Laboratories. Prace rozpoczęły się w latach 70., a wczesna nazwa „C with Classes” opisywała główny pomysł: zachować wiele znanych konstrukcji C i dodać klasy. C++ później rozwinął się w osobny język z własnym standardem i biblioteką.
 
-C++ został stworzony przez Bjarne Stroustrupa w latach 80. XX wieku, również w Bell Laboratories. Początkowo nazywany "C z klasami", C++ miał na celu wprowadzenie do języka C mechanizmów programowania obiektowego, takich jak klasy, dziedziczenie i polimorfizm. Nazwa "C++" jest odniesieniem do operatora inkrementacji w C, sugerując, że C++ jest "następną wersją" C.
+Dlatego wiele prostych fragmentów kodu jest wspólnych, ale reguły obu języków z czasem rozeszły się. Znajomość jednego pomaga w nauce drugiego, lecz nie zastępuje poznania jego zasad.
 
-C++ przeszedł wiele etapów standaryzacji, począwszy od standardu C++98, poprzez C++03, C++11, C++14, C++17, aż po C++20 i C++23. Każda kolejna wersja wprowadzała nowe funkcjonalności, takie jak szablony (templates), inteligentne wskaźniki, wyrażenia lambda, koncepty (concepts) i wiele innych, czyniąc język coraz bardziej złożonym, ale jednocześnie potężnym narzędziem do tworzenia skomplikowanych systemów.
+## 1. Wspólny zapis nie oznacza wspólnych reguł
 
-### Zgodność i Różnice
-
-#### Zgodność Wsteczna
-
-C++ został zaprojektowany tak, aby był w dużej mierze zgodny wstecz z C. Oznacza to, że wiele kodu napisanego w C można skompilować jako kod C++. Jednakże ta zgodność nie jest absolutna. Istnieją subtelne różnice w semantyce niektórych konstrukcji, co może prowadzić do nieprzewidywalnych zachowań podczas kompilacji kodu C jako C++.
-
-Na przykład, w C deklaracje zmiennych muszą znajdować się na początku bloku kodu, podczas gdy w C++ można deklarować zmienne w dowolnym miejscu. Ponadto, C++ wprowadza nowe słowa kluczowe, które mogą kolidować z identyfikatorami używanymi w kodzie C.
-
-#### Typowanie i Bezpieczeństwo
-
-C++ wprowadza silniejsze mechanizmy typowania w porównaniu z C. Na przykład, w C istnieje większa swoboda w konwersji wskaźników między różnymi typami, co może prowadzić do błędów. C++ wymaga jawnych rzutowań i wprowadza zestaw operatorów rzutowania (`static_cast`, `dynamic_cast`, `reinterpret_cast`, `const_cast`), co zwiększa bezpieczeństwo typów.
-
-#### Obsługa Pamięci
-
-W C zarządzanie pamięcią odbywa się za pomocą funkcji `malloc`, `calloc`, `realloc` i `free`. W C++ wprowadzono operatory `new` i `delete`, które nie tylko przydzielają i zwalniają pamięć, ale także wywołują odpowiednie konstruktory i destruktory obiektów. Dodatkowo, C++ oferuje inteligentne wskaźniki (`std::unique_ptr`, `std::shared_ptr`), które automatyzują zarządzanie zasobami i pomagają uniknąć wycieków pamięci.
-
-### Dyrektywy Preprocesora i Załączanie Bibliotek
-
-W obu językach używa się dyrektywy `#include` do załączania plików nagłówkowych. Różnice pojawiają się jednak w sposobie organizacji bibliotek standardowych.
-
-#### W C
-
-W języku C pliki nagłówkowe standardowych bibliotek mają rozszerzenie `.h`. Przykłady:
+Prosta funkcja może wyglądać tak samo w C i C++:
 
 ```c
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
+int podwoj(int liczba) {
+    return liczba * 2;
+}
 ```
 
-#### W C++
+Funkcja przyjmuje liczbę całkowitą, mnoży ją przez dwa i zwraca wynik. W takim przykładzie oba języki używają tej samej składni.
 
-W C++ standardowe biblioteki są załączane bez rozszerzenia `.h`, a ich nazwy są zdefiniowane w przestrzeni nazw `std`. Dodatkowo, biblioteki C są dostępne z prefiksem `c` i bez rozszerzenia, np.:
-
-```cpp
-#include <iostream>
-#include <vector>
-#include <string>
-#include <cmath>
-// Biblioteki z C w C++
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-```
-
-Używając bibliotek C w C++, należy pamiętać, że ich funkcje są również umieszczone w przestrzeni nazw `std`.
-
-### Słowa Kluczowe
-
-#### Wspólne Słowa Kluczowe
-
-Oba języki dzielą wiele słów kluczowych, które służą do sterowania przepływem programu, deklaracji zmiennych i typów danych:
+Różnice stają się widoczne przy bardziej zaawansowanych elementach. Na przykład w C można przypisać wskaźnik `void *` do wskaźnika na konkretny typ bez rzutowania. C++ wymaga jawnego wskazania konwersji:
 
 ```c
-auto
-break
-case
-char
-const
-continue
-default
-do
-double
-else
-enum
-extern
-float
-for
-goto
-if
-int
-long
-register
-return
-short
-signed
-sizeof
-static
-struct
-switch
-typedef
-union
-unsigned
-void
-volatile
-while
+/* C */
+int liczba = 10;
+void *adres = &liczba;
+int *wskaznik = adres;
 ```
-
-#### Dodatkowe Słowa Kluczowe w C++
-
-C++ wprowadza szereg nowych słów kluczowych, które wspierają nowe funkcjonalności języka:
 
 ```cpp
-alignas
-alignof
-asm
-bool
-catch
-class
-const_cast
-constexpr
-decltype
-delete
-dynamic_cast
-explicit
-export
-false
-friend
-inline
-mutable
-namespace
-new
-noexcept
-nullptr
-operator
-private
-protected
-public
-reinterpret_cast
-static_assert
-static_cast
-template
-this
-thread_local
-throw
-true
-try
-typeid
-typename
-using
-virtual
-wchar_t
+// C++
+int liczba = 10;
+void *adres = &liczba;
+int *wskaznik = static_cast<int *>(adres);
 ```
 
-Każde z tych słów kluczowych ma określoną rolę w języku, np. `class` i `struct` służą do definiowania nowych typów danych, `virtual` umożliwia polimorfizm, a `template` wprowadza programowanie ogólne.
+W obu przykładach `adres` przechowuje adres zmiennej `liczba`. Wskaźnik `wskaznik` ma wskazywać na tę samą zmienną. Różni się reguła przypisania: C wykonuje tę konwersję niejawnie, a C++ wymaga jawnego zapisu.
 
-### Zaawansowane Funkcjonalności C++
+To nie znaczy, że każde rzutowanie w C++ jest bezpieczne. Programista nadal musi wiedzieć, jaki obiekt znajduje się pod danym adresem. Rzutowania i wskaźniki opisują osobne notatki: [konwersje i rzutowania](19_konwersje.md) oraz [wskaźniki](11_wskazniki.md).
 
-#### Programowanie Obiektowe
+Różnicę mogą ujawnić także słowa kluczowe. C++ zarezerwował nazwy takie jak `class` i `template`, których C nie używa jako słów kluczowych. Dlatego nazwa zmiennej dopuszczalna w C może kolidować ze składnią C++:
 
-C++ jest językiem wieloparadygmatowym, który wspiera programowanie obiektowe (OOP). OOP wprowadza koncepcje takie jak:
-
-- **Klasy i obiekty** stanowią podstawę programowania obiektowego, gdzie klasy działają jako szablony definiujące atrybuty i metody, z których tworzone są konkretne obiekty.
-- **Dziedziczenie** pozwala na tworzenie nowych klas, które dziedziczą właściwości i metody z już istniejących klas, co umożliwia ponowne wykorzystanie kodu.
-- **Polimorfizm** umożliwia korzystanie z wskaźników lub referencji do klasy bazowej, które mogą odnosić się do obiektów klas pochodnych, pozwalając na elastyczne zarządzanie różnymi typami obiektów.
-- **Enkapsulacja** zapewnia kontrolę dostępu do składowych klasy poprzez ukrywanie szczegółów implementacyjnych i zastosowanie modyfikatorów dostępu, takich jak `private`, `protected` i `public`.
-
-Przykład definicji klasy w C++:
-
-```cpp
-class Punkt {
-private:
-    double x;
-    double y;
-
-public:
-    Punkt(double x = 0.0, double y = 0.0) : x(x), y(y) {}
-
-    double odlegloscOdPoczatku() const {
-        return sqrt(x * x + y * y);
-    }
-
-    void przesun(double dx, double dy) {
-        x += dx;
-        y += dy;
-    }
-};
+```c
+int class = 3; /* class może być identyfikatorem w C */
 ```
 
-#### Szablony (Templates)
+Ten zapis nie jest poprawny w C++, bo `class` rozpoczyna tam deklarację klasy. Przy przenoszeniu kodu warto sprawdzić nie tylko instrukcje, ale też nazwy użyte przez program.
 
-Szablony umożliwiają tworzenie funkcji i klas generycznych, które mogą działać z różnymi typami danych. Są one podstawą programowania ogólnego w C++.
+## 2. Typy i funkcje
 
-Przykład szablonu funkcji:
+Oba języki mają podstawowe typy, takie jak `char`, `int`, `float` i `double`. C++ oferuje między innymi referencje, klasy, przeciążanie funkcji i szablony. C ma inne sposoby wyrażania części tych idei.
 
-```cpp
-template<typename T>
-T maksimum(T a, T b) {
-    return (a > b) ? a : b;
-}
-```
+### Przeciążanie funkcji
 
-Szablon klasy:
-
-```cpp
-template<typename T>
-class Wektor {
-private:
-    std::vector<T> dane;
-
-public:
-    void dodaj(const T& element) {
-        dane.push_back(element);
-    }
-
-    T pobierz(int indeks) const {
-        return dane[indeks];
-    }
-};
-```
-
-#### Obsługa Wyjątków
-
-C++ wprowadza mechanizm obsługi wyjątków, który pozwala na kontrolowane zarządzanie błędami podczas wykonywania programu.
-
-Przykład użycia wyjątków:
-
-```cpp
-double dziel(double a, double b) {
-    if (b == 0.0) {
-        throw std::runtime_error("Dzielenie przez zero!");
-    }
-    return a / b;
-}
-
-int main() {
-    try {
-        double wynik = dziel(10.0, 0.0);
-    } catch (const std::exception& e) {
-        std::cerr << "Wystąpił błąd: " << e.what() << std::endl;
-    }
-    return 0;
-}
-```
-
-#### Przeciążanie Funkcji i Operatorów
-
-C++ pozwala na definiowanie wielu funkcji o tej samej nazwie, ale różnych sygnaturach (typach i liczbie argumentów). Przeciążanie operatorów umożliwia definiowanie zachowania operatorów dla obiektów własnych klas.
-
-Przykład przeciążania funkcji:
+W C++ można zdefiniować kilka funkcji o tej samej nazwie, jeśli różnią się parametrami:
 
 ```cpp
 int suma(int a, int b) {
@@ -256,133 +70,228 @@ int suma(int a, int b) {
 double suma(double a, double b) {
     return a + b;
 }
+
+int liczba = suma(2, 3);        // wywołuje wersję dla int
+double ulamek = suma(2.5, 3.1); // wywołuje wersję dla double
 ```
 
-Przykład przeciążania operatora:
+Kompilator wybiera wersję na podstawie typów argumentów. W C nie można zdefiniować w ten sposób dwóch funkcji `suma`; trzeba użyć innych nazw, na przykład `suma_int` i `suma_double`.
+
+### Referencje i wskaźniki
+
+Referencja w C++ jest inną nazwą dla istniejącej zmiennej. Można jej użyć, aby funkcja zmieniła argument bez kopiowania go:
 
 ```cpp
-class Liczba {
-private:
-    int wartosc;
-
-public:
-    Liczba(int wartosc) : wartosc(wartosc) {}
-
-    Liczba operator+(const Liczba& inna) const {
-        return Liczba(this->wartosc + inna.wartosc);
-    }
-};
-```
-
-#### Referencje
-
-C++ wprowadza referencje, które są alternatywą dla wskaźników i pozwalają na przekazywanie argumentów do funkcji przez referencję, umożliwiając modyfikację oryginalnych danych bez konieczności użycia wskaźników.
-
-Przykład:
-
-```cpp
-void zwieksz(int& liczba) {
-    liczba++;
+void zwieksz(int &liczba) {
+    ++liczba;
 }
 
 int main() {
-    int x = 5;
-    zwieksz(x);
-    // x == 6
+    int wynik = 5;
+    zwieksz(wynik);
+    // wynik ma teraz wartość 6
+}
+```
+
+Znak `&` w parametrze oznacza, że funkcja pracuje na oryginalnej zmiennej. W C podobny efekt osiąga się przez przekazanie wskaźnika:
+
+```c
+void zwieksz(int *liczba) {
+    ++*liczba;
+}
+
+int main(void) {
+    int wynik = 5;
+    zwieksz(&wynik);
+    /* wynik ma teraz wartość 6 */
+}
+```
+
+Wersja C przekazuje adres jawnie za pomocą `&wynik`, a funkcja odczytuje lub zmienia wartość pod tym adresem przez `*liczba`. Wersja C++ zapisuje ten sam zamiar przez referencję. Referencja nie zastępuje wskaźników we wszystkich sytuacjach: wskaźnik może na przykład nie wskazywać na żaden obiekt (`nullptr`), a referencja musi być związana z obiektem.
+
+### Klasy i szablony
+
+C++ pozwala łączyć dane i operacje na tych danych w klasach. Klasa może ukrywać szczegóły, których użytkownik obiektu nie musi znać:
+
+```cpp
+class Licznik {
+public:
+    void zwieksz() {
+        ++wartosc_;
+    }
+
+    int odczytaj() const {
+        return wartosc_;
+    }
+
+private:
+    int wartosc_ = 0;
+};
+```
+
+Użytkownik klasy może wywołać `zwieksz()` i `odczytaj()`, ale nie może bezpośrednio zmienić pola `wartosc_`, bo jest ono prywatne. Dzięki temu klasa kontroluje sposób modyfikowania swojego stanu. Klasy i obiekty omawia notatka [programowanie obiektowe](15_programowanie_obietkowe.md).
+
+Szablon pozwala napisać funkcję, której typ argumentów nie jest ustalony z góry:
+
+```cpp
+template <typename T>
+T maksimum(T a, T b) {
+    return a < b ? b : a;
+}
+
+int m = maksimum(3, 8);
+double d = maksimum(2.5, 1.7);
+```
+
+Kompilator tworzy wersję funkcji odpowiednią dla użytego typu. Ten przykład działa dla typów, które można porównywać operatorem `<` i których wartość można zwrócić. Szablony są ważną częścią C++, między innymi dlatego, że biblioteka standardowa używa ich do tworzenia kontenerów i algorytmów. C nie ma szablonów wbudowanych w język.
+
+Operator `+` można też przeciążyć dla własnego typu. Dzięki temu zapis dodawania może odpowiadać temu, co działanie znaczy w danej dziedzinie:
+
+```cpp
+struct Punkt {
+    double x;
+    double y;
+};
+
+Punkt operator+(Punkt a, Punkt b) {
+    return {a.x + b.x, a.y + b.y};
+}
+
+int main() {
+    Punkt p{1.0, 2.0};
+    Punkt q{3.0, 4.0};
+    Punkt suma = p + q; // (4.0, 6.0)
+}
+```
+
+Wyrażenie `p + q` wywołuje tu funkcję, która dodaje osobno współrzędne punktów. W C trzeba użyć nazwanej funkcji, na przykład `dodaj_punkty(p, q)`, bo nie można zmienić znaczenia operatora dla własnego typu. Operator warto przeciążać tylko wtedy, gdy jego znaczenie będzie naturalne dla czytelnika. Więcej przykładów jest w notatce o [przeciążaniu](18_przeciazanie.md).
+
+## 3. Biblioteki i wejście-wyjście
+
+Oba języki korzystają z dyrektywy `#include`, ale często dołączają inne nagłówki i używają innych narzędzi.
+
+W C prosty tekst można wypisać funkcją `printf` z nagłówka `<stdio.h>`:
+
+```c
+#include <stdio.h>
+
+int main(void) {
+    printf("Witaj!\n");
     return 0;
 }
 ```
 
-### Porównanie Zastosowań i Wydajności
+`#include <stdio.h>` udostępnia deklarację `printf`. Zapis `\n` oznacza znak nowego wiersza, a `return 0` informuje system, że program zakończył się poprawnie.
 
-#### Zastosowania Języka C
-
-- **Programowanie systemowe** obejmuje tworzenie systemów operacyjnych, sterowników urządzeń oraz kompilatorów, gdzie wymagana jest niska kontrola nad sprzętem i wydajność.
-- **Systemy wbudowane** dotyczą programowania mikrokontrolerów oraz urządzeń IoT, gdzie zasoby są ograniczone, a wydajność kluczowa.
-- **Aplikacje o wysokiej wydajności** korzystają z minimalnego narzutu oraz pełnej kontroli nad zarządzaniem pamięcią, co pozwala na maksymalizację wydajności.
-- **Nauka podstaw programowania** jest uproszczona dzięki prostocie języka, co ułatwia zrozumienie fundamentalnych konceptów informatyki.
-
-#### Zastosowania Języka C++
-
-- **Aplikacje wielkoskalowe**, takie jak systemy bankowe i aplikacje biznesowe, korzystają z programowania obiektowego, które ułatwia zarządzanie złożonością dużych systemów.
-- **Gry i grafika komputerowa** czerpią korzyści z wydajności C++ oraz dostępnych bibliotek, takich jak Unreal Engine, co sprawia, że C++ jest idealnym wyborem w tej dziedzinie.
-- **Aplikacje z wymaganiami real-time** mogą korzystać z C++ dzięki możliwości optymalizacji i pełnej kontroli nad zasobami, co jest kluczowe dla tych systemów.
-- **Biblioteki i frameworki** tworzone w C++ pozwalają na wykorzystanie szablonów i programowania ogólnego, co umożliwia budowanie uniwersalnych i wydajnych narzędzi.
-
-#### Wydajność
-
-Ogólnie rzecz biorąc, zarówno C, jak i C++ są językami kompilowanymi do kodu maszynowego, co zapewnia wysoką wydajność. Jednakże:
-
-- **Narzut abstrakcji** może wystąpić w C++ w przypadku korzystania z funkcji takich jak wirtualne funkcje, wyjątki czy RTTI, co może prowadzić do dodatkowego narzutu czasowego i pamięciowego.
-- **Optymalizacje kompilatora** w nowoczesnych kompilatorach pozwalają na skuteczne optymalizowanie kodu C++, co może znacznie poprawić wydajność aplikacji.
-- **Kontrola nad zasobami** w C++ daje możliwość rezygnacji z pewnych funkcji języka, takich jak polimorfizm, w celu osiągnięcia lepszej wydajności, co pozwala na bardziej precyzyjne zarządzanie zasobami.
-
-### Standardy i Rozwój Języków
-
-#### Standardy C
-
-| Standard     | Rok  | Nowości                                                                                           |
-|--------------|------|---------------------------------------------------------------------------------------------------|
-| **C89/C90**  | 1989 | Pierwszy standard języka, ustanawiający podstawy.                                                  |
-| **C99**      | 1999 | Nowe typy całkowite (`stdint.h`), pętle `for` o zmiennym zakresie, funkcje zmiennowymiarowe, komentarze stylu `//`. |
-| **C11**      | 2011 | Dodaje obsługę wielowątkowości, anonimowe struktury i unie.                                        |
-| **C18**      | 2018 | Głównie poprawki do C11.                                                                           |
-
-#### Standardy C++
-
-| Standard     | Rok  | Nowości                                                                                           |
-|--------------|------|---------------------------------------------------------------------------------------------------|
-| **C++98/C++03** | 1998/2003 | Pierwsze standardy, wprowadzające szablony, przestrzenie nazw, wyjątki.                     |
-| **C++11**       | 2011      | Znaczące rozszerzenia: wyrażenia lambda, `auto`, `nullptr`, inteligentne wskaźniki.         |
-| **C++14**       | 2014      | Drobne usprawnienia C++11.                                                                  |
-| **C++17**       | 2017      | Nowe biblioteki, `std::optional`, `std::variant`, składnia `if constexpr`.                  |
-| **C++20**       | 2020      | Koncepty, moduły, zakresy (ranges), korutyny.                                               |
-
-### Matematyczne Aspekty Języków
-
-#### Typy Danych i Arytmetyka
-
-Oba języki oferują podstawowe typy danych, takie jak `int`, `float`, `double`, `char`. Jednak C++ wprowadza dodatkowe typy, np. `bool` (w C typ logiczny jest symulowany za pomocą `int`).
-
-Arytmetyka w obu językach podlega tym samym regułom, ale C++ umożliwia przeciążanie operatorów, co pozwala na definiowanie własnych typów numerycznych z zachowaniem naturalnej składni.
-
-Przykład przeciążania operatorów dla liczb zespolonych:
+W C++ można użyć strumienia `std::cout` z nagłówka `<iostream>`:
 
 ```cpp
-class Zespolona {
-private:
-    double re, im;
+#include <iostream>
 
-public:
-    Zespolona(double re = 0.0, double im = 0.0) : re(re), im(im) {}
-
-    Zespolona operator+(const Zespolona& z) const {
-        return Zespolona(re + z.re, im + z.im);
-    }
-
-    Zespolona operator*(const Zespolona& z) const {
-        return Zespolona(re * z.re - im * z.im, re * z.im + im * z.re);
-    }
-};
-```
-
-#### Programowanie Generyczne i Koncepty
-
-C++ umożliwia tworzenie algorytmów generycznych za pomocą szablonów, co jest zbliżone do parametrów typów w matematyce. Wprowadzenie konceptów w C++20 pozwala na definiowanie wymagań dla parametrów szablonów, co zwiększa bezpieczeństwo i czytelność kodu.
-
-Przykład konceptu:
-
-```cpp
-template<typename T>
-concept Liczba = requires(T a, T b) {
-    { a + b } -> std::convertible_to<T>;
-    { a - b } -> std::convertible_to<T>;
-    { a * b } -> std::convertible_to<T>;
-    { a / b } -> std::convertible_to<T>;
-};
-
-template<Liczba T>
-T suma(T a, T b) {
-    return a + b;
+int main() {
+    std::cout << "Witaj!\n";
 }
 ```
+
+Operator `<<` przekazuje tekst do strumienia wyjściowego. Nazwa `std::cout` składa się z `cout` oraz `std::`, które wskazuje, że element należy do przestrzeni nazw biblioteki standardowej C++.
+
+C++ ma też nagłówki odpowiadające wielu nagłówkom C. Na przykład dla funkcji wejścia-wyjścia z C można dołączyć `<cstdio>` i zapisać `std::printf`. W nowym kodzie C++ często wybiera się jednak narzędzia biblioteki C++, takie jak strumienie, kontenery i algorytmy.
+
+## 4. Pamięć i czas życia zasobów
+
+Programy często potrzebują pamięci lub innych zasobów, na przykład otwartego pliku. Ważne jest nie tylko uzyskanie zasobu, ale też zwolnienie go we właściwym momencie.
+
+### Ręczne zarządzanie w C
+
+Funkcja `malloc` prosi o blok pamięci. Zwraca adres początku bloku albo `NULL`, gdy przydział się nie powiedzie:
+
+```c
+#include <stdlib.h>
+
+int main(void) {
+    int *wartosc = malloc(sizeof *wartosc);
+    if (wartosc == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    *wartosc = 42;
+    /* tutaj program może używać wartości */
+
+    free(wartosc);
+    return EXIT_SUCCESS;
+}
+```
+
+`sizeof *wartosc` oblicza rozmiar obiektu, na który wskazuje `wartosc`, czyli rozmiar typu `int`. Ten zapis pozostaje poprawny, nawet jeśli później zmieni się typ wskaźnika. Po zakończeniu pracy `free` zwalnia pamięć. Brak `free` może powodować wyciek pamięci; zwolnienie tego samego bloku więcej niż raz albo dalsze używanie go po zwolnieniu to błędy.
+
+### Zarządzanie czasem życia w C++
+
+C++ ma `new` i `delete`, ale w nowoczesnym kodzie zwykle wybiera się obiekty, które same pilnują czasu życia zasobów:
+
+```cpp
+#include <memory>
+
+int main() {
+    auto wartosc = std::make_unique<int>(42);
+    // wartosc wskazuje na int o wartości 42
+}
+```
+
+`std::make_unique` (dostępne od C++14) tworzy obiekt i zwraca wskaźnik z wyłączną własnością. Gdy zmienna `wartosc` przestaje istnieć, obiekt jest automatycznie usuwany. Nie trzeba w tym przykładzie pamiętać o osobnym `delete`.
+
+To podejście nazywa się RAII: obiekt przejmuje odpowiedzialność za zasób i zwalnia go, gdy kończy się jego czas życia. W praktyce często nie trzeba nawet tworzyć pojedynczego obiektu dynamicznie. Jeśli potrzebna jest kolekcja liczb, `std::vector<int>` sam zarządza pamięcią potrzebną na elementy.
+
+`malloc` i `free` nie są zamiennikami `new` i `delete` w C++. `new` tworzy obiekt i uruchamia jego konstruktor, a `delete` uruchamia destruktor. Funkcje `malloc` i `free` zarządzają surową pamięcią i nie wykonują tych czynności dla obiektów C++.
+
+## 5. Zgłaszanie i obsługa błędów
+
+W C wiele funkcji sygnalizuje błąd przez wartość zwrotną. Wywołujący sprawdza wynik i sam podejmuje dalsze działanie. Przykładem jest sprawdzenie, czy `malloc` zwrócił `NULL`.
+
+C++ także korzysta z wartości zwrotnych, ale ma dodatkowo wyjątki. Funkcja może zgłosić wyjątek przez `throw`, a kod, który potrafi obsłużyć błąd, przechwytuje go przez `catch`:
+
+```cpp
+#include <iostream>
+#include <stdexcept>
+
+int podziel(int a, int b) {
+    if (b == 0) {
+        throw std::invalid_argument("Dzielnik nie może być zerem");
+    }
+    return a / b;
+}
+
+int main() {
+    try {
+        std::cout << podziel(10, 0) << '\n';
+    } catch (const std::invalid_argument &blad) {
+        std::cerr << "Nie można wykonać działania: " << blad.what() << '\n';
+    }
+}
+```
+
+Funkcja `podziel` wykrywa przypadek, którego nie może obsłużyć, i zgłasza wyjątek. Wykonanie przechodzi wtedy do pasującego bloku `catch`; linia wypisująca wynik nie zostaje wykonana. W C++ wyjątki nie są obowiązkowe — wiele funkcji nadal zwraca kody błędów lub wartości opisujące brak wyniku. C nie ma mechanizmu `try`/`catch` wbudowanego w język.
+
+## 6. Czy C++ zawsze jest szybszy?
+
+Nie. Zarówno C, jak i C++ mogą być kompilowane do kodu maszynowego, a o szybkości konkretnego programu decydują między innymi algorytm, sposób użycia pamięci, kompilator i jego ustawienia. Sam wybór języka nie gwarantuje przewagi.
+
+C++ udostępnia mechanizmy, które mogą wiązać się z dodatkową pracą lub pamięcią, na przykład funkcje wirtualne. Jednocześnie abstrakcje takie jak `std::vector` mogą być równie wydajne jak dobrze napisany kod ręczny. Koszt zależy od użycia i kompilatora, więc gdy wydajność ma znaczenie, mierzy się działający program.
+
+Oba języki spotyka się w systemach operacyjnych, oprogramowaniu wbudowanym, bibliotekach i aplikacjach wymagających wysokiej wydajności. Często wybór zależy od istniejącego kodu, dostępnych bibliotek, platformy oraz doświadczenia zespołu, a nie od jednej uniwersalnej reguły.
+
+## 7. Standardy i kompilatory
+
+Standard opisuje reguły języka i bibliotekę standardową. Określenia C17, C23, C++20 i C++23 oznaczają różne wydania standardów. Kompilator może obsługiwać kilka z nich, ale obsługa konkretnej funkcji zależy od jego wersji.
+
+| Język | Ważne wydania | Przykładowe nowości |
+| --- | --- | --- |
+| C | C89/C90, C99, C11, C17/C18, [C23](https://committee.iso.org/standard/82075.html) | C99 dodał między innymi deklaracje w pętli `for`; C11 wprowadził między innymi atomiki; C17 zawiera głównie poprawki; najnowsze opublikowane wydanie ISO to C23 / ISO/IEC 9899:2024. |
+| C++ | C++98/03, C++11, C++14, C++17, C++20, [C++23](https://www.iso.org/standard/83626.html) | C++11 dodał między innymi lambdy i inteligentne wskaźniki; C++17 dodał między innymi `std::optional`; C++20 dodał koncepty i zakresy; najnowsze opublikowane wydanie ISO to C++23 / ISO/IEC 14882:2024. |
+
+Opcja kompilatora może wskazać wybrany standard, na przykład `-std=c17` dla C albo `-std=c++20` dla C++. Nazwa opcji zależy od używanego kompilatora, a starszy kompilator może nie obsługiwać wszystkich elementów danego standardu.
+
+## Jak zapamiętać różnicę?
+
+C jest językiem proceduralnym z niewielkim zestawem podstawowych mechanizmów i dużą kontrolą nad szczegółami działania programu. C++ zachowuje wiele znanych konstrukcji C, a do tego oferuje klasy, referencje, szablony, wyjątki i rozbudowaną bibliotekę standardową. Można w nim pisać proceduralnie, ale można też korzystać z programowania obiektowego i generycznego.
+
+Najważniejsza praktyczna zasada brzmi: traktuj C i C++ jako osobne języki. Używaj kompilatora i biblioteki odpowiednich dla języka pliku, a przy przenoszeniu kodu sprawdzaj reguły zamiast zakładać, że skoro składnia wygląda znajomo, program zadziała tak samo.

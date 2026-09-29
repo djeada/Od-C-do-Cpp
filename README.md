@@ -24,7 +24,7 @@ Kod źródłowy do programów z yt.
 | 14 | Operacje bitowe | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/14_operacje_bitowe.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 15 | Programowanie obiektowe | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/15_programowanie_obietkowe.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 16 | Dziedziczenie | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/16_dziedziczenie.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
-| 17 | Zaawanosowane wskaźniki | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/17_zaawansowane_wskaźniki.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
+| 17 | Zaawansowane wskaźniki | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/17_zaawansowane_wskazniki.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> |
 | 18 | Przeciążanie | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/18_przeciazanie.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 19 | Konwersje | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/19_konwersje.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 20 | Lambdy | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/20_lambdy.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
