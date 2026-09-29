@@ -34,6 +34,22 @@ Kod źródłowy do programów z yt.
 | 24 | Praca z plikami | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/24_praca_z_plikami.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 | 25 | C vs C++ | <a href="https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/25_c_vs_cpp.md"><img src="https://img.icons8.com/color/344/markdown.png" height="50" /> </a> | 
 
+## Prezentacje
+
+Materiały prezentacyjne zostały uporządkowane wokół celów, praktycznych przykładów i najczęstszych pułapek.
+
+| Temat | Materiał |
+| --- | --- |
+| GDB | [Debugowanie programów](prezentacje/gdb/gdb.md) |
+| Make | [Automatyzacja budowania](prezentacje/make/make.md) |
+| Preprocesor i makra | [Makra i kompilacja warunkowa](prezentacje/makra/makra.md) |
+| Procesy | [Procesy w systemach Unix](prezentacje/procesy/procesy.md) |
+| Programowanie sieciowe | [Gniazda, TCP i UDP](prezentacje/programowanie_sieciowe/programowanie_sieciowe.md) |
+| Stos i sterta | [Czas życia i pamięć](prezentacje/stos_i_sterta/stos_i_sterta.md) |
+| Sygnały | [Sygnały w C/POSIX](prezentacje/sygnaly/sygnaly.md) |
+| Wskaźniki | [Wskaźniki i arytmetyka wskaźników](prezentacje/wskazniki/wskazniki.md) |
+| Wyjątki | [Wyjątki w C++](prezentacje/wyjatki/wyjatki.md) |
+
 ## Walidacja przykładów
 
 Repozytorium zawiera niezależne przykłady C i C++, dlatego zamiast jednego programu
