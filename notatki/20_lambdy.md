@@ -1,296 +1,219 @@
-## Funkcje Lambda
+# Wyrażenia lambda
 
-Funkcje lambda, wprowadzone w standardzie C++11, stanowią jedno z najbardziej przełomowych rozszerzeń języka, umożliwiając tworzenie funkcji anonimowych bezpośrednio w miejscu ich użycia. Pozwalają one na definiowanie funkcji w sposób zwięzły i elastyczny, co znacząco ułatwia programowanie funkcyjne w C++. W niniejszym opracowaniu przedstawimy szczegółowy opis funkcji lambda, ich składni, mechanizmów przechwytywania zmiennych oraz zastosowań w praktyce, z naciskiem na precyzję i formalizm matematyczny.
+Lambda to zapis zachowania w miejscu, w którym jest potrzebne. Najczęściej przekazujemy ją do algorytmu jako kryterium sortowania, wyszukiwania lub przekształcania elementów. Zamiast tworzyć osobną nazwaną funkcję, zapisujemy krótką operację obok jej użycia. Jej parametry działają jak parametry zwykłej funkcji: typy argumentów i ewentualne konwersje nadal mają znaczenie.
 
-### Składnia funkcji lambda
+Lambda nie jest zwykłą funkcją bez nazwy. Jest wyrażeniem, które tworzy **obiekt funkcyjny**: obiekt wywoływalny jak funkcja. Kompilator nadaje mu unikalny typ domknięcia i zapisuje w tym obiekcie przechwycone wartości lub odwołania. Ten model pomaga zrozumieć, skąd lambda bierze dane i jak długo może z nich bezpiecznie korzystać.
 
-Ogólna postać funkcji lambda w C++ jest następująca:
+## Składnia i pierwsze wywołanie
 
 ```cpp
-[przechwycenie](parametry) -> typ_zwracany {
-    // ciało funkcji
+[przechwycenia](parametry) -> typ_wyniku {
+    // ciało lambdy
 }
 ```
 
-Elementy składni:
-
-- **Przechwycenie (`[przechwycenie]`)** określa, które zmienne z zakresu otaczającego (en. *enclosing scope*) są dostępne wewnątrz lambdy oraz w jaki sposób są przechwytywane.
-- Lista **parametrów (`(parametry)`)** funkcji, analogicznie jak w zwykłych funkcjach.
-- **Specyfikator typu zwracanego (`-> typ_zwracany`)** opcjonalnie określa typ zwracany przez funkcję. Jeśli jest pominięty, kompilator próbuje go wywnioskować na podstawie `return` w ciele funkcji.
-- **Ciało funkcji (`{ ... }`)** to blok kodu wykonywany przy wywołaniu lambdy.
-
-Przykład prostej lambdy dodającej dwie liczby:
+Lista parametrów działa jak w zwykłej funkcji. Typ po `->` można pominąć, jeśli kompilator może go wywnioskować z instrukcji `return`.
 
 ```cpp
-auto suma = [](int a, int b) -> int {
+auto dodaj = [](int a, int b) {
     return a + b;
+};
+
+int wynik = dodaj(2, 3);  // operator() lambdy dostaje a == 2 i b == 3; wynik to 5
+```
+
+W `[]` określamy przechwycenia; pusta lista oznacza, że lambda nie korzysta z lokalnych zmiennych otaczającego zakresu. `auto` pozwala przechować obiekt bez nazywania jego niejawnego typu. Po prawej stronie `=` lambda jest tworzona, a średnik kończy deklarację zmiennej `dodaj`.
+
+## Jak działa domknięcie
+
+Każda lambda ma własny typ, inny niż typ każdej innej lambdy. Można myśleć o niej jak o obiekcie klasy wygenerowanej przez kompilator z operatorem `operator()`. Poniższa lambda:
+
+```cpp
+int poprawka = 3;
+auto dodajPoprawke = [poprawka](int x) {
+    return x + poprawka;
 };
 ```
 
-### Mechanizm przechwytywania zmiennych (Domknięcie)
+zachowuje się w przybliżeniu jak obiekt z polem przechowującym kopię `poprawka` oraz metodą wywołania. To tylko model wyjaśniający — dokładny układ obiektu jest szczegółem implementacji. Gdy lambda powstaje, do jej domknięcia trafia wartość `3`. Wywołanie `dodajPoprawke(4)` używa parametru `x == 4` i przechwyconej kopii `poprawka == 3`, więc zwraca `7`. Późniejsza zmiana pierwotnej zmiennej nie zmienia kopii w domknięciu.
 
-Funkcje lambda w C++ posiadają zdolność do tworzenia **domknięć** (en. *closures*), co oznacza, że mogą przechwytywać i wykorzystywać zmienne z zakresu, w którym zostały zdefiniowane. Sposób przechwytywania zmiennych określa się w nawiasach kwadratowych `[]`.
+## Przechwytywanie zmiennych
 
-Sposoby przechwytywania:
+Lista przechwytywania określa, jak lambda korzysta ze **zmiennych automatycznych** widocznych w miejscu jej utworzenia — zwykle są to zmienne lokalne. Najważniejsza różnica: przechwycenie przez wartość przechowuje kopię, a przez referencję odwołuje się do istniejącego obiektu.
 
-- `[]` — brak przechwytywania. Lambda nie ma dostępu do żadnych zmiennych spoza swojego zakresu.
-- `[=]` — przechwytywanie wszystkich dostępnych zmiennych przez wartość. Zmienne są kopiowane do wnętrza lambdy.
-- `[&]` — przechwytywanie wszystkich dostępnych zmiennych przez referencję. Lambda operuje na oryginalnych zmiennych.
-- `[this]` — przechwytywanie wskaźnika `this`, umożliwiające dostęp do członków klasy.
-- `[x, &y]` — selektywne przechwytywanie: `x` przez wartość, `y` przez referencję.
+| Zapis | Znaczenie |
+|---|---|
+| `[]` | Brak przechwyconych zmiennych lokalnych. |
+| `[x]` | Przechwycenie `x` przez wartość, czyli kopia. |
+| `[&x]` | Przechwycenie `x` przez referencję. |
+| `[=]` | Domyślne przechwytywanie użytych zmiennych lokalnych przez wartość. |
+| `[&]` | Domyślne przechwytywanie użytych zmiennych lokalnych przez referencję. |
+| `[x, &y]` | `x` jest kopiowane, a `y` używane przez referencję. |
 
-**Uwaga:** Przechwytywane zmienne są traktowane jako prywatne składowe anonimowej klasy generowanej przez kompilator dla lambdy.
+Zmienne globalne i statyczne nie są przechwytywane — lambda może się do nich odwołać bezpośrednio. Domyślne przechwycenie nie oznacza kopiowania całego zakresu, tylko tych zmiennych lokalnych, których lambda używa.
 
-### Typy funkcji lambda
-
-Każda funkcja lambda jest obiektem funkcyjnym o unikalnym typie anonimowym, generowanym przez kompilator. Aby przechowywać lambdy o nieznanym z góry typie, można użyć:
-
-- `auto` — do automatycznego wywnioskowania typu.
-- `std::function` — do przechowywania lambd o określonej sygnaturze, kosztem narzutu związanego z dynamicznym wywołaniem.
-
-Przykład użycia `std::function`:
+### Kopia i referencja w praktyce
 
 ```cpp
-std::function<int(int, int)> dodaj = [](int a, int b) {
-    return a + b;
+int licznik = 10;
+auto kopia = [licznik] { return licznik; };
+auto odwolanie = [&licznik] { return licznik; };
+
+licznik = 20;
+int a = kopia();       // 10: domknięcie zachowało wcześniejszą kopię
+int b = odwolanie();   // 20: lambda odczytała bieżący obiekt licznik
+```
+
+Referencja bywa wygodna, gdy lambda działa od razu, na przykład wewnątrz algorytmu wywoływanego synchronicznie. Trzeba jednak pilnować czasu życia obiektu, do którego się odwołuje. Lambda może przeżyć zmienną, którą przechwyciła:
+
+```cpp
+auto stworzOdczyt = [] {
+    int lokalna = 7;
+    return [&lokalna] { return lokalna; };  // Błąd projektu: lokalna przestaje istnieć
 };
 ```
 
-### Klauzula `mutable`
+Zapis funkcji z wnioskowanym typem zwracanym wymaga C++14. Samo przechwycenie przez referencję działa już w C++11, ale nie przedłuża życia `lokalna`.
 
-Domyślnie lambdy przechwytujące zmienne przez wartość nie pozwalają na modyfikację tych zmiennych wewnątrz swojego ciała (są one traktowane jako `const`). Aby umożliwić modyfikację przechwyconych przez wartość zmiennych, należy użyć klauzuli `mutable`:
+Po wyjściu ze `stworzOdczyt` zmienna `lokalna` już nie istnieje. Wywołanie zwróconej lambdy próbuje wtedy odczytać nieistniejący obiekt — zachowanie programu jest niezdefiniowane. Jeśli lambda ma przeżyć bieżący zakres, przechwyć potrzebną wartość przez kopię:
+
+```cpp
+auto stworzOdczyt = [] {
+    int lokalna = 7;
+    return [lokalna] { return lokalna; };  // Domknięcie przechowuje własne 7
+};
+
+auto odczytaj = stworzOdczyt();
+int wartosc = odczytaj();  // 7
+```
+
+Kopia wskaźnika nie kopiuje wskazywanego obiektu ani nie przedłuża jego życia. Podobnie skopiowanie obiektu zawierającego referencję nie przedłuża życia celu. Dlatego samo `[=]` nie gwarantuje bezpieczeństwa czasu życia — trzeba znać to, co przechowywana wartość faktycznie wskazuje.
+
+### Przechwytywanie `this`
+
+W metodzie klasy lambda może korzystać ze składowych obiektu. Przechwycenie `[this]` zachowuje wskaźnik do bieżącego obiektu, nie jego kopię. Jeśli lambda będzie wywołana po zniszczeniu obiektu, `this` będzie wiszącym wskaźnikiem. Od C++17 zapis `[*this]` kopiuje bieżący obiekt do domknięcia, o ile jego kopiowanie jest dozwolone.
+
+W starszym kodzie `[=]` użyte w metodzie mogło niejawnie przechwycić `this`; nie kopiowało wtedy całego obiektu. To niejawne przechwytywanie jest przestarzałe od C++20. Gdy lambda korzysta ze składowej klasy, zapisz intencję wprost (`[this]` lub `[*this]`) i sprawdź, czy wybrany czas życia jest właściwy.
+
+## Modyfikowanie przechwyconej kopii: `mutable`
+
+Domyślnie operator wywołania lambdy nie zmienia stanu przechwyconych przez wartość kopii. Słowo `mutable` pozwala modyfikować ten stan. Nie powoduje jednak zapisu do pierwotnej zmiennej:
 
 ```cpp
 int licznik = 0;
-auto inkrementuj = [licznik]() mutable {
-    licznik++;
-    return licznik;
-};
-```
-
-W powyższym przykładzie `licznik` jest lokalną kopią zmiennej przechwyconej przez wartość, którą możemy modyfikować wewnątrz lambdy.
-
-### Przykłady praktyczne
-
-#### Przechwytywanie zmiennych
-
-Rozważmy zmienne `a` i `b` w zewnętrznym zakresie:
-
-```cpp
-int a = 5;
-int b = 10;
-
-auto suma = [=]() {
-    return a + b;
+auto nastepny = [licznik]() mutable {
+    return ++licznik;
 };
 
-auto mnoznik = [&]() {
-    a *= 2;
-    b *= 2;
-};
+int pierwszy = nastepny();  // 1; kopia wewnątrz domknięcia zmienia się z 0 na 1
+int drugi = nastepny();     // 2; to samo domknięcie pamięta poprzedni stan
+// licznik nadal wynosi 0
 ```
 
-- W lambdzie `suma` zmienne `a` i `b` są przechwycone przez wartość. Modyfikacje `a` i `b` wewnątrz lambdy nie wpłyną na oryginalne zmienne.
-- W lambdzie `mnoznik` zmienne są przechwycone przez referencję. Modyfikacje wewnątrz lambdy wpływają na oryginalne zmienne.
+`mutable` nie służy do modyfikowania oryginału. Do tego potrzebne jest przechwycenie przez referencję (`[&licznik]`), co ponownie wymaga zadbania o czas życia zmiennej. Ponieważ `mutable` zmienia operator wywołania tak, by mógł modyfikować stan, taka lambda nie jest wywoływalna przez obiekt lambdy oznaczony jako `const`.
 
-#### Użycie z algorytmami STL
+## Lambdy i algorytmy biblioteki standardowej
 
-Funkcje lambda są szczególnie użyteczne w połączeniu z algorytmami biblioteki standardowej.
-
-**Przykład sortowania z własnym kryterium:**
+Algorytm przyjmuje lambdę jako argument i wywołuje ją dla elementów zakresu. Dzięki temu mechanizm sortowania lub wyszukiwania pozostaje ogólny, a kryterium jest zapisane obok konkretnego użycia. Poniższy przykład wymaga `<algorithm>` i `<vector>`; używa C++11:
 
 ```cpp
-std::vector<int> liczby = {3, 1, 4, 1, 5, 9, 2, 6};
-std::sort(liczby.begin(), liczby.end(), [](int a, int b) {
-    return a > b;  // Sortowanie malejące
-});
-```
-
-**Przykład filtrowania elementów:**
-
-```cpp
-std::vector<int> liczby = {1, 2, 3, 4, 5};
-auto it = std::find_if(liczby.begin(), liczby.end(), [](int n) {
-    return n % 2 == 0;  // Szukanie pierwszej liczby parzystej
-});
-```
-
-### Teoretyczne podstawy funkcji lambda
-
-Funkcje lambda w C++ są inspirowane rachunkiem lambda, formalnym systemem logicznym opracowanym przez Alonzo Churcha w latach 30. XX wieku. Rachunek lambda jest podstawą matematycznej teorii funkcji i stanowi fundament dla języków funkcyjnych.
-
-W kontekście C++, funkcje lambda umożliwiają traktowanie funkcji jako obiektów pierwszej klasy, co oznacza, że mogą być przekazywane jako argumenty, zwracane z funkcji oraz przechowywane w zmiennych.
-
-### Mechanizm działania lambd w C++
-
-Podczas kompilacji lambdy są przekształcane na obiekty funkcyjne (funktory). Kompilator generuje anonimową klasę z przeciążonym operatorem wywołania funkcyjnego `operator()`. Przechwycone zmienne stają się prywatnymi składowymi tej klasy.
-
-**Przykład lambdy i jej odpowiednika jako funktor:**
-
-Lambda:
-
-```cpp
-auto suma = [x](int y) {
-    return x + y;
-};
-```
-
-Odpowiednik jako klasa:
-
-```cpp
-class AnonimowaLambda {
-private:
-    int x;
-public:
-    AnonimowaLambda(int x) : x(x) {}
-    int operator()(int y) const {
-        return x + y;
-    }
-};
-
-AnonimowaLambda suma(x);
-```
-
-### Zaawansowane zastosowania
-
-#### Generatory funkcji
-
-Funkcje lambda mogą być zwracane z funkcji, co pozwala na tworzenie fabryk funkcji:
-
-```cpp
-auto stworz_mnoznik(int mnoznik) {
-    return [mnoznik](int x) {
-        return x * mnoznik;
-    };
-}
-
-auto podwajaj = stworz_mnoznik(2);
-std::cout << podwajaj(5);  // Wyświetli 10
-```
-
-#### Rekursja w lambdach
-
-Ze względu na anonimowość, lambdy nie posiadają nazwy, co utrudnia implementację rekurencji. Można to obejść, używając wskaźnika na samą lambdę:
-
-```cpp
-std::function<int(int)> silnia = [](int n) {
-    return n <= 1 ? 1 : n * silnia(n - 1);
-};
-```
-
-Lub poprzez przekazanie samej siebie jako argumentu:
-
-```cpp
-auto silnia = [](auto self, int n) -> int {
-    return n <= 1 ? 1 : n * self(self, n - 1);
-};
-
-std::cout << silnia(silnia, 5);  // Wyświetli 120
-```
-
-### Wydajność i optymalizacja
-
-Funkcje lambda w C++ są zazwyczaj kompilowane do wydajnego kodu maszynowego, porównywalnego z kodem napisanym za pomocą tradycyjnych funkcji czy funktorów. Jednakże nadmierne użycie `std::function` może wprowadzać narzut związany z dynamicznym wywołaniem funkcji.
-
-Aby zapewnić maksymalną wydajność:
-
-- Unikaj używania `std::function`, jeśli nie jest to konieczne.
-- Przechwytuj zmienne przez referencję, jeśli kopiowanie jest kosztowne.
-- Używaj `constexpr` lambd, gdy jest to możliwe (od C++17).
-
-### Nowości w nowszych standardach C++
-
-Standard C++ jest dynamicznie rozwijany, a każda nowa wersja wprowadza istotne ulepszenia, które zwiększają możliwości języka, poprawiają wydajność oraz ułatwiają programowanie. W tej sekcji omówimy kluczowe nowości związane z lambdami oraz innymi funkcjami wprowadzonymi w standardach C++14, C++17 i C++20.
-
-#### C++14: Generowane typy zwracane
-
-W C++14 wprowadzono możliwość pominięcia specyfikatora typu zwracanego w lambdach, co pozwala na bardziej zwięzły i czytelny kod, szczególnie w przypadku złożonych wyrażeń.
-
-**Przykład:**
-
-```cpp
-#include <iostream>
-#include <vector>
 #include <algorithm>
-
-int main() {
-    std::vector<int> liczby = {1, 2, 3, 4, 5};
-
-    // Lambda bez określonego typu zwracanego
-    auto suma = [](auto a, auto b) {
-        return a + b;
-    };
-
-    int wynik = suma(10, 20);
-    std::cout << "Suma: " << wynik << std::endl; // Wyświetli 30
-
-    return 0;
-}
-```
-
-**Zalety:**
-
-- Skrócony zapis lambd sprawia, że kod jest bardziej przejrzysty.
-- Automatyczne dedukowanie typu zwracanego pozwala na użycie lambd z różnymi typami danych bez konieczności ręcznego określania typu.
-
-#### C++17: Domyślne szablony zmiennych w lambdach
-
-C++17 wprowadził możliwość definiowania lambd z parametrami szablonowymi, co pozwala na większą elastyczność i ponowne używanie lambd w różnych kontekstach typów.
-
-**Przykład:**
-
-```cpp
-#include <iostream>
 #include <vector>
-#include <algorithm>
+
+std::vector<int> liczby{3, 1, 4, 1, 5, 9};
 
 int main() {
-    // Lambda z parametrami szablonowymi
-    auto suma = []<typename T>(T a, T b) {
-        return a + b;
-    };
+    std::sort(liczby.begin(), liczby.end(),
+              [](int a, int b) { return a > b; });  // Porządek malejący
 
-    std::cout << "Suma int: " << suma(10, 20) << std::endl;       // Wyświetli 30
-    std::cout << "Suma double: " << suma(10.5, 20.3) << std::endl; // Wyświetli 30.8
-
+    int granica = 4;
+    auto znaleziony = std::find_if(liczby.begin(), liczby.end(),
+                                   [granica](int n) { return n > granica; });
+    if (znaleziony != liczby.end()) {
+        int wartosc = *znaleziony;
+    }
     return 0;
 }
 ```
 
-**Zalety:**
+`std::sort` wielokrotnie pyta komparator, czy pierwszy argument ma znaleźć się przed drugim. Dla liczb warunek `a > b` ustawia większe wartości wcześniej. Komparator musi spełniać regułę ścisłego słabego porządku; na przykład `a >= b` jest błędne, bo dla `a == b` twierdzi, że element jest przed samym sobą.
 
-- Lambdy mogą działać z różnymi typami danych bez potrzeby definiowania osobnych lambd dla każdego typu.
-- Możliwość stosowania lambd w różnych kontekstach typów zwiększa reużywalność kodu.
+`std::find_if` sprawdza elementy po kolei, wywołując predykat z wartością `n`. Lambda zachowała kopię `granica == 4`, więc szuka pierwszej liczby większej od 4. Wynikiem jest iterator do znalezionego elementu albo `liczby.end()`, jeśli żadnego nie znaleziono. W pełnym kodzie należy porównać iterator z `end()` przed dereferencją.
 
-#### C++20: Lambdy odświeżone (constexpr lambdas)
+Ponieważ algorytm kończy pracę przed wyjściem z tego zakresu, przechwycenie `[&granica]` byłoby tu również bezpieczne pod względem czasu życia. Kopia `[granica]` wyraźniej pokazuje, że predykat potrzebuje tylko wartości i nie zmienia zewnętrznej zmiennej. W przypadku algorytmu uruchamianego asynchronicznie referencja mogłaby przeżyć zmienną — wtedy ten sam zapis nie byłby bezpieczny.
 
-C++20 wprowadza lambdy oznaczone jako `constexpr`, co umożliwia ich użycie w kontekstach wymagających stałych wyrażeń, takich jak `static_assert` czy inicjalizatory stałych zmiennych.
+## Typ lambdy, `auto` i `std::function`
 
-**Przykład:**
+Typ domknięcia jest unikalny i nie ma nazwy, dlatego typowym sposobem przechowania lambdy jest `auto`:
 
 ```cpp
-#include <iostream>
-#include <array>
+auto podwajaj = [](int x) { return 2 * x; };
+```
+
+Dwie lambdy zapisane identycznie w dwóch miejscach nadal mają różne typy. Z tego powodu zmienna `auto` nie może później dostać dowolnej innej lambdy. Gdy potrzebujemy przechowywać różne, kopiowalne obiekty wywoływalne o tej samej sygnaturze, można użyć `std::function` z nagłówka `<functional>`:
+
+```cpp
+#include <functional>
 
 int main() {
-    // Lambda constexpr
-    constexpr auto kwadrat = [](int x) constexpr {
-        return x * x;
-    };
-
-    static_assert(kwadrat(5) == 25, "Kwadrat 5 powinien być 25");
-
-    constexpr std::array<int, 3> tablica = { kwadrat(2), kwadrat(3), kwadrat(4) };
-    
-    for (const auto& val : tablica) {
-        std::cout << val << " "; // Wyświetli 4 9 16
-    }
-    
+    std::function<int(int)> operacja = [](int x) { return 2 * x; };
+    operacja = [](int x) { return x + 1; };  // Inny typ lambdy, ta sama sygnatura
+    int wynik = operacja(3);  // 4
     return 0;
 }
 ```
 
-**Zalety:**
+`std::function<int(int)>` obiecuje, że przechowywany obiekt da się wywołać z `int` i wynikiem wywołania jest `int`. Opakowanie ukrywa konkretny typ domknięcia, może jednak dodawać koszt pośredniego wywołania lub alokacji i wymaga, by przechowywany obiekt był kopiowalny. Jeśli typ jest znany w miejscu użycia, zwykle prostsze jest `auto`; jeśli funkcja ma przyjmować dowolny typ wywoływalny, często nadaje się parametr szablonowy (temat następnej notatki).
 
-- Stałe wyrażenia mogą być przetwarzane podczas kompilacji, co prowadzi do optymalizacji czasu wykonania.
-- Możliwość sprawdzania poprawności wyrażeń w czasie kompilacji za pomocą `static_assert`.
+## Zwracanie i uogólnianie lambd
+
+### Zwracanie lambdy
+
+Typ domknięcia jest niejawny, ale od C++14 kompilator może wywnioskować typ zwracany funkcji, która zwraca lambdę:
+
+```cpp
+auto stworzMnoznik(int mnoznik) {
+    return [mnoznik](int x) { return x * mnoznik; };
+}
+
+auto podwajaj = stworzMnoznik(2);
+int wynik = podwajaj(5);  // Domknięcie przechowuje 2; wynik to 10
+```
+
+Wartość `mnoznik` została skopiowana do zwróconego domknięcia, więc lambda nie odwołuje się do zmiennej lokalnej po zakończeniu `stworzMnoznik`.
+
+### Lambdy generyczne
+
+Od C++14 parametr lambdy może mieć typ `auto`. Wtedy kompilator tworzy szablonowy operator wywołania, który może być instancjowany dla różnych typów:
+
+```cpp
+auto suma = [](auto a, auto b) { return a + b; };
+
+int calkowita = suma(2, 3);       // Jedno wywołanie: a i b są int
+double zmiennoprzecinkowa = suma(2.5, 3.5);  // Inne wywołanie: a i b są double
+```
+
+To nie oznacza, że dowolne dwa typy będą działały. Dla każdego wywołania wyrażenie `a + b` musi być poprawne i jego wynik musi pasować do kontekstu. Od C++20 można zapisać parametry szablonu lambdy jawnie, np. `[]<typename T>(T x) { ... }`.
+
+### Rekurencja
+
+Lambda nie może odwołać się po nazwie do zmiennej, której inicjalizacja właśnie trwa. Od C++14 można obejść to ograniczenie, przekazując obiekt lambdy jako argument `self`:
+
+```cpp
+auto silnia = [](auto self, unsigned n) -> unsigned long long {
+    return n < 2 ? 1 : n * self(self, n - 1);
+};
+
+auto wynik = silnia(silnia, 5);  // 5 * 4 * 3 * 2 * 1 == 120
+```
+
+Pierwsze wywołanie przekazuje lambdę jako jej własny argument. Przy `n == 5` ciało wywołuje `self(self, 4)`, potem `self(self, 3)` i tak dalej aż do przypadku bazowego `n < 2`. Użycie typu bez znaku uniemożliwia przekazanie wartości ujemnej, ale wynik nadal ma ograniczony zakres; dla dużego `n` może nastąpić zawinięcie wartości bez znaku. Silnia jest tu przykładem rekurencji, nie gotową funkcją do dowolnie dużych danych.
+
+## Wersje standardu
+
+- **C++11:** podstawowe lambdy, jawne przechwycenia, `std::function`.
+- **C++14:** parametry `auto`, inicjalizowane przechwycenia, np. `[kopia = wyrazenie]`, oraz wnioskowanie typu zwracanego funkcji zwracającej lambdę. Jeśli inicjalizator używa `std::move`, potrzebny jest nagłówek `<utility>`.
+- **C++17:** możliwość używania lambdy jako `constexpr`, jeśli spełnia odpowiednie wymagania; przechwycenie kopii bieżącego obiektu przez `[*this]`.
+- **C++20:** jawne listy parametrów szablonu lambdy, np. `[]<typename T>(T x)`, oraz przestarzałość niejawnego przechwycenia `this` przez `[=]`.
+
+Lambdy najczęściej przekazuje się do algorytmów albo funkcji szablonowych bez opakowania w `std::function`. Dzięki temu kod może przyjmować różne typy wywoływalne, zachowując ich typy i przechwycony stan — szablony z następnej notatki są jednym z mechanizmów, które to umożliwiają.

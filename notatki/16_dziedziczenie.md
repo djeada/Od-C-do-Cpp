@@ -1,204 +1,159 @@
-## Dziedziczenie
+# Dziedziczenie i polimorfizm
 
-Dziedziczenie to mechanizm w programowaniu obiektowym, który pozwala na tworzenie nowych klas, wykorzystując część kodu z klasy już istniejącej. Klasa, z której dziedziczymy, nazywana jest klasą bazową lub rodzicem, natomiast klasa dziedzicząca to klasa pochodna lub dziecko. Dziedziczenie pozwala klasom pochodnym na wykorzystanie pól i metod klasy bazowej oraz rozszerzenie lub modyfikację jej funkcjonalności.
+> Przykłady w tej notatce wymagają C++14. Używają `std::make_unique`, wprowadzonego w C++14.
 
-W języku C++ dziedziczenie reprezentowane jest poprzez umieszczenie nazwy klasy dziedziczącej w nawiasach klamrowych po nazwie klasy bazowej. W poniższym przykładzie, klasa `Prostokat` dziedziczy po klasie `Figura`.
+Wyobraźmy sobie program, który oblicza pola różnych figur. Można napisać osobne funkcje dla prostokątów i kół, ale każda nowa figura wymagałaby dopisywania kolejnych warunków. Wspólny interfejs pozwala powiedzieć programowi: „oblicz pole tej figury”, bez sprawdzania, czy jest ona prostokątem, czy kołem. W C++ można zbudować taki interfejs za pomocą klasy bazowej i funkcji wirtualnych.
 
-```c++
+## Klasa bazowa i klasy pochodne
+
+Klasa bazowa zawiera wspólne dane lub operacje. Klasa pochodna przejmuje jej część interfejsu i może dodać własne składowe albo zastąpić wybrane zachowania. Zapis `class Prostokat : public Figura` oznacza publiczne dziedziczenie: `Prostokat` jest rodzajem `Figura`, więc można użyć prostokąta tam, gdzie oczekuje się figury.
+
+Poniższy program tworzy prostokąt i koło, przechowuje je pod wspólnym typem `Figura` i prosi każde o obliczenie pola:
+
+```cpp
+#include <iostream>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
 class Figura {
-  std::string nazwa;
+    std::string nazwa_;
 
-  public:
-    Figura(std::string nazwa) : nazwa(nazwa) {}
-    void info() { std::cout << "Figura: " << nazwa << std::endl; }
-    virtual double obliczPole() = 0;
+public:
+    explicit Figura(std::string nazwa) : nazwa_(std::move(nazwa)) {}
+    virtual ~Figura() = default;
+
+    const std::string& nazwa() const { return nazwa_; }
+    virtual double pole() const = 0;
 };
 
 class Prostokat : public Figura {
-  int a;
-  int b;
+    double szerokosc_;
+    double wysokosc_;
 
-  public:
-    Prostokat(int a, int b, std::string nazwa) : Figura(nazwa), a(a), b(b) {}
-    void info() {
-      Figura::info(); // wywołanie metody bazowej
-      std::cout << "Prostokat: " << a << "x" << b << std::endl;
+public:
+    Prostokat(std::string nazwa, double szerokosc, double wysokosc)
+        : Figura(std::move(nazwa)),
+          szerokosc_(szerokosc), wysokosc_(wysokosc) {}
+
+    double pole() const override {
+        return szerokosc_ * wysokosc_;
     }
-    double obliczPole() { return a * b; }
+};
+
+class Kolo : public Figura {
+    double promien_;
+
+public:
+    Kolo(std::string nazwa, double promien)
+        : Figura(std::move(nazwa)), promien_(promien) {}
+
+    double pole() const override {
+        constexpr double pi = 3.141592653589793;
+        return pi * promien_ * promien_;
+    }
+};
+
+int main() {
+    std::vector<std::unique_ptr<Figura>> figury;
+    figury.push_back(std::make_unique<Prostokat>("prostokąt", 3, 4));
+    figury.push_back(std::make_unique<Kolo>("koło", 2));
+
+    for (const auto& figura : figury) {
+        std::cout << figura->nazwa() << ": "
+                  << figura->pole() << '\n';
+    }
 }
 ```
 
-W powyższym przykładzie, Prostokat dziedziczy wszystkie pola i metody z klasy Figura, takie jak nazwa, a także dodaje nowe pola a i b. Klasa Prostokat nadpisuje również metodę info() z klasy bazowej, wywołując jej pierwotną implementację i dodając nowe informacje.
+Jak czytać ten przykład:
 
-### Typy dziedziczenia
+1. `Figura` przechowuje nazwę wspólną dla wszystkich figur. Jej pola są prywatne, więc klasy pochodne nie odczytują ich bezpośrednio. Mogą skorzystać z publicznej funkcji `nazwa()`.
+2. `virtual double pole() const = 0;` deklaruje funkcję wirtualną czysto wirtualną. `= 0` oznacza, że sama klasa `Figura` nie podaje sposobu liczenia pola. Każda konkretna figura ma go dostarczyć.
+3. `Prostokat` i `Kolo` implementują `pole()`. Słowo `override` prosi kompilator o sprawdzenie, czy sygnatura rzeczywiście odpowiada funkcji wirtualnej z bazy. Literówka lub brak `const` zostaną dzięki temu wykryte.
+4. `std::unique_ptr<Figura>` może posiadać obiekt klasy pochodnej. Konwersja wskaźnika z `Prostokat*` do `Figura*` jest bezpieczna i niejawna, bo każdy prostokąt jest figurą.
+5. Wyrażenie `figura->pole()` wywołuje implementację odpowiadającą rzeczywistemu obiektowi: dla prostokąta metodę `Prostokat::pole`, a dla koła `Kolo::pole`. Taki wybór w czasie działania programu to **polimorfizm dynamiczny**.
 
-Istnieją trzy podstawowe typy dziedziczenia w C++:
+Bez funkcji wirtualnej wywołanie przez `Figura*` wybrałoby wersję zadeklarowaną w typie wskaźnika, a nie wersję klasy rzeczywistego obiektu. Słowo `virtual` w bazie włącza dynamiczny wybór. `override` samo nie włącza polimorfizmu — potwierdza tylko poprawne nadpisanie.
 
-- publiczne (`public`) - pozwala na dostęp do pol i metod klasy bazowej zarówno wewnątrz klasy pochodnej, jak i z zewnątrz.
-- prywatne (`private`) - ogranicza dostęp do pol i metod klasy bazowej tylko do wnętrza klasy pochodnej.
-- chronione (`protected`) - udostępnia pola i metody klasy bazowej dla klas pochodnych oraz dla samej klasy bazowej.
+### Klasa abstrakcyjna
 
-Poniższa tabela przedstawia dostępność pol i metod klasy bazowej w zależności od typu dziedziczenia:
+Klasa z co najmniej jedną funkcją czysto wirtualną jest abstrakcyjna. Nie można utworzyć jej bezpośrednio: oznacza to, że klasa bazowa wymaga od klasy konkretnej dostarczenia implementacji tej operacji. Można jednak tworzyć wskaźniki i referencje do klasy abstrakcyjnej. `Figura` jest abstrakcyjna przez `pole() = 0`, natomiast `Prostokat` i `Kolo` są konkretne, bo implementują tę funkcję.
 
-| Typ Dziedziczenia | Dostęp do prywatnych pól i metod	 | Dostęp do chronionych pól i metod | Dostęp do publicznych pól i metod |
-| ---------------- | ---------------------- | ---------------------- | ---------------------- |
-| publiczne | tak | tak | tak |
-| chronione | nie | tak | tak (ale zmienia się na chronioną) |
-| prywatne | nie | tak (ale zmienia się na prywatną) | tak (ale zmienia się na prywatną) |
+Klasa abstrakcyjna może zawierać zwykłe pola, konstruktor, funkcje z implementacją oraz wiele funkcji wirtualnych. Nie musi być „pustym interfejsem”. Gdy klasa pochodna nie zaimplementuje wszystkich odziedziczonych funkcji czysto wirtualnych, sama też pozostanie abstrakcyjna.
 
-### Polimorfizm
+### Konstrukcja i niszczenie obiektu
 
-Polimorfizm to jedno z kluczowych zagadnień programowania obiektowego, które umożliwia obiektom różnych klas reagowanie na te same wywołania metod w indywidualny sposób. Polimorfizm pozwala na interakcję z obiektami poprzez interfejs ich klas bazowych, nie znając ich rzeczywistej klasy. W praktyce oznacza to, że różne klasy mogą implementować metody o tej samej nazwie, lecz różnej funkcjonalności.
+Przy tworzeniu obiektu pochodnego najpierw konstruowana jest jego część bazowa, następnie jego własne pola. Przy niszczeniu kolejność jest odwrotna: najpierw niszczona jest część pochodna, potem bazowa. Dlatego konstruktor `Prostokat` najpierw wywołuje `Figura(...)` na liście inicjalizacyjnej, a dopiero potem inicjalizuje szerokość i wysokość.
 
-W kontekście języków programowania takich jak C++, polimorfizm osiągany jest głównie za pomocą funkcji wirtualnych i dziedziczenia. 
+Konstruktory nie są zwykłymi metodami: nie są wirtualne i nie można ich nadpisywać. Destruktor może być wirtualny. W polimorficznej bazie, której obiekty usuwa się przez wskaźnik bazowy, powinien być wirtualny:
 
-Przykładowo, możemy mieć klasę bazową `A` z metodą wirtualną `foo()`, oraz klasy pochodne `B` i `C`, które nadpisują tę metodę.
-
-```c++
-class A {
-  public:
-    virtual void foo() { std::cout << "A" << std::endl; }
-};
-
-class B : public A {
-  public:
-    void foo() override { std::cout << "B" << std::endl; }
-};
-
-class C : public A {
-  public:
-    void foo() override { std::cout << "C" << std::endl; }
+```cpp
+class Figura {
+public:
+    virtual ~Figura() = default;
+    virtual double pole() const = 0;
 };
 ```
 
-Gdy mamy kolekcję wskaźników do klasy bazowej A, które w rzeczywistości wskazują na obiekty klas A, B i C, wywołanie metody foo() da różne rezultaty w zależności od rzeczywistego typu obiektu.
+Gdy `std::unique_ptr<Figura>` niszczy posiadany obiekt, wirtualny destruktor pozwala uruchomić najpierw destruktor klasy rzeczywistej, a potem destruktor bazy. Usuwanie obiektu pochodnego przez wskaźnik do bazy bez wirtualnego destruktora prowadzi do niezdefiniowanego zachowania. Destruktor klasy pochodnej staje się wirtualny automatycznie; zapis `~Prostokat() override` jest dozwolony i może dokumentować intencję.
 
-```c++
-std::vector<A*> obiekty { new A, new B, new C };
+Jeśli nie planujesz usuwać obiektów przez wskaźnik bazowy, alternatywą bywa chroniony, niewirtualny destruktor. Dla początkującego praktyczna reguła jest prostsza: polimorficzna baza używana z `unique_ptr<Baza>` lub `delete Baza*` powinna mieć publiczny destruktor wirtualny.
 
-for (auto obiekt : obiekty)
-  obiekt->foo();
-```
+### Rodzaje dziedziczenia i dostęp do składowych
 
-To podejście eliminuje potrzebę ręcznego sprawdzania typu obiektu i decydowania, jaką metodę wywołać. Dla porównania, bez polimorfizmu, musielibyśmy użyć instrukcji warunkowych, aby obsłużyć każdy typ obiektu indywidualnie.
+Dziedziczenie opisuje nie tylko dostęp do elementów, ale też relację typów. Publiczne dziedziczenie mówi, że obiekt klasy pochodnej można traktować jak obiekt klasy bazowej. `protected` i `private` zmieniają widoczność odziedziczonych składowych; nie pozwalają bezpośrednio czytać prywatnych elementów bazy.
 
-Polimorfizm zapewnia elastyczność i skalowalność kodu. Dzięki temu, nowe klasy mogą być dodawane z minimalnym wpływem na istniejący kod, pod warunkiem, że przestrzegają one tego samego interfejsu (wirtualne metody klasy bazowej).
+| Rodzaj dziedziczenia | Publiczna składowa bazy staje się | Chroniona składowa bazy staje się | Prywatna składowa bazy |
+| --- | --- | --- | --- |
+| `public` | publiczna | chroniona | niedostępna bezpośrednio |
+| `protected` | chroniona | chroniona | niedostępna bezpośrednio |
+| `private` | prywatna | prywatna | niedostępna bezpośrednio |
 
-W praktycznym przykładzie, zamiast tworzyć różne metody dla każdego typu zwierzęcia (jak kwacz() dla kaczki czy szczekaj() dla psa), możemy stworzyć uniwersalną metodę zachowanie() i odpowiednio ją zaimplementować w każdej klasie dziedziczącej.
+W deklaracji `class` domyślne dziedziczenie jest prywatne, a w `struct` publiczne. Prywatne pole bazy nadal istnieje w części bazowej obiektu, ale kod klasy pochodnej nie może odwołać się do niego po nazwie. Powinna to robić przez odpowiednią funkcję bazową.
 
-```c++
-class Zwierze {
-  public:
-    virtual void zachowanie() = 0; // czysta funkcja wirtualna
-};
+Publiczne dziedziczenie jest dobrym wyborem, gdy można uczciwie powiedzieć „X jest rodzajem Y” i program ma korzystać z obiektu X przez interfejs Y. Jeśli klasa tylko używa innego obiektu jako jednego ze swoich składników, zwykle właściwsza jest kompozycja: pole jednego typu wewnątrz drugiego.
 
-class Kaczka : public Zwierze {
-  public:
-    void zachowanie() override { std::cout << "Kwaczę" << std::endl; }
-};
+### Konwersja wskaźnika bazowego i pochodnego
 
-class Pies : public Zwierze {
-  public:
-    void zachowanie() override { std::cout << "Szczekam" << std::endl; }
-};
+Konwersja w górę hierarchii, z `Prostokat*` do `Figura*`, jest bezpieczna: wskaźnik wskazuje wtedy na część bazową tego samego obiektu. Konwersja w dół, z `Figura*` do `Prostokat*`, nie zawsze jest poprawna — wskaźnik może wskazywać na koło. Gdy rodzaj obiektu nie jest znany, użyj `dynamic_cast` i sprawdź wynik:
 
-void foo(Zwierze* obiekt) {
-  obiekt->zachowanie();
+Korzystając z klas `Figura`, `Prostokat` i `Kolo` z poprzedniego przykładu, można napisać:
+
+```cpp
+std::unique_ptr<Figura> figura = std::make_unique<Kolo>("koło", 2);
+
+if (auto* prostokat = dynamic_cast<Prostokat*>(figura.get())) {
+    // rzutowanie się powiodło; figura wskazuje na Prostokat
+} else {
+    // w tym przykładzie obiekt jest kołem, więc rzutowanie się nie powiodło
 }
 ```
 
-W skrócie, polimorfizm sprzyja tworzeniu bardziej ogólnych, reużywalnych i łatwiejszych do rozwijania aplikacji.
+W przykładzie `figura.get()` daje zwykły wskaźnik do części bazowej obiektu. Ponieważ obiekt jest kołem, `dynamic_cast` zwraca `nullptr`, a program wchodzi do gałęzi `else`. Dla wskaźnika wynik nieudanego rzutowania to `nullptr`; dla referencji `dynamic_cast` rzuca wyjątek `std::bad_cast`. Klasa bazowa musi być polimorficzna, czyli mieć co najmniej jedną funkcję wirtualną. Jeśli często musisz sprawdzać typ i rzutować w dół, zastanów się, czy wspólny interfejs nie powinien udostępniać potrzebnej operacji jako funkcji wirtualnej.
 
-### Metody wirtualne
+### Krojenie obiektu
 
-W języku C++, metody wirtualne pozwalają na dynamiczne wiązanie metod. Oznacza to, że jeśli mamy wskaźnik lub referencję do klasy bazowej, który w rzeczywistości wskazuje (lub odnosi się) do obiektu klasy pochodnej, to wywołanie metody wirtualnej odwołuje się do odpowiedniej implementacji w zależności od rzeczywistego typu obiektu.
+Przypisanie obiektu pochodnego do zmiennej bazowej przez wartość kopiuje tylko część bazową. Dodatkowe pola i zachowanie klasy pochodnej zostają utracone. To zjawisko nazywa się **krojeniem obiektu** (*object slicing*):
 
-Przykład ilustrujący zachowanie bez używania metody wirtualnej:
+```cpp
+#include <iostream>
 
-```c++
-class A {
-  public:
-    void foo() { std::cout << "A" << std::endl; }
+class Bazowa {
+public:
+    virtual ~Bazowa() = default;
+    virtual void opisz() const { std::cout << "Bazowa\n"; }
 };
 
-class B : public A {
-  public:
-    void foo() { std::cout << "B" << std::endl; }
+class Pochodna : public Bazowa {
+public:
+    void opisz() const override { std::cout << "Pochodna\n"; }
 };
 
-B b;
-A* wsk = &b;
-wsk->foo(); // wyświetli "A"
+Pochodna oryginal;
+Bazowa kopia = oryginal; // kopia jest osobnym obiektem typu Bazowa
+kopia.opisz();           // wywoła Bazowa::opisz
 ```
 
-Aby uzyskać oczekiwane zachowanie, musimy zastosować słowo kluczowe virtual w deklaracji metody klasy bazowej:
-
-```c++
-class A {
-  public:
-    virtual void foo() { std::cout << "A" << std::endl; }
-};
-
-class B : public A {
-  public:
-    void foo() override { std::cout << "B" << std::endl; }
-};
-
-B b;
-A* wsk = &b;
-wsk->foo(); // wyświetli "B"
-```
-
-Pamiętaj również, że jeśli w klasie bazowej zdefiniowano destruktor jako wirtualny, destruktor w klasie pochodnej również stanie się wirtualny:
-
-```c++
-class A {
-  public:
-    virtual ~A() { /* ... */ }
-};
-
-class B : public A {
-  public:
-    ~B() override { /* ... */ }
-};
-```
-
-### Klasy abstrakcyjne
-
-W C++ klasy abstrakcyjne służą jako szablony dla innych klas. Nie można tworzyć obiektów klasy abstrakcyjnej, ale można tworzyć wskaźniki i referencje do niej. Klasy abstrakcyjne są zwykle używane jako bazy dla klas pochodnych.
-
-Aby uczynić klasę abstrakcyjną, musisz zdefiniować przynajmniej jedną jej metodę jako czysto wirtualną, co oznacza, że nie ma ona implementacji w klasie bazowej.
-
-```c++
-class A {
-  public:
-    virtual void foo() = 0;
-};
-
-class B : public A {
-  public:
-    void foo() override { std::cout << "B" << std::endl; }
-};
-
-B b;
-A* wsk = &b;
-wsk->foo(); // wyświetli "B"
-```
-
-Czy warto stosować klasy abstrakcyjne?
-
-- **Kapsułkowanie** pozwala na zdefiniowanie interfejsu, który oddziela użytkownika od szczegółów implementacji, zapewniając elastyczność w ukrywaniu wewnętrznych mechanizmów.
-- **Rozszerzalność** umożliwia klasom pochodnym dostarczanie własnych implementacji metod, przy jednoczesnym zachowaniu spójności interfejsu klasy bazowej, co ułatwia rozwój systemu.
-- **Zachowanie spójności** jest osiągane dzięki temu, że klasy pochodne są zobowiązane do zaimplementowania określonych metod, co gwarantuje jednolitą funkcjonalność niezależnie od konkretnej realizacji.
-
-Klasa czysto wirtualna to specyficzny rodzaj klasy abstrakcyjnej, która nie zawiera żadnych składowych ani implementacji, tylko deklaracje czysto wirtualnych metod:
-
-```c++
-class A {
-  public:
-    virtual void foo() = 0;
-    virtual void bar() = 0;
-};
-```
-
-W praktyce klasy czysto wirtualne są rzadko stosowane, ale mogą być użyteczne w bardzo specyficznych scenariuszach, gdzie wymagana jest wyłącznie definicja interfejsu bez jakiejkolwiek implementacji.
+Gdy chcesz zachować rzeczywisty typ obiektu i polimorfizm, przekazuj obiekty przez referencję lub wskaźnik, a przy dynamicznym zarządzaniu czasem życia użyj inteligentnego wskaźnika do bazy, jak w pierwszym przykładzie.

@@ -1,298 +1,203 @@
-## Napisy w języku C i C++
+# Napisy w C i C++
 
-Napisy są fundamentalnym elementem wielu aplikacji programistycznych, służąc do przechowywania i manipulacji tekstem, takim jak dane wejściowe użytkownika, komunikaty systemowe, informacje o błędach i wiele innych. W językach C i C++, napisy są reprezentowane na różne sposoby, co wynika z ewolucji tych języków oraz dążenia do zwiększenia bezpieczeństwa i łatwości użycia.
+Program często pobiera tekst, przechowuje go, porównuje i wyświetla. Zanim wybierzesz funkcję do pracy z tekstem, trzeba rozróżnić trzy rzeczy: **znak** (np. `A`), jego **zapis w pamięci** (jeden lub kilka bajtów) oraz **napis** (ciąg znaków w określonej reprezentacji). To rozróżnienie wyjaśnia, dlaczego długość tablicy nie zawsze jest długością tekstu i dlaczego C oraz C++ oferują różne narzędzia.
 
-### Napisy w języku C (C-string)
+## Napis w C: znaki, bufor i terminator
 
-W języku C napisy są reprezentowane jako tablice znaków typu `char`, zakończone specjalnym znakiem `'\0'`, znanym jako znak null (null terminator). Ten znak wskazuje koniec napisu i pozwala funkcjom bibliotecznym na określenie długości napisu w czasie wykonania.
-
-#### Deklaracja i inicjalizacja napisów w C
-
-Istnieje kilka sposobów deklarowania i inicjalizacji napisów w C:
-
-I. **Wskaźnik do stałego łańcucha znaków:**
+W C nie ma wbudowanego osobnego typu napisu. Napis C to umowa: funkcja otrzymuje adres pierwszego elementu tablicy `char`, a koniec tekstu rozpoznaje po bajcie o wartości zero, zapisywanym jako `\0`. Taki ciąg nazywa się **napisem zakończonym zerem** (C-string).
 
 ```c
-const char *napisA = "Ala ma kota";
+char napis[] = "Ala ma kota";
+const char *literał = "Ala ma kota";
 ```
 
-W tym przypadku `napisA` jest wskaźnikiem do stałego łańcucha znaków przechowywanego w pamięci tylko do odczytu (zazwyczaj w segmencie tekstowym programu). Próba modyfikacji tego napisu prowadzi do niezdefiniowanego zachowania.
+Pierwsza deklaracja tworzy tablicę i kopiuje do niej znaki literału razem z terminatorem. Tekst `Ala ma kota` ma 11 bajtów w zwykłym kodowaniu ASCII/UTF-8, a tablica ma **12 elementów**: 11 bajtów tekstu oraz końcowy `\0`. Można zmieniać elementy tablicy `napis`, dopóki nowa zawartość nadal mieści się w jej rozmiarze i zachowuje terminator. Druga deklaracja tworzy wskaźnik do literału; literału nie wolno modyfikować.
 
-II. **Tablica znaków z inicjalizacją literałem:**
+Pamiętaj o różnicy między **długością** a **pojemnością bufora**:
 
-```c
-char napisB[] = "Ala ma kota";
-```
+- długość napisu to liczba bajtów przed pierwszym `\0`;
+- pojemność bufora to liczba wszystkich elementów tablicy, jakie można zapisać;
+- zapis tekstu o długości `n` wymaga miejsca na `n + 1` elementów, bo trzeba jeszcze zapisać terminator.
 
-Tutaj `napisB` jest tablicą znaków, która jest kopią literału napisu. Ta tablica może być modyfikowana, ponieważ jest przechowywana w pamięci dostępnej do zapisu (zazwyczaj na stosie lub w pamięci dynamicznej).
-
-III. **Tablica znaków z inicjalizacją listą znaków:**
-
-```c
-char napisC[] = {'A', 'l', 'a', ' ', 'm', 'a', ' ', 'k', 'o', 't', 'a', '\0'};
-```
-
-Ten sposób jest równoważny poprzedniemu, ale wymaga jawnego dodania znaku null na końcu tablicy.
-
-#### Znaczenie znaku null
-
-Znak null `'\0'` jest kluczowy w reprezentacji napisów w C. Funkcje biblioteczne operujące na napisach zakładają, że napisy są zakończone tym znakiem. Brak znaku null może prowadzić do błędów, takich jak odczyt poza granicami tablicy (buffer overrun), co może skutkować naruszeniem ochrony pamięci i awarią programu.
-
-#### Operacje na napisach w C
-
-Język C dostarcza bogaty zestaw funkcji w standardowych bibliotekach do manipulacji napisami. Kluczowe biblioteki to `<string.h>`, `<ctype.h>` i `<stdlib.h>`.
-
-##### Biblioteka `<string.h>`
-
-Funkcje w tej bibliotece służą do manipulacji i porównywania napisów:
-
-| Funkcja                            | Opis                                                                 |
-|------------------------------------|----------------------------------------------------------------------|
-| `size_t strlen(const char *s);`    | Zwraca długość napisu `s`, czyli liczbę znaków przed znakiem null.   |
-| `char *strcpy(char *dest, const char *src);` | Kopiuje napis `src` do bufora `dest`. Uwaga: `dest` musi mieć wystarczający rozmiar, aby pomieścić `src`. |
-| `char *strncpy(char *dest, const char *src, size_t n);` | Kopiuje maksymalnie `n` znaków z `src` do `dest`.                       |
-| `char *strcat(char *dest, const char *src);` | Dołącza napis `src` do końca `dest`. `dest` musi mieć wystarczający rozmiar. |
-| `char *strncat(char *dest, const char *src, size_t n);` | Dołącza maksymalnie `n` znaków z `src` do `dest`.                       |
-| `int strcmp(const char *s1, const char *s2);` | Porównuje napisy `s1` i `s2`. Zwraca wartość ujemną, zero lub dodatnią w zależności od wyniku porównania. |
-| `int strncmp(const char *s1, const char *s2, size_t n);` | Porównuje maksymalnie `n` znaków z `s1` i `s2`.                        |
-| `char *strchr(const char *s, int c);` | Wyszukuje pierwsze wystąpienie znaku `c` w napisie `s`.               |
-| `char *strrchr(const char *s, int c);` | Wyszukuje ostatnie wystąpienie znaku `c` w napisie `s`.               |
-| `char *strstr(const char *haystack, const char *needle);` | Wyszukuje podciąg `needle` w napisie `haystack`.                       |
-
-**Uwaga dotycząca bezpieczeństwa:** Funkcje takie jak `strcpy` i `strcat` są podatne na błędy przepełnienia bufora (buffer overflow) i nie powinny być używane w nowym kodzie. Bezpieczniejsze alternatywy to `strncpy` i `strncat`, jednak one również mają swoje ograniczenia. W praktyce zaleca się korzystanie z funkcji takich jak `strlcpy` i `strlcat` (jeśli są dostępne) lub funkcji specyficznych dla danego systemu operacyjnego.
-
-##### Biblioteka `<ctype.h>`
-
-Ta biblioteka zawiera funkcje do klasyfikacji i manipulacji znakami:
-
-| Funkcja               | Opis                                                                                     |
-|-----------------------|------------------------------------------------------------------------------------------|
-| `int isalpha(int c);` | Sprawdza, czy znak `c` jest literą alfabetu.                                              |
-| `int isdigit(int c);` | Sprawdza, czy znak `c` jest cyfrą.                                                        |
-| `int isalnum(int c);` | Sprawdza, czy znak `c` jest alfanumeryczny.                                               |
-| `int isspace(int c);` | Sprawdza, czy znak `c` jest znakiem białym (spacja, tabulacja, nowa linia itp.).           |
-| `int toupper(int c);` | Konwertuje znak `c` do wielkiej litery, jeśli to możliwe.                                 |
-| `int tolower(int c);` | Konwertuje znak `c` do małej litery, jeśli to możliwe.                                   |
-
-##### Biblioteka `<stdlib.h>`
-
-Zawiera funkcje do konwersji napisów na wartości liczbowe i odwrotnie:
-
-| Funkcja                                            | Opis                                                                                                     |
-|----------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| `int atoi(const char *nptr);`                     | Konwertuje napis `nptr` na wartość `int`.                                                               |
-| `long int strtol(const char *nptr, char **endptr, int base);` | Konwertuje napis `nptr` na wartość `long int`, z możliwością określenia podstawy systemu liczbowego. |
-| `double atof(const char *nptr);`                  | Konwertuje napis `nptr` na wartość `double`.                                                            |
-| `double strtod(const char *nptr, char **endptr);` | Konwertuje napis `nptr` na wartość `double`, zwracając wskaźnik do pierwszego znaku po liczbie w `*endptr`. |
-| `char *strtok(char *str, const char *delim);`     | Dzieli napis `str` na tokeny, używając separatorów zdefiniowanych w `delim`.                            |
-
-**Uwaga dotycząca bezpieczeństwa:** Funkcja `atoi` nie obsługuje błędów i nie jest bezpieczna. Zaleca się użycie `strtol` lub `strtod`, które pozwalają na wykrycie błędów konwersji.
-
-#### Przykłady użycia napisów w C
-
-**Inicjalizacja i wypisanie napisu:**
-
-```c
-#include <stdio.h>
-
-int main() {
-    char napis[] = "Witaj, świecie!";
-    printf("%s\n", napis);
-    return 0;
-}
-```
-
-**Łączenie dwóch napisów:**
+Na przykład, dla napisu `"kot"` `strlen` zwraca `3`, ale tablica musi mieć co najmniej `4` elementy: `'k'`, `'o'`, `'t'`, `\0`. Jeśli funkcja szuka terminatora, a go nie znajduje w dostępnej tablicy, może czytać dalej poza jej granicami. To nie jest tylko błędny wynik — program może odczytać cudze dane albo ulec awarii.
 
 ```c
 #include <stdio.h>
 #include <string.h>
 
-int main() {
-    char napis1[50] = "Witaj, ";
-    char napis2[] = "świecie!";
-
-    strcat(napis1, napis2);
-
-    printf("%s\n", napis1); // "Witaj, świecie!"
+int main(void) {
+    char napis[] = "kot";
+    printf("Tekst: %s\n", napis);
+    printf("Długość: %zu bajty\n", strlen(napis));
+    printf("Pojemność tablicy: %zu elementy\n", sizeof napis);
     return 0;
 }
 ```
 
-**Obliczanie długości napisu:**
+Wyniki długości i pojemności to odpowiednio `3` i `4`. `sizeof napis` działa tu dlatego, że `napis` jest tablicą w tym samym zakresie. Gdy tablica zostanie przekazana do funkcji, jako argument zamieni się na wskaźnik i `sizeof` wskaźnika nie poda rozmiaru bufora. Rozmiar trzeba wtedy przekazać osobno.
+
+### Literał, tablica i wskaźnik to różne rzeczy
+
+Literał tekstowy można skopiować do modyfikowalnej tablicy, ale wskaźnik nie tworzy takiej kopii:
+
+```c
+char modyfikowalny[] = "Ala";       /* tablica: 'A', 'l', 'a', '\0' */
+const char *tylko_odczyt = "Ala";   /* wskaźnik do literału */
+
+modyfikowalny[0] = 'O';             /* poprawne: teraz "Ola" */
+/* tylko_odczyt[0] = 'O'; */        /* nie wolno modyfikować literału */
+```
+
+`const` informuje kompilator i czytelnika, że przez ten wskaźnik nie należy zmieniać znaków. To ważne, bo zapis do literału ma niezdefiniowane zachowanie. Z kolei samo `char napis[] = "Ala";` tworzy własną tablicę, którą można zmieniać.
+
+### Długość tekstu a kodowanie
+
+`strlen` liczy bajty przed `\0`, a nie litery widoczne dla człowieka. W UTF-8 wiele liter spoza podstawowego zestawu ASCII zajmuje więcej niż jeden bajt. Na przykład polskie `ą` jest zapisane jako dwa bajty UTF-8. Dlatego dla tekstu `"ą"` `strlen` może zwrócić `2`, mimo że użytkownik widzi jedną literę. Podobnie długość `std::string` oznacza liczbę bajtów, nie liczbę znaków Unicode ani grafemów.
+
+## Funkcje biblioteki C
+
+Standardowe funkcje do napisów są zadeklarowane w `<string.h>`. Przyjmują wskaźniki, więc programista odpowiada za to, by wskazywały na pamięć o właściwym rozmiarze i zawierały poprawnie zakończone napisy.
+
+| Funkcja | Co robi i co trzeba zapewnić |
+|---|---|
+| `strlen(s)` | Liczy bajty przed `\0`. `s` musi być poprawnym napisem. |
+| `strcmp(a, b)` | Porównuje teksty znak po znaku; zwraca liczbę ujemną, zero albo dodatnią. Równość sprawdza się przez `== 0`, nie przez oczekiwanie konkretnej wartości ujemnej lub dodatniej. |
+| `strchr(s, c)` | Zwraca wskaźnik do pierwszego wystąpienia znaku `c` albo `NULL`. |
+| `strrchr(s, c)` | Zwraca wskaźnik do ostatniego wystąpienia znaku `c` albo `NULL`. |
+| `strstr(s, fragment)` | Wyszukuje podnapis i zwraca wskaźnik do jego początku albo `NULL`. |
+| `strncmp(a, b, n)` | Porównuje najwyżej `n` początkowych bajtów; nie zastępuje walidacji długości ani kodowania tekstu. |
+| `strcpy(dst, src)` | Kopiuje także końcowe `\0`. `dst` musi mieć co najmniej `strlen(src) + 1` elementów, a obszary nie mogą się nakładać. |
+| `strcat(dst, src)` | Dopisuje `src` za istniejącym tekstem w `dst`, a potem zapisuje `\0`. Bufor `dst` musi pomieścić oba teksty i terminator; obszary źródła i celu nie mogą się nakładać. |
+| `strncpy(dst, src, n)` | Kopiuje najwyżej `n` bajtów. Gdy źródło ma co najmniej `n` bajtów, wynik może nie mieć `\0`; gdy jest krótsze, reszta bufora jest dopełniana zerami. Nie jest to automatycznie bezpieczna wersja `strcpy`. |
+| `strncat(dst, src, n)` | Dopisuje najwyżej `n` bajtów ze źródła i dodaje własne `\0`. `dst` musi mieć jeszcze miejsce na istniejący tekst, dopisywany fragment i terminator. |
+
+Przykładowo `strcmp("kot", "kot") == 0`, natomiast wynik dla różnych napisów zależy od pierwszej różniącej się wartości znaku. Nie porównuj wskaźników `a == b`, jeśli chcesz sprawdzić, czy dwa teksty mają tę samą treść: porównanie wskaźników sprawdza, czy wskazują to samo miejsce w pamięci.
+
+Kopiowanie i dopisywanie dobrze pokazują, dlaczego pojemność jest ważna:
 
 ```c
 #include <stdio.h>
 #include <string.h>
 
-int main() {
-    char napis[] = "Programowanie";
-    size_t dlugosc = strlen(napis);
+int main(void) {
+    char powitanie[32] = "Witaj, ";
+    const char *adresat = "Ala";
 
-    printf("Długość napisu: %zu\n", dlugosc);
+    /* 32 elementy wystarczą na oba fragmenty i końcowe '\0'. */
+    strcat(powitanie, adresat);
+    puts(powitanie); /* Witaj, Ala */
     return 0;
 }
 ```
 
-**Porównywanie dwóch napisów:**
+`strcat` najpierw szuka końcowego `\0` w `powitanie`, a potem kopiuje za nim tekst `adresat` razem z jego terminatorem. Gdyby tablica `powitanie` była za mała, funkcja zapisałaby dane poza nią. Z tego powodu przed kopiowaniem lub dopisywaniem trzeba znać i sprawdzić pojemność bufora. Samo użycie wariantu z literą `n` nie usuwa tego obowiązku.
+
+### Odczyt tekstu do ograniczonego bufora
+
+`fgets` przyjmuje rozmiar tablicy, więc nie zapisze więcej niż się w niej mieści i zakończy wczytany tekst znakiem `\0`. Może jednak wczytać tylko początek dłuższej linii. Poniżej usuwamy znak nowej linii, jeśli został wczytany, i składamy komunikat przez `snprintf`:
 
 ```c
 #include <stdio.h>
 #include <string.h>
 
-int main() {
-    char napis1[] = "ABC";
-    char napis2[] = "ABC";
-
-    if (strcmp(napis1, napis2) == 0) {
-        printf("Napisy są identyczne.\n");
-    } else {
-        printf("Napisy są różne.\n");
+int main(void) {
+    char imie[32];
+    if (fgets(imie, sizeof imie, stdin) == NULL) {
+        return 1; /* koniec wejścia albo błąd */
     }
+
+    /* strcspn znajduje pozycję '\n'; jeśli jej nie ma, zwraca strlen(imie). */
+    imie[strcspn(imie, "\n")] = '\0';
+
+    char komunikat[64];
+    int zapisano_by = snprintf(komunikat, sizeof komunikat,
+                               "Witaj, %s!", imie);
+    if (zapisano_by < 0 || (size_t)zapisano_by >= sizeof komunikat) {
+        return 1; /* błąd formatowania albo tekst nie mieści się w buforze */
+    }
+
+    puts(komunikat);
     return 0;
 }
 ```
 
-#### Zarządzanie pamięcią i bezpieczeństwo
+Wartość zwrócona przez `snprintf` to liczba znaków, które powstałyby bez ograniczenia bufora, bez końcowego `\0`. Jeśli ta liczba jest równa lub większa od pojemności tablicy, komunikat został obcięty. W programie produkcyjnym trzeba też rozpoznać zbyt długą linię wczytaną przez `fgets` — na przykład gdy bufor nie zawiera `\n`, mimo że wejście nie dobiegło końca. Funkcja `gets` nie przyjmuje rozmiaru bufora i nie powinna być używana.
 
-Podczas pracy z napisami w C należy zwrócić szczególną uwagę na alokację pamięci i zarządzanie buforami. Błędy takie jak przepełnienie bufora mogą prowadzić do poważnych luk bezpieczeństwa, w tym możliwości wykonania złośliwego kodu.
+### Znaki i konwersja liczb
 
-Aby uniknąć takich problemów:
+Funkcje `isdigit`, `isspace`, `toupper` i podobne pochodzą z `<ctype.h>`. Ich argumentem może być `EOF` albo wartość, którą da się zapisać jako `unsigned char`. Zwykły `char` może być ujemny, więc przy przekazaniu go bezpośrednio wynik może być nieokreślony. Bezpieczny wzorzec to:
 
-- **Zawsze sprawdzaj długości napisów** przed kopiowaniem lub łączeniem, aby zapobiec błędom przepełnienia bufora i zapewnić bezpieczeństwo pamięci.
-- **Używaj bezpiecznych funkcji** lub bibliotek, które automatycznie zarządzają pamięcią, aby uniknąć ręcznego zarządzania wskaźnikami i potencjalnych błędów.
-- **Rozważ użycie dynamicznej alokacji pamięci**, jeśli rozmiar napisu nie jest znany z góry, co pozwala na bardziej elastyczne zarządzanie pamięcią w programie.
-  
-### Napisy w języku C++ (`std::string`)
+```c
+#include <ctype.h>
 
-Chociaż język C++ jest zgodny z C i pozwala na użycie tradycyjnych C-stringów, oferuje również bardziej zaawansowaną i bezpieczniejszą klasę `std::string` do reprezentacji napisów. Klasa ta jest częścią standardowej biblioteki C++ i znajduje się w nagłówku `<string>`.
-
-#### Zalety użycia `std::string`
-
-- **`std::string` automatycznie zarządza alokacją i dealokacją pamięci**, co zmniejsza ryzyko wystąpienia błędów, takich jak wycieki pamięci, dzięki czemu program jest bardziej bezpieczny i stabilny.
-- **Metody klasy `std::string` zazwyczaj sprawdzają granice buforów**, co chroni przed błędami przepełnienia bufora, zwiększając bezpieczeństwo operacji na napisach.
-- **Klasa `std::string` oferuje bogatą funkcjonalność**, w tym metody do takich operacji jak konkatenacja, wyszukiwanie, czy zamiana podłańcuchów, co upraszcza manipulację tekstem.
-- **`std::string` jest dobrze zintegrowany z innymi komponentami STL**, co pozwala na jego efektywne użycie z kontenerami i algorytmami biblioteki standardowej C++.
-
-#### Tworzenie i inicjalizacja `std::string`
-
-```cpp
-#include <string>
-
-std::string napis1; // Pusty napis
-std::string napis2("Ala ma kota"); // Inicjalizacja napisem
-std::string napis3(napis2); // Kopia istniejącego napisu
-```
-
-#### Podstawowe operacje na `std::string`
-
-I. **Dodawanie napisów:**
-
-```cpp
-std::string napis1 = "Ala";
-std::string napis2 = " ma kota";
-std::string wynik = napis1 + napis2; // "Ala ma kota"
-```
-
-II. **Dostęp do znaków:**
-
-```cpp
-char znak = napis1[0]; // 'A'
-napis1[0] = 'E'; // napis1 teraz to "Ela"
-```
-
-**Uwaga:** Dostęp poza granicami napisu (`napis1.at(index)`) generuje wyjątek `std::out_of_range`.
-
-III. **Pobieranie długości napisu:**
-
-```cpp
-size_t dlugosc = napis1.length();
-```
-
-IV. **Porównywanie napisów:**
-
-```cpp
-if (napis1 == napis2) {
-// Napisy są identyczne
+if (isdigit((unsigned char)znak)) {
+    /* znak jest cyfrą rozpoznawaną w bieżącej lokalizacji */
 }
 ```
 
-V. **Wyszukiwanie w napisie:**
+Do zamiany tekstu na liczbę używaj raczej `strtol` z `<stdlib.h>` niż `atoi`. `atoi` nie informuje, czy konwersja się nie udała lub czy wynik przekroczył zakres. `strtol` daje dwa sposoby kontroli: `koniec` wskazuje, gdzie kończy się odczytana liczba, a `errno` informuje m.in. o przekroczeniu zakresu.
 
-```cpp
-size_t pozycja = napis1.find("ma");
-if (pozycja != std::string::npos) {
-// Znaleziono podnapis
+```c
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(void) {
+    const char *tekst = "123abc";
+    char *koniec;
+
+    errno = 0;
+    long liczba = strtol(tekst, &koniec, 10);
+
+    if (tekst == koniec) {
+        puts("Nie znaleziono liczby.");
+    } else if (errno == ERANGE) {
+        puts("Liczba nie mieści się w typie long.");
+    } else if (*koniec != '\0') {
+        printf("Po liczbie zostały dodatkowe znaki: %s\n", koniec);
+    } else {
+        printf("Odczytano: %ld\n", liczba);
+    }
 }
 ```
 
-VI. **Zamiana podnapisu:**
+W przykładzie `strtol` odczytuje `123`, a `koniec` wskazuje na `a`. Program nie uznaje więc całego wejścia za liczbę. Jeśli oczekujesz wyłącznie liczby, sprawdzenie `*koniec == '\0'` jest równie ważne jak znalezienie początku liczby. `strtok` dzieli tekst, zastępując separatory znakiem `\0`; modyfikuje więc bufor i przechowuje stan między wywołaniami. Nie wolno stosować jej do literału ani do danych, których nie można zmienić.
+
+## Napis w C++: `std::string`
+
+W C++ najczęściej przechowuje się tekst w `std::string` z nagłówka `<string>`. To obiekt, który pamięta długość i sam zarządza buforem. Kiedy dopisujemy tekst, `std::string` w razie potrzeby powiększa pamięć; programista nie musi ręcznie liczyć miejsca na końcowy `\0`.
 
 ```cpp
-napis1.replace(0, 3, "Ola"); // Zamienia pierwsze 3 znaki na "Ola"
-```
-
-VII. **Wydzielanie podnapisu:**
-
-```cpp
-std::string podnapis = napis1.substr(4, 2); // Wydziela 2 znaki od pozycji 4
-```
-
-#### Interoperacyjność z C-stringami
-
-Chociaż `std::string` jest wygodny w użyciu, czasami konieczna jest interakcja z kodem, który wymaga tradycyjnych C-stringów (np. funkcje biblioteki C). Klasa `std::string` udostępnia metodę `c_str()`, która zwraca wskaźnik do tablicy znaków zakończonej znakiem null:
-
-```cpp
-const char *c_napis = napis1.c_str();
-```
-
-**Uwaga:** Wskaźnik zwrócony przez `c_str()` jest ważny tylko do momentu zmodyfikowania napisu. Jeśli planujesz modyfikować napis po pobraniu wskaźnika, musisz skopiować ciąg znaków do osobnego bufora.
-
-#### Bezpieczeństwo i wydajność
-
-- **`std::string` automatycznie zarządza pamięcią**, jednak w przypadku operacji na bardzo dużych napisach lub częstych operacjach w pętlach, może to negatywnie wpływać na wydajność. W takich przypadkach warto z wyprzedzeniem zarezerwować pamięć za pomocą metody `reserve(size_t n);`, aby zminimalizować koszt dynamicznej alokacji.
-- Metody klasy `std::string` mogą rzucać **wyjątki**, takie jak `std::bad_alloc` w przypadku braku pamięci czy `std::out_of_range` przy dostępie poza granicami. Ważne jest uwzględnienie tych wyjątków w kodzie, zwłaszcza w środowiskach, gdzie stabilność jest kluczowa.
-- W C++11 i nowszych wersjach wprowadzono **semantykę przenoszenia**, co umożliwia efektywne przenoszenie zasobów zamiast ich kopiowania. Warto korzystać z konstruktorów i operatorów przenoszących, aby poprawić wydajność w miejscach, gdzie kopiowanie jest zbędne.
-
-#### Przykłady użycia `std::string`
-
-**Łączenie i manipulacja napisami:**
-
-```cpp
+#include <cstddef>
 #include <iostream>
 #include <string>
 
 int main() {
-    std::string napis = "Ala ma kota";
-    std::string napis2 = " i psa";
+    std::string imie = "Ala";
+    std::string komunikat = "Witaj, " + imie + "!";
 
-    // Połączenie napisów
-    napis += napis2;
+    std::cout << komunikat << '\n';
+    std::cout << "Liczba bajtów: " << komunikat.size() << '\n';
 
-    std::cout << napis << std::endl; // "Ala ma kota i psa"
-
-    // Zamiana fragmentu napisu
-    napis.replace(4, 2, "nie ma");
-
-    std::cout << napis << std::endl; // "Ala nie ma kota i psa"
-
-    // Wyszukiwanie
-    size_t pozycja = napis.find("kota");
+    std::size_t pozycja = komunikat.find("Ala");
     if (pozycja != std::string::npos) {
-        std::cout << "Znaleziono 'kota' na pozycji: " << pozycja << std::endl;
+        std::string imie_znalezione = komunikat.substr(pozycja, 3);
+        std::cout << "Znaleziono: " << imie_znalezione << '\n';
+        komunikat.replace(pozycja, 3, "Ola");
     }
-
-    // Wydzielanie podnapisu
-    std::string zwierze = napis.substr(pozycja, 4); // "kota"
-    std::cout << "Zwierzę: " << zwierze << std::endl;
-
-    return 0;
+    std::cout << komunikat << '\n';
 }
 ```
 
-**Konwersja liczb na napisy i odwrotnie:**
+W przykładzie `+` tworzy nowy napis, a `find` szuka fragmentu. Jeśli go znajdzie, zwraca pozycję pierwszego bajtu fragmentu. Jeśli go nie znajdzie, zwraca specjalną wartość `std::string::npos`. Dlatego wynik `find` należy sprawdzić przed użyciem. `replace(pozycja, 3, "Ola")` zastępuje trzy bajty od znalezionej pozycji.
 
-W C++11 i nowszych dostępne są funkcje takie jak `std::to_string`, które ułatwiają konwersję liczb na napisy:
+`std::string` jest wygodniejszy i zwykle bezpieczniejszy od ręcznie zarządzanej tablicy, lecz nie oznacza to, że każdy dostęp jest sprawdzany. `tekst[i]` wymaga prawidłowego indeksu; `tekst.at(i)` zgłasza wyjątek `std::out_of_range`, gdy indeks jest poza zakresem. `size()` i `length()` zwracają liczbę przechowywanych bajtów. Dla UTF-8 nie muszą zwracać liczby widocznych liter.
+
+`std::string` potrafi przechowywać także bajt `\0` wewnątrz tekstu i nadal pamięta pełną długość. C-string nie ma takiej możliwości w zwykłym użyciu: pierwsze `\0` kończy napis, więc funkcje takie jak `strlen` nie zobaczą dalszej części tablicy. To ważna różnica, gdy przetwarzasz dane binarne — do nich nie używaj funkcji oczekujących C-stringa.
+
+### Konwersje i współpraca z kodem C
+
+W C++11 i nowszym można użyć `std::to_string`, aby zamienić liczbę na napis, a `std::stoi` — aby rozpocząć konwersję z napisu na liczbę. `std::stoi` może zgłosić wyjątek, gdy tekstu nie da się przekonwertować albo liczba wykracza poza zakres `int`. Domyślnie akceptuje też poprawny początek liczby, nawet jeśli po nim zostają inne znaki; gdy wymagany jest cały napis, sprawdź opcjonalny parametr `pos` i upewnij się, że wskazuje koniec tekstu.
 
 ```cpp
 #include <iostream>
@@ -300,107 +205,71 @@ W C++11 i nowszych dostępne są funkcje takie jak `std::to_string`, które uła
 
 int main() {
     int liczba = 42;
-    std::string napis = "Liczba: " + std::to_string(liczba);
+    std::string opis = "Wynik: " + std::to_string(liczba);
 
-    std::cout << napis << std::endl; // "Liczba: 42"
+    std::string tekst = "123";
+    int wartosc = std::stoi(tekst);
 
-    // Konwersja napisu na liczbę
-    std::string liczba_napis = "123";
-    int liczba2 = std::stoi(liczba_napis);
-
-    std::cout << "Liczba2: " << liczba2 << std::endl; // 123
-
-    return 0;
+    std::cout << opis << '\n';       // Wynik: 42
+    std::cout << wartosc + 1 << '\n'; // 124
 }
 ```
 
-#### Zaawansowane operacje na napisach
+Biblioteka C może potrzebować wskaźnika do znaków zakończonych `\0`. `c_str()` daje taki wskaźnik:
 
-Operacje na napisach w C++ to kluczowy element przetwarzania tekstu, szczególnie w aplikacjach związanych z analizą danych, przetwarzaniem języka naturalnego oraz systemami wielojęzycznymi. Poniżej opisano kilka zaawansowanych technik operacji na napisach, które znacznie rozszerzają możliwości programisty.
+```cpp
+std::string tekst = "Ala";
+const char *dane_dla_c = tekst.c_str();
+```
 
-I. **Wyrażenia regularne:**  
+Można go przekazać funkcji C, która tylko odczytuje napis. Nie wolno przez ten wskaźnik zmieniać znaków. Wskaźnik może stracić ważność po zmianie lub zniszczeniu obiektu `tekst`; funkcja C nie powinna przechowywać go dłużej, niż żyje i pozostaje niezmieniony ten obiekt.
 
-W C++11 wprowadzono bibliotekę `<regex>`, która umożliwia manipulację napisami za pomocą wyrażeń regularnych. Jest to niezwykle potężne narzędzie, które pozwala na dopasowywanie wzorców, wyszukiwanie i manipulację fragmentami tekstu. Wyrażenia regularne mogą być stosowane do walidacji danych, ekstrakcji informacji oraz skomplikowanej manipulacji tekstu.
+### `std::string_view` — widok bez kopii (C++17)
 
-Przykład poniżej demonstruje podstawową operację wyszukiwania dopasowań w tekście za pomocą wyrażenia regularnego. Program dopasowuje wzorzec, który identyfikuje kto posiada jakie zwierzę, a następnie wyświetla wyniki.
+`std::string_view` opisuje fragment już istniejących danych: w uproszczeniu przechowuje adres pierwszego znaku i liczbę znaków. Dzięki temu funkcja może przyjąć tekst do odczytu bez kopiowania całego `std::string`. Widok nie jest właścicielem znaków i nie wydłuża ich czasu życia.
 
 ```cpp
 #include <iostream>
 #include <string>
-#include <regex>
-
-int main() {
-   std::string tekst = "Ala ma kota i psa";
-   std::regex wzorzec("(\\w+) ma (\\w+)");
-   std::smatch dopasowanie;
-   
-   if (std::regex_search(tekst, dopasowanie, wzorzec)) {
-      std::cout << "Dopasowanie: " << dopasowanie[0] << std::endl;
-      std::cout << "Osoba: " << dopasowanie[1] << std::endl;
-      std::cout << "Zwierzę: " << dopasowanie[2] << std::endl;
-   }
-   
-   return 0;
-}
-```
-
-Wyrażenia regularne umożliwiają również bardziej zaawansowane operacje, takie jak:
-
-- **Wyrażenia regularne umożliwiają znajdowanie i zamienianie fragmentów tekstu** na podstawie określonych wzorców, co jest przydatne w operacjach edycji i transformacji danych.
-- Można wyszukiwać **wielokrotne dopasowania w tekście**, co pozwala na iteracyjne przeszukiwanie np. logów lub dokumentów, aby znaleźć wszystkie wystąpienia określonych wzorców.
-- **Walidacja formatu** jest możliwa dzięki wyrażeniom regularnym, które mogą być używane do sprawdzania poprawności danych takich jak adresy e-mail, numery telefonów czy inne dane o określonym formacie.
-
-II. **Unicode i międzynarodowe napisy:**  
-
-W świecie globalizacji obsługa napisów w różnych kodowaniach jest kluczowa. Standard C++11 wprowadził wsparcie dla literałów Unicode, co umożliwia pracę z tekstem w takich kodowaniach jak UTF-8, UTF-16 i UTF-32. Jest to istotne przy tworzeniu aplikacji wielojęzycznych, gdzie wymagane jest poprawne wyświetlanie znaków z różnych alfabetów, takich jak cyrylica, chińskie znaki czy znaki diakrytyczne.
-
-Przykład wykorzystania literałów Unicode w C++:
-
-```cpp
-#include <iostream>
-#include <string>
-
-int main() {
-   std::u16string tekst = u"Привет мир!";  // UTF-16
-   std::u32string innyTekst = U"你好，世界！";  // UTF-32
-   
-   std::cout << "Długość tekstu w UTF-16: " << tekst.length() << std::endl;
-   std::cout << "Długość tekstu w UTF-32: " << innyTekst.length() << std::endl;
-   
-   return 0;
-}
-```
-
-Chociaż wsparcie dla Unicode w C++ jest wbudowane, manipulowanie takimi napisami może być wyzwaniem. Długość napisów w UTF-16 czy UTF-32 nie zawsze odpowiada liczbie znaków, ponieważ niektóre znaki mogą być kodowane jako wieloznakowe sekwencje. Dlatego w wielu przypadkach programiści sięgają po zewnętrzne biblioteki, takie jak ICU (International Components for Unicode), które oferują kompleksowe narzędzia do manipulacji napisami Unicode.
-
-**ICU (International Components for Unicode):** ICU to popularna biblioteka open-source zapewniająca zaawansowane wsparcie dla międzynarodowych formatów tekstowych, sortowania według lokalnych porządków, konwersji kodowań, obsługi dat i liczb oraz innych aspektów pracy z wielojęzycznymi aplikacjami.
-
-III. **Operacje na napisach za pomocą `std::string_view`:**  
-
-`std::string_view` to typ dodany w C++17, który umożliwia efektywniejsze operacje na napisach bez kopiowania danych. `std::string_view` reprezentuje widok na fragment napisu (ciąg znaków), co pozwala na szybszą i bardziej pamięciooszczędną manipulację tekstem.
-
-```cpp
-#include <iostream>
 #include <string_view>
 
-void wypisz_fragment(std::string_view tekst) {
-   std::cout << "Fragment tekstu: " << tekst << std::endl;
+void wypisz(std::string_view tekst) {
+    std::cout << tekst << '\n';
 }
 
 int main() {
-   std::string calyTekst = "To jest długi tekst.";
-   wypisz_fragment(std::string_view(calyTekst).substr(3, 7));  // "jest d"
-
-   return 0;
+    std::string caly = "To jest napis";
+    wypisz(std::string_view(caly).substr(3, 4)); // "jest"
 }
 ```
 
-`std::string_view` jest idealny w sytuacjach, gdy chcemy jedynie analizować fragmenty tekstu bez potrzeby tworzenia nowych obiektów typu `std::string`. Jest to często wykorzystywane w sytuacjach, gdzie wydajność jest kluczowa, jak w analizie danych lub podczas operacji na dużych plikach tekstowych.
+To wywołanie jest bezpieczne: `caly` istnieje przez całe wywołanie `wypisz`. Nie zwracaj ani nie zapisuj widoku do lokalnego napisu, jeśli napis zaraz przestanie istnieć. Wtedy widok wskazywałby na zwolnioną pamięć.
 
-IV. **Biblioteki zewnętrzne do operacji na napisach:**  
+## Wzorce tekstu i Unicode
 
-Chociaż standardowa biblioteka C++ oferuje bogate wsparcie dla operacji na napisach, czasem może okazać się niewystarczająca. W takich przypadkach, do bardziej zaawansowanych zastosowań, istnieje wiele zewnętrznych bibliotek, takich jak:
+Jeśli trzeba szukać tekstu pasującego do wzorca, C++ udostępnia bibliotekę `<regex>`. Wzorzec poniżej szuka wyrażenia „słowo, spacja, `ma`, spacja, słowo”; nawiasy tworzą grupy przechwytywania, które można odczytać jako dopasowane fragmenty:
 
-- **Boost.StringAlgo** jest częścią biblioteki Boost i oferuje bogaty zestaw narzędzi do pracy z napisami, w tym funkcje do przeszukiwania, zamiany, transformacji oraz cięcia i dołączania tekstów, co zwiększa elastyczność operacji na ciągach znaków.
-- **fmt** to biblioteka do formatowania napisów, która zapewnia zaawansowane możliwości formatowania podobne do `printf`, ale oferuje bardziej bezpieczne i elastyczne podejście, zwiększając wygodę i bezpieczeństwo przy formatowaniu tekstów.
-- **ICU (International Components for Unicode)** to jedna z najbardziej zaawansowanych bibliotek do pracy z napisami Unicode oraz międzynarodowymi formatami tekstowymi, co czyni ją niezbędnym narzędziem w aplikacjach wielojęzycznych.
+```cpp
+#include <iostream>
+#include <regex>
+#include <string>
+
+int main() {
+    const std::string tekst = "Ala ma kota i psa";
+    const std::regex wzorzec(R"((\w+) ma (\w+))");
+    std::smatch dopasowanie;
+
+    if (std::regex_search(tekst, dopasowanie, wzorzec)) {
+        std::cout << "Osoba: " << dopasowanie[1] << '\n';
+        std::cout << "Zwierzę: " << dopasowanie[2] << '\n';
+    }
+}
+```
+
+`regex_search` sprawdza, czy wzorzec występuje gdziekolwiek w napisie; `regex_match` wymagałoby dopasowania całego napisu. Składnia i wydajność wyrażeń regularnych mogą być trudniejsze niż zwykłe `find`, więc do prostego szukania podnapisu wybieraj prostszą metodę.
+
+Kodowanie tekstu jest osobnym zagadnieniem od typu kontenera. `std::string` przechowuje bajty, często UTF-8, ale sam nie wie, gdzie kończy się litera złożona z kilku bajtów. `std::u16string` przechowuje jednostki kodowe UTF-16, a `std::u32string` — jednostki UTF-32; ich `size()` także nie jest ogólną metodą liczenia widocznych znaków. Poprawne dzielenie tekstu na litery, sortowanie językowe i normalizację Unicode zapewniają wyspecjalizowane biblioteki, np. ICU, nie sama klasa `std::string`.
+
+## Jak te pojęcia łączą się z kolejnymi tematami
+
+Tekst w pamięci ma postać bajtów. W C tablica `char` zawiera bajty i terminator `\0`; w C++ `std::string` przechowuje bajty wraz z ich długością. Operacje bitowe z następnej notatki mogą wybrać lub zmienić bity konkretnego bajtu, ale nie zastępują zasad kodowania tekstu. Klasa z notatki o programowaniu obiektowym może z kolei przechowywać `std::string` jako część swojego stanu i udostępniać operacje, które pilnują, jak ten tekst jest używany.

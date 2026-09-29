@@ -1,139 +1,164 @@
-## Wyjątki w programowaniu
+# Wyjątki w C++
 
-W programowaniu, wyjątki służą jako mechanizm do sygnalizowania i obsługi nieoczekiwanych sytuacji, które mogą wystąpić podczas działania programu. Choć wyjątki często są używane w odpowiedzi na błędy, nie każdy wyjątek musi wynikać z błędu. Wyjątek może być również środkiem do poinformowania innych części kodu o pewnych warunkach lub sytuacjach, które wymagają specjalnej uwagi.
+Wyjątek to sposób przekazania informacji o problemie z miejsca, w którym go wykryto, do miejsca, które może zdecydować, co dalej zrobić. Najczęściej używa się go wtedy, gdy funkcja nie może wykonać swojego zadania i nie ma sensownego sposobu, by naprawić sytuację lokalnie.
 
-### Rodzaje błędów w programowaniu
+Ważne: C++ nie zamienia automatycznie każdego błędu w wyjątek. To kod programu lub biblioteki musi go jawnie zgłosić. Dlatego przed użyciem wyjątków warto rozróżnić kilka rodzajów problemów.
 
-1. **Błędy składniowe** są to błędy związane z nieprawidłowym użyciem składni języka. Takie błędy zwykle są łatwe do wykrycia, gdyż kompilatory i interpretery zgłaszają je przed uruchomieniem programu. Przykład: niezamknięty nawias lub brakujący średnik.
-2. **Błędy logiczne** odnoszą się do sytuacji, gdy program działa inaczej, niż tego oczekiwano, mimo że nie zawiera błędów składniowych. Przykład: niewłaściwie zaprogramowana pętla `for` powodująca nieskończoną iterację.
-3. **Błędy semantyczne** są to błędy, w których kod jest technicznie poprawny, ale nie wykonuje zamierzonej akcji. Przykład: zastosowanie niewłaściwej zmiennej w obliczeniach.
-4. **Wyjątki** są najczęściej związane z błędami podczas wykonywania programu, nie z innymi rodzajami błędów.
+## Błąd, wyjątek i kod błędu
 
-### Rodzaje problemów, które mogą prowadzić do wyjątków
+Słowo „błąd” opisuje problem, a „wyjątek” jest jednym ze sposobów przekazania informacji o nim. Błąd można też zgłosić kodem zwracanym przez funkcję albo wykryć jako nieprawidłowy wynik programu.
 
-1. **Problemy z pamięcią**, takie jak próba dostępu do niezainicjowanej pamięci, wycieki pamięci czy korzystanie z wskaźnika po jego dealokacji.
-2. **Nieprzewidziane sytuacje wejścia/wyjścia**, przykładem może być próba odczytu pliku, który nie istnieje, lub próba zapisu do pliku, gdy brakuje uprawnień.
-3. **Nieprawidłowe operacje**, jak dzielenie przez zero lub operacje na niekompatybilnych typach danych.
-4. **Zewnętrzne warunki**, takie jak utrata połączenia z bazą danych lub przerwanie połączenia sieciowego.
+| Sytuacja | Co się dzieje | Przykład |
+|---|---|---|
+| Błąd składni lub typów | Kompilator odrzuca program; program nie zaczyna działania. | Brak średnika albo przypisanie tekstu do zmiennej typu `int`. |
+| Błąd logiczny | Program działa, ale wynik nie odpowiada zamiarowi autora. | Pętla kończy się o jeden krok za wcześnie. |
+| Niezdefiniowane zachowanie (UB) | Standard C++ nie określa wyniku; program może zadziałać różnie lub ulec awarii. Samo UB nie oznacza wyjątku. | Dzielenie całkowite przez zero lub dereferencja nieprawidłowego wskaźnika. |
+| Wyjątek | Kod wykonania jawnie zgłosił obiekt wyjątku, a program może przekazać go do obsługi wyżej w stosie wywołań. | Funkcja odrzuca niedozwolony argument przez `throw std::invalid_argument(...)`. |
+| Kod błędu lub stan | Funkcja zwraca informację o niepowodzeniu; wywołujący sprawdza ją i wybiera dalsze działanie. | `fopen` w C zwraca `NULL`, a strumień C++ może ustawić `failbit`. |
 
-Wyjątki w programowaniu służą do sygnalizowania takich problemów. Pozwalają programistom na określenie, jak program powinien reagować w takich sytuacjach, umożliwiając bardziej kontrolowane i eleganckie zarządzanie niespodziewanymi warunkami.
+Na przykład dzielenie przez zero nie powoduje, że C++ sam rzuci wyjątek. Jeśli chcemy taki przypadek obsłużyć wyjątkiem, musimy najpierw sprawdzić dzielnik i sami zgłosić wyjątek. W wielu sytuacjach przewidywalny brak wyniku lepiej obsłużyć kodem błędu; wyjątek przydaje się, gdy zwykłe wykonanie funkcji nie może być kontynuowane.
 
-### Mechanizm wyjątków
+## Przepływ wyjątku: `throw`, `try` i `catch`
 
-W momencie wystąpienia wyjątku w programie, normalny przepływ kontroli jest przerywany. Wyjątek, jeśli nie zostanie obsłużony w odpowiednim miejscu, może doprowadzić do zakończenia działania programu. Jednak dzięki mechanizmowi `try-catch` można przechwytywać i obsługiwać te wyjątki.
-
-Poniżej znajduje się przykład działania wyjątków w C++:
+Załóżmy, że funkcja `podziel` otrzymuje dwa argumenty. Gdy dzielnik jest równy zero, nie ma poprawnego wyniku. Zamiast zwracać przypadkową wartość, funkcja zgłasza problem:
 
 ```cpp
 #include <iostream>
 #include <stdexcept>
 
-void funkcja() { throw std::runtime_error("Wystąpiła wyjątkowa sytuacja!"); }
-
-int main() {
-  try {
-    funkcja();
-  } catch (const std::runtime_error &e) {
-    std::cout << "Przechwycono wyjątek: " << e.what() << std::endl;
-  }
-
-  std::cout << "Życie toczy się dalej" << std::endl;
-
-  return 0;
+int podziel(int licznik, int mianownik) {
+    if (mianownik == 0) {
+        throw std::invalid_argument("Mianownik nie może być równy zero");
+    }
+    return licznik / mianownik;
 }
-```
-
-W powyższym kodzie, funkcja `funkcja()` rzuca wyjątek typu `std::runtime_error`. Ten wyjątek jest następnie przechwytywany i obsługiwany w bloku `try-catch` w funkcji `main()`. Dzięki temu program nie kończy swojego działania po wystąpieniu wyjątku, co potwierdza komunikat "Życie toczy się dalej".
-
-Programiści mają możliwość korzystania z wielu wbudowanych typów wyjątków w C++, ale także mogą definiować własne typy wyjątków, dostosowane do specyficznych potrzeb swojego kodu.
-
-### Tworzenie własnych wyjątków
-
-Definiowanie własnych typów wyjątków w C++ jest prostym procesem, który polega na dziedziczeniu po istniejących klasach wyjątków. Najczęściej używaną klasą bazową dla własnych wyjątków jest `std::exception`.
-
-Oto jak można zdefiniować własny wyjątek:
-
-```c++
-class MojWyjatek : public std::exception
-{
-public:
-    MojWyjatek(const std::string& komunikat) : komunikat_(komunikat) {}
-    virtual const char* what() const throw() { return komunikat_.c_str(); }
-private:
-    std::string komunikat_;
-};
-```
-
-W tym przykładzie, klasa `MojWyjatek` dziedziczy po `std::exception` i umożliwia przekazanie indywidualnego komunikatu, który jest następnie zwracany przez przesłoniętą funkcję `what()`. Tak zdefiniowany wyjątek może być rzucony i przechwycony w taki sam sposób, jak wbudowane typy wyjątków.
-
-### Hierarchia wyjątków w C++
-
-C++ posiada rozbudowaną hierarchię klas wyjątków, która ułatwia zarządzanie różnymi typami błędów. Na szczycie tej hierarchii znajduje się klasa `std::exception`, z której dziedziczą inne klasy wyjątków.
-
-```cpp
-#include <iostream>
-#include <exception>
-
-class BaseException : public std::exception {
-public:
-    virtual const char* what() const throw() {
-        return "BaseException";
-    }
-};
-
-class DerivedException : public BaseException {
-public:
-    virtual const char* what() const throw() {
-        return "DerivedException";
-    }
-};
 
 int main() {
     try {
-        throw DerivedException();
-    } catch (const BaseException& e) {
-        std::cout << "Caught: " << e.what() << std::endl;
-    } catch (const std::exception& e) {
-        std::cout << "Caught: " << e.what() << std::endl;
+        int wynik = podziel(20, 0);
+        std::cout << "Wynik: " << wynik << '\n';
+    } catch (const std::invalid_argument& blad) {
+        std::cerr << "Nie udało się obliczyć ilorazu: " << blad.what() << '\n';
     }
-
-    return 0;
 }
 ```
 
-W powyższym przykładzie klasa `DerivedException` dziedziczy po `BaseException`, a `BaseException` dziedziczy po `std::exception`. Kiedy `DerivedException` jest rzucany, może być przechwycony przez catch blok obsługujący `BaseException`, ponieważ `DerivedException` jest typem bardziej szczegółowym, dziedziczącym po `BaseException`.
+Wywołanie `podziel(20, 0)` jest przykładowym wejściem. Funkcja wykrywa niedozwolony mianownik i wykonuje `throw`. Wtedy jej zwykły dalszy kod (`return` oraz wypisanie wyniku) nie jest wykonywany. C++ szuka pasującego `catch`: najpierw w aktywnym bloku `try`, a jeśli go tam nie ma, w funkcji, która wywołała bieżącą funkcję, i dalej w kolejnych wywołaniach. W przykładzie program wypisze:
 
-### Praktyczne zastosowania wyjątków
+```text
+Nie udało się obliczyć ilorazu: Mianownik nie może być równy zero
+```
 
-Wyjątki w programowaniu mają szerokie zastosowanie, począwszy od prostych przypadków obsługi błędów, aż po bardziej zaawansowane techniki, takie jak zapewnianie integralności danych czy zarządzanie zasobami.
+Dla wejścia `podziel(20, 4)` wyjątek nie jest zgłaszany i funkcja zwraca `5`. Blok `catch` nie zostaje wtedy wykonany.
 
-1. Wyjątki mogą być używane do obsługi błędów przy otwieraniu, odczycie lub zapisie plików.
-2. Zarządzanie zasobami, takimi jak pamięć czy połączenia sieciowe, może być uproszczone przy użyciu wyjątków. W C++, konstrukcja RAII (Resource Acquisition Is Initialization) często współdziała z wyjątkami, aby zapewnić automatyczne zwalnianie zasobów.
-3. Wyjątki mogą być używane do walidacji danych wejściowych w programie. Jeśli dane nie spełniają określonych kryteriów, rzucany jest wyjątek, który następnie może być obsłużony, aby podjąć odpowiednie działania naprawcze.
-4. Wyjątki mogą służyć do przekazywania informacji o błędach między różnymi warstwami aplikacji, na przykład między warstwą danych a warstwą logiki biznesowej.
+`throw` oznacza „zgłoś problem”, `try` obejmuje operacje, które mogą taki problem zgłosić, a `catch` określa reakcję na konkretny typ problemu. Funkcja, która wykryła problem, nie musi znać decyzji całego programu: może przekazać wyjątek wyżej, np. do warstwy wyświetlającej komunikat użytkownikowi.
 
-### Zalety i wady używania wyjątków
+### Rozwijanie stosu i RAII
 
-**Zalety**:
+Funkcje działające w danej chwili tworzą stos wywołań. Jeśli wyjątek nie zostanie obsłużony w bieżącej funkcji, C++ opuszcza ją i wraca po stosie do miejsca, gdzie znajdzie odpowiedni `catch`. Ten proces nazywa się rozwijaniem stosu (stack unwinding).
 
-1. Wyjątki pozwalają na oddzielenie logiki obsługi błędów od logiki biznesowej, co prowadzi do bardziej przejrzystego i czytelnego kodu.
-2. Dzięki mechanizmom wyjątków, programiści mogą skupić się na logice biznesowej, nie musząc martwić się o obsługę błędów na każdym kroku.
-3. Wyjątki pozwalają na centralne zarządzanie błędami, co ułatwia ich obsługę i diagnozowanie.
+Przy opuszczaniu funkcji niszczone są jej lokalne obiekty — w kolejności odwrotnej do ich tworzenia. To ważne, bo destruktory obiektów RAII zwalniają zasoby takie jak pamięć, blokada lub otwarty plik. Przykład pokazuje kolejność sprzątania:
 
-**Wady**:
+```cpp
+#include <iostream>
+#include <stdexcept>
 
-1. Rzucanie i przechwytywanie wyjątków jest operacją kosztowną pod względem wydajności. Nie należy ich używać do kontrolowania normalnego przepływu programu.
-2. Niewłaściwe użycie wyjątków może prowadzić do skomplikowanego i trudnego do zrozumienia kodu. Utrzymanie dużej liczby wyjątków w różnych miejscach kodu może być wyzwaniem.
-3. Wyjątki mogą być trudne do przewidzenia i testowania, szczególnie w dużych systemach, gdzie różne moduły mogą rzucać i przechwytywać wyjątki na różne sposoby.
-4. Nadmierne poleganie na wyjątkach może prowadzić do sytuacji, w której prawdziwe błędy są ukrywane, co utrudnia ich wykrycie i naprawę. Programiści mogą być skłonni do przechwytywania wszystkich wyjątków bez odpowiedniego przetwarzania, co prowadzi do niewłaściwej obsługi błędów.
-5. Wprowadzenie wyjątków do istniejącego kodu może wymagać znacznej refaktoryzacji, zwłaszcza jeśli kod wcześniej nie korzystał z tego mechanizmu. Może to być czasochłonne i skomplikowane.
+struct Slad {
+    const char* nazwa;
+    ~Slad() { std::cout << "Sprzątanie: " << nazwa << '\n'; }
+};
 
-### Najlepsze praktyki związane z wyjątkami
+void drugi_krok() {
+    Slad zasob{"drugi krok"};
+    throw std::runtime_error("awaria w drugim kroku");
+}
 
-Aby skutecznie korzystać z wyjątków, warto stosować się do kilku najlepszych praktyk:
+void pierwszy_krok() {
+    Slad zasob{"pierwszy krok"};
+    drugi_krok();
+}
 
-1. Wyjątki powinny być używane tylko do sytuacji naprawdę wyjątkowych, które nie są częścią normalnego przepływu programu.
-2. Każda funkcja, która może rzucić wyjątek, powinna być odpowiednio udokumentowana, aby inni programiści wiedzieli, jakie wyjątki mogą wystąpić i jak je obsługiwać.
-3. Zawsze staraj się przechwytywać najbardziej specyficzny wyjątek możliwy, zamiast ogólnych wyjątków. Pozwala to na bardziej precyzyjną i kontrolowaną obsługę błędów.
-4. Upewnij się, że używanie wyjątków w całym projekcie jest spójne. Stosowanie jednolitych konwencji dotyczących nazewnictwa i obsługi wyjątków pomoże utrzymać czytelność kodu.
-5. Zawsze zwracaj uwagę na zasoby, które mogą zostać alokowane przed wystąpieniem wyjątku. Używaj konstrukcji RAII (Resource Acquisition Is Initialization) w C++ lub bloków `finally` w innych językach, aby upewnić się, że zasoby są zawsze poprawnie zwalniane.
+int main() {
+    try {
+        pierwszy_krok();
+    } catch (const std::runtime_error& blad) {
+        std::cout << "Obsłużono: " << blad.what() << '\n';
+    }
+}
+```
+
+Po wywołaniu `pierwszy_krok()` powstaje jej lokalny obiekt, potem `drugi_krok()` tworzy swój obiekt i zgłasza wyjątek. Najpierw niszczony jest obiekt z `drugi_krok`, następnie obiekt z `pierwszy_krok`, a dopiero potem działa `catch`. Oczekiwany wynik:
+
+```text
+Sprzątanie: drugi krok
+Sprzątanie: pierwszy krok
+Obsłużono: awaria w drugim kroku
+```
+
+RAII zwalnia zasoby, ale samo w sobie nie cofa zmian w danych ani nie naprawia problemu. Odpowiedzialność za decyzję, czy program ma ponowić operację, poinformować użytkownika czy zakończyć pracę, należy do kodu obsługującego wyjątek.
+
+## Jaki typ wyjątku wybrać?
+
+Standardowa biblioteka udostępnia m.in. typy z nagłówka `<stdexcept>`:
+
+- `std::invalid_argument` — argument funkcji nie spełnia jej warunków;
+- `std::out_of_range` — wartość, np. indeks, jest poza dopuszczalnym zakresem;
+- `std::runtime_error` — operacja nie powiodła się z przyczyn wykrytych podczas działania programu;
+- `std::logic_error` — problem wskazuje na niepoprawne użycie lub założenie w logice programu.
+
+Własny typ wyjątku ma sens, gdy kod wywołujący musi rozpoznać szczególną kategorię problemu. Zwykle najprościej rozszerzyć typ standardowy zamiast samodzielnie implementować `what()`:
+
+```cpp
+#include <stdexcept>
+#include <string>
+
+class BladFormatu : public std::runtime_error {
+public:
+    explicit BladFormatu(const std::string& opis)
+        : std::runtime_error(opis) {}
+};
+```
+
+Można wtedy osobno obsłużyć ten przypadek, a inne wyjątki pozostawić ogólnej obsłudze:
+
+```cpp
+try {
+    // Odczyt i przetwarzanie danych.
+} catch (const BladFormatu& blad) {
+    // Reakcja właściwa dla niepoprawnego formatu.
+} catch (const std::exception& blad) {
+    // Pozostałe wyjątki standardowej biblioteki.
+}
+```
+
+Bardziej szczegółowe typy umieszczaj przed typem bazowym. Gdyby `catch (const std::exception&)` znalazł się pierwszy, przechwyciłby również `BladFormatu` i późniejszy blok nie zostałby osiągnięty.
+
+## Jak przechwytywać i przekazywać wyjątki
+
+- Rzucaj obiekt wyjątku przez wartość, np. `throw std::runtime_error("opis");`.
+- Przechwytuj przez `const` referencję, np. `catch (const std::exception& blad)`. Kopiowanie wyjątku jest niepotrzebne i mogłoby utracić informację o typie pochodnym.
+- Przechwytuj tylko tam, gdzie możesz podjąć sensowną decyzję. Jeśli aktualna funkcja nie umie naprawić sytuacji, pozwól wyjątkowi przejść wyżej.
+- Aby przechwycić wyjątek, wykonać część działań i przekazać ten sam wyjątek dalej, użyj `throw;` bez argumentu. Zapis `throw blad;` tworzy nowy obiekt na podstawie zmiennej i może utracić typ pochodny.
+- Nie używaj pustego `catch`, bo wtedy problem znika z pola widzenia programu. Jeśli potrzebujesz awaryjnego `catch (...)`, powinien on np. zapisać informację i zakończyć działanie w kontrolowany sposób.
+
+Jeśli wyjątek przejdzie poza `main()` bez przechwycenia, program kończy się przez `std::terminate()`. Nie należy zakładać, że po nieobsłużonym wyjątku program będzie działał dalej.
+
+## Wyjątek czy kod błędu?
+
+Wyobraźmy sobie funkcję, która próbuje znaleźć użytkownika w opcjonalnej pamięci podręcznej. Brak użytkownika jest normalnym wynikiem wyszukiwania, więc wygodny może być jawny wynik typu `bool`, `std::optional` lub inny kod statusu. Jeśli funkcja ma obowiązkowo zapisać raport, ale dysk jest niedostępny, może nie być w stanie spełnić swojego kontraktu — wyjątek pozwala przekazać tę informację do miejsca, które zdecyduje, czy przerwać raportowanie, spróbować innej lokalizacji czy powiadomić użytkownika.
+
+| Mechanizm | Kiedy pasuje | Co musi zrobić wywołujący |
+|---|---|---|
+| Kod błędu / status | Wynik „brak danych” lub „nie znaleziono” jest spodziewaną częścią normalnego działania. | Sprawdzić zwróconą wartość i obsłużyć każdy wymagany przypadek. |
+| Wyjątek | Operacja nie może spełnić swojego zadania, a obsługa jest sensowna w wyższym miejscu programu. | Umieścić operację w `try`, jeśli potrafi podjąć decyzję; w przeciwnym razie przekazać wyjątek dalej. |
+
+Nie używaj wyjątków do zwykłego sterowania pętlą ani do każdego braku dopasowania — to utrudnia odczytanie normalnej ścieżki programu. Z drugiej strony nie zamieniaj wyjątku na milczącą wartość, jeśli przez to wywołujący nie będzie wiedział, że wymaganej operacji nie udało się wykonać.
+
+## Czego wyjątki nie robią
+
+- Nie wykrywają automatycznie błędów. Dzielenie całkowite przez zero, błędny wskaźnik i przepełnienie typu ze znakiem nie są automatycznie zamieniane na wyjątek C++.
+- Nie naprawiają stanu programu. Jeśli wyjątek zgłoszono po częściowym zmodyfikowaniu pliku lub obiektu, te zmiany mogą pozostać.
+- Nie gwarantują, że można bezpiecznie kontynuować. Obsługa powinna wiedzieć, czy dane i zasoby są w poprawnym stanie.
+- Nie zastępują RAII. Nadal trzeba wiązać zasoby z czasem życia obiektów, aby zostały zwolnione podczas rozwijania stosu.
+
+Najważniejsza zasada: zgłoś wyjątek w miejscu, gdzie wykrywasz niepowodzenie; przechwyć go tam, gdzie możesz zdecydować o dalszym działaniu; a zasoby powierz obiektom RAII.

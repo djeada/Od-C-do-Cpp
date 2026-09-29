@@ -1,262 +1,362 @@
-## Instrukcje warunkowe
+# Instrukcje warunkowe
 
-Instrukcje warunkowe stanowią podstawowy mechanizm kontroli przepływu w praktycznie każdym języku programowania, w tym w C++. Pozwalają one na wykonywanie określonych fragmentów kodu tylko wówczas, gdy spełniony jest ustalony warunek. Dzięki temu programy mogą podejmować decyzje i reagować na bieżące wartości zmiennych bądź wynik operacji. Poniżej przedstawiono najważniejsze konstrukcje i dobre praktyki związane z instrukcjami warunkowymi w C++, w tym typowe pułapki, na które trzeba uważać podczas pisania i debugowania kodu.
+Do tej pory program mógł wypisać tekst lub odczytać dane, ale instrukcje wykonywały się zawsze w tej samej kolejności. Instrukcja warunkowa pozwala wybrać dalsze działanie na podstawie wartości danych: program oblicza warunek, a potem wykonuje odpowiednią gałąź.
 
-### Podstawowa instrukcja `if`
+W przykładach używamy C++, dlatego programy wypisujące tekst dołączają `<iostream>`. `if`, `else`, operatory porównań i logika wyboru występują również w C; różnice językowe, na przykład obsługa wejścia i wyjścia, opisujemy osobno.
 
-Najprostszą i zarazem najczęściej wykorzystywaną konstrukcją warunkową jest `if`. Pozwala ona na wykonanie określonego bloku kodu wyłącznie wtedy, gdy podany w nawiasie okrągłym warunek przyjmuje wartość prawdziwą. Aby to zilustrować, przyjmijmy przykładową zmienną `x` o wartości 5. Jeśli `x` okaże się większe niż 3, wtedy wyświetlimy komunikat w konsoli:
+## Najprostszy wybór: `if`
 
-```cpp
-int x = 5;
-if (x > 3) {
-    std::cout << "x jest większe niż 3" << std::endl;
-
-}
-```
-
-W tym przykładzie warunek `x > 3` jest spełniony (gdyż `5 > 3`), więc wewnątrz bloku `if` zostanie wywołane polecenie `std::cout << ...`. Jeżeli zaś chcielibyśmy zareagować na inny scenariusz, w którym warunek nie jest spełniony, możemy zastosować rozszerzenie `if-else`.
-
-### Rozszerzenie `if-else`
-
-Instrukcja `else` przydaje się w sytuacjach, kiedy chcemy wykonać inny blok kodu, jeśli warunek pierwotny nie został spełniony. Pozwala to na jasne rozgraniczenie dwóch różnych ścieżek działania programu, w zależności od wartości zmiennej:
-
-```cpp
-if (x > 10) {
-    std::cout << "x jest większe niż 10" << std::endl;
-} else {
-    std::cout << "x nie jest większe niż 10" << std::endl;
-}
-```
-
-Tutaj, jeśli `x` wyniesie przykładowo 12, to w konsoli zobaczymy pierwszy komunikat. Natomiast gdy `x` wyniesie 3, zostanie wyświetlony komunikat z bloku `else`. Jest to jeden z najbardziej podstawowych wzorców decyzyjnych w kodzie.
-
-### Instrukcja `if-else if-else`
-
-Często zdarza się, że chcemy zbadać więcej niż jeden warunek i wykonać różne działania zależnie od ich wyniku. W takim przypadku wygodnie jest skorzystać z instrukcji warunkowej rozszerzonej o dodatkowe gałęzie `else if`:
-
-```cpp
-if (x > 10) {
-    std::cout << "x jest większe niż 10" << std::endl;
-
-} else if (x > 5) {
-    std::cout << "x jest większe niż 5, ale nie większe niż 10" << std::endl;
-
-} else {
-    std::cout << "x nie jest większe niż 5" << std::endl;
-
-}
-```
-
-Algorytm sprawdzi kolejno: najpierw, czy `x > 10`; jeśli to prawda – wykona pierwszy blok i pominie resztę. Jeśli nie, przejdzie do drugiego warunku `x > 5`; jeśli on zostanie spełniony – wyświetli drugi komunikat, a jeśli okaże się fałszywy, wykona wreszcie blok `else`. Warto mieć na uwadze, że pierwszy warunek, który zostanie rozpoznany jako prawdziwy, przerywa dalsze sprawdzanie. 
-
-### Złożone warunki logiczne
-
-Operatory logiczne `&&` (koniunkcja/AND) oraz `||` (alternatywa/OR) pozwalają na łączenie wielu warunków w jednej instrukcji `if`. Dzięki nim możemy tworzyć bardziej rozbudowane wyrażenia logiczne:
-
-```cpp
-if (x > 5 && x < 10) {
-    std::cout << "x jest większe niż 5 i mniejsze niż 10" << std::endl;
-}
-
-if (x < 5 || x > 10) {
-    std::cout << "x jest mniejsze niż 5 lub większe niż 10" << std::endl;
-}
-```
-
-Pierwszy przykład wykona się tylko wówczas, gdy wartość `x` będzie jednocześnie większa niż 5 oraz mniejsza niż 10. Drugi zadziała w sytuacjach, w których wartość `x` znajdzie się poza przedziałem [5, 10]. Tworzenie złożonych wyrażeń logicznych znacznie zwiększa elastyczność warunków, jednak zawsze należy dbać o ich czytelność. 
-
-### Operator warunkowy (trójargumentowy)
-
-W C++ funkcjonuje również tzw. operator trójargumentowy `?:`, nazywany często „ternary operator”. Pozwala on na zapisanie prostego warunku i przypisania wartości w jednej linii, co bywa przydatne przy nadawaniu wartości zmiennym. Składnia wygląda następująco:
-
-```cpp
-int max = (x > y) ? x : y;
-```
-
-Wyrażenie `(x > y) ? x : y` odczytujemy w sposób: „Jeżeli `x` jest większe od `y`, zwróć `x`, w przeciwnym razie zwróć `y`”. Dzięki temu w zmiennej `max` znajdzie się większa z dwóch liczb bez konieczności stosowania rozbudowanego `if-else`.
-
-### Instrukcja warunkowa z wartością logiczną
-
-W języku C++ typ logiczny `bool` może być bezpośrednio wykorzystywany w instrukcjach `if`. Zmienna typu `bool` przyjmuje wartość `true` lub `false`, a jej interpretacja w warunku odbywa się bezpośrednio:
-
-```cpp
-bool warunek = true;
-if (warunek) {
-    std::cout << "Warunek jest prawdziwy" << std::endl;
-} else {
-    std::cout << "Warunek jest fałszywy" << std::endl;
-}
-```
-
-Powyższy przykład jest bardzo przejrzysty, gdyż unika rzutowania na wartość całkowitą (`0`/`1`). Niemniej w C++ dopuszczalne jest używanie liczb całkowitych w warunkach – warto jednak zaznaczyć, że `0` interpretowane jest jako `false`, a każda inna wartość całkowita jako `true`.
-
-### Na co uważać przy używaniu instrukcji warunkowych
-
-Choć konstrukcje warunkowe wydają się dość proste, w praktyce mogą pojawić się pewne trudności i sytuacje, w których działanie programu nie będzie takie, jak się spodziewaliśmy. Oto kilka typowych pułapek i dobrych praktyk:
-
-I. **Kolejność ewaluacji warunków**
-
-W przypadku zagnieżdżonych instrukcji `if-else if-else` sprawdzanie kończy się w momencie znalezienia pierwszego warunku, który zwraca prawdę. Kolejne ścieżki nie zostaną wówczas wykonane, nawet jeśli również byłyby prawdziwe.
-
-```cpp
-int x = 10;
-if (x > 5) {
-   std::cout << "x jest większe niż 5" << std::endl;
-
-} else if (x > 8) {
-
-   // Do tej gałęzi nigdy nie dojdzie, mimo że x > 8 również jest prawdą.
-   std::cout << "x jest większe niż 8" << std::endl;
-
-}
-```
-
-II. **Ewaluacja wartości logicznych**: W C++ liczba `0` jest interpretowana jako `false`, natomiast każda inna liczba całkowita traktowana jest jak `true`. Może to prowadzić do niezamierzonego działania, jeśli przez pomyłkę zostanie użyty typ całkowity w warunkach.
-
-```cpp
-int liczba = 0;
-if (liczba) {
-   std::cout << "To jest prawdziwe" << std::endl;
-} else {
-   std::cout << "To jest fałszywe" << std::endl;  // Wyświetli się ten komunikat.
-}
-```
-
-III. **Pomyłki `==` vs. `=`**: Zdarza się, że przez nieuwagę zamiast operatora porównania `==` użyjemy operatora przypisania `=`. Taka pomyłka w warunku nie wywoła błędu kompilacji, ale zmieni wartość zmiennej i zawsze zwróci wynik interpretowany jak `true` (jeśli przypisana wartość jest różna od zera).
-
-```cpp
-int x = 5;
-
-// Niepoprawne, bo użyto '=' zamiast '=='
-if (x = 10) {
-   std::cout << "x jest równe 10" << std::endl; 
-
-   // Ten blok wykona się zawsze (po przypisaniu x=10 jest interpretowane jako true).
-
-}
-
-// Poprawna wersja:
-if (x == 10) {
-   std::cout << "x jest równe 10" << std::endl;
-
-}
-```
-
-IV. **Porównywanie zmiennoprzecinkowe**
-
-Korzystanie z operatora `==` przy danych zmiennoprzecinkowych (`float`, `double`) może być niebezpieczne, ze względu na ograniczoną precyzję zapisu liczb w tym formacie. Zaleca się w takich przypadkach porównywanie z pewną tolerancją (epsilonem).
-
-```cpp
-double a = 0.1;
-double b = 0.1 + 0.1 + 0.1 - 0.3;
-if (a == b) {
-   std::cout << "a == b" << std::endl;  // Może nie zadziałać zgodnie z oczekiwaniami.
-}
-const double epsilon = 1e-9;
-if (fabs(a - b) < epsilon) {
-   std::cout << "a i b są w przybliżeniu równe" << std::endl;
-}
-```
-
-V. **Efekty uboczne w warunkach**
-
-Używanie inkrementacji (np. `x++`) czy wyrażeń z innymi efektami ubocznymi wewnątrz warunku może prowadzić do trudnych do wyśledzenia błędów. Wynika to z faktu, że samą inkrementację można łatwo przeoczyć, co zmienia dalsze działanie programu:
-
-```cpp
-int x = 5;
-if (x++ > 5) {
-   std::cout << "x jest większe niż 5" << std::endl;  
-
-}
-std::cout << "x = " << x << std::endl;  // x = 6, co może być nieoczywiste na pierwszy rzut oka.
-```
-
-VI. **Złożone warunki logiczne**
-
-Bardzo długie wyrażenia logiczne, łączące wiele operatorów `&&` i `||`, bywają trudne do odczytania. Dobrym pomysłem jest dzielenie ich na mniejsze, wyodrębnione warunki przypisane do pomocniczych zmiennych o znaczących nazwach:
-
-```cpp
-int a = 5, b = 10, c = 15;
-bool wszystkieDodatnie = (a > 0) && (b > 0) && (c > 0);
-bool spelniaNierownosciTrojkata = (a + b > c) && (a + c > b) && (b + c > a);
-if (wszystkieDodatnie && spelniaNierownosciTrojkata) {
-   std::cout << "Wszystkie liczby są dodatnie i spełniają nierówności trójkąta" << std::endl;
-}
-```
-
-VII. **Unikanie powtórzeń kodu**
-
-Czasem w blokach `if` i `else` pojawia się identyczny fragment kodu. Zamiast duplikować instrukcje, lepiej przenieść je na zewnątrz, co poprawia czytelność i ułatwia konserwację:
-
-```cpp
-int x = 5;
-if (x > 10) {
-   std::cout << "x jest większe niż 10" << std::endl;
-
-   // wspólny fragment kodu
-
-} else {
-   std::cout << "x nie jest większe niż 10" << std::endl;
-
-   // wspólny fragment kodu
-
-}
-
-// Lepsze podejście
-if (x > 10) {
-   std::cout << "x jest większe niż 10" << std::endl;
-
-} else {
-   std::cout << "x nie jest większe niż 10" << std::endl;
-
-}
-
-// Wspólna część po instrukcjach
-std::cout << "To jest wspólny kod" << std::endl;
-```
-   
-### Konstrukcja `switch`
-
-Konstrukcja `switch` stanowi alternatywę dla rozbudowanych łańcuchów `if-else if-else`. Szczególnie przydaje się wtedy, gdy chcemy wielokrotnie porównać jedną i tę samą zmienną z różnymi wartościami stałymi (np. liczbami całkowitymi lub znakami). Działa to w ten sposób, że podajemy wartość zmiennej w nawiasie po słowie kluczowym `switch`, a następnie w kolejnych blokach `case` sprawdzamy, czy zmienna tę wartość przyjmuje.
+Instrukcja `if` wykonuje swój blok tylko wtedy, gdy warunek jest prawdziwy. Jeśli jest fałszywy, program omija blok i idzie dalej.
 
 ```cpp
 #include <iostream>
 
 int main() {
-    int n;
-    std::cout << "Podaj numer dnia tygodnia (0-6): " << std::endl;
-    std::cin >> n;
+    int temperatura = 25;
 
-    switch (n) {
-    case 0:
-        std::cout << "Poniedziałek." << std::endl;
-        break;
-    case 1:
-        std::cout << "Wtorek." << std::endl;
-        break;
-    case 2:
-        std::cout << "Środa." << std::endl;
-        break;
-    case 3:
-        std::cout << "Czwartek." << std::endl;
-        break;
-    case 4:
-        std::cout << "Piątek." << std::endl;
-        break;
-    case 5:
-        std::cout << "Sobota." << std::endl;
-        break;
-    case 6:
-        std::cout << "Niedziela." << std::endl;
-        break;
-    default:
-        std::cout << "Błąd! Numer dnia powinien być w zakresie 0-6." << std::endl;
+    if (temperatura > 20) {
+        std::cout << "Jest ciepło.\n";
+    }
+
+    std::cout << "Program działa dalej.\n";
+    return 0;
+}
+```
+
+Program porównuje `temperatura` z `20`. Ponieważ `25 > 20` jest prawdą, wypisuje „Jest ciepło.”. Następnie wykonuje instrukcję znajdującą się za blokiem `if`. Gdyby temperatura wynosiła `18`, ominąłby tylko komunikat o cieple; reszta programu nadal by się wykonała.
+
+## Wybór jednej z dwóch dróg: `if` i `else`
+
+Jeśli trzeba obsłużyć oba wyniki, dodaj `else`. Gdy warunek w `if` jest prawdziwy, wykona się pierwszy blok. W przeciwnym razie wykona się blok `else`.
+
+```cpp
+#include <iostream>
+
+int main() {
+    int liczba = 7;
+
+    if (liczba % 2 == 0) {
+        std::cout << "Liczba jest parzysta.\n";
+    } else {
+        std::cout << "Liczba jest nieparzysta.\n";
     }
 
     return 0;
 }
 ```
 
-Gdy zostanie znaleziony pasujący `case`, wykonywanie kodu trwa aż do momentu napotkania słowa `break` lub końca całej konstrukcji `switch`. Z kolei `default` pełni rolę „wszystkich innych przypadków”, czyli jest wykonywany wtedy, gdy żaden z bloków `case` nie pasuje.
+Operator `%` daje resztę z dzielenia całkowitego. Liczba parzysta dzielona przez `2` ma resztę `0`, więc warunek `liczba % 2 == 0` rozstrzyga, który komunikat wybrać. W przykładzie reszta z dzielenia `7` przez `2` wynosi `1`, dlatego wykonywany jest blok `else`.
 
-Konstrukcja `switch` bywa czytelniejsza i efektywniejsza w sytuacjach, gdzie występują liczne porównania zmiennej z różnymi wartościami. Dodatkowo, kompilator może czasem zoptymalizować `switch` wewnętrznie (np. przy użyciu tablicy przeskoków), co przy rozbudowanych instrukcjach może przyspieszyć wykonywanie kodu. 
+Nawiasy klamrowe `{}` wyznaczają zakres gałęzi. Nawet gdy w środku jest tylko jedna instrukcja, warto ich używać — wtedy łatwiej zauważyć, które instrukcje zależą od warunku.
+
+## Więcej niż dwa przypadki: `else if`
+
+Gdy możliwych jest kilka wyników, można połączyć `if`, jedno lub więcej `else if` oraz opcjonalne `else`. Warunki są sprawdzane po kolei. Program wykonuje pierwszy blok, którego warunek jest prawdziwy, po czym pomija pozostałe gałęzie.
+
+```cpp
+#include <iostream>
+
+int main() {
+    int wynik;
+    std::cout << "Podaj wynik od 0 do 100: ";
+    if (!(std::cin >> wynik)) {
+        std::cerr << "Wynik musi być liczbą całkowitą.\n";
+        return 1;
+    }
+
+    if (wynik < 0 || wynik > 100) {
+        std::cout << "Wynik jest poza zakresem.\n";
+    } else if (wynik >= 90) {
+        std::cout << "Bardzo dobry wynik.\n";
+    } else if (wynik >= 50) {
+        std::cout << "Wynik zaliczający.\n";
+    } else {
+        std::cout << "Wynik poniżej progu zaliczenia.\n";
+    }
+
+    return 0;
+}
+```
+
+Najpierw program sprawdza, czy liczba jest poza zakresem. Jeśli nie, sprawdza kolejno progi `90` i `50`. Dla wartości `75` pierwsze porównanie zakresu jest fałszywe, `75 >= 90` też jest fałszywe, ale `75 >= 50` jest prawdziwe — więc wykonywana jest gałąź „zaliczający”. Pozostałe gałęzie są już pomijane.
+
+Kolejność progów ma znaczenie. Gdybyśmy najpierw sprawdzili `wynik >= 50`, wynik `95` także spełniłby ten warunek i nie dotarłby do sprawdzenia progu `90`. W łańcuchu `else if` umieszczaj najpierw warunki, które mają pierwszeństwo lub opisują wyższe progi.
+
+Użyj osobnych instrukcji `if`, gdy decyzje nie wykluczają się wzajemnie i kilka działań może się wykonać. `if`–`else if` wybiera najwyżej jedną gałąź.
+
+## Operatory porównania i wartości logiczne
+
+Porównania tworzą wynik logiczny: prawdę albo fałsz. W C++ typem logicznym jest `bool`, a jego wartości zapisujemy jako `true` i `false`.
+
+| Operator | Znaczenie |
+|---|---|
+| `==` | równe |
+| `!=` | różne |
+| `<` | mniejsze |
+| `>` | większe |
+| `<=` | mniejsze lub równe |
+| `>=` | większe lub równe |
+
+Przykład: `wiek >= 18` jest prawdziwy, gdy `wiek` wynosi co najmniej 18. Granice przedziału zapisuj uważnie: `x < 10` nie obejmuje 10, natomiast `x <= 10` już tak.
+
+W C++ wartość `bool` można bezpośrednio podać jako warunek. W warunku akceptowane są też inne typy, które można zamienić na `bool`: zero oznacza fałsz, a wartość różna od zera — prawdę. Zwykle czytelniej napisać `liczba != 0` niż samo `if (liczba)`, bo porównanie pokazuje, co sprawdzamy.
+
+W C typem logicznym jest `_Bool`; nagłówek `<stdbool.h>` udostępnia wygodne nazwy `bool`, `true` i `false` w starszych standardach C. W obu językach warunek instrukcji `if` interpretuje wartość skalarną jako prawdę lub fałsz, ale typy i nazwy związane z wartością logiczną nie są identyczne we wszystkich wersjach języków.
+
+## Łączenie warunków
+
+Czasem decyzja zależy od kilku faktów naraz. Operatory logiczne pozwalają połączyć porównania:
+
+- `&&` — „i”: oba warunki muszą być prawdziwe;
+- `||` — „lub”: wystarczy, że prawdziwy jest co najmniej jeden;
+- `!` — „nie”: odwraca wartość logiczną.
+
+```cpp
+#include <iostream>
+
+int main() {
+    int wiek = 20;
+    bool maBilet = true;
+
+    if (wiek >= 18 && maBilet) {
+        std::cout << "Można wejść.\n";
+    }
+
+    if (wiek < 18 || !maBilet) {
+        std::cout << "Wejście jest niedostępne.\n";
+    }
+    return 0;
+}
+```
+
+W pierwszym warunku obie części muszą być prawdziwe. W drugim wystarczy, że osoba jest niepełnoletnia albo nie ma biletu. Operatory `&&` i `||` stosują krótkie spięcie: jeśli wynik jest już rozstrzygnięty przez lewą część, prawa część nie jest obliczana. Można na tym bezpiecznie polegać, na przykład sprawdzając mianownik przed dzieleniem:
+
+```cpp
+#include <iostream>
+
+int main() {
+    int mianownik = 3;
+    int licznik = 10;
+
+    if (mianownik != 0 && licznik / mianownik > 2) {
+        std::cout << "Iloraz jest większy niż 2.\n";
+    }
+    return 0;
+}
+```
+
+Nie łącz wielu trudnych porównań w jednym wierszu, jeśli utrudnia to zrozumienie. Podziel je na nazwane wartości logiczne:
+
+```cpp
+#include <iostream>
+
+int main() {
+    int a = 5;
+    int b = 6;
+    int c = 7;
+
+    bool wszystkieDodatnie = a > 0 && b > 0 && c > 0;
+    bool spelniaNierownosciTrojkata =
+        a + b > c && a + c > b && b + c > a;
+
+    if (wszystkieDodatnie && spelniaNierownosciTrojkata) {
+        std::cout << "Liczby mogą być długościami boków trójkąta.\n";
+    }
+    return 0;
+}
+```
+
+Jeżeli w jednym wyrażeniu mieszasz `&&` i `||`, dodaj nawiasy, aby jasno zaznaczyć grupowanie. Nawiasy ułatwiają czytanie i chronią przed pomyłką w kolejności działań.
+
+## Krótki wybór wartości: operator `?:`
+
+Operator warunkowy `?:` jest wyrażeniem, które wybiera jedną z dwóch wartości. Ma postać `warunek ? wartość_gdy_prawda : wartość_gdy_fałsz`.
+
+```cpp
+#include <iostream>
+
+int main() {
+    int x = 8;
+    int y = 5;
+    int wieksza = (x > y) ? x : y;
+
+    std::cout << "Większa liczba: " << wieksza << '\n';
+    return 0;
+}
+```
+
+Najpierw sprawdzany jest warunek `x > y`. Ponieważ jest prawdziwy, całe wyrażenie ma wartość `x`, czyli `8`, a ta wartość zostaje przypisana do `wieksza`. Gdy warunek jest fałszywy, wybrane zostaje `y`. Ten zapis pasuje do krótkiego wyboru wartości; rozbudowane działania lepiej zapisać w zwykłym `if`–`else`.
+
+## Typowe pomyłki
+
+### Przypisanie `=` a porównanie `==`
+
+Pojedynczy znak `=` przypisuje wartość do zmiennej. Podwójny `==` porównuje dwie wartości. Pomyłka może być poprawna składniowo, ale zmienia program:
+
+```cpp
+#include <iostream>
+
+int main() {
+    int x = 5;
+
+    if (x = 10) { // Błędny warunek: zmienia x na 10.
+        std::cout << "Ta gałąź się wykona, bo 10 oznacza prawdę.\n";
+    }
+
+    if (x == 10) { // Porównanie: nie zmienia x.
+        std::cout << "x jest równe 10.\n";
+    }
+    return 0;
+}
+```
+
+Wartość przypisania jest zarazem wartością całego wyrażenia. Ponieważ `10` oznacza prawdę w warunku, błędna gałąź się wykona. Kompilator często ostrzega o takim zapisie — nie ignoruj ostrzeżeń.
+
+### Za szeroki warunek na początku
+
+W łańcuchu `else if` późniejsze warunki mogą stać się nieosiągalne:
+
+```cpp
+#include <iostream>
+
+int main() {
+    int x = 10;
+
+    if (x > 5) {
+        std::cout << "x jest większe niż 5.\n";
+    } else if (x > 8) {
+        std::cout << "x jest większe niż 8.\n";
+    }
+    return 0;
+}
+```
+
+Jeżeli gałęzie opisują progi, sprawdzaj najpierw próg wyższy. Jeżeli warunki są niezależne, zamiast `else if` użyj osobnych `if`.
+
+### Średnik po `if`
+
+Nie wstawiaj średnika bezpośrednio po warunku. Średnik sam jest pustą instrukcją, więc poniższy `if` nie steruje blokiem w nawiasach klamrowych:
+
+```cpp
+#include <iostream>
+
+int main() {
+    int liczba = -2;
+
+    if (liczba > 0); // Ta instrukcja kończy się tutaj.
+    {
+        std::cout << "Ten blok wykona się niezależnie od liczby.\n";
+    }
+    return 0;
+}
+```
+
+Blok `{ ... }` jest osobnym blokiem, a nie częścią `if`. Zostaw warunek bez średnika i obejmij nawiasami klamrowymi dokładnie te instrukcje, które mają zależeć od jego wyniku.
+
+### Porównywanie liczb zmiennoprzecinkowych
+
+Liczby `float` i `double` są przechowywane z ograniczoną precyzją. Obliczenie, które matematycznie powinno dać na przykład `0.3`, może mieć minimalnie inną reprezentację. Dlatego równość `==` bywa niewłaściwa do sprawdzania wyniku obliczeń zmiennoprzecinkowych. Często sprawdza się, czy różnica mieści się w tolerancji:
+
+```cpp
+#include <cmath>
+#include <iostream>
+
+int main() {
+    double suma = 0.1 + 0.2;
+    const double tolerancja = 1e-9;
+
+    if (std::abs(suma - 0.3) < tolerancja) {
+        std::cout << "Suma jest w przybliżeniu równa 0.3.\n";
+    }
+}
+```
+
+Tolerancję dobiera się do skali i znaczenia obliczeń; `1e-9` nie jest uniwersalną wartością dla każdego programu.
+
+### Zmiana wartości ukryta w warunku
+
+Wyrażenie `x++` zwraca najpierw starą wartość `x`, a potem zwiększa zmienną. Taki efekt uboczny w warunku jest trudny do zauważenia:
+
+```cpp
+#include <iostream>
+
+int main() {
+    int x = 5;
+    if (x++ > 5) {
+        std::cout << "Warunek jest prawdziwy.\n";
+    }
+    std::cout << "x ma teraz wartość " << x << ".\n";
+    return 0;
+}
+```
+
+W prostych instrukcjach czytelniej jest oddzielić zmianę zmiennej od sprawdzania warunku.
+
+## Wybór spośród stałych przypadków: `switch`
+
+`switch` przydaje się, gdy porównujemy jedną wartość z kilkoma konkretnymi stałymi. W C++ wyrażenie `switch` może mieć typ całkowity, znakowy albo wyliczeniowy; nie służy do bezpośredniego sprawdzania przedziałów ani tekstu `std::string`.
+
+```cpp
+#include <iostream>
+
+int main() {
+    int dzien;
+    std::cout << "Podaj numer dnia (1-7): ";
+    if (!(std::cin >> dzien)) {
+        std::cerr << "Numer dnia musi być liczbą całkowitą.\n";
+        return 1;
+    }
+
+    switch (dzien) {
+        case 1:
+            std::cout << "Poniedziałek\n";
+            break;
+        case 2:
+            std::cout << "Wtorek\n";
+            break;
+        case 3:
+            std::cout << "Środa\n";
+            break;
+        case 4:
+            std::cout << "Czwartek\n";
+            break;
+        case 5:
+            std::cout << "Piątek\n";
+            break;
+        case 6:
+            std::cout << "Sobota\n";
+            break;
+        case 7:
+            std::cout << "Niedziela\n";
+            break;
+        default:
+            std::cout << "Numer musi być z zakresu 1-7.\n";
+    }
+
+    return 0;
+}
+```
+
+Program porównuje `dzien` z kolejnymi etykietami `case`. Po znalezieniu pasującej wartości wykonuje instrukcje tej gałęzi. `break` kończy `switch`; bez niego wykonanie przechodzi dalej, także do instrukcji pod następnym `case`. `default` jest opcjonalną gałęzią dla wartości, które nie pasują do żadnego przypadku. Do sprawdzania przedziału, takiego jak „od 1 do 7”, użyj `if`.
+
+## Wspólna część po wyborze
+
+Jeżeli po wybraniu gałęzi program ma wykonać tę samą czynność, umieść ją po całym `if`–`else`, zamiast kopiować ją do obu bloków:
+
+```cpp
+#include <iostream>
+
+int main() {
+    int x = 12;
+    if (x > 10) {
+        std::cout << "x jest większe niż 10\n";
+    } else {
+        std::cout << "x nie jest większe niż 10\n";
+    }
+
+    std::cout << "Ten komunikat pojawi się w obu przypadkach.\n";
+    return 0;
+}
+```
+
+W ten sposób decyzja wybiera tylko różny komunikat, a wspólna instrukcja uruchamia się po niej niezależnie od wyniku.
