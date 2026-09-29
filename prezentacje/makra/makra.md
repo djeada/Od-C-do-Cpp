@@ -1,144 +1,208 @@
-## Konstrukcja 'include guard' (strażnik załącznika)
+# Preprocesor, makra i kompilacja warunkowa
 
-Konstrukcja 'include guard', znana też jako "strażnik załącznika", zapewnia, że dany plik nagłówkowy jest załączony tylko raz w jednym źródle. Jest to niezbędne, ponieważ wielokrotne załączenie tego samego pliku nagłówkowego może prowadzić do błędów kompilacji związanych z wielokrotną definicją tych samych zmiennych, struktur czy funkcji.
+Preprocesor działa przed właściwą kompilacją C/C++. Obsługuje m.in. `#include`, `#define` oraz dyrektywy kompilacji warunkowej.
 
-Poniżej przedstawiono sposób wykorzystania 'include guard' w języku C++:
+## Cele
+
+Po tej prezentacji powinieneś umieć:
+
+- wyjaśnić rolę preprocesora,
+- zabezpieczyć nagłówek przed wielokrotnym dołączeniem,
+- rozpoznać pułapki makr funkcyjnych,
+- stosować kompilację warunkową,
+- wskazać bezpieczniejsze alternatywy dla makr w nowoczesnym C++.
+
+## Include guard
+
+Nagłówek może zostać pośrednio dołączony wiele razy. Include guard sprawia, że jego treść zostanie przetworzona tylko raz w obrębie jednej jednostki translacji.
 
 ```cpp
-#ifndef NAZWA_PLIKU_H
-#define NAZWA_PLIKU_H
+#ifndef MY_PROJECT_WIDGET_H
+#define MY_PROJECT_WIDGET_H
 
-  // Zawartość pliku nagłówkowego...
+struct Widget {
+    int value;
+};
 
-#endif // NAZWA_PLIKU_H
+#endif  // MY_PROJECT_WIDGET_H
 ```
 
-Gdy preprocesor napotka dyrektywę #include dla danego pliku:
+Dobra nazwa strażnika powinna być możliwie unikalna, np. zawierać nazwę projektu i ścieżkę.
 
-- Najpierw sprawdza, czy symbol NAZWA_PLIKU_H został już zdefiniowany.
-- Jeżeli nie został zdefiniowany, preprocesor definiuje ten symbol i kontynuuje przetwarzanie zawartości pliku.
-- Jeśli symbol został już zdefiniowany (co oznacza, że plik został wcześniej załączony), to cała zawartość pliku między #ifndef a #endif jest pomijana.
-
-W praktyce, dla większej czytelności i uniknięcia konfliktów nazw, zaleca się używanie unikalnych nazw dla strażników załącznika, często opartych na nazwie pliku i/lub ścieżce. Dla pliku my_directory/my_header.h strażnik mógłby wyglądać np. tak: MY_DIRECTORY_MY_HEADER_H.
-
-## Makra
-
-Makro w językach programowania, takich jak C i C++, to wyrażenia, które są rozwijane lub podmieniane przez preprocesor przed kompilacją kodu źródłowego. Makra są często używane do definiowania stałych, skrótów i różnych konstrukcji, które mają być ekspandowane w kodzie przed kompilacją.
-
-### Składnia dyrektywy `#define`
-
-Dyrektywa `#define` jest używana do definiowania makr:
+W wielu kompilatorach działa także:
 
 ```cpp
-#define NAZWA_MAKRA wartosc_makra
+#pragma once
 ```
 
-Zaleca się, by nazwy makr były pisane wielkimi literami, choć nie jest to konieczne. Dzięki temu łatwiej je odróżnić od zmiennych i funkcji.
+To rozwiązanie jest bardzo popularne i szeroko wspierane, ale nie jest dyrektywą zdefiniowaną przez standard C/C++.
 
-Możemy również definiować makra z argumentami:
+## Makra obiektowe
 
 ```cpp
-#define NAZWA_MAKRA(arg1, arg2) wyrażenie_używające_arg1_i_arg2
+#define BUFFER_SIZE 4096
+#define APP_NAME "demo"
 ```
 
-### Przykłady makr
+Preprocesor wykonuje podstawienie tekstowe przed kompilacją. Makro nie jest zmienną i nie ma typu.
 
-Poniżej przedstawiono różne przykłady makr:
+W C++ dla stałych zwykle lepsze są:
 
 ```cpp
-// Definiowanie stałej
-#define PI 3.141592653589793
-
-// Makro zwracające stałą wartość - wynik dzielenia PI przez 2
-#define PI_2 (PI/2)
-
-// Makro zwracające wartość przekazanej liczby podniesionej do kwadratu
-// Uwaga: Nawiasy są ważne, by zapewnić poprawne rozwinięcie makra w kodzie.
-#define KWADRAT(x) ((x)*(x))
-
-// Makro zwracające większą z dwóch wartości
-#define MAKS_2(x, y) ((x) > (y) ? (x) : (y))
-
-// Makro zwracające największą z trzech wartości
-#define MAKS_3(x, y, z) MAKS_2(MAKS_2(x, y), z)
+constexpr std::size_t buffer_size = 4096;
+constexpr std::string_view app_name = "demo";
 ```
 
-Powyższe makra korzystają z nawiasów w celu zapewnienia poprawnego rozwinięcia i uniknięcia problemów związanych z kolejnością wykonywania operacji w trakcie ekspansji makr. Nawiasy gwarantują, że wartości argumentów są traktowane jako pojedyncze jednostki podczas operacji.
-
-## Makra vs Funkcje
-
-Makra i funkcje to dwa różne mechanizmy w językach programowania C i C++, które pozwalają na wielokrotne używanie tego samego bloku kodu. Mimo że oba te mechanizmy wydają się podobne, mają różne właściwości i zastosowania.
-
-| Właściwość                            | Makra                                   | Funkcje                                |
-|---------------------------------------|-----------------------------------------|----------------------------------------|
-| Kompilacja                            | Makra nie są kompilowane                 | Funkcje są kompilowane                  |
-| Sprawdzanie typów                     | Typy nie są sprawdzane                   | Typy są sprawdzane                      |
-| Wywołanie                             | Kod jest ekspandowany (kopiowany)        | Kod jest wywoływany (funkcja jest wykonywana)|
-| Szybkość wykonywania                  | Szybkie (bez kosztu wywołania)           | Generalnie szybkie, ale z kosztem wywołania funkcji |
-| Skalowanie (rekursja)                 | Brak wsparcia dla rekursji               | Wsparcie dla rekursji                   |
-| Kontrola błędów przez kompilator      | Kompilator nie sprawdza błędów w makrach | Kompilator sprawdza błędy               |
-| Zasięg zmiennej                       | Globalny (w całym pliku)                 | Lokalny (tylko wewnątrz funkcji)        |
-| Oddzielne przestrzenie nazw           | Nie                                      | Tak                                     |
-
-Chociaż makra są wygodne w wielu sytuacjach, takich jak definicje stałych czy proste operacje, mają pewne ograniczenia i potencjalne pułapki. Na przykład, skomplikowane makra mogą prowadzić do nieoczekiwanych skutków ubocznych z powodu ekspansji kodu. W związku z tym, dla bardziej skomplikowanych operacji, zaleca się korzystanie z funkcji.
-
-### Dyrektywa `#if`
-
-Dyrektywa `#if` umożliwia wykonanie pewnych fragmentów kodu tylko wtedy, gdy określone warunki są spełnione. Jest to użyteczne w wielu scenariuszach, takich jak różne konfiguracje dla różnych platform, włączanie/wyłączanie funkcji debugowania itp.
+## Makra funkcyjne
 
 ```cpp
-#define FLAGA 1
+#define SQUARE(x) ((x) * (x))
+```
 
-int main() {
+Nawiasy chronią przed częścią błędów związanych z priorytetem operatorów:
 
-  #if FLAGA
-    // Kod do wykonania, gdy FLAGA jest różna od zera (czyli prawda).
-  #else
-    // Kod do wykonania, gdy FLAGA jest równa zeru (czyli fałsz).
-  #endif
+```cpp
+SQUARE(a + b)
+```
 
-  return 0;
+bez nawiasów mogłoby rozwinąć się niepoprawnie.
+
+## Najważniejsza pułapka: wielokrotna ewaluacja
+
+```cpp
+int i = 3;
+int y = SQUARE(i++);
+```
+
+Makro rozwija argument tekstowo, więc `i++` pojawia się dwa razy. Taki kod może prowadzić do nieoczekiwanego lub niezdefiniowanego zachowania.
+
+Bezpieczniejsza wersja w C++:
+
+```cpp
+template <typename T>
+constexpr T square(T x) {
+    return x * x;
 }
 ```
 
-### Rozszerzenia dyrektywy #if
+Argument funkcji jest obliczany raz, a typ podlega normalnej kontroli kompilatora.
 
-Dyrektywa `#if` może być również używana z `#elif` (wariant "else if").
+## Makro wieloinstrukcyjne
 
-```cpp
-#define WERSJA 2
-
-int main() {
-
-  #if WERSJA == 1
-    // Kod dla wersji 1.
-  #elif WERSJA == 2
-    // Kod dla wersji 2.
-  #else
-    // Kod dla wszystkich innych wersji.
-  #endif
-
-  return 0;
-}
-```
-
-### Dyrektywa #ifdef i #ifndef
-
-Często używanymi dyrektywami są również `#ifdef` (sprawdza, czy dany symbol/makro został zdefiniowany) oraz `#ifndef` (sprawdza, czy dany symbol/makro nie został zdefiniowany).
+Jeżeli makro musi zawierać kilka instrukcji, popularny wzorzec wygląda tak:
 
 ```cpp
-#define DEBUG
-
-int main() {
-
-  #ifdef DEBUG
-    // Kod do wykonania, gdy DEBUG jest zdefiniowany.
-  #else
-    // Kod do wykonania, gdy DEBUG nie jest zdefiniowany.
-  #endif
-
-  return 0;
-}
+#define LOG_IF_ERROR(expr)        \
+    do {                          \
+        if (!(expr)) {            \
+            log_error(#expr);     \
+        }                         \
+    } while (0)
 ```
 
-Dzięki tym dyrektywom można skutecznie zarządzać kompilacją różnych fragmentów kodu w zależności od konfiguracji lub celów kompilacji.
+Konstrukcja `do { ... } while (0)` sprawia, że makro zachowuje się składniowo jak pojedyncza instrukcja.
+
+## Kompilacja warunkowa
+
+```cpp
+#if defined(DEBUG)
+    log_debug("start");
+#endif
+```
+
+Można też użyć:
+
+```cpp
+#ifdef DEBUG
+    // ...
+#endif
+
+#ifndef FEATURE_X
+    // ...
+#endif
+```
+
+oraz warunków liczbowych:
+
+```cpp
+#define API_VERSION 2
+
+#if API_VERSION >= 2
+    // kod dla nowszego API
+#else
+    // kod zgodności
+#endif
+```
+
+## Typowe zastosowania kompilacji warunkowej
+
+- kod zależny od platformy,
+- opcjonalne funkcje,
+- tryb debugowania,
+- konfiguracja biblioteki,
+- zgodność z różnymi wersjami API.
+
+Przykład:
+
+```cpp
+#if defined(_WIN32)
+    // Windows
+#elif defined(__linux__)
+    // Linux
+#else
+    // inna platforma
+#endif
+```
+
+## Zasięg makra
+
+Makro nie ma zasięgu blokowego ani przestrzeni nazw jak zmienna czy funkcja. Od miejsca definicji jest widoczne dla preprocesora aż do:
+
+- `#undef`,
+- końca jednostki translacji,
+- lub końca odpowiedniej gałęzi przetwarzania warunkowego.
+
+```cpp
+#define TEMP 10
+// ...
+#undef TEMP
+```
+
+To jeden z powodów, dla których nadmierne użycie makr utrudnia utrzymanie dużych projektów.
+
+## Makra a funkcje
+
+| Cecha | Makro | Funkcja / `constexpr` / szablon |
+| --- | --- | --- |
+| Kontrola typów | brak na etapie preprocessingu | normalna kontrola typów |
+| Argument | może zostać rozwinięty wiele razy | obliczany zgodnie z semantyką języka |
+| Debugowanie | trudniejsze | zwykle prostsze |
+| Przestrzeń nazw | nie | tak |
+| Możliwość optymalizacji inline | nie dotyczy wprost | kompilator może inline'ować |
+| Użycie w `#if` | tak | nie |
+
+Makra nie są automatycznie „szybsze” od funkcji. Współczesny kompilator może inline'ować małe funkcje, a bezpieczeństwo typów zwykle jest cenniejsze niż ręczne podstawianie kodu.
+
+## Kiedy makra nadal mają sens?
+
+- include guardy,
+- kompilacja warunkowa,
+- generowanie kodu wymagające operatorów `#` lub `##`,
+- integracja z API lub frameworkiem opartym na makrach.
+
+W pozostałych przypadkach w C++ często lepiej rozważyć:
+
+- `constexpr`,
+- `inline`,
+- szablony,
+- funkcje,
+- `enum class`.
+
+## Podsumowanie
+
+Preprocesor jest potężny, ale działa na poziomie tekstu, zanim kompilator sprawdzi typy i semantykę programu. Dlatego:
+
+1. zabezpieczaj nagłówki,
+2. otaczaj argumenty i całe wyrażenia makr nawiasami,
+3. unikaj argumentów ze skutkami ubocznymi,
+4. preferuj konstrukcje języka C++, gdy nie potrzebujesz funkcji dostępnych wyłącznie w preprocesorze.
