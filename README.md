@@ -50,6 +50,18 @@ Materiały prezentacyjne zostały uporządkowane wokół celów, praktycznych pr
 | Wskaźniki | [Wskaźniki i arytmetyka wskaźników](prezentacje/wskazniki/wskazniki.md) |
 | Wyjątki | [Wyjątki w C++](prezentacje/wyjatki/wyjatki.md) |
 
+## Quizy
+
+Quizy jednokrotnego wyboru pozwalają sprawdzić zrozumienie notatek. Każde pytanie ma wyjaśnienie poprawnej odpowiedzi, a przykłady kodu zostały skompilowane i uruchomione.
+
+| Zakres | Quiz |
+| --- | --- |
+| Proces kompilacji, preprocesor, zmienne i typy danych, interakcja z konsolą | [Kompilacja i typy](quizzes/01_kompilacja_i_typy.md) |
+| Instrukcja warunkowa, pętle, liczby losowe, typ wyliczeniowy, funkcje, L-wartości i R-wartości, operacje bitowe | [Sterowanie i funkcje](quizzes/02_sterowanie_i_funkcje.md) |
+| Wskaźniki, tablice, napisy, zaawansowane i inteligentne wskaźniki | [Wskaźniki, tablice i napisy](quizzes/03_wskazniki_tablice_i_napisy.md) |
+| Programowanie obiektowe, dziedziczenie, przeciążanie, konwersje | [Programowanie obiektowe](quizzes/04_programowanie_obiektowe.md) |
+| Lambdy, szablony, wyjątki, STL, praca z plikami, C vs C++ | [Nowoczesny C++](quizzes/05_nowoczesny_cpp.md) |
+
 ## Walidacja przykładów
 
 Repozytorium zawiera niezależne przykłady C i C++, dlatego zamiast jednego programu
