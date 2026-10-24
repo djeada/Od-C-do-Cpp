@@ -2,7 +2,7 @@
 
 Wskaźnik to wartość, która może przechowywać adres. Sam surowy wskaźnik nie mówi jednak, kto odpowiada za obiekt ani jak długo ten obiekt będzie istniał. Ta różnica jest kluczowa: wskaźnik może jedynie **obserwować** obiekt albo uczestniczyć w zarządzaniu jego **własnością**. W C++ wskaźniki mogą też wskazywać funkcje i składowe klas.
 
-> Przykłady ze `std::unique_ptr` i `std::make_unique` wymagają C++14. `std::shared_ptr`, `std::weak_ptr`, wskaźniki do funkcji i wskaźniki do składowych są dostępne od C++11.
+> `std::unique_ptr`, `std::shared_ptr`, `std::weak_ptr`, wskaźniki do funkcji i wskaźniki do składowych są dostępne od C++11. Przykłady ze `std::make_unique` wymagają C++14.
 
 ## Wskaźnik a czas życia obiektu
 
@@ -118,7 +118,7 @@ Jeśli obiekt ma właściciela przez cały czas życia w programie, nie zawsze t
 
 ### `std::unique_ptr` — jeden właściciel
 
-`unique_ptr` jest niewyłącznym w dostępie, ale **wyłącznym w posiadaniu**: wiele miejsc może chwilowo obserwować obiekt przez referencję lub zwykły wskaźnik, lecz właściciel jest tylko jeden. Nie można kopiować `unique_ptr`, bo powstałyby dwa obiekty próbujące zwolnić ten sam zasób. Własność można przenieść:
+`unique_ptr` daje **wyłączną własność**, ale nie wyłączny dostęp: wiele miejsc może chwilowo obserwować obiekt przez referencję lub zwykły wskaźnik, lecz właściciel jest tylko jeden. Nie można kopiować `unique_ptr`, bo powstałyby dwa obiekty próbujące zwolnić ten sam zasób. Własność można przenieść:
 
 ```cpp
 #include <iostream>

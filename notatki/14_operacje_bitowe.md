@@ -98,7 +98,7 @@ To są wzorce aktualizacji flag. Przed użyciem maski trzeba wiedzieć, ile bit�
 
 ## Przesunięcia bitowe i typowe pułapki
 
-Przesunięcie w lewo `x << n` przenosi bity `x` o `n` miejsc w stronę bardziej znaczących pozycji, wprowadzając z prawej zera. Dla wartości bez znaku `5` na czterech bitach:
+Przesunięcie w lewo `x << n` przenosi bity `x` o `n` miejsc w stronę bardziej znaczących pozycji, wprowadzając z prawej zera. Dla wartości bez znaku `5` zapisanej na ośmiu bitach:
 
 ```text
 00000101 << 2  = 00010100

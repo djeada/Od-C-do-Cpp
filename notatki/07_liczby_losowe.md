@@ -205,7 +205,7 @@ int main(void) {
 
 `srand` ustawia początkowy stan generatora używanego przez `rand`. Gdy program nie wywoła `srand`, otrzymuje powtarzalny przebieg zgodny z zachowaniem określonym dla biblioteki. Użycie `time(NULL)` często daje inne ziarno w kolejnych uruchomieniach, ale dwa uruchomienia w tej samej sekundzie mogą dostać ten sam czas.
 
-Wyrażenie `rand() % 6 + 1` jest łatwe do zapisania, ale może rozkładać wyniki nierównomiernie. Reszta z dzielenia jest równa, jeśli liczba możliwych wyników `rand()` nie dzieli się równo przez 6. Jakość i zakres `rand()` zależą od implementacji, a sam interfejs nie oferuje osobnych rozkładów. Dlatego w nowym kodzie C++ wybieraj `<random>`.
+Wyrażenie `rand() % 6 + 1` jest łatwe do zapisania, ale może rozkładać wyniki nierównomiernie. Jeśli liczba możliwych wyników `rand()` nie dzieli się równo przez 6, niektóre reszty z dzielenia wypadają częściej niż inne. Jakość i zakres `rand()` zależą od implementacji, a sam interfejs nie oferuje osobnych rozkładów. Dlatego w nowym kodzie C++ wybieraj `<random>`.
 
 ## Czego nie używać do haseł i kluczy?
 

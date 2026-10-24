@@ -280,7 +280,7 @@ int main() {
 }
 ```
 
-Definicja `int Ustawienia::limit = 100;` tworzy wspólne pole klasy (dla standardów przed C++17 trzeba umieścić ją poza definicją klasy, zwykle w jednym pliku źródłowym). Wartość odczytuje się przez `Ustawienia::limit`, a nie przez konkretne konto/obiekt. W C++17 można też użyć pola `inline static` zainicjalizowanego wewnątrz klasy.
+Definicja `int Ustawienia::limit = 100;` tworzy wspólne pole klasy. Zwykłe (nie `inline`) pole statyczne trzeba zdefiniować poza klasą, zwykle w jednym pliku źródłowym. Wartość odczytuje się przez `Ustawienia::limit`, a nie przez konkretne konto/obiekt. Od C++17 pole `inline static` można zainicjalizować wewnątrz klasy i wtedy osobna definicja nie jest potrzebna.
 
 ## Funkcje zaprzyjaźnione
 

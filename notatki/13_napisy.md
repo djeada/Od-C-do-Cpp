@@ -125,7 +125,7 @@ Wartość zwrócona przez `snprintf` to liczba znaków, które powstałyby bez o
 
 ### Znaki i konwersja liczb
 
-Funkcje `isdigit`, `isspace`, `toupper` i podobne pochodzą z `<ctype.h>`. Ich argumentem może być `EOF` albo wartość, którą da się zapisać jako `unsigned char`. Zwykły `char` może być ujemny, więc przy przekazaniu go bezpośrednio wynik może być nieokreślony. Bezpieczny wzorzec to:
+Funkcje `isdigit`, `isspace`, `toupper` i podobne pochodzą z `<ctype.h>`. Ich argumentem może być `EOF` albo wartość, którą da się zapisać jako `unsigned char`. Zwykły `char` może być ujemny, więc przekazanie go bezpośrednio może prowadzić do niezdefiniowanego zachowania. Bezpieczny wzorzec to:
 
 ```c
 #include <ctype.h>
