@@ -225,7 +225,7 @@ int main() {
 * [ ] Od 0 do 32
 * [ ] Od 1 do 31
 
-> **Wyjaśnienie:** Pięć bitów bez znaku daje 2⁵ = 32 wartości, czyli od 0 do 31. Pole nie sprawdza jednak reguł modelu, np. czy dana data w ogóle istnieje.
+> **Wyjaśnienie:** Pięć bitów bez znaku daje $2^5 = 32$ wartości, czyli od 0 do 31. Pole nie sprawdza jednak reguł modelu, np. czy dana data w ogóle istnieje.
 
 #### Q. Dlaczego funkcja `void f(const Wiadomosc& w) { w.oznacz_przeczytana(); }` się nie skompiluje, jeśli metoda `oznacz_przeczytana` nie jest oznaczona `const`?
 
@@ -612,7 +612,7 @@ int main(void) {
 * [ ] `260 260`
 * [ ] `4 260`
 
-> **Wyjaśnienie:** Przed dodawaniem oba argumenty są promowane do `int`, więc suma wynosi 260. Zapis do `unsigned char` (8 bitów na typowych platformach) zachowuje wartość modulo 256, czyli 4.
+> **Wyjaśnienie:** Przed dodawaniem oba argumenty są promowane do `int`, więc suma wynosi 260. Zapis do `unsigned char` (8 bitów na typowych platformach) zachowuje wartość modulo 256, czyli $260 \bmod 256 = 4$.
 
 #### Q. Wskaźnik `Baza* b` wskazuje obiekt typu `Baza`, a nie `Pochodna`. Co można powiedzieć o wyniku `static_cast<Pochodna*>(b)`?
 

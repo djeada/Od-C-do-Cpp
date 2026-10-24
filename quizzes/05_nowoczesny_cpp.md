@@ -87,7 +87,7 @@ int main() {
 * [ ] `1 2`
 * [ ] `0 2`
 
-> **Wyjaśnienie:** Każde wyrażenie lambda tworzy własny, unikalny typ domknięcia, nawet przy identycznym zapisie. Obie lambdy działają tak samo, więc suma wyników to 2 + 2 = 4.
+> **Wyjaśnienie:** Każde wyrażenie lambda tworzy własny, unikalny typ domknięcia, nawet przy identycznym zapisie. Obie lambdy działają tak samo, więc suma wyników to $2 + 2 = 4$.
 
 #### Q. Co wypisze ten program w C++ z lambdą generyczną?
 
