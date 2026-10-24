@@ -250,14 +250,14 @@ int main() {
 
 > **Wyjaśnienie:** Funkcja dostaje kopię adresu pierwszego elementu, a nie kopię tablicy. Zapis `t[i] *= 2` zmienia więc elementy tablicy `dane` w `main`.
 
-#### Q. Macierz 3 × 4 przechowujesz w jednym `std::vector<int>` wiersz po wierszu (`columns == 4`). Pod jakim indeksem leży element z wiersza 2 i kolumny 1, licząc od zera?
+#### Q. Macierz $3 \times 4$ przechowujesz w jednym `std::vector<int>` wiersz po wierszu (`columns == 4`). Pod jakim indeksem leży element z wiersza 2 i kolumny 1, licząc od zera?
 
 * [x] `9`
 * [ ] `5`
 * [ ] `7`
 * [ ] `12`
 
-> **Wyjaśnienie:** Przy układzie wierszami indeks to `row * columns + column`, czyli `2 * 4 + 1 = 9`. Wynik 5 dałoby błędne zamienienie ról wiersza i kolumny.
+> **Wyjaśnienie:** Przy układzie wierszami indeks to `row * columns + column`, czyli $2 \cdot 4 + 1 = 9$. Wynik 5 dałoby błędne zamienienie ról wiersza i kolumny.
 
 #### Q. Jaki jest rzeczywisty typ parametru `const int matrix[][3]` w deklaracji funkcji C++?
 

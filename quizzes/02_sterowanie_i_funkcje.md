@@ -272,7 +272,7 @@ int main() {
 * [x] `6`
 * [ ] `4`
 
-> **Wyjaśnienie:** Wewnętrzna pętla wykonuje się `i` razy dla każdego `i`: 0 + 1 + 2 + 3 = 6. Gdyby obie pętle miały granicę 4, ciało wykonałoby się 16 razy.
+> **Wyjaśnienie:** Wewnętrzna pętla wykonuje się `i` razy dla każdego `i`: $0 + 1 + 2 + 3 = 6$. Gdyby obie pętle miały granicę 4, ciało wykonałoby się 16 razy.
 
 #### Q. Co wypisze ten program w C++ porównujący dwa silniki `std::mt19937`?
 
@@ -307,7 +307,7 @@ int main() {
 * [ ] Liczby całkowite od 0 do 6 włącznie
 * [ ] Liczby całkowite od 0 do 5 włącznie
 
-> **Wyjaśnienie:** Całkowity rozkład jednostajny obejmuje oba końce zakresu, więc każda z sześciu wartości ma prawdopodobieństwo 1/6. Inaczej działa rozkład rzeczywisty, który wyklucza górną granicę.
+> **Wyjaśnienie:** Całkowity rozkład jednostajny obejmuje oba końce zakresu, więc każda z sześciu wartości ma prawdopodobieństwo $\frac{1}{6}$. Inaczej działa rozkład rzeczywisty, który wyklucza górną granicę.
 
 #### Q. Z jakiego przedziału pochodzą wyniki `std::uniform_real_distribution<double> odcinek(0.0, 1.0)`?
 
