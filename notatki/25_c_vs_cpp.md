@@ -44,7 +44,7 @@ int *wskaznik = static_cast<int *>(adres);
 
 W obu przykładach `adres` przechowuje adres zmiennej `liczba`. Wskaźnik `wskaznik` ma wskazywać na tę samą zmienną. Różni się reguła przypisania: C wykonuje tę konwersję niejawnie, a C++ wymaga jawnego zapisu.
 
-To nie znaczy, że każde rzutowanie w C++ jest bezpieczne. Programista nadal musi wiedzieć, jaki obiekt znajduje się pod danym adresem. Rzutowania i wskaźniki opisują osobne notatki: [konwersje i rzutowania](19_konwersje.md) oraz [wskaźniki](11_wskazniki.md).
+To nie znaczy, że każde rzutowanie w C++ jest bezpieczne. Programista nadal musi wiedzieć, jaki obiekt znajduje się pod danym adresem. Rzutowania i wskaźniki opisują osobne notatki: [konwersje i rzutowania](https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/19_konwersje.md) oraz [wskaźniki](https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/11_wskazniki.md).
 
 Różnicę mogą ujawnić także słowa kluczowe. C++ zarezerwował nazwy takie jak `class` i `template`, których C nie używa jako słów kluczowych. Dlatego nazwa zmiennej dopuszczalna w C może kolidować ze składnią C++:
 
@@ -129,7 +129,7 @@ private:
 };
 ```
 
-Użytkownik klasy może wywołać `zwieksz()` i `odczytaj()`, ale nie może bezpośrednio zmienić pola `wartosc_`, bo jest ono prywatne. Dzięki temu klasa kontroluje sposób modyfikowania swojego stanu. Klasy i obiekty omawia notatka [programowanie obiektowe](15_programowanie_obietkowe.md).
+Użytkownik klasy może wywołać `zwieksz()` i `odczytaj()`, ale nie może bezpośrednio zmienić pola `wartosc_`, bo jest ono prywatne. Dzięki temu klasa kontroluje sposób modyfikowania swojego stanu. Klasy i obiekty omawia notatka [programowanie obiektowe](https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/15_programowanie_obietkowe.md).
 
 Szablon pozwala napisać funkcję, której typ argumentów nie jest ustalony z góry:
 
@@ -164,7 +164,7 @@ int main() {
 }
 ```
 
-Wyrażenie `p + q` wywołuje tu funkcję, która dodaje osobno współrzędne punktów. W C trzeba użyć nazwanej funkcji, na przykład `dodaj_punkty(p, q)`, bo nie można zmienić znaczenia operatora dla własnego typu. Operator warto przeciążać tylko wtedy, gdy jego znaczenie będzie naturalne dla czytelnika. Więcej przykładów jest w notatce o [przeciążaniu](18_przeciazanie.md).
+Wyrażenie `p + q` wywołuje tu funkcję, która dodaje osobno współrzędne punktów. W C trzeba użyć nazwanej funkcji, na przykład `dodaj_punkty(p, q)`, bo nie można zmienić znaczenia operatora dla własnego typu. Operator warto przeciążać tylko wtedy, gdy jego znaczenie będzie naturalne dla czytelnika. Więcej przykładów jest w notatce o [przeciążaniu](https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/18_przeciazanie.md).
 
 ## 3. Biblioteki i wejście-wyjście
 

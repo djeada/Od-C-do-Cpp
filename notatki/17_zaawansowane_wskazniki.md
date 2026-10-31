@@ -51,7 +51,7 @@ int main() {
 
 Typ parametru `void (*operacja)(int)` czytamy: „`operacja` jest wskaźnikiem na funkcję, która przyjmuje `int` i zwraca `void`”. Nawiasy są istotne: `void *operacja(int)` oznacza funkcję `operacja`, która zwraca `void*`, a nie wskaźnik na funkcję.
 
-Wskaźnik na funkcję nie przechowuje obiektu i nie przedłuża jego czasu życia. Przekazując nazwę przeciążonej funkcji, czasem trzeba wskazać właściwą wersję przez jawny typ wskaźnika — wybór przeciążenia omawia [notatka o przeciążaniu](18_przeciazanie.md).
+Wskaźnik na funkcję nie przechowuje obiektu i nie przedłuża jego czasu życia. Przekazując nazwę przeciążonej funkcji, czasem trzeba wskazać właściwą wersję przez jawny typ wskaźnika — wybór przeciążenia omawia [notatka o przeciążaniu](https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/18_przeciazanie.md).
 
 ## Wskaźniki do składowych klasy
 
@@ -217,7 +217,7 @@ Sprawdzenie `lock()` jest ważne: samo sprawdzenie, czy obiekt istniał wcześni
 
 Konwersja wskaźnika do klasy pochodnej na wskaźnik do publicznej, jednoznacznej klasy bazowej jest bezpieczna. Dlatego `std::unique_ptr<Prostokat>` można przenieść do `std::unique_ptr<Figura>`, a `std::shared_ptr<Prostokat>` można skopiować do `std::shared_ptr<Figura>`. Działa to tak, jak zwykłe rzutowanie w górę hierarchii.
 
-Ważny jest jednak sposób usuwania obiektu. Jeśli `unique_ptr<Figura>` posiada obiekt `Prostokat`, przy zniszczeniu usuwa go jako `Figura*`. Destruktor bazy powinien wtedy być wirtualny — szczegóły i kompletny przykład są w [notatce o dziedziczeniu](16_dziedziczenie.md). Wartość wskaźnika sama nie przechowuje bezpiecznie „pełnego typu” na potrzeby poprawnego niszczenia przez bazę.
+Ważny jest jednak sposób usuwania obiektu. Jeśli `unique_ptr<Figura>` posiada obiekt `Prostokat`, przy zniszczeniu usuwa go jako `Figura*`. Destruktor bazy powinien wtedy być wirtualny — szczegóły i kompletny przykład są w [notatce o dziedziczeniu](https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/16_dziedziczenie.md). Wartość wskaźnika sama nie przechowuje bezpiecznie „pełnego typu” na potrzeby poprawnego niszczenia przez bazę.
 
 Nie twórz też osobnego `shared_ptr` z surowego wskaźnika, który już należy do innego `shared_ptr`:
 

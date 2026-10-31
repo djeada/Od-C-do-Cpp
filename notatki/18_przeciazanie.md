@@ -87,7 +87,7 @@ using FunkcjaNaInt = void (*)(int);
 FunkcjaNaInt operacja = static_cast<FunkcjaNaInt>(ustaw);
 ```
 
-To ten sam rodzaj wskaźnika na funkcję, który opisuje [notatka o wskaźnikach](17_zaawansowane_wskazniki.md).
+To ten sam rodzaj wskaźnika na funkcję, który opisuje [notatka o wskaźnikach](https://github.com/djeada/Od-C-do-Cpp/blob/master/notatki/17_zaawansowane_wskazniki.md).
 
 ## Przeciążanie operatorów
 
